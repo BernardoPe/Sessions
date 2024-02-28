@@ -75,5 +75,15 @@ class DBTests {
         }
     }
 
+    @Test
+    fun `test students update`() {
+        dataSource.getConnection().use {
+            val stm1 = it.prepareStatement("update students set name = 'Afonso' where name = 'Alice' ")
+            stm1.executeUpdate()
+            val stm2 = it.prepareStatement("update courses set name = 'MEIC' where name = 'LEIC' ")
+            stm2.executeUpdate()
+        }
+    }
+
 
 }
