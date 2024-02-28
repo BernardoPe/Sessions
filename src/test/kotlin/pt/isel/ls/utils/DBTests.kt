@@ -38,11 +38,9 @@ class DBTests {
     @Test
     fun `test insert`(){
         dataSource.getConnection().use {
-            var stm = it.prepareStatement("insert into courses(name) values ('LEIC');")
-            stm.executeUpdate()
-            stm = it.prepareStatement("insert into students(course, number, name) values (1, 12345, 'Alice');")
-            stm.executeUpdate()
-            stm = it.prepareStatement("insert into students(course, number, name) select cid as course, 12346 as number, 'Bob' as name from courses where name = 'LEIC'")
+            val stm = it.prepareStatement("insert into courses(name) values ('LEIC');" +
+                    "insert into students(course, number, name) values (1, 12345, 'Alice');" +
+                    "insert into students(course, number, name) select cid as course, 12346 as number, 'Bob' as name from courses where name = 'LEIC'")
             stm.executeUpdate()
         }
     }
@@ -58,30 +56,18 @@ class DBTests {
     }
 
     @Test
-    fun `test courses delete`(){
-        try {
-            // Delete all from the database
+    fun `test delete`(){
             dataSource.connection.use {
-                // Courses
-                val stm1 = it.prepareStatement("delete from courses cascade")
+                val stm1 = it.prepareStatement("delete from courses cascade;" + "delete from students cascade")
                 stm1.executeUpdate()
-                // Students
-                val stm2 = it.prepareStatement("delete from students cascade")
-                stm2.executeUpdate()
             }
-        } catch (e: Exception) {
-            // Print the exception
-            e.printStackTrace()
-        }
     }
 
     @Test
     fun `test students update`() {
         dataSource.getConnection().use {
-            val stm1 = it.prepareStatement("update students set name = 'Afonso' where name = 'Alice' ")
+            val stm1 = it.prepareStatement("update students set name = 'Afonso' where name = 'Alice';" + "update courses set name = 'MEIC' where name = 'LEIC';")
             stm1.executeUpdate()
-            val stm2 = it.prepareStatement("update courses set name = 'MEIC' where name = 'LEIC' ")
-            stm2.executeUpdate()
         }
     }
 
