@@ -57,5 +57,23 @@ class DBTests {
 
     }
 
+    @Test
+    fun `test courses delete`(){
+        try {
+            // Delete all from the database
+            dataSource.connection.use {
+                // Courses
+                val stm1 = it.prepareStatement("delete from courses cascade")
+                stm1.executeUpdate()
+                // Students
+                val stm2 = it.prepareStatement("delete from students cascade")
+                stm2.executeUpdate()
+            }
+        } catch (e: Exception) {
+            // Print the exception
+            e.printStackTrace()
+        }
+    }
+
 
 }
