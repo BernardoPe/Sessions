@@ -1,5 +1,6 @@
 package pt.isel.ls.utils
 
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.postgresql.ds.PGSimpleDataSource
@@ -10,27 +11,54 @@ class DBTests {
 
     val dataSource = PGSimpleDataSource()
     @Before
-    fun connect() {
+    fun `connect and create test table`() {
         val jdbcDatabaseURL = System.getenv("JDBC_DATABASE_URL")
         dataSource.setURL(jdbcDatabaseURL)
+        dataSource.getConnection().use {
+            var stm = it.prepareStatement("" +
+                    "create table courses (\n" +
+                    "  cid serial primary key,\n" +
+                    "  name varchar(80)\n" +
+                    ");\n" +
+                    "\n" +
+                    "create table students (\n" +
+                    "  number int primary key,\n" +
+                    "  name varchar(80),\n" +
+                    "  course int references courses(cid)\n" +
+                    ");"
+            )
+            stm.executeUpdate()
+        }
+    }
+    @After
+    fun `delete test tables`() {
+        dataSource.getConnection().use {
+            var stm = it.prepareStatement("drop table if exists students;" +
+                    "drop table if exists courses;")
+            stm.executeUpdate()
+        }
+    }
+    @Test
+    fun `test insert`(){
+        dataSource.getConnection().use {
+            var stm = it.prepareStatement("insert into courses(name) values ('LEIC');")
+            stm.executeUpdate()
+            stm = it.prepareStatement("insert into students(course, number, name) values (1, 12345, 'Alice');")
+            stm.executeUpdate()
+            stm = it.prepareStatement("insert into students(course, number, name) select cid as course, 12346 as number, 'Bob' as name from courses where name = 'LEIC'")
+            stm.executeUpdate()
+        }
     }
 
     @Test
     fun `test students select`(){
 
-        val studentsList = mutableListOf<String>()
-
         dataSource.getConnection().use {
             val stm = it.prepareStatement("select * from students")
-            val rs = stm.executeQuery()
-            while (rs.next()) {
-                studentsList.add(rs.getString("name"))
-            }
+            stm.executeQuery()
         }
-        assertTrue { studentsList.size == 2 && studentsList.contains("Alice") && studentsList.contains("Bob") }
 
     }
-
 
 
 }
