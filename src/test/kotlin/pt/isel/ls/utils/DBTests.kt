@@ -13,7 +13,7 @@ class DBTests {
         val jdbcDatabaseURL = System.getenv("JDBC_DATABASE_URL")
         dataSource.setURL(jdbcDatabaseURL)
         dataSource.getConnection().use {
-            var stm = it.prepareStatement("" +
+            val stm = it.prepareStatement("" +
                     "create table courses (\n" +
                     "  cid serial primary key,\n" +
                     "  name varchar(80)\n" +
@@ -31,8 +31,7 @@ class DBTests {
     @After
     fun `delete test tables`() {
         dataSource.getConnection().use {
-            var stm = it.prepareStatement("drop table if exists students;" +
-                    "drop table if exists courses;")
+            val stm = it.prepareStatement("drop table if exists students;" + "drop table if exists courses;")
             stm.executeUpdate()
         }
     }
