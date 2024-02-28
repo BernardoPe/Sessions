@@ -5,8 +5,6 @@ import org.junit.Before
 import org.junit.Test
 import org.postgresql.ds.PGSimpleDataSource
 
-import kotlin.test.assertTrue
-
 class DBTests {
 
     val dataSource = PGSimpleDataSource()
