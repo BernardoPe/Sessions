@@ -1,4 +1,4 @@
-package pt.isel.ls.Control.DTO.Session
+package pt.isel.ls.DTO.Session
 
 /**
  *  Session

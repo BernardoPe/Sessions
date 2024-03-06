@@ -1,4 +1,4 @@
-package pt.isel.ls.Control.DTO.Game
+package pt.isel.ls.DTO.Game
 
 /**
  *  Game

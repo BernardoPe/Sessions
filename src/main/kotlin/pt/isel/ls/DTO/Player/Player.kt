@@ -1,4 +1,4 @@
-package pt.isel.ls.Control.DTO.Player
+package pt.isel.ls.DTO.Player
 
 /**
  *  Player
