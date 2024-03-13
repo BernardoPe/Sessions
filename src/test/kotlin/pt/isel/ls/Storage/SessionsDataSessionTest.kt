@@ -1,11 +1,12 @@
-package pt.isel.ls.Storage.Mem
+package pt.isel.ls.Storage
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import pt.isel.ls.DTO.Session.Session
+import pt.isel.ls.Storage.Mem.SessionsDataMemSession
 
-class SessionsDataMemSessionTest {
+class SessionsDataSessionTest {
 
     @Test
     fun testCreateAndReadSession() {
@@ -14,13 +15,13 @@ class SessionsDataMemSessionTest {
         // Create a session storage
         val sessionStorage = SessionsDataMemSession()
         // Create the session (add it to the storage)
-        sessionStorage.createSession(session)
+        sessionStorage.create(session)
         // Check if the session was created
         // compare the session with the session read from the storage
-        assertEquals(session, sessionStorage.readSession(1))
+        assertEquals(session, sessionStorage.read(1))
         // Check the session data
         // Start by reading the session from the storage
-        val sessionData = sessionStorage.readSession(1)
+        val sessionData = sessionStorage.read(1)
         // Check the session id
         assertEquals(1, sessionData?.ssid)
         // Check the session capacity
@@ -30,7 +31,7 @@ class SessionsDataMemSessionTest {
         // Check the session date
         assertEquals("2022/01/01", sessionData?.date)
         // Check if the session with id 2 was not created
-        assertNull(sessionStorage.readSession(2))
+        assertNull(sessionStorage.read(2))
     }
 
     @Test
@@ -40,16 +41,16 @@ class SessionsDataMemSessionTest {
         // Create a session storage
         val sessionStorage = SessionsDataMemSession()
         // Create the session (add it to the storage)
-        sessionStorage.createSession(session)
+        sessionStorage.create(session)
         // Update the session
         val newSession = Session(1, 10, 2, "2022/01/02")
-        sessionStorage.updateSession(1, newSession)
+        sessionStorage.update(1, newSession)
         // Check if the session was updated
         // compare the session with the session read from the storage
-        assertEquals(newSession, sessionStorage.readSession(1))
+        assertEquals(newSession, sessionStorage.read(1))
         // Check the session data
         // Start by reading the session from the storage
-        val sessionData = sessionStorage.readSession(1)
+        val sessionData = sessionStorage.read(1)
         // Check the session id
         assertEquals(1, sessionData?.ssid)
         // Check the session capacity
@@ -67,10 +68,10 @@ class SessionsDataMemSessionTest {
         // Create a session storage
         val sessionStorage = SessionsDataMemSession()
         // Create the session (add it to the storage)
-        sessionStorage.createSession(session)
+        sessionStorage.create(session)
         // Delete the session
-        sessionStorage.deleteSession(0)
+        sessionStorage.delete(0)
         // Check if the session was deleted
-        assertNull(sessionStorage.readSession(0))
+        assertNull(sessionStorage.read(0))
     }
 }

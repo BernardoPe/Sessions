@@ -1,26 +1,27 @@
-package pt.isel.ls.Storage.Mem
+package pt.isel.ls.Storage
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import pt.isel.ls.DTO.Player.Player
+import pt.isel.ls.Storage.Mem.SessionsDataMemPlayer
 
-class SessionsDataMemPlayerTest {
+class SessionsDataPlayerTest {
 
     @Test
     fun testCreateAndReadPlayer() {
         // Create a player
-        val player = Player(1, "player", "email")
+        val player = Player(1, "player", "email", "token")
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Create the player (add it to the storage)
-        playerStorage.createPlayer(player)
+        playerStorage.create(player)
         // Check if the player was created
         // compare the player with the player read from the storage
-        assertEquals(player, playerStorage.readPlayer(1))
+        assertEquals(player, playerStorage.read(1))
         // Check the player data
         // Start by reading the player from the storage
-        val playerData = playerStorage.readPlayer(1)
+        val playerData = playerStorage.read(1)
         // Check the player id
         assertEquals(1, playerData?.pid)
         // Check the player name
@@ -28,26 +29,26 @@ class SessionsDataMemPlayerTest {
         // Check the player email
         assertEquals("email", playerData?.email)
         // Check if the player with id 2 was not created
-        assertNull(playerStorage.readPlayer(2))
+        assertNull(playerStorage.read(2))
     }
 
     @Test
     fun testUpdatePlayer() {
         // Create a player
-        val player = Player(1, "player", "email")
+        val player = Player(1, "player", "email", "token")
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Create the player (add it to the storage)
-        playerStorage.createPlayer(player)
+        playerStorage.create(player)
         // Update the player
-        val newPlayer = Player(1, "newPlayer", "newEmail")
-        playerStorage.updatePlayer(1, newPlayer)
+        val newPlayer = Player(1, "newPlayer", "newEmail", "newToken")
+        playerStorage.update(1, newPlayer)
         // Check if the player was updated
         // compare the player with the player read from the storage
-        assertEquals(newPlayer, playerStorage.readPlayer(1))
+        assertEquals(newPlayer, playerStorage.read(1))
         // Check the player data
         // Start by reading the player from the storage
-        val playerData = playerStorage.readPlayer(1)
+        val playerData = playerStorage.read(1)
         // Check the player id
         assertEquals(1, playerData?.pid)
         // Check the player name
@@ -59,14 +60,14 @@ class SessionsDataMemPlayerTest {
     @Test
     fun testDeletePlayer() {
         // Create a player
-        val player = Player(1, "player", "email")
+        val player = Player(1, "player", "email", "token")
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Create the player (add it to the storage)
-        playerStorage.createPlayer(player)
+        playerStorage.create(player)
         // Delete the player
-        playerStorage.deletePlayer(0)
+        playerStorage.delete(0)
         // Check if the player was deleted
-        assertNull(playerStorage.readPlayer(0))
+        assertNull(playerStorage.read(0))
     }
 }
