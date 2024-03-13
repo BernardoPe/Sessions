@@ -1,6 +1,5 @@
 package pt.isel.ls.DTO.Session
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import pt.isel.ls.DTO.Game.Game
 import pt.isel.ls.DTO.Player.Player
@@ -14,7 +13,6 @@ const val SESSION_MAX_CAPACITY = 100
  *
  *  @param ssid The session identifier
  *  @param capacity The session capacity
- *  @param gid The game identifier
  *  @param date The session date
  */
 @Serializable
