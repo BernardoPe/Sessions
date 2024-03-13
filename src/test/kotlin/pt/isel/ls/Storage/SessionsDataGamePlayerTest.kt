@@ -1,17 +1,17 @@
 package pt.isel.ls.Storage
 
+import pt.isel.ls.DTO.Player.Player
+import pt.isel.ls.Storage.Mem.SessionsDataMemPlayer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import pt.isel.ls.DTO.Player.Player
-import pt.isel.ls.Storage.Mem.SessionsDataMemPlayer
 
 class SessionsDataGamePlayerTest {
 
     @Test
     fun testCreateAndReadPlayer() {
         // Create a player
-        val player = Player(1, "player", "email", "token")
+        val player = Player(1, "player", "email")
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Create the player (add it to the storage)
@@ -35,13 +35,13 @@ class SessionsDataGamePlayerTest {
     @Test
     fun testUpdatePlayer() {
         // Create a player
-        val player = Player(1, "player", "email", "token")
+        val player = Player(1, "player", "email")
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Create the player (add it to the storage)
         playerStorage.create(player)
         // Update the player
-        val newPlayer = Player(1, "newPlayer", "newEmail", "newToken")
+        val newPlayer = Player(1, "newPlayer", "newEmail")
         playerStorage.update(1, newPlayer)
         // Check if the player was updated
         // compare the player with the player read from the storage
@@ -60,7 +60,7 @@ class SessionsDataGamePlayerTest {
     @Test
     fun testDeletePlayer() {
         // Create a player
-        val player = Player(1, "player", "email", "token")
+        val player = Player(1, "player", "email")
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Create the player (add it to the storage)

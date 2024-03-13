@@ -1,18 +1,20 @@
 package pt.isel.ls.Server
 
 import kotlinx.serialization.json.Json
-import org.http4k.core.*
+import org.http4k.core.Method
+import org.http4k.core.Request
+import org.http4k.core.Status
 import org.junit.After
 import org.junit.Before
 import pt.isel.ls.DTO.Game.Game
 import pt.isel.ls.DTO.Player.Player
+import pt.isel.ls.DTO.Session.Session
 import pt.isel.ls.Services.gameService
 import pt.isel.ls.Services.playerService
 import pt.isel.ls.Services.sessionsService
-import pt.isel.ls.pt.isel.ls.SessionsServer
 import pt.isel.ls.WebApi.SessionsApi
+import pt.isel.ls.pt.isel.ls.SessionsServer
 import kotlin.test.Test
-import pt.isel.ls.DTO.Session.Session
 
 class ServerTest {
 
@@ -443,10 +445,10 @@ class ServerTest {
         //  Assert
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
-        assert(session.gid == 1)
+        assert(session.gameSession.gid == 1)
         assert(session.capacity == 100)
         assert(session.date == "2021-05-01T00:00:00")
-        assert(session.ssid == 1)
+        assert(session.sid == 1)
     }
 
     @Test
@@ -475,10 +477,10 @@ class ServerTest {
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
         assert(sessionList.size == 1)
-        assert(sessionList[0].gid == 1)
+        assert(sessionList[0].gameSession.gid == 1)
         assert(sessionList[0].capacity == 100)
         assert(sessionList[0].date == "2021-05-01T00:00:00")
-        assert(sessionList[0].ssid == 1)
+        assert(sessionList[0].sid == 1)
     }
 
     @Test
@@ -519,14 +521,14 @@ class ServerTest {
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
         assert(sessionList.size == 2)
-        assert(sessionList[0].gid == 1)
+        assert(sessionList[0].gameSession.gid == 1)
         assert(sessionList[0].capacity == 100)
         assert(sessionList[0].date == "2021-05-01T00:00:00")
-        assert(sessionList[0].ssid == 1)
-        assert(sessionList[1].gid == 1)
+        assert(sessionList[0].sid == 1)
+        assert(sessionList[1].gameSession.gid == 1)
         assert(sessionList[1].capacity == 100)
         assert(sessionList[1].date == "2021-06-01T00:00:00")
-        assert(sessionList[1].ssid == 2)
+        assert(sessionList[1].sid == 2)
     }
 
 

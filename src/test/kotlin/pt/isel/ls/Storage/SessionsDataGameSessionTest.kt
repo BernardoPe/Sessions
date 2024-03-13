@@ -1,17 +1,19 @@
 package pt.isel.ls.Storage
 
+import pt.isel.ls.DTO.Game.Game
+import pt.isel.ls.DTO.Player.Player
+import pt.isel.ls.DTO.Session.Session
+import pt.isel.ls.Storage.Mem.SessionsDataMemSession
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import pt.isel.ls.DTO.Session.Session
-import pt.isel.ls.Storage.Mem.SessionsDataMemSession
 
 class SessionsDataGameSessionTest {
 
     @Test
     fun testCreateAndReadSession() {
         // Create a session
-        val session = Session(1, 5, 1, "2022/01/01")
+        val session = Session(1, 5, "2022/01/01", newGameTest(), newPlayersTest1())
         // Create a session storage
         val sessionStorage = SessionsDataMemSession()
         // Create the session (add it to the storage)
@@ -23,11 +25,11 @@ class SessionsDataGameSessionTest {
         // Start by reading the session from the storage
         val sessionData = sessionStorage.getById(1)
         // Check the session id
-        assertEquals(1, sessionData?.ssid)
+        assertEquals(1, sessionData?.sid)
         // Check the session capacity
         assertEquals(5, sessionData?.capacity)
         // Check the session gid
-        assertEquals(1, sessionData?.gid)
+        assertEquals(1, sessionData?.gameSession?.gid)
         // Check the session date
         assertEquals("2022/01/01", sessionData?.date)
         // Check if the session with id 2 was not created
@@ -35,16 +37,16 @@ class SessionsDataGameSessionTest {
     }
 
     @Test
-    fun testUpdateSession() {
+    fun testAddNewPlayersSession() {
         // Create a session
-        val session = Session(1, 5, 1, "2022/01/01")
+        val session = Session(1, 5, "2022/01/01", newGameTest(), newPlayersTest1())
         // Create a session storage
         val sessionStorage = SessionsDataMemSession()
         // Create the session (add it to the storage)
         sessionStorage.create(session)
         // Update the session
-        val newSession = Session(1, 10, 2, "2022/01/02")
-        sessionStorage.update(newSession.ssid, newSession)
+        val newSession = Session(1, 10, "2022/01/02", newGameTest(), newPlayersTest1() + newPlayersTest2())
+        sessionStorage.update(newSession.sid, newSession)
         // Check if the session was updated
         // compare the session with the session read from the storage
         assertEquals(newSession, sessionStorage.getById(1))
@@ -52,19 +54,36 @@ class SessionsDataGameSessionTest {
         // Start by reading the session from the storage
         val sessionData = sessionStorage.getById(1)
         // Check the session id
-        assertEquals(1, sessionData?.ssid)
+        assertEquals(1, sessionData?.sid)
         // Check the session capacity
         assertEquals(10, sessionData?.capacity)
         // Check the session gid
-        assertEquals(2, sessionData?.gid)
+        assertEquals(
+            Game(
+                1,
+                "Test Game 1",
+                "Test Developer",
+                listOf("Genre1", "Genre2")
+            ), sessionData?.gameSession
+        )
         // Check the session date
         assertEquals("2022/01/02", sessionData?.date)
+        assertEquals(
+            listOf(
+                Player(1, "player1", "player1@example.com"),
+                Player(2, "player2", "player2@example.com"),
+                Player(3, "player3", "player3@example.com"),
+                Player(4, "player4", "player4@example.com"),
+                Player(5, "player5", "player5@example.com"),
+                Player(6, "player6", "player6@example.com"),
+            ), sessionData?.playersSession
+        )
     }
 
     @Test
     fun testDeleteSession() {
         // Create a session
-        val session = Session(1, 5, 1, "2022/01/01")
+        val session = Session(1, 5, "2022/01/01", newGameTest(), newPlayersTest1())
         // Create a session storage
         val sessionStorage = SessionsDataMemSession()
         // Create the session (add it to the storage)
@@ -73,5 +92,26 @@ class SessionsDataGameSessionTest {
         sessionStorage.delete(0)
         // Check if the session was deleted
         assertNull(sessionStorage.getById(0))
+    }
+
+    companion object {
+        fun newGameTest() = Game(
+            1,
+            "Test Game 1",
+            "Test Developer",
+            listOf("Genre1", "Genre2")
+        )
+
+        fun newPlayersTest1() = listOf(
+            Player(1, "player1", "player1@example.com"),
+            Player(2, "player2", "player2@example.com"),
+            Player(3, "player3", "player3@example.com"),
+        )
+
+        fun newPlayersTest2() = listOf(
+            Player(4, "player4", "player4@example.com"),
+            Player(5, "player5", "player5@example.com"),
+            Player(6, "player6", "player6@example.com"),
+        )
     }
 }

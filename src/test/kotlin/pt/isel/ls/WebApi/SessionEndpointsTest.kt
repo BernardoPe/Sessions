@@ -191,10 +191,10 @@ class SessionEndpointsTest {
         //  Assert
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
-        assert(session.gid == 1)
+        assert(session.gameSession.gid == 1)
         assert(session.capacity == 100)
         assert(session.date == "2021-05-01T00:00:00")
-        assert(session.ssid == 1)
+        assert(session.sid == 1)
     }
 
     @Test
@@ -223,10 +223,10 @@ class SessionEndpointsTest {
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
         assert(sessionList.size == 1)
-        assert(sessionList[0].gid == 1)
+        assert(sessionList[0].gameSession.gid == 1)
         assert(sessionList[0].capacity == 100)
         assert(sessionList[0].date == "2021-05-01T00:00:00")
-        assert(sessionList[0].ssid == 1)
+        assert(sessionList[0].sid == 1)
     }
 
     @Test
@@ -267,13 +267,13 @@ class SessionEndpointsTest {
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
         assert(sessionList.size == 2)
-        assert(sessionList[0].gid == 1)
+        assert(sessionList[0].gameSession.gid == 1)
         assert(sessionList[0].capacity == 100)
         assert(sessionList[0].date == "2021-05-01T00:00:00")
-        assert(sessionList[0].ssid == 1)
-        assert(sessionList[1].gid == 1)
+        assert(sessionList[0].sid == 1)
+        assert(sessionList[1].gameSession.gid == 1)
         assert(sessionList[1].capacity == 100)
         assert(sessionList[1].date == "2021-06-01T00:00:00")
-        assert(sessionList[1].ssid == 2)
+        assert(sessionList[1].sid == 2)
     }
 }

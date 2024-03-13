@@ -1,5 +1,7 @@
 package pt.isel.ls.DTO.Session
 
+import pt.isel.ls.DTO.Game.Game
+import pt.isel.ls.DTO.Player.Player
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -8,17 +10,28 @@ class SessionTest {
 
     @Test
     fun `test successful session creation`() {
-        val session = Session(1, 50, 1, "2023-03-01")
-        assertEquals(1, session.ssid)
+        val session = Session(1, 50, "2023-03-01", newGameTest(), newPlayersTest())
+        assertEquals(1, session.sid)
         assertEquals(50, session.capacity)
-        assertEquals(1, session.gid)
         assertEquals("2023-03-01", session.date)
+        assertEquals(Game(1, "Test Game", "Test Developer", listOf("RPG", "Adventure")), session.gameSession)
+        assertEquals(
+            listOf(
+                Player(1, "player1", "player1@example.com"),
+                Player(2, "player2", "player2@example.com"),
+                Player(3, "player3", "player3@example.com"),
+                Player(4, "player4", "player4@example.com"),
+                Player(5, "player5", "player5@example.com"),
+                Player(6, "player6", "player6@example.com"),
+            ), session.playersSession
+        )
+
     }
 
     @Test
     fun `test session creation with negative ssid`() {
         val exception = assertFailsWith<IllegalArgumentException> {
-            Session(-1, 50, 1, "2023-03-01")
+            Session(-1, 50, "2023-03-01", newGameTest(), newPlayersTest())
         }
         assertEquals("Session identifier must be a positive number", exception.message)
     }
@@ -26,7 +39,7 @@ class SessionTest {
     @Test
     fun `test session creation with capacity less than 1`() {
         val exception = assertFailsWith<IllegalArgumentException> {
-            Session(1, 0, 1, "2023-03-01")
+            Session(1, 0, "2023-03-01", newGameTest(), newPlayersTest())
         }
         assertEquals("Session capacity must be a positive number", exception.message)
     }
@@ -34,16 +47,26 @@ class SessionTest {
     @Test
     fun `test session creation with capacity greater than max`() {
         val exception = assertFailsWith<IllegalArgumentException> {
-            Session(1, SESSION_MAX_CAPACITY + 1, 1, "2023-03-01")
+            Session(1, SESSION_MAX_CAPACITY + 1, "2023-03-01", newGameTest(), newPlayersTest())
         }
         assertEquals("Session capacity must be less than or equal to $SESSION_MAX_CAPACITY", exception.message)
     }
 
-    @Test
-    fun `test session creation with negative gid`() {
-        val exception = assertFailsWith<IllegalArgumentException> {
-            Session(1, 50, -1, "2023-03-01")
-        }
-        assertEquals("Game identifier must be a positive number", exception.message)
+    companion object {
+        fun newGameTest() = Game(
+            1,
+            "Test Game 1",
+            "Test Developer",
+            listOf("Genre1", "Genre2")
+        )
+
+        fun newPlayersTest() = listOf(
+            Player(1, "player1", "player1@example.com"),
+            Player(2, "player2", "player2@example.com"),
+            Player(3, "player3", "player3@example.com"),
+            Player(4, "player4", "player4@example.com"),
+            Player(5, "player5", "player5@example.com"),
+            Player(6, "player6", "player6@example.com"),
+        )
     }
 }

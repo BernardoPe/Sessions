@@ -38,7 +38,7 @@ class SessionsDataMemSession : SessionsDataSession {
     /**
      * Read a session from the database mock
      *
-     * This function uses the [get] function from the [SessionsDataSessionMem] class
+     * This function uses the [get] function from the [SessionsDataMemSession] class
      *
      * @param id The session identifier
      * @return The session object with the given id or null if it does not exist
@@ -47,7 +47,7 @@ class SessionsDataMemSession : SessionsDataSession {
         // Read the session object from the database mock
         db.forEach {
             // search for the session with the given id
-            if (it.ssid == id) {
+            if (it.sid == id) {
                 // if found
                 // return the session object
                 return it
@@ -80,7 +80,7 @@ class SessionsDataMemSession : SessionsDataSession {
         // Update the session object in the database mock
         db.forEach {
             // search for the session with the given id
-            if (it.gid == id) {
+            if (it.sid == id) {
                 // if found
                 // remove the session from the database mock
                 db.remove(it)
@@ -101,7 +101,7 @@ class SessionsDataMemSession : SessionsDataSession {
         // Delete the session object from the database mock
         db.forEach {
             // search for the session with the given id
-            if (it.gid == id) {
+            if (it.sid == id) {
                 // if found
                 // remove the session from the database mock
                 db.remove(it)
