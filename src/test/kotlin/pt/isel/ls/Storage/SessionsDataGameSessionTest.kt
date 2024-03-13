@@ -6,7 +6,7 @@ import kotlin.test.assertNull
 import pt.isel.ls.DTO.Session.Session
 import pt.isel.ls.Storage.Mem.SessionsDataMemSession
 
-class SessionsDataSessionTest {
+class SessionsDataGameSessionTest {
 
     @Test
     fun testCreateAndReadSession() {
@@ -18,10 +18,10 @@ class SessionsDataSessionTest {
         sessionStorage.create(session)
         // Check if the session was created
         // compare the session with the session read from the storage
-        assertEquals(session, sessionStorage.get(1))
+        assertEquals(session, sessionStorage.getById(1))
         // Check the session data
         // Start by reading the session from the storage
-        val sessionData = sessionStorage.get(1)
+        val sessionData = sessionStorage.getById(1)
         // Check the session id
         assertEquals(1, sessionData?.ssid)
         // Check the session capacity
@@ -31,7 +31,7 @@ class SessionsDataSessionTest {
         // Check the session date
         assertEquals("2022/01/01", sessionData?.date)
         // Check if the session with id 2 was not created
-        assertNull(sessionStorage.get(2))
+        assertNull(sessionStorage.getById(2))
     }
 
     @Test
@@ -44,13 +44,13 @@ class SessionsDataSessionTest {
         sessionStorage.create(session)
         // Update the session
         val newSession = Session(1, 10, 2, "2022/01/02")
-        sessionStorage.update(1, newSession)
+        sessionStorage.update(newSession.ssid, newSession)
         // Check if the session was updated
         // compare the session with the session read from the storage
-        assertEquals(newSession, sessionStorage.get(1))
+        assertEquals(newSession, sessionStorage.getById(1))
         // Check the session data
         // Start by reading the session from the storage
-        val sessionData = sessionStorage.get(1)
+        val sessionData = sessionStorage.getById(1)
         // Check the session id
         assertEquals(1, sessionData?.ssid)
         // Check the session capacity
@@ -72,6 +72,6 @@ class SessionsDataSessionTest {
         // Delete the session
         sessionStorage.delete(0)
         // Check if the session was deleted
-        assertNull(sessionStorage.get(0))
+        assertNull(sessionStorage.getById(0))
     }
 }

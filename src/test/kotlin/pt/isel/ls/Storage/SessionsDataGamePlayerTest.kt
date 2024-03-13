@@ -6,7 +6,7 @@ import kotlin.test.assertNull
 import pt.isel.ls.DTO.Player.Player
 import pt.isel.ls.Storage.Mem.SessionsDataMemPlayer
 
-class SessionsDataPlayerTest {
+class SessionsDataGamePlayerTest {
 
     @Test
     fun testCreateAndReadPlayer() {
@@ -18,10 +18,10 @@ class SessionsDataPlayerTest {
         playerStorage.create(player)
         // Check if the player was created
         // compare the player with the player read from the storage
-        assertEquals(player, playerStorage.get(1))
+        assertEquals(player, playerStorage.getById(1))
         // Check the player data
         // Start by reading the player from the storage
-        val playerData = playerStorage.get(1)
+        val playerData = playerStorage.getById(1)
         // Check the player id
         assertEquals(1, playerData?.pid)
         // Check the player name
@@ -29,7 +29,7 @@ class SessionsDataPlayerTest {
         // Check the player email
         assertEquals("email", playerData?.email)
         // Check if the player with id 2 was not created
-        assertNull(playerStorage.get(2))
+        assertNull(playerStorage.getById(2))
     }
 
     @Test
@@ -45,10 +45,10 @@ class SessionsDataPlayerTest {
         playerStorage.update(1, newPlayer)
         // Check if the player was updated
         // compare the player with the player read from the storage
-        assertEquals(newPlayer, playerStorage.get(1))
+        assertEquals(newPlayer, playerStorage.getById(1))
         // Check the player data
         // Start by reading the player from the storage
-        val playerData = playerStorage.get(1)
+        val playerData = playerStorage.getById(1)
         // Check the player id
         assertEquals(1, playerData?.pid)
         // Check the player name
@@ -68,6 +68,6 @@ class SessionsDataPlayerTest {
         // Delete the player
         playerStorage.delete(0)
         // Check if the player was deleted
-        assertNull(playerStorage.get(0))
+        assertNull(playerStorage.getById(0))
     }
 }
