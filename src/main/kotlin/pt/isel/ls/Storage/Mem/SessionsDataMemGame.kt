@@ -24,11 +24,11 @@ class SessionsDataMemGame : SessionsDataMem<Game>(getter) {
      *
      * This function uses the [create] function from the [SessionsDataMem] class
      *
-     * @param game The game object to be created
+     * @param value The game object to be created
      */
-    fun createGame(game: Game) {
+    override fun create(value: Game) {
         // Add the game object to the database mock
-        create(game)
+        super.create(value)
     }
 
     /**
@@ -39,8 +39,8 @@ class SessionsDataMemGame : SessionsDataMem<Game>(getter) {
      * @param id The game identifier
      * @return The game object with the given id or null if it does not exist
      */
-    fun readGame(id: Int): Game? {
-        return read(id)
+    override fun read(id: Int): Game? {
+        return super.read(id)
     }
 
     /**
@@ -51,9 +51,8 @@ class SessionsDataMemGame : SessionsDataMem<Game>(getter) {
      * @param id The game identifier
      * @param game The new game object
      */
-    fun updateGame(id: Int, game: Game) {
-        // Update the game in the database mock with the new game object
-        update(id, game)
+    override fun update(id: Int, value: Game) {
+        super.update(id, value)
     }
 
     /**
@@ -63,8 +62,7 @@ class SessionsDataMemGame : SessionsDataMem<Game>(getter) {
      *
      * @param id The game identifier
      */
-    fun deleteGame(id: Int) {
-        // Delete the game from the database mock with the given id
-        delete(id)
+    override fun delete(id: Int) {
+        super.delete(id)
     }
 }

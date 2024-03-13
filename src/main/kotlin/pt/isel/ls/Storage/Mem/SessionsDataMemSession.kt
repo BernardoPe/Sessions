@@ -24,11 +24,10 @@ class SessionsDataMemSession : SessionsDataMem<Session>(getter) {
      *
      * This function uses the [create] function from the [SessionsDataMem] class
      *
-     * @param session The session object to be created
+     * @param value The session object to be created
      */
-    fun createSession(session: Session) {
-        // Add the session object to the database mock
-        create(session)
+    override fun create(value: Session) {
+        super.create(value)
     }
 
     /**
@@ -39,8 +38,8 @@ class SessionsDataMemSession : SessionsDataMem<Session>(getter) {
      * @param id The session identifier
      * @return The session object with the given id or null if it does not exist
      */
-    fun readSession(id: Int): Session? {
-        return read(id)
+    override fun read(id: Int): Session? {
+        return super.read(id)
     }
 
     /**
@@ -49,11 +48,10 @@ class SessionsDataMemSession : SessionsDataMem<Session>(getter) {
      * This function uses the [update] function from the [SessionsDataMem] class
      *
      * @param id The session identifier
-     * @param session The new session object
+     * @param value The new session object
      */
-    fun updateSession(id: Int, session: Session) {
-        // Update the session in the database mock with the new session object
-        update(id, session)
+    override fun update(id: Int, value: Session) {
+        super.update(id, value)
     }
 
     /**
@@ -63,8 +61,7 @@ class SessionsDataMemSession : SessionsDataMem<Session>(getter) {
      *
      * @param id The session identifier
      */
-    fun deleteSession(id: Int) {
-        // Delete the session from the database mock with the given id
-        delete(id)
+    override fun delete(id: Int) {
+        super.delete(id)
     }
 }
