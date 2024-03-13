@@ -1,5 +1,8 @@
 package pt.isel.ls.DTO.Session
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
 /**
  *  Session
  *
@@ -10,9 +13,10 @@ package pt.isel.ls.DTO.Session
  *  @param gid The game identifier
  *  @param date The session date
  */
+@Serializable
 data class Session(
-    val ssid: Int,
-    val capacity: Int,
-    val gid: Int,
-    val date: String,
+    @SerialName("ssid") val ssid: Int,
+    @SerialName("capacity") val capacity: Int,
+    @SerialName("gid")  val gid: Int,
+    @SerialName("date") val date: String,
 )

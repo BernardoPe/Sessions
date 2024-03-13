@@ -9,5 +9,9 @@ class playerService {
         TODO()
     }
 
+    fun verifyToken(token: String): Boolean {
+        TODO()
+    }
+
     /** More methods to come */
 }

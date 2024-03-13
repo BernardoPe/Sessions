@@ -1,5 +1,8 @@
 package pt.isel.ls.DTO.Game
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
 /**
  *  Game
  *
@@ -9,10 +12,12 @@ package pt.isel.ls.DTO.Game
  *  @param developer The game developer
  *  @param genres The game list of genres
  */
+@Serializable
 data class Game (
-        val gid: Int,
-        val developer: String,
-        val genres: List<String>,
+        @SerialName("gid") val gid: Int,
+        @SerialName("name") val name: String,
+        @SerialName("developer") val developer: String,
+        @SerialName("genres") val genres: List<String>
 )
 
 

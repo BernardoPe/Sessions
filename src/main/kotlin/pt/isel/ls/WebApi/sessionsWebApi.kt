@@ -3,11 +3,11 @@ package pt.isel.ls.WebApi
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
-import org.slf4j.Logger
+import org.http4k.core.Status.Companion.UNAUTHORIZED
 import pt.isel.ls.Services.*
+import pt.isel.ls.pt.isel.ls.logger
 
-class SessionsApi(val logger: Logger,
-                  val playerServices: playerService,
+class SessionsApi(val playerServices: playerService,
                   val gameServices: gameService,
                   val sessionServices: sessionsService
 ) {
@@ -64,8 +64,9 @@ class SessionsApi(val logger: Logger,
 
         logRequest(request)
 
-        if (requiresAuth)
-            verifyAuth(request)
+        if (requiresAuth && !verifyAuth(request))
+            return Response(UNAUTHORIZED).header("content-type", "text/plain").body("Unauthorized")
+
 
         return try {
             val processFunction = processors[service]!!
@@ -87,10 +88,10 @@ class SessionsApi(val logger: Logger,
         )
     }
 
-    private fun verifyAuth(request: Request) {
-        TODO()
+    private fun verifyAuth(request: Request) : Boolean {
+        val token = request.header("Authorization")?.split(" ")?.get(1) ?: return false
+        return playerServices.verifyToken(token)
     }
-
 
 }
 
