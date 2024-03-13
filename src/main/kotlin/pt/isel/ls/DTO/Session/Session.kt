@@ -2,6 +2,8 @@ package pt.isel.ls.DTO.Session
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import pt.isel.ls.DTO.Game.Game
+import pt.isel.ls.DTO.Player.Player
 
 const val SESSION_MAX_CAPACITY = 100
 
@@ -19,13 +21,14 @@ const val SESSION_MAX_CAPACITY = 100
 data class Session(
     val ssid: Int,
     val capacity: Int,
-    val gid: Int,
     val date: String,
+    val gameSession: Game,
+    val playersSession: List<Player>
 ) {
     init {
         require(ssid >= 0) { "Session identifier must be a positive number" }
         require(capacity > 1) { "Session capacity must be a positive number" }
         require(capacity <= SESSION_MAX_CAPACITY) { "Session capacity must be less than or equal to $SESSION_MAX_CAPACITY" }
-        require(gid > 0) { "Game identifier must be a positive number" }
+        require(gameSession.gid > 0) { "Game identifier must be a positive number" }
     }
 }

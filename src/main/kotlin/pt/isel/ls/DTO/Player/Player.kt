@@ -17,13 +17,11 @@ import kotlinx.serialization.Serializable
 data class Player (
         val pid: Int,
         val name: String,
-        val email: String,
-        val token: String
+        val email: String
 ) {
         init {
                 require(pid >= 0) { "The player identifier must be a positive integer" }
                 require(name.isNotEmpty()) { "The player name must not be empty" }
                 require(email.isNotEmpty()) { "The player email must not be empty" }
-                require(token.isNotEmpty()) { "The player token must not be empty" }
         }
 }
