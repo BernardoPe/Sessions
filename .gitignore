@@ -169,3 +169,7 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij,kotlin,gradle
+
+# Local configurations
+myStuff/**
+myStuff/
