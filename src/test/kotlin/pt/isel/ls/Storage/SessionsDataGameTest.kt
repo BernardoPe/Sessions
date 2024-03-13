@@ -6,7 +6,7 @@ import kotlin.test.assertNull
 import pt.isel.ls.DTO.Game.Game
 import pt.isel.ls.Storage.Mem.SessionsDataMemGame
 
-class SessionsDataGameGameTest {
+class SessionsDataGameTest {
 
     @Test
     fun testCreateAndReadGame() {
