@@ -1,6 +1,5 @@
 package pt.isel.ls.DTO.Player
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -11,7 +10,6 @@ import kotlinx.serialization.Serializable
  *  @param pid The player identifier
  *  @param name The player name
  *  @param email The player email
- *  @param token The player token
  */
 @Serializable
 data class Player (
