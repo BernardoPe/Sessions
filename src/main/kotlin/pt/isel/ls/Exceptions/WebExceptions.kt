@@ -1,6 +1,6 @@
 package pt.isel.ls.Exceptions
 
-sealed class WebExceptions(status: Int, description: String, cause: String?) : Exception() {
+open class WebExceptions(status: Int, description: String, cause: String?) : Exception() {
     val status: Int = status
     val description: String = description
     val error_cause: String? = cause

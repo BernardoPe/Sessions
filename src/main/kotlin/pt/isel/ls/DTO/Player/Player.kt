@@ -11,13 +11,14 @@ import kotlinx.serialization.Serializable
  *  @param pid The player identifier
  *  @param name The player name
  *  @param email The player email
+ *  @param token The player token
  */
 @Serializable
 data class Player (
-        @SerialName("pid") val pid: Int,
-        @SerialName("name") val name: String,
-        @SerialName("email") val email: String,
-        @SerialName("token") val token: String
+        val pid: Int,
+        val name: String,
+        val email: String,
+        val token: String
 ) {
         init {
                 require(pid >= 0) { "The player identifier must be a positive integer" }

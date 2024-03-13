@@ -17,10 +17,10 @@ const val SESSION_MAX_CAPACITY = 100
  */
 @Serializable
 data class Session(
-    @SerialName("ssid") val ssid: Int,
-    @SerialName("capacity") val capacity: Int,
-    @SerialName("gid")  val gid: Int,
-    @SerialName("date") val date: String,
+    val ssid: Int,
+    val capacity: Int,
+    val gid: Int,
+    val date: String,
 ) {
     init {
         require(ssid >= 0) { "Session identifier must be a positive number" }

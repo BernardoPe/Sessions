@@ -14,10 +14,10 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Game (
-        @SerialName("gid") val gid: Int,
-        @SerialName("name") val name: String,
-        @SerialName("developer") val developer: String,
-        @SerialName("genres") val genres: List<String>
+        val gid: Int,
+        val name: String,
+        val developer: String,
+        val genres: List<String>
 ) {
         init {
                 require(gid >= 0) { "The game identifier must be a positive integer" }
