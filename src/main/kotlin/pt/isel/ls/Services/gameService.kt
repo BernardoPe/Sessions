@@ -1,16 +1,18 @@
 package pt.isel.ls.Services
 
-import pt.isel.ls.Storage.SessionsData
+import pt.isel.ls.Storage.SessionsDataGame
 import pt.isel.ls.DTO.Game.Game
 
 
-class gameService(val storage: SessionsData<Game>) {
+class gameService() {//val storage: SessionsDataGame) {
 
     fun createGame(game: Game) {
-        storage.create(game)
+        //storage.create(game)
+        TODO()
     }
     fun getGameById(id: Int) {
-        val game = storage.get(id)
+        //val game = storage.getById(id)
+        TODO()
     }
 
     fun detailsGame() {
