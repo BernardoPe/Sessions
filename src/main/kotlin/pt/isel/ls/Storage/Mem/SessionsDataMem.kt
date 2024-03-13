@@ -8,7 +8,7 @@ import pt.isel.ls.Storage.SessionsData
  *  Using the CRUD operations
  *
  *  @property create Create a new data entry
- *  @property read Read a data entry
+ *  @property get Read a data entry
  *  @property update Update a data entry
  *  @property delete Delete a data entry
  */
@@ -17,7 +17,7 @@ open class SessionsDataMem<E> (
      * Getter function
      *
      * This function is used as a comparator
-     * It is used to compare the data entry with the given id in the [read] function
+     * It is used to compare the data entry with the given id in the [get] function
      *
      * @property E The data entry
      * @property Int The data entry identifier
@@ -55,9 +55,21 @@ open class SessionsDataMem<E> (
      * @param id The data entry identifier
      * @return The data entry with the given id or null if it does not exist
      */
-    override fun read(id: Int): E? {
+    override fun get(id: Int): E? {
         return db.firstOrNull { getter(it, id) }
     }
+
+/**
+     * Read all data entries
+     *
+     * This function reads all data entries from the [db] list
+     *
+     * @return A list with all the data entries in the [db] list
+     */
+    override fun getAll(): List<E> {
+        return db
+    }
+
 
     /**
      * Update a data entry

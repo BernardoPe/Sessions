@@ -34,13 +34,13 @@ class SessionsDataMemGame : SessionsDataMem<Game>(getter) {
     /**
      * Read a game from the database mock
      *
-     * This function uses the [read] function from the [SessionsDataMem] class
+     * This function uses the [get] function from the [SessionsDataMem] class
      *
      * @param id The game identifier
      * @return The game object with the given id or null if it does not exist
      */
-    override fun read(id: Int): Game? {
-        return super.read(id)
+    override fun get(id: Int): Game? {
+        return super.get(id)
     }
 
     /**

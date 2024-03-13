@@ -18,10 +18,10 @@ class SessionsDataSessionTest {
         sessionStorage.create(session)
         // Check if the session was created
         // compare the session with the session read from the storage
-        assertEquals(session, sessionStorage.read(1))
+        assertEquals(session, sessionStorage.get(1))
         // Check the session data
         // Start by reading the session from the storage
-        val sessionData = sessionStorage.read(1)
+        val sessionData = sessionStorage.get(1)
         // Check the session id
         assertEquals(1, sessionData?.ssid)
         // Check the session capacity
@@ -31,7 +31,7 @@ class SessionsDataSessionTest {
         // Check the session date
         assertEquals("2022/01/01", sessionData?.date)
         // Check if the session with id 2 was not created
-        assertNull(sessionStorage.read(2))
+        assertNull(sessionStorage.get(2))
     }
 
     @Test
@@ -47,10 +47,10 @@ class SessionsDataSessionTest {
         sessionStorage.update(1, newSession)
         // Check if the session was updated
         // compare the session with the session read from the storage
-        assertEquals(newSession, sessionStorage.read(1))
+        assertEquals(newSession, sessionStorage.get(1))
         // Check the session data
         // Start by reading the session from the storage
-        val sessionData = sessionStorage.read(1)
+        val sessionData = sessionStorage.get(1)
         // Check the session id
         assertEquals(1, sessionData?.ssid)
         // Check the session capacity
@@ -72,6 +72,6 @@ class SessionsDataSessionTest {
         // Delete the session
         sessionStorage.delete(0)
         // Check if the session was deleted
-        assertNull(sessionStorage.read(0))
+        assertNull(sessionStorage.get(0))
     }
 }

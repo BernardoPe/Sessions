@@ -7,7 +7,7 @@ package pt.isel.ls.Storage
  *  It is used to create, read, update and delete items from the database
  *
  *  @property create Create a new item in the database
- *  @property read Read an item from the database
+ *  @property get Read an item from the database
  *  @property update Update an item in the database
  *  @property delete Delete an item from the database
  */
@@ -25,7 +25,14 @@ interface SessionsData<E> {
      * @param id The item identifier
      * @return The item with the given id or null if it does not exist
      */
-    fun read(id: Int): E?
+    fun get(id: Int): E?
+
+    /**
+     * Read all items from the database
+     *
+     * @return A list with all the items in the database
+     */
+    fun getAll(): List<E>
 
     /**
      * Update an item in the database
