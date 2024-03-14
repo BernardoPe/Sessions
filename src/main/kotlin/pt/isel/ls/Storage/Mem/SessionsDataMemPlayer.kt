@@ -1,5 +1,6 @@
 package pt.isel.ls.Storage.Mem
 
+import pt.isel.ls.DTO.Game.Game
 import pt.isel.ls.DTO.Player.Player
 import pt.isel.ls.Storage.SessionsDataPlayer
 
@@ -26,21 +27,39 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
     var db: MutableList<Player> = mutableListOf()
 
     /**
+     * Last Identifier
+     *
+     * The last identifier is used to keep track of the last identifier used in the database mock
+     * When a new player instance is added to the database mock, the last identifier is incremented
+     *
+     * @property lastId The last identifier.
+     */
+    var lastId = 0
+
+    /**
      * Create a player in the database mock
      *
-     * This function uses the [create] function from the [SessionsDataPlayerMem] class
+     * This function uses the [create] function from the [SessionsDataMemPlayer] class
      *
      * @param value The player object to be created
      */
     override fun create(value: Player) {
         // Add the player object to the database mock
-        db.add(value)
+        // Start by incrementing the last identifier
+        lastId++
+        // Add the updated player object to the database mock
+        db.add(
+            Player(
+            lastId,
+            value.name,
+            value.email
+        ))
     }
 
     /**
      * Read a player from the database mock
      *
-     * This function uses the [get] function from the [SessionsDataPlayerMem] class
+     * This function uses the [get] function from the [SessionsDataMemPlayer] class
      *
      * @param id The player identifier
      * @return The player object with the given id or null if it does not exist
@@ -61,7 +80,7 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
     /**
      * Read all players from the database mock
      *
-     * This function uses the [getAll] function from the [SessionsDataPlayerMem] class
+     * This function uses the [getAll] function from the [SessionsDataMemPlayer] class
      *
      * @return A list with all the players in the database
      */
@@ -73,12 +92,12 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
     /**
      * Update a player in the database mock
      *
-     * This function uses the [update] function from the [SessionsDataPlayerMem] class
+     * This function uses the [update] function from the [SessionsDataMemPlayer] class
      *
      * @param id The player identifier
      * @param value The new player object
      */
-    override fun update(id: Int, value: Player) {
+    override fun update(id: Int, value: Player): Boolean {
         // Update the player object in the database mock
         db.forEach {
             // search for the player with the given id
@@ -88,18 +107,22 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
                 db.remove(it)
                 // add the new player to the database mock
                 db.add(value)
+                // alert the user that the player was updated
+                return true
             }
         }
+        // alert otherwise
+        return false
     }
 
     /**
      * Delete a player from the database mock
      *
-     * This function uses the [delete] function from the [SessionsDataPlayerMem] class
+     * This function uses the [delete] function from the [SessionsDataMemPlayer] class
      *
      * @param id The player identifier
      */
-    override fun delete(id: Int) {
+    override fun delete(id: Int): Boolean {
         // Delete the player object from the database mock
         db.forEach {
             // search for the player with the given id
@@ -107,7 +130,11 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
                 // if found
                 // remove the player from the database mock
                 db.remove(it)
+                // alert the user that the player was deleted
+                return true
             }
         }
+        // alert otherwise
+        return false
     }
 }

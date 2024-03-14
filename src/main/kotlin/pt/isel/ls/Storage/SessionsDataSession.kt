@@ -43,12 +43,13 @@ interface SessionsDataSession {
         * @param id The session identifier
         * @param value The new session object
         */
-        fun update(id: Int, value: Session)
+        fun update(id: Int, value: Session): Boolean
 
         /**
         * Delete a session from the database
         *
         * @param id The session identifier
+        * @return true if the session was deleted, false otherwise
         */
-        fun delete(id: Int)
+        fun delete(id: Int): Boolean
 }

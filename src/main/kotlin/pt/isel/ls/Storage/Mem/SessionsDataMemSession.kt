@@ -1,5 +1,6 @@
 package pt.isel.ls.Storage.Mem
 
+import pt.isel.ls.DTO.Player.Player
 import pt.isel.ls.DTO.Session.Session
 import pt.isel.ls.Storage.SessionsDataSession
 
@@ -24,6 +25,16 @@ class SessionsDataMemSession : SessionsDataSession {
     var db: MutableList<Session> = mutableListOf()
 
     /**
+     * Last Identifier
+     *
+     * The last identifier is used to keep track of the last identifier used in the database mock
+     * When a new session instance is added to the database mock, the last identifier is incremented
+     *
+     * @property lastId The last identifier.
+     */
+    var lastId = 0
+
+    /**
      * Create a session in the database mock
      *
      * This function uses the [create] function from the [SessionsDataMemSession] class
@@ -32,7 +43,18 @@ class SessionsDataMemSession : SessionsDataSession {
      */
     override fun create(value: Session) {
         // Add the session object to the database mock
-        db.add(value)
+        // Start by incrementing the last identifier
+        lastId++
+        // Add the updated session object to the database mock
+        db.add(
+            Session(
+                lastId,
+                value.capacity,
+                value.date,
+                value.gameSession,
+                value.playersSession
+            )
+        )
     }
 
     /**
@@ -76,7 +98,7 @@ class SessionsDataMemSession : SessionsDataSession {
      * @param id The session identifier
      * @param value The new session object
      */
-    override fun update(id: Int, value: Session) {
+    override fun update(id: Int, value: Session): Boolean {
         // Update the session object in the database mock
         db.forEach {
             // search for the session with the given id
@@ -86,8 +108,12 @@ class SessionsDataMemSession : SessionsDataSession {
                 db.remove(it)
                 // add the new session to the database mock
                 db.add(value)
+                // tell the caller that the update was successful
+                return true
             }
         }
+        // tell the caller that the update was not successful
+        return false
     }
 
     /**
@@ -97,7 +123,7 @@ class SessionsDataMemSession : SessionsDataSession {
      *
      * @param id The session identifier
      */
-    override fun delete(id: Int) {
+    override fun delete(id: Int): Boolean {
         // Delete the session object from the database mock
         db.forEach {
             // search for the session with the given id
@@ -105,7 +131,11 @@ class SessionsDataMemSession : SessionsDataSession {
                 // if found
                 // remove the session from the database mock
                 db.remove(it)
+                // tell the caller that the delete was successful
+                return true
             }
         }
+        // tell the caller that the delete was not successful
+        return false
     }
 }

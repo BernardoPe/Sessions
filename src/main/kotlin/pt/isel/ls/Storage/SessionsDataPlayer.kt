@@ -42,13 +42,13 @@ interface SessionsDataPlayer {
      * @param id The player identifier
      * @param value The new player object
      */
-    fun update(id: Int, value: Player)
+    fun update(id: Int, value: Player): Boolean
 
     /**
      * Delete a player from the database
      *
      * @param id The player identifier
      */
-    fun delete(id: Int)
+    fun delete(id: Int): Boolean
 
 }
