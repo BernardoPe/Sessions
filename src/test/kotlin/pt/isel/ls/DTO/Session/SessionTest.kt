@@ -10,11 +10,11 @@ class SessionTest {
 
     @Test
     fun `test successful session creation`() {
-        val session = Session(1, 50, "2023-03-01", newGameTest(), newPlayersTest())
+        val session = Session(1, 50, "2023-03-01 15:00:00", newGameTest(), newPlayersTest())
         assertEquals(1, session.sid)
         assertEquals(50, session.capacity)
-        assertEquals("2023-03-01", session.date)
-        assertEquals(Game(1, "Test Game", "Test Developer", listOf("RPG", "Adventure")), session.gameSession)
+        assertEquals("2023-03-01 15:00:00", session.date)
+        assertEquals(Game(1, "Test Game 1", "Test Developer", listOf("Genre1", "Genre2")), session.gameSession)
         assertEquals(
             listOf(
                 Player(1, "player1", "player1@example.com"),

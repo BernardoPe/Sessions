@@ -1,15 +1,19 @@
 package pt.isel.ls.Services
 
+import org.eclipse.jetty.http.HttpTokens.Token
+import pt.isel.ls.DTO.Player.Player
+import pt.isel.ls.DTO.Player.PlayerRequest
+
 class playerService {
-    fun createPlayer () {
+    fun createPlayer (player : PlayerRequest) : Pair<Int, String> {
         TODO()
     }
 
-    fun authenticatePlayer() {
+    fun authenticatePlayer(token: String) : Boolean {
         TODO()
     }
 
-    fun verifyToken(token: String): Boolean {
+    fun getPlayerDetails(pid: Int) : Player {
         TODO()
     }
 

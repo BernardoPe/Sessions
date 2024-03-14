@@ -21,11 +21,10 @@ data class Game (
 ) {
         init {
                 require(gid >= 0) { "The game identifier must be a positive integer" }
-                require(name.isNotEmpty()) { "The game name must not be empty" }
-                require(developer.isNotEmpty()) { "The game developer must not be empty" }
-                require(genres.isNotEmpty()) { "The game genres must not be empty" }
+                require(name.isNotBlank()) { "The game name must not be empty" }
+                require(developer.isNotBlank()) { "The game developer must not be empty" }
                 require(
-                        genres.all { it.isNotEmpty() }
+                        genres.all { it.isNotBlank() }
                 ) { "The game genres must not be empty" }
         }
 }

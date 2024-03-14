@@ -19,7 +19,8 @@ data class Player (
 ) {
         init {
                 require(pid >= 0) { "The player identifier must be a positive integer" }
-                require(name.isNotEmpty()) { "The player name must not be empty" }
-                require(email.isNotEmpty()) { "The player email must not be empty" }
+                require(name.isNotBlank()) { "The player name must not be empty" }
+                require(email.isNotBlank()) { "The player email must not be empty" }
         }
 }
+

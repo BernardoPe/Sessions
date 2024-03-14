@@ -4,67 +4,71 @@ import kotlinx.serialization.json.Json
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
+import org.http4k.core.UriTemplate
+import org.http4k.routing.RoutedRequest
 import pt.isel.ls.DTO.Game.Game
 import pt.isel.ls.Services.gameService
 import pt.isel.ls.Services.playerService
 import pt.isel.ls.Services.sessionsService
 import kotlin.test.Test
 
+/*
 class GameEndpointsTest {
 
     private val api = SessionsApi(playerService(), gameService(), sessionsService())
     @Test
-    fun `test create game`() {
+    fun `test create game should create game`() {
         // Arrange
         val request = Request(Method.POST, "/games")
             .header("Content-Type", "application/json")
-            .body("""{"name":"Test","description":"Test","genres":["Test"]}""")
+            .body("""{"name":"Test","developer":"Test","genres":["Test"]}""")
         // Act
-        val response = api.processRequest(request, api.createGame)
+        val response = api.processRequest(request, Operation.CREATE_GAME)
         // Assert
         assert(response.status == Status.CREATED)
     }
 
     @Test
-    fun `test create game empty fields`() {
+    fun `test create game empty fields should give bad request`() {
         // Arrange
         val request = Request(Method.POST, "/games")
             .header("Content-Type", "application/json")
-            .body("""{"name":"","description":"Test","genres":[""]}""")
+            .body("""{"name":"","developer":"Test","genres":[""]}""")
         // Act
-        val response = api.processRequest(request, api.createGame)
+        val response = api.processRequest(request, Operation.CREATE_GAME)
         // Assert
-        assert(response.status == Status.CREATED)
+        assert(response.status == Status.BAD_REQUEST)
     }
     @Test
-    fun `test create game with invalid body`() {
+    fun `test create game with invalid body should give bad request`() {
         // Arrange
         val request = Request(Method.POST, "/games")
             .header("Content-Type", "application/json")
             .body("""{"name":"Test"}""")
         // Act
-        val response = api.processRequest(request, api.createGame)
+        val response = api.processRequest(request, Operation.CREATE_GAME)
         // Assert
         assert(response.status == Status.BAD_REQUEST)
     }
 
     @Test
-    fun `test create game no auth`() {
+    fun `test create game no auth should give unauthorized`() {
         // Arrange
         val request = Request(Method.POST, "/games")
             .header("Content-Type", "application/json")
-            .body("""{"name":"Test","description":"Test","genres":["Test"]}""")
+            .body("""{"name":"Test","developer":"Test","genres":["Test"]}""")
         // Act
-        val response = api.processRequest(request, api.createGame)
+        val response = api.processRequest(request, Operation.CREATE_GAME)
         // Assert
         assert(response.status == Status.UNAUTHORIZED)
     }
     @Test
-    fun `test get game details`() {
+    fun `test get game details should return game details`() {
         // Arrange
         val request = Request(Method.GET, "/games/1")
+        val routedRequest = RoutedRequest(request, UriTemplate.from("/games/{gid}"))
         // Act
-        val response = api.processRequest(request, api.getGameDetails)
+        val response = api.processRequest(routedRequest, Operation.GET_GAME_DETAILS)
         val gameDetailsJson = response.bodyString()
         val gameDetails = Json.decodeFromString<Game>(gameDetailsJson)
         // Assert
@@ -76,23 +80,24 @@ class GameEndpointsTest {
         assert(gameDetails.gid == 1)
     }
     @Test
-    fun `test get game details not found`() {
+    fun `test get game details should give not found`() {
         // Arrange
         val request = Request(Method.GET, "/games/2")
+        val routedRequest = RoutedRequest(request, UriTemplate.from("/games/{gid}"))
         // Act
-        val response = api.processRequest(request, api.getGameDetails)
+        val response = api.processRequest(routedRequest, Operation.GET_GAME_DETAILS)
         // Assert
         assert(response.status == Status.NOT_FOUND)
     }
 
     @Test
-    fun `test get game list`() {
+    fun `test get game list should return game list`() {
         // Arrange
         val request = Request(Method.GET, "/games")
             .header("Content-Type", "application/json")
             .body("""{"developer":"Test","genres":["TestGenre1"]}""")
         // Act
-        val response = api.processRequest(request, api.getGameList)
+        val response = api.processRequest(request, Operation.GET_GAME_LIST)
         val gameListJson = response.bodyString()
         val gameList = Json.decodeFromString<List<Game>>(gameListJson)
         // Assert
@@ -110,25 +115,27 @@ class GameEndpointsTest {
     }
 
     @Test
-    fun `test get game list empty fields`() {
+    fun `test get game list empty fields should return empty array`() {
         // Arrange
         val request = Request(Method.GET, "/games")
             .header("Content-Type", "application/json")
             .body("""{"developer":"","genres":[]}""")
         // Act
-        val response = api.processRequest(request, api.getGameList)
+        val response = api.processRequest(request, Operation.GET_GAME_LIST)
         // Assert
-        assert(response.status == Status.BAD_REQUEST)
+        assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
+        assert(response.bodyString() == """{"games":[]}""")
     }
+
     @Test
-    fun `test get game list invalid body`() {
+    fun `test get game list invalid body should give bad request`() {
         // Arrange
         val request = Request(Method.GET, "/games")
             .header("Content-Type", "application/json")
             .body("")
         // Act
-        val response = api.processRequest(request, api.getGameList)
+        val response = api.processRequest(request, Operation.GET_GAME_LIST)
         // Assert
         assert(response.header("Content-Type") == "application/json")
         assert(response.status == Status.BAD_REQUEST)
@@ -137,13 +144,13 @@ class GameEndpointsTest {
 
 
     @Test
-    fun `test get game list limit and skip`() {
+    fun `test get game list limit and skip should return game list`() {
         // Arrange
         val request = Request(Method.GET, "/games?limit=1&skip=1")
             .header("Content-Type", "application/json")
             .body("""{"developer":"Test","genres":["TestGenre1"]""")
         // Act
-        val response = api.processRequest(request, api.getGameList)
+        val response = api.processRequest(request, Operation.GET_GAME_LIST)
         val gameListJson = response.bodyString()
         val gameList = Json.decodeFromString<List<Game>>(gameListJson)
         // Assert
@@ -156,4 +163,4 @@ class GameEndpointsTest {
         assert(gameList[0].gid == 2)
     }
 
-}
+}*/

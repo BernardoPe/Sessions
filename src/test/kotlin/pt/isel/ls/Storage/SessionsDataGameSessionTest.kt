@@ -13,7 +13,7 @@ class SessionsDataGameSessionTest {
     @Test
     fun testCreateAndReadSession() {
         // Create a session
-        val session = Session(1, 5, "2022/01/01", newGameTest(), newPlayersTest1())
+        val session = Session(1, 5, "2022-01-01 15:00:00", newGameTest(), newPlayersTest1())
         // Create a session storage
         val sessionStorage = SessionsDataMemSession()
         // Create the session (add it to the storage)
@@ -31,7 +31,7 @@ class SessionsDataGameSessionTest {
         // Check the session gid
         assertEquals(1, sessionData?.gameSession?.gid)
         // Check the session date
-        assertEquals("2022/01/01", sessionData?.date)
+        assertEquals("2022-01-01 15:00:00", sessionData?.date)
         // Check if the session with id 2 was not created
         assertNull(sessionStorage.getById(2))
     }
@@ -39,13 +39,13 @@ class SessionsDataGameSessionTest {
     @Test
     fun testAddNewPlayersSession() {
         // Create a session
-        val session = Session(1, 5, "2022/01/01", newGameTest(), newPlayersTest1())
+        val session = Session(1, 5, "2022-01-01 15:00:00", newGameTest(), newPlayersTest1())
         // Create a session storage
         val sessionStorage = SessionsDataMemSession()
         // Create the session (add it to the storage)
         sessionStorage.create(session)
         // Update the session
-        val newSession = Session(1, 10, "2022/01/02", newGameTest(), newPlayersTest1() + newPlayersTest2())
+        val newSession = Session(1, 10, "2022-01-02 15:00:00", newGameTest(), newPlayersTest1() + newPlayersTest2())
         sessionStorage.update(newSession.sid, newSession)
         // Check if the session was updated
         // compare the session with the session read from the storage
@@ -67,7 +67,7 @@ class SessionsDataGameSessionTest {
             ), sessionData?.gameSession
         )
         // Check the session date
-        assertEquals("2022/01/02", sessionData?.date)
+        assertEquals("2022-01-02 15:00:00", sessionData?.date)
         assertEquals(
             listOf(
                 Player(1, "player1", "player1@example.com"),
@@ -83,7 +83,7 @@ class SessionsDataGameSessionTest {
     @Test
     fun testDeleteSession() {
         // Create a session
-        val session = Session(1, 5, "2022/01/01", newGameTest(), newPlayersTest1())
+        val session = Session(1, 5, "2022-01-01 15:00:00", newGameTest(), newPlayersTest1())
         // Create a session storage
         val sessionStorage = SessionsDataMemSession()
         // Create the session (add it to the storage)

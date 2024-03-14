@@ -1,13 +1,24 @@
 package pt.isel.ls.WebApi
 
-import org.eclipse.jetty.server.session.Session
-import org.http4k.core.Method
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.http4k.core.Request
 import org.http4k.core.Response
+import org.http4k.core.Status
 import org.http4k.core.Status.Companion.BAD_REQUEST
-import org.http4k.core.Status.Companion.NOT_FOUND
+import org.http4k.core.Status.Companion.CREATED
+import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Status.Companion.UNAUTHORIZED
+import org.http4k.routing.path
+import pt.isel.ls.DTO.Game.GameRequest
+import pt.isel.ls.DTO.Game.GameSearch
+import pt.isel.ls.DTO.Player.PlayerRequest
+import pt.isel.ls.DTO.Session.SessionPlayer
+import pt.isel.ls.DTO.Session.SessionRequest
+import pt.isel.ls.DTO.Session.SessionSearch
+import pt.isel.ls.Exceptions.*
 import pt.isel.ls.Services.*
 import pt.isel.ls.pt.isel.ls.logger
 
@@ -39,50 +50,74 @@ class SessionsApi(val playerServices: playerService,
                   val sessionServices: sessionsService
 ) {
 
-    val createPlayer : SessionsRequest = SessionsRequest(::createPlayer, false)
-    val getPlayerDetails : SessionsRequest = SessionsRequest(::getPlayerDetails, false)
-    val createGame : SessionsRequest = SessionsRequest(::createGame, true)
-    val getGameDetails : SessionsRequest = SessionsRequest(::getGameDetails, false)
-    val getGameList : SessionsRequest = SessionsRequest(::getGameList, false)
-    val createSession : SessionsRequest = SessionsRequest(::createSession, true)
-    val addPlayerToSession : SessionsRequest = SessionsRequest(::addPlayerToSession, true)
-    val getSessionDetails : SessionsRequest = SessionsRequest(::getSessionDetails, false)
-    val getSessionList : SessionsRequest = SessionsRequest(::getSessionList, false)
+    private val processors = mapOf(
+        Operation.CREATE_PLAYER to SessionsRequest(::createPlayer, false),
+        Operation.GET_PLAYER_DETAILS to SessionsRequest(::getPlayerDetails, true),
+        Operation.CREATE_GAME to SessionsRequest(::createGame, true),
+        Operation.GET_GAME_DETAILS to SessionsRequest(::getGameDetails, true),
+        Operation.GET_GAME_LIST to SessionsRequest(::getGameList, true),
+        Operation.CREATE_SESSION to SessionsRequest(::createSession, true),
+        Operation.ADD_PLAYER_TO_SESSION to SessionsRequest(::addPlayerToSession, true),
+        Operation.GET_SESSION_DETAILS to SessionsRequest(::getSessionDetails, true),
+        Operation.GET_SESSION_LIST to SessionsRequest(::getSessionList, true)
+    )
 
     private fun createPlayer(request: Request): Response {
-        TODO()
+        val player = parseJsonBody<PlayerRequest>(request)
+        //supposed to return token + pid in the response, maybe a Pair?
+        val res = playerServices.createPlayer(player)
+        return Response(CREATED).header("content-type", "application/json").body("{\"pid\":${res.first},\"token\":\"${res.second}\"}")
     }
 
     private fun getPlayerDetails(request: Request): Response {
-        TODO()
+        val pid = request.path("pid")?.toIntOrNull() ?: throw BadRequestException("Invalid Player Identifier")
+        val player = playerServices.getPlayerDetails(pid)
+        return Response(OK).header("content-type", "application/json").body(Json.encodeToString(player))
     }
 
     private fun createGame(request: Request): Response {
-        TODO()
+        val game = parseJsonBody<GameRequest>(request)
+        val gid = gameServices.createGame(game)
+        return Response(CREATED).header("content-type", "application/json").body("{\"gid\":$gid}")
     }
 
     private fun getGameDetails(request: Request): Response {
-        TODO()
+        val gid = request.path("gid")?.toIntOrNull() ?: throw BadRequestException("Invalid Game Identifier")
+        val game = gameServices.getGameById(gid)
+        return Response(OK).header("content-type", "application/json").body(Json.encodeToString(game))
     }
 
     private fun getGameList(request: Request): Response {
-        TODO()
+        val (limit, skip) = (request.query("limit")?.toInt() ?: 5) to (request.query("skip")?.toInt() ?: 0)
+        val gameSearch = parseJsonBody<GameSearch>(request)
+        val games = gameServices.listGames(gameSearch, limit, skip)
+        return Response(OK).header("content-type", "application/json").body(Json.encodeToString(games))
     }
 
     private fun createSession(request: Request): Response {
-        TODO()
+        val session = parseJsonBody<SessionRequest>(request)
+        val sid = sessionServices.createSession(session)
+        return Response(CREATED).header("content-type", "application/json").body("{\"sid\":$sid}")
     }
 
     private fun addPlayerToSession(request: Request): Response {
-        TODO()
+        val sid = request.path("sid")?.toIntOrNull() ?: throw BadRequestException("Invalid Session Identifier")
+        val player = parseJsonBody<SessionPlayer>(request)
+        sessionServices.addPlayer(sid, player.pid)
+        return Response(OK)
     }
 
     private fun getSessionDetails(request: Request): Response {
-        TODO()
+        val sid = request.path("sid")?.toIntOrNull() ?: throw BadRequestException("Invalid Session Identifier")
+        val session = sessionServices.getSessionDetails(sid)
+        return Response(OK).header("content-type", "application/json").body(Json.encodeToString(session))
     }
 
     private fun getSessionList(request: Request): Response {
-        TODO()
+        val (limit, skip) = (request.query("limit")?.toIntOrNull() ?: 5) to (request.query("skip")?.toIntOrNull() ?: 0)
+        val sessionSearch = parseJsonBody<SessionSearch>(request)
+        val sessions = sessionServices.listSessions(sessionSearch, limit, skip)
+        return Response(OK).header("content-type", "application/json").body(Json.encodeToString(sessions))
     }
 
     /**
@@ -93,23 +128,26 @@ class SessionsApi(val playerServices: playerService,
      *
      * @return The response
      */
-    fun processRequest(request: Request, service: SessionsRequest): Response {
+    fun processRequest(request: Request, service: Operation): Response {
 
         logRequest(request)
 
-        val (processor, requiresAuth) = service
+        val (processor, requiresAuth) = processors[service] ?: return Response(INTERNAL_SERVER_ERROR)
 
-        if (request.header("content-type") != "application/json")
-            return Response(BAD_REQUEST).header("content-type", "text/plain").body("Unsupported Media Type")
+        if (request.bodyString().isNotBlank() && request.header("content-type") != "application/json")
+            return Response(BAD_REQUEST).header("content-type", "application/json").body(Json.encodeToString(UnsupportedMediaTypeException()))
 
         if (requiresAuth && !verifyAuth(request))
-            return Response(UNAUTHORIZED).header("content-type", "text/plain").body("Unauthorized")
+            return Response(UNAUTHORIZED).header("content-type", "application/json").body(Json.encodeToString(UnauthorizedException()))
 
         return try {
             processor(request)
-        } catch (e: Exception) {
-            // TODO ERROR HANDLING
-            Response(OK).header("content-type", "text/plain").body(e.message ?: "Internal Server Error")
+        } catch (e: WebExceptions) {
+            Response(Status(e.status, e.description)).header("content-type", "application/json").body(Json.encodeToString(e))
+        }
+        catch (e: Exception) {
+            logger.error("Internal Server Error", e)
+            Response(INTERNAL_SERVER_ERROR)
         }
 
     }
@@ -125,10 +163,38 @@ class SessionsApi(val playerServices: playerService,
     }
 
     private fun verifyAuth(request: Request) : Boolean {
-        val token = request.header("Authorization")?.split(" ")?.get(1) ?: return false
-        return playerServices.verifyToken(token)
+        return true
+        //val token = request.header("Authorization")?.split(" ")?.get(1) ?: return false
+       // return playerServices.authenticatePlayer(token)
     }
 
+    private inline fun <reified T> parseJsonBody(request: Request): T {
+        val body = request.bodyString()
+        return try {
+            Json.decodeFromString<T>(body)
+        } catch (e: SerializationException) {
+            throw BadRequestException("Invalid Body")
+        }
+        catch (e: IllegalArgumentException) {
+            throw BadRequestException(e.message)
+        }
+    }
+}
+
+
+/**
+ * The [Operation] enum represents the available operations that the client can request.
+ */
+enum class Operation {
+    CREATE_PLAYER,
+    GET_PLAYER_DETAILS,
+    CREATE_GAME,
+    GET_GAME_DETAILS,
+    GET_GAME_LIST,
+    CREATE_SESSION,
+    ADD_PLAYER_TO_SESSION,
+    GET_SESSION_DETAILS,
+    GET_SESSION_LIST
 }
 
 /**

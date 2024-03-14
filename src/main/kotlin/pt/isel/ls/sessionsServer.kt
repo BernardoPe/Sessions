@@ -9,7 +9,8 @@ import org.slf4j.LoggerFactory
 import pt.isel.ls.Services.gameService
 import pt.isel.ls.Services.playerService
 import pt.isel.ls.Services.sessionsService
-import pt.isel.ls.WebApi.*
+import pt.isel.ls.WebApi.Operation
+import pt.isel.ls.WebApi.SessionsApi
 
 val logger = LoggerFactory.getLogger("pt.isel.ls.http.HTTPServer")
 
@@ -18,9 +19,7 @@ const val PLAYER_DETAILS_ROUTE = "/players/{pid}"
 const val GAME_ROUTE = "/games"
 const val GAME_DETAILS_ROUTE = "/games/{gid}"
 const val SESSION_ROUTE = "/sessions"
-const val SESSION_DETAILS_ROUTE = "/sessions/{ssid}"
-const val SESSION_LIST_ROUTE = "/sessions/{gid}/list"
-
+const val SESSION_DETAILS_ROUTE = "/sessions/{sid}"
 
 /**
  * The [SessionsServer] class is responsible for starting and stopping the server.
@@ -35,27 +34,30 @@ const val SESSION_LIST_ROUTE = "/sessions/{gid}/list"
  */
 class SessionsServer(api: SessionsApi, port: Int = 8080) {
 
+
+    //TODO multi-threading
+
     private val requestHandler = api::processRequest
 
     private val playerRoutes =
         routes(
-            PLAYER_ROUTE bind POST to { req -> requestHandler(req, api.createPlayer) },
-            PLAYER_DETAILS_ROUTE bind GET to { req -> requestHandler(req, api.getPlayerDetails) }
+            PLAYER_ROUTE bind POST to { req -> requestHandler(req, Operation.CREATE_PLAYER) },
+            PLAYER_DETAILS_ROUTE bind GET to { req -> requestHandler(req, Operation.GET_PLAYER_DETAILS) }
         )
 
     private val gameRoutes =
         routes(
-            GAME_ROUTE bind POST to { req -> requestHandler(req, api.createGame) },
-            GAME_DETAILS_ROUTE bind GET to { req -> requestHandler(req, api.getGameDetails) },
-            GAME_ROUTE bind GET to { req -> requestHandler(req, api.getGameList) }
+            GAME_ROUTE bind POST to { req -> requestHandler(req, Operation.CREATE_GAME) },
+            GAME_DETAILS_ROUTE bind GET to { req -> requestHandler(req, Operation.GET_GAME_DETAILS) },
+            GAME_ROUTE bind GET to { req -> requestHandler(req, Operation.GET_GAME_LIST) }
         )
 
     private val sessionRoutes =
         routes(
-            SESSION_ROUTE bind POST to { req -> requestHandler(req, api.createSession) },
-            SESSION_DETAILS_ROUTE bind PUT to { req -> requestHandler(req, api.addPlayerToSession) },
-            SESSION_DETAILS_ROUTE bind GET to { req -> requestHandler(req, api.getSessionDetails) },
-            SESSION_LIST_ROUTE bind GET to { req -> requestHandler(req, api.getSessionList) }
+            SESSION_ROUTE bind POST to { req -> requestHandler(req, Operation.CREATE_SESSION) },
+            SESSION_DETAILS_ROUTE bind PUT to { req -> requestHandler(req, Operation.ADD_PLAYER_TO_SESSION) },
+            SESSION_DETAILS_ROUTE bind GET to { req -> requestHandler(req, Operation.GET_SESSION_DETAILS) },
+            SESSION_ROUTE bind GET to { req -> requestHandler(req, Operation.GET_SESSION_LIST) }
         )
 
     val sessionsHandler =

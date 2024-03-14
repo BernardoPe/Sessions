@@ -42,7 +42,7 @@ class GameTest {
     @Test
     fun `test game creation with empty genres`() {
         val exception = assertFailsWith<IllegalArgumentException> {
-            Game(1, "Test Game", "Test Developer", emptyList())
+            Game(1, "Test Game", "Test Developer", listOf("",""))
         }
         assertEquals("The game genres must not be empty", exception.message)
     }

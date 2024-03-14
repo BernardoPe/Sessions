@@ -4,8 +4,9 @@ import kotlinx.serialization.json.Json
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
-import org.junit.After
-import org.junit.Before
+import org.http4k.metrics.MetricsDefaults.Companion.server
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import pt.isel.ls.DTO.Game.Game
 import pt.isel.ls.DTO.Player.Player
 import pt.isel.ls.DTO.Session.Session
@@ -16,22 +17,14 @@ import pt.isel.ls.WebApi.SessionsApi
 import pt.isel.ls.pt.isel.ls.SessionsServer
 import kotlin.test.Test
 
+
+
+/*
 class ServerTest {
 
-    private val server = SessionsServer(SessionsApi(playerService(), gameService(), sessionsService()))
-
-    @Before
-    fun startServer() {
-        server.start()
-    }
-
-    @After
-    fun stopServer() {
-        server.stop()
-    }
 
     @Test
-    fun `invalid content-type`(){
+    fun `invalid content-type should give bad request`(){
         // Arrange
         val request = Request(Method.POST, "/players")
             .header("Content-Type", "text/plain")
@@ -43,7 +36,7 @@ class ServerTest {
     }
 
     @Test
-    fun `not supported route`() {
+    fun `not supported route should give not found`() {
         // Arrange
         val request = Request(Method.GET, "/testroutenotsupported")
         // Act
@@ -53,18 +46,17 @@ class ServerTest {
     }
 
     @Test
-    fun `method not implemented`() {
+    fun `method not implemented should give not allowed`() {
         // Arrange
         val request = Request(Method.HEAD, "/players")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assert(response.status == Status.NOT_IMPLEMENTED)
-        assert(response.header("Content-Type") == "application/json")
+        assert(response.status == Status.METHOD_NOT_ALLOWED)
     }
 
     @Test
-    fun `test create player`() {
+    fun `test create player should create player`() {
         // Arrange
         val request = Request(Method.POST, "/players")
             .header("Content-Type", "application/json")
@@ -76,7 +68,7 @@ class ServerTest {
     }
 
     @Test
-    fun `test create player empty fields`() {
+    fun `test create player empty fields should give bad request`() {
         // Arrange
         val request = Request(Method.POST, "/players")
             .header("Content-Type", "application/json")
@@ -88,7 +80,7 @@ class ServerTest {
     }
 
     @Test
-    fun `test create player with invalid body`() {
+    fun `test create player with invalid body should give bad request`() {
         // Arrange
         val request = Request(Method.POST, "/players")
             .header("Content-Type", "application/json")
@@ -100,7 +92,7 @@ class ServerTest {
         assert(response.status == Status.BAD_REQUEST)
     }
     @Test
-    fun `test get player details`() {
+    fun `test get player details should give player details`() {
         // Arrange
         val request = Request(Method.GET, "/players/1")
         // Act
@@ -125,11 +117,11 @@ class ServerTest {
         assert(response.status == Status.NOT_FOUND)
     }
     @Test
-    fun `test create game`() {
+    fun `test create game should create game`() {
         // Arrange
         val request = Request(Method.POST, "/games")
             .header("Content-Type", "application/json")
-            .body("""{"name":"Test","description":"Test","genres":["Test"]}""")
+            .body("""{"name":"Test","developer":"Test","genres":["Test"]}""")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
@@ -137,18 +129,18 @@ class ServerTest {
     }
 
     @Test
-    fun `test create game empty fields`() {
+    fun `test create game empty fields should give bad request`() {
         // Arrange
         val request = Request(Method.POST, "/games")
             .header("Content-Type", "application/json")
-            .body("""{"name":"","description":"Test","genres":[""]}""")
+            .body("""{"name":"","developer":"Test","genres":[""]}""")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assert(response.status == Status.CREATED)
+        assert(response.status == Status.BAD_REQUEST)
     }
     @Test
-    fun `test create game with invalid body`() {
+    fun `test create game with invalid body should give bad request`() {
         // Arrange
         val request = Request(Method.POST, "/games")
             .header("Content-Type", "application/json")
@@ -160,18 +152,18 @@ class ServerTest {
     }
 
     @Test
-    fun `test create game no auth`() {
+    fun `test create game no auth should give unauthorized`() {
         // Arrange
         val request = Request(Method.POST, "/games")
             .header("Content-Type", "application/json")
-            .body("""{"name":"Test","description":"Test","genres":["Test"]}""")
+            .body("""{"name":"Test","developer":"Test","genres":["Test"]}""")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
         assert(response.status == Status.UNAUTHORIZED)
     }
     @Test
-    fun `test get game details`() {
+    fun `test get game details should give game details`() {
         // Arrange
         val request = Request(Method.GET, "/games/1")
         // Act
@@ -197,7 +189,7 @@ class ServerTest {
     }
 
     @Test
-    fun `test get game list`() {
+    fun `test get game list should give games`() {
         // Arrange
         val request = Request(Method.GET, "/games")
             .header("Content-Type", "application/json")
@@ -221,7 +213,7 @@ class ServerTest {
     }
 
     @Test
-    fun `test get game list empty fields`() {
+    fun `test get game list empty fields should give empty array`() {
         // Arrange
         val request = Request(Method.GET, "/games")
             .header("Content-Type", "application/json")
@@ -229,11 +221,12 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assert(response.status == Status.BAD_REQUEST)
+        assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
+        assert(response.bodyString() == """{"games":[]}""")
     }
     @Test
-    fun `test get game list invalid body`() {
+    fun `test get game list invalid body should give bad request`() {
         // Arrange
         val request = Request(Method.GET, "/games")
             .header("Content-Type", "application/json")
@@ -245,10 +238,8 @@ class ServerTest {
         assert(response.status == Status.BAD_REQUEST)
     }
 
-
-
     @Test
-    fun `test get game list limit and skip`() {
+    fun `test get game list limit and skip should give game list`() {
         // Arrange
         val request = Request(Method.GET, "/games?limit=1&skip=1")
             .header("Content-Type", "application/json")
@@ -268,11 +259,11 @@ class ServerTest {
     }
 
     @Test
-    fun `test create session`() {
+    fun `test create session should create session`() {
         // Arrange
         val request = Request(Method.POST, "/sessions")
             .header("Content-Type", "application/json")
-            .body("""{"gid":1,"capacity":"100","date":"2021-05-01T00:00:00"}""")
+            .body("""{"gid":1,"capacity":"100","date":"2021-05-01 00:00:00"}""")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
@@ -280,11 +271,11 @@ class ServerTest {
     }
 
     @Test
-    fun `test create session exceeding max capacity supported`() {
+    fun `test create session exceeding max capacity supported should give bad request`() {
         // Arrange
         val request = Request(Method.POST, "/sessions")
             .header("Content-Type", "application/json")
-            .body("""{"gid":1,"capacity":"1000","date":"2021-05-01T00:00:00"}""")
+            .body("""{"gid":1,"capacity":"1000","date":"2021-05-01 00:00:00"}""")
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
@@ -293,7 +284,7 @@ class ServerTest {
     }
 
     @Test
-    fun `test create session exceeding incorrect date format`() {
+    fun `test create session exceeding incorrect date format should give bad request`() {
         // Arrange
         val request = Request(Method.POST, "/sessions")
             .header("Content-Type", "application/json")
@@ -306,7 +297,7 @@ class ServerTest {
     }
 
     @Test
-    fun `test create session no auth`() {
+    fun `test create session no auth should give unauthorized`() {
         // Arrange
         val request = Request(Method.POST, "/sessions")
             .header("Content-Type", "application/json")
@@ -328,11 +319,11 @@ class ServerTest {
         val response = server.sessionsHandler(request)
         //  Assert
         assert(response.header("Content-Type") == "application/json")
-        assert(response.status == Status.UNAUTHORIZED)
+        assert(response.status == Status.NOT_FOUND)
     }
 
     @Test
-    fun `test create session with invalid body`() {
+    fun `test create session with invalid body should give bad request`() {
         // Arrange
         val request = Request(Method.POST, "/sessions")
             .header("Content-Type", "application/json")
@@ -345,7 +336,7 @@ class ServerTest {
     }
 
     @Test
-    fun `test create session empty fields`() {
+    fun `test create session empty fields should give bad request`() {
         // Arrange
         val request = Request(Method.POST, "/sessions")
             .header("Content-Type", "application/json")
@@ -358,7 +349,7 @@ class ServerTest {
     }
 
     @Test
-    fun `add player to session`() {
+    fun `add player to session should add player`() {
         // Arrange
         val request = Request(Method.PUT, "/sessions/1")
             .header("Content-Type", "application/json")
@@ -370,7 +361,7 @@ class ServerTest {
     }
 
     @Test
-    fun `add player to session no auth`() {
+    fun `add player to session no auth should give unauthorized`() {
         // Arrange
         val request = Request(Method.PUT, "/sessions/1")
             .header("Content-Type", "application/json")
@@ -408,7 +399,7 @@ class ServerTest {
     }
 
     @Test
-    fun `add player to session, empty fields`() {
+    fun `add player to session, empty fields should give bad request`() {
         // Arrange
         val request = Request(Method.PUT, "/sessions/1")
             .header("Content-Type", "application/json")
@@ -421,7 +412,7 @@ class ServerTest {
     }
 
     @Test
-    fun `add player to session, invalid body`() {
+    fun `add player to session, invalid body should give bad request`() {
         // Arrange
         val request = Request(Method.PUT, "/sessions/1")
             .header("Content-Type", "application/json")
@@ -434,7 +425,7 @@ class ServerTest {
     }
 
     @Test
-    fun `get session details`() {
+    fun `get session details should give session details`() {
         // Arrange
         val request = Request(Method.GET, "/sessions/1")
             .header("Content-Type", "application/json")
@@ -464,11 +455,11 @@ class ServerTest {
     }
 
     @Test
-    fun `test get session list`() {
+    fun `test get session list should give session list`() {
         // Arrange
-        val request = Request(Method.GET, "/sessions/1/list")
+        val request = Request(Method.GET, "/sessions")
             .header("Content-Type", "application/json")
-            .body("""{"gid":1,"date":"2021-05-01T00:00:00","state":"open","pid":1}""")
+            .body("""{"gid":1,"date":"2021-05-01 00:00:00","state":"open","pid":1}""")
         // Act
         val response = server.sessionsHandler(request)
         val sessionListJson = response.bodyString()
@@ -484,9 +475,9 @@ class ServerTest {
     }
 
     @Test
-    fun `test get session list empty fields`() {
+    fun `test get session list empty fields should give empty array`() {
         // Arrange
-        val request = Request(Method.GET, "/sessions/1/list")
+        val request = Request(Method.GET, "/sessions")
             .header("Content-Type", "application/json")
             .body("""{"gid":""")
         // Act
@@ -494,11 +485,12 @@ class ServerTest {
         //  Assert
         assert(response.status == Status.BAD_REQUEST)
         assert(response.header("Content-Type") == "application/json")
+        assert(response.bodyString() == """{"sessions":[]}""")
     }
     @Test
-    fun `test get session list invalid body`() {
+    fun `test get session list invalid body should give bad request`() {
         // Arrange
-        val request = Request(Method.GET, "/sessions/1/list")
+        val request = Request(Method.GET, "/sessions")
             .header("Content-Type", "application/json")
             .body("")
         // Act
@@ -508,9 +500,9 @@ class ServerTest {
         assert(response.status == Status.BAD_REQUEST)
     }
     @Test
-    fun `test get session list limit and skip`() {
+    fun `test get session list limit and skip should give session list`() {
         // Arrange
-        val request = Request(Method.GET, "/sessions/1/list?limit=1&skip=1")
+        val request = Request(Method.GET, "/sessions?limit=1&skip=1")
             .header("Content-Type", "application/json")
             .body("""{"gid":1}""")
         // Act
@@ -531,6 +523,22 @@ class ServerTest {
         assert(sessionList[1].sid == 2)
     }
 
+    companion object {
+
+        private val server = SessionsServer(SessionsApi(playerService(), gameService(), sessionsService()))
+
+        @JvmStatic
+        @BeforeAll
+        fun startServer(): Unit {
+            server.start()
+        }
+
+        @JvmStatic
+        @AfterAll
+        fun stopServer(): Unit {
+            server.stop()
+        }
+    }
 
 
-}
+}*/

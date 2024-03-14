@@ -1,22 +1,30 @@
 package pt.isel.ls.Exceptions
 
-open class WebExceptions(status: Int, description: String, cause: String?) : Exception() {
-    val status: Int = status
-    val description: String = description
-    val error_cause: String? = cause
-}
+import kotlinx.serialization.Serializable
+import org.http4k.core.Status
+import org.http4k.core.Status.Companion.BAD_REQUEST
+import org.http4k.core.Status.Companion.NOT_FOUND
+import org.http4k.core.Status.Companion.NOT_IMPLEMENTED
+
+@Serializable
+
+open class WebExceptions(val status: Int, val description: String, val errorCause: String?) : Exception()
 
 // 400 Bad Request
-class BadRequestException(cause: String?) : WebExceptions(400, "Bad Request", cause)
+
+class BadRequestException(cause: String?) : WebExceptions(BAD_REQUEST.code, "Bad Request", cause)
 
 // 404 Not Found
-class NotFoundException(item: String?) : WebExceptions(404, "Not Found", item)
-
-// 500 Internal Server Error
-class InternalErrorException() : WebExceptions(500, "Internal Server Error", null)
+class NotFoundException(item: String?) : WebExceptions(NOT_FOUND.code, "Not Found", item)
 
 // 501 Not Implemented
-class NotImplementedException() : WebExceptions(501, "Not Implemented", null)
+
+@Serializable
+class NotImplementedException() : WebExceptions(NOT_IMPLEMENTED.code, "Not Implemented", null)
 
 
+@Serializable
+class UnsupportedMediaTypeException() : WebExceptions(Status.UNSUPPORTED_MEDIA_TYPE.code, "Unsupported Media Type", null)
 
+@Serializable
+class UnauthorizedException() : WebExceptions(Status.UNAUTHORIZED.code, "Unauthorized", "Invalid Auth")
