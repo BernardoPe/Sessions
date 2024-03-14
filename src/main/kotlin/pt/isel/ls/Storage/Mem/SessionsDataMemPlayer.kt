@@ -24,7 +24,7 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
      *
      * @property db The database.
      */
-    var db: MutableList<Player> = mutableListOf()
+    private var db: MutableList<Player> = mutableListOf()
 
     /**
      * Last Identifier
@@ -34,7 +34,7 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
      *
      * @property lastId The last identifier.
      */
-    var lastId = 0
+    private var lastId = 0
 
     /**
      * Create a player in the database mock

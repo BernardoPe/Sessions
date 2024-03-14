@@ -20,7 +20,7 @@ class SessionsDataMemGame : SessionsDataGame {
      *
      * @property db The database.
      */
-    var db: MutableList<Game> = mutableListOf()
+    private var db: MutableList<Game> = mutableListOf()
 
     /**
      * Last Identifier
@@ -30,7 +30,7 @@ class SessionsDataMemGame : SessionsDataGame {
      *
      * @property lastId The last identifier.
      */
-    var lastId = 0
+    private var lastId = 0
 
     /**
      * Create a game in the database mock

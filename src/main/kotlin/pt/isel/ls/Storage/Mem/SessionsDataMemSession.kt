@@ -22,7 +22,7 @@ class SessionsDataMemSession : SessionsDataSession {
      *
      * @property db The database.
      */
-    var db: MutableList<Session> = mutableListOf()
+    private var db: MutableList<Session> = mutableListOf()
 
     /**
      * Last Identifier
@@ -32,7 +32,7 @@ class SessionsDataMemSession : SessionsDataSession {
      *
      * @property lastId The last identifier.
      */
-    var lastId = 0
+    private var lastId = 0
 
     /**
      * Create a session in the database mock
