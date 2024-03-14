@@ -92,6 +92,8 @@ class SessionsServer(api: SessionsApi, port: Int = 8080) {
      * The method that stops the server
      */
     fun stop() {
+        executor.shutdown()
+        executor.awaitTermination(10, java.util.concurrent.TimeUnit.SECONDS)
         jettyServer.stop()
         logger.info("Server stopped listening")
     }
