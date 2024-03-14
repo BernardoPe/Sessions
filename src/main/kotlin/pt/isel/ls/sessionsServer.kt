@@ -43,19 +43,12 @@ class SessionsServer(api: SessionsApi, port: Int = 8080) {
     companion object {
         private val executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
     }
-    private fun dispatcher(req: Request, operation: Operation): Response {
-
-        logRequest(req)
-
-        val response = executor.submit<Response> {
-            requestHandler(req, operation)
+    private fun dispatcher(req: Request, operation: Operation): Response
+        = executor.submit<Response> {
+            logRequest(req)
+            requestHandler(req, operation).also { logResponse(it) }
         }.get()
 
-        logResponse(response)
-
-        return response
-
-    }
     private fun bindRoute(route: String, method: org.http4k.core.Method, operation: Operation) =
         route bind method to { req -> dispatcher(req, operation) }
 
