@@ -76,7 +76,7 @@ class SessionsDataMemSession : SessionsDataSession {
      * @param id The session identifier
      * @param value The new session object
      */
-    override fun update(id: Int, value: Session) {
+    override fun update(id: Int, value: Session): Boolean {
         // Update the session object in the database mock
         db.forEach {
             // search for the session with the given id
@@ -86,8 +86,12 @@ class SessionsDataMemSession : SessionsDataSession {
                 db.remove(it)
                 // add the new session to the database mock
                 db.add(value)
+                // tell the caller that the update was successful
+                return true
             }
         }
+        // tell the caller that the update was not successful
+        return false
     }
 
     /**
@@ -97,7 +101,7 @@ class SessionsDataMemSession : SessionsDataSession {
      *
      * @param id The session identifier
      */
-    override fun delete(id: Int) {
+    override fun delete(id: Int): Boolean {
         // Delete the session object from the database mock
         db.forEach {
             // search for the session with the given id
@@ -105,7 +109,11 @@ class SessionsDataMemSession : SessionsDataSession {
                 // if found
                 // remove the session from the database mock
                 db.remove(it)
+                // tell the caller that the delete was successful
+                return true
             }
         }
+        // tell the caller that the delete was not successful
+        return false
     }
 }

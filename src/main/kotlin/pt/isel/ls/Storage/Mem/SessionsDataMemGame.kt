@@ -78,7 +78,7 @@ class SessionsDataMemGame : SessionsDataGame {
      * @param id The game identifier
      * @param value The new game object
      */
-    override fun update(id: Int, value: Game) {
+    override fun update(id: Int, value: Game): Boolean {
         // Update the game object in the database mock
         db.forEach {
             // search for the game with the given id
@@ -88,8 +88,12 @@ class SessionsDataMemGame : SessionsDataGame {
                 db.remove(it)
                 // add the new game to the database mock
                 db.add(value)
+                // alert that the game was updated
+                return true
             }
         }
+        // alert otherwise
+        return false
     }
 
     /**
@@ -99,7 +103,7 @@ class SessionsDataMemGame : SessionsDataGame {
      *
      * @param id The game identifier
      */
-    override fun delete(id: Int) {
+    override fun delete(id: Int): Boolean {
         // Delete the game object from the database mock
         db.forEach {
             // search for the game with the given id
@@ -107,7 +111,11 @@ class SessionsDataMemGame : SessionsDataGame {
                 // if found
                 // remove the game from the database mock
                 db.remove(it)
+                // alert that the game was deleted
+                return true
             }
         }
+        // alert otherwise
+        return false
     }
 }

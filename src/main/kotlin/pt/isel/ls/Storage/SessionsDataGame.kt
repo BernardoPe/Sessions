@@ -43,12 +43,12 @@ interface SessionsDataGame {
      * @param id The game identifier
      * @param value The new game object
      */
-    fun update(id: Int, value: Game)
+    fun update(id: Int, value: Game): Boolean
 
     /**
      * Delete a game from the database
      *
      * @param id The game identifier
      */
-    fun delete(id: Int)
+    fun delete(id: Int): Boolean
 }
