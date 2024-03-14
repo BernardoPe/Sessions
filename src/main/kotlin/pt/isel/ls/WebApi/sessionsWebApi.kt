@@ -64,7 +64,6 @@ class SessionsApi(val playerServices: playerService,
 
     private fun createPlayer(request: Request): Response {
         val player = parseJsonBody<PlayerRequest>(request)
-        //supposed to return token + pid in the response, maybe a Pair?
         val res = playerServices.createPlayer(player)
         return Response(CREATED).header("content-type", "application/json").body("{\"pid\":${res.first},\"token\":\"${res.second}\"}")
     }
@@ -130,8 +129,6 @@ class SessionsApi(val playerServices: playerService,
      */
     fun processRequest(request: Request, service: Operation): Response {
 
-        logRequest(request)
-
         val (processor, requiresAuth) = processors[service] ?: return Response(INTERNAL_SERVER_ERROR)
 
         if (request.bodyString().isNotBlank() && request.header("content-type") != "application/json")
@@ -146,20 +143,9 @@ class SessionsApi(val playerServices: playerService,
             Response(Status(e.status, e.description)).header("content-type", "application/json").body(Json.encodeToString(e))
         }
         catch (e: Exception) {
-            logger.error("Internal Server Error", e)
-            Response(INTERNAL_SERVER_ERROR)
+            Response(INTERNAL_SERVER_ERROR).header("content-type", "application/json").body(Json.encodeToString(InternalServerErrorException()))
         }
 
-    }
-
-    private fun logRequest(request: Request) {
-        logger.info(
-            "incoming request: method={}, uri={}, content-type={} accept={}",
-            request.method,
-            request.uri,
-            request.header("content-type"),
-            request.header("accept"),
-        )
     }
 
     private fun verifyAuth(request: Request) : Boolean {

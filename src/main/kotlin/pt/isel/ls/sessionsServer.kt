@@ -14,6 +14,7 @@ import pt.isel.ls.Services.sessionsService
 import pt.isel.ls.WebApi.Operation
 import pt.isel.ls.WebApi.SessionsApi
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 val logger = LoggerFactory.getLogger("pt.isel.ls.http.HTTPServer")
 
@@ -43,9 +44,17 @@ class SessionsServer(api: SessionsApi, port: Int = 8080) {
         private val executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
     }
     private fun dispatcher(req: Request, operation: Operation): Response {
-        return executor.submit<Response> {
+
+        logRequest(req)
+
+        val response = executor.submit<Response> {
             requestHandler(req, operation)
         }.get()
+
+        logResponse(response)
+
+        return response
+
     }
     private fun bindRoute(route: String, method: org.http4k.core.Method, operation: Operation) =
         route bind method to { req -> dispatcher(req, operation) }
@@ -78,6 +87,25 @@ class SessionsServer(api: SessionsApi, port: Int = 8080) {
             sessionRoutes
         )
 
+    private fun logRequest(request: Request) {
+        logger.info(
+            "incoming request: method={}, uri={}, content-type={} accept={}",
+            request.method,
+            request.uri,
+            request.header("content-type"),
+            request.header("accept"),
+        )
+    }
+
+    private fun logResponse(response: Response) {
+        logger.info(
+            "outgoing response: status={}, content-type={}",
+            response.status,
+            response.header("content-type"),
+        )
+    }
+
+
     private val jettyServer = sessionsHandler.asServer(Jetty(port))
 
     /**
@@ -92,12 +120,17 @@ class SessionsServer(api: SessionsApi, port: Int = 8080) {
      * The method that stops the server
      */
     fun stop() {
-        executor.shutdown()
-        executor.awaitTermination(10, java.util.concurrent.TimeUnit.SECONDS)
         jettyServer.stop()
+        executor.shutdown()
+        try {
+            if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                executor.shutdownNow()
+            }
+        } catch (e: InterruptedException) {
+            executor.shutdownNow()
+        }
         logger.info("Server stopped listening")
     }
-
 }
 
 

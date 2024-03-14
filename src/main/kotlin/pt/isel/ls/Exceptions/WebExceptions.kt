@@ -18,10 +18,11 @@ class BadRequestException(cause: String?) : WebExceptions(BAD_REQUEST.code, "Bad
 class NotFoundException(item: String?) : WebExceptions(NOT_FOUND.code, "Not Found", item)
 
 // 501 Not Implemented
-
 @Serializable
 class NotImplementedException() : WebExceptions(NOT_IMPLEMENTED.code, "Not Implemented", null)
 
+@Serializable
+class InternalServerErrorException() : WebExceptions(Status.INTERNAL_SERVER_ERROR.code, "Internal Server Error", null)
 
 @Serializable
 class UnsupportedMediaTypeException() : WebExceptions(Status.UNSUPPORTED_MEDIA_TYPE.code, "Unsupported Media Type", null)
