@@ -8,11 +8,11 @@ import org.http4k.routing.routes
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
 import org.slf4j.LoggerFactory
-import pt.isel.ls.Services.gameService
-import pt.isel.ls.Services.playerService
-import pt.isel.ls.Services.sessionsService
-import pt.isel.ls.WebApi.Operation
-import pt.isel.ls.WebApi.SessionsApi
+import pt.isel.ls.api.Operation
+import pt.isel.ls.api.SessionsApi
+import pt.isel.ls.services.gameService
+import pt.isel.ls.services.playerService
+import pt.isel.ls.services.sessionsService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 

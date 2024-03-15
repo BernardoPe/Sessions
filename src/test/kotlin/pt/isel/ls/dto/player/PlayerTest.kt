@@ -1,0 +1,38 @@
+package pt.isel.ls.dto.player
+
+import pt.isel.ls.domain.player.Player
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+
+class PlayerTest {
+
+    @Test
+    fun `Player creation should succeed when all parameters are valid`() {
+        val player = Player(1, "Test Player", "testplayer@example.com")
+        assertEquals(1, player.pid)
+        assertEquals("Test Player", player.name)
+        assertEquals("testplayer@example.com", player.email)
+    }
+
+    @Test
+    fun `Player creation should fail when pid is negative`() {
+        assertFailsWith<IllegalArgumentException> {
+            Player(-1, "Test Player", "")
+        }
+    }
+
+    @Test
+    fun `Player creation should fail when name is empty`() {
+        assertFailsWith<IllegalArgumentException> {
+            Player(1, "", "testplayer@example.com")
+        }
+    }
+
+    @Test
+    fun `Player creation should fail when email is empty`() {
+        assertFailsWith<IllegalArgumentException> {
+            Player(1, "Test Player", "")
+        }
+    }
+}

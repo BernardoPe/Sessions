@@ -1,23 +1,5 @@
 package pt.isel.ls.Server
 
-import kotlinx.serialization.json.Json
-import org.http4k.core.Method
-import org.http4k.core.Request
-import org.http4k.core.Status
-import org.http4k.metrics.MetricsDefaults.Companion.server
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import pt.isel.ls.DTO.Game.Game
-import pt.isel.ls.DTO.Player.Player
-import pt.isel.ls.DTO.Session.Session
-import pt.isel.ls.Services.gameService
-import pt.isel.ls.Services.playerService
-import pt.isel.ls.Services.sessionsService
-import pt.isel.ls.WebApi.SessionsApi
-import pt.isel.ls.pt.isel.ls.SessionsServer
-import kotlin.test.Test
-
-
 
 /*
 class ServerTest {
