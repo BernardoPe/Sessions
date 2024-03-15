@@ -1,0 +1,220 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Sessions API",
+    "description": "API for managing game sessions",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080"
+    }
+  ],
+  "paths": {
+    "/players": {
+      "post": {
+        "summary": "Create a new player",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": null
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Player created successfully",
+            "content": {
+              "application/json": {
+                "schema": null
+              }
+            }
+          }
+        }
+      }
+    },
+    "/players/{pid}": {
+      "get": {
+        "summary": "Get player details",
+        "parameters": [
+          {
+            "name": "pid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Player details retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": null
+              }
+            }
+          }
+        }
+      }
+    },
+    "/games": {
+      "post": {
+        "summary": "Create a new game",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": null
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Game created successfully",
+            "content": {
+              "application/json": {
+                "schema": null
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get list of games",
+        "responses": {
+          "200": {
+            "description": "List of games retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": null
+              }
+            }
+          }
+        }
+      }
+    },
+    "/games/{gid}": {
+      "get": {
+        "summary": "Get game details",
+        "parameters": [
+          {
+            "name": "gid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Game details retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": null
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions": {
+      "post": {
+        "summary": "Create a new session",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": null
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Session created successfully",
+            "content": {
+              "application/json": {
+                "schema": null
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get list of sessions",
+        "responses": {
+          "200": {
+            "description": "List of sessions retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": null
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/{sid}": {
+      "get": {
+        "summary": "Get session details",
+        "parameters": [
+          {
+            "name": "sid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session details retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": null
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Add player to session",
+        "parameters": [
+          {
+            "name": "sid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": null
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Player added to session successfully",
+            "content": {
+              "application/json": {
+                "schema": null
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
