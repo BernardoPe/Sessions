@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
 data class GameRequest (
     val name: String,
     val developer: String,
-    val genres: List<String>
+    val genres: Set<String>
 ) {
     init {
         require(name.isNotEmpty()) { "The game name must not be empty" }
@@ -25,6 +25,9 @@ data class GameRequest (
         require(
             genres.all { it.isNotEmpty() }
         ) { "The game genres must not be empty" }
+        require(name.length in 1..40) { "The game name must be between 1 and 40 characters" }
+        require(developer.length in 1..40) { "The game developer must be between 1 and 40 characters" }
+        require(genres.all { it.length in 1..40 }) { "The game genres must be between 1 and 40 characters" }
     }
 }
 

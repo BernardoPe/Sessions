@@ -11,7 +11,7 @@ class SessionsDataGamePlayerTest {
     @Test
     fun testCreateAndReadPlayer() {
         // Create a player
-        val player = Player(1, "player", "email")
+        val player = Player(1, "player", "email@test.com")
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Create the player (add it to the storage)
@@ -27,7 +27,7 @@ class SessionsDataGamePlayerTest {
         // Check the player name
         assertEquals("player", playerData?.name)
         // Check the player email
-        assertEquals("email", playerData?.email)
+        assertEquals("email@test.com", playerData?.email)
         // Check if the player with id 2 was not created
         assertNull(playerStorage.getById(2))
     }
@@ -35,13 +35,13 @@ class SessionsDataGamePlayerTest {
     @Test
     fun testUpdatePlayer() {
         // Create a player
-        val player = Player(1, "player", "email")
+        val player = Player(1, "player", "email@test.com")
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Create the player (add it to the storage)
         playerStorage.create(player)
         // Update the player
-        val newPlayer = Player(1, "newPlayer", "newEmail")
+        val newPlayer = Player(1, "newPlayer", "newEmail@test.com")
         playerStorage.update(1, newPlayer)
         // Check if the player was updated
         // compare the player with the player read from the storage
@@ -54,13 +54,13 @@ class SessionsDataGamePlayerTest {
         // Check the player name
         assertEquals("newPlayer", playerData?.name)
         // Check the player email
-        assertEquals("newEmail", playerData?.email)
+        assertEquals("newEmail@test.com", playerData?.email)
     }
 
     @Test
     fun testDeletePlayer() {
         // Create a player
-        val player = Player(1, "player", "email")
+        val player = Player(1, "player", "email@test.com")
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Create the player (add it to the storage)

@@ -9,7 +9,7 @@ import pt.isel.ls.Services.playerService
 import pt.isel.ls.Services.sessionsService
 import kotlin.test.Test
 
-/*
+/**
 class SessionEndpointsTest {
 
     private val api = SessionsApi(playerService(), gameService(), sessionsService())
@@ -183,6 +183,18 @@ class SessionEndpointsTest {
         val response = api.processRequest(routedRequest, Operation.ADD_PLAYER_TO_SESSION)
         //  Assert
         assert(response.header("Content-Type") == "application/json")
+        assert(response.status == Status.BAD_REQUEST)
+    }
+
+    @Test
+    fun `add player to session player already in session`() {
+        // Arrange
+        val request = Request(Method.PUT, "/sessions/1")
+            .header("Content-Type", "application/json")
+            .body("""{"pid":2}""")
+        // Act
+        val response = api.processRequest(request, Operation.ADD_PLAYER_TO_SESSION)
+        //  Assert
         assert(response.status == Status.BAD_REQUEST)
     }
 

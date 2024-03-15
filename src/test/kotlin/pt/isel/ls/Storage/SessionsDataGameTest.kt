@@ -11,7 +11,7 @@ class SessionsDataGameTest {
     @Test
     fun testCreateAndReadGame() {
         // Create a game
-        val game = Game(1, "game", "developer", listOf("genre1", "genre2"))
+        val game = Game(1, "game", "developer", setOf("genre1", "genre2"))
         // Create a game storage
         val gameStorage: SessionsDataGame = SessionsDataMemGame()
         // Create the game (add it to the storage)
@@ -27,7 +27,7 @@ class SessionsDataGameTest {
         // Check the game developer
         assertEquals("developer", gameData?.developer)
         // Check the game genres
-        assertEquals(listOf("genre1", "genre2"), gameData?.genres)
+        assertEquals(setOf("genre1", "genre2"), gameData?.genres)
         // Check if the game with id 2 was not created
         assertNull(gameStorage.getById(2))
     }
@@ -35,13 +35,13 @@ class SessionsDataGameTest {
     @Test
     fun testUpdateGame() {
         // Create a game
-        val game = Game(1, "game", "developer", listOf("genre1", "genre2"))
+        val game = Game(1, "game", "developer", setOf("genre1", "genre2"))
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // Create the game (add it to the storage)
         gameStorage.create(game)
         // Update the game
-        val newGame = Game(1, "newGame", "newDeveloper", listOf("newGenre1", "newGenre2"))
+        val newGame = Game(1, "newGame", "newDeveloper", setOf("newGenre1", "newGenre2"))
         gameStorage.update(1, newGame)
         // Check if the game was updated
         // compare the game with the game read from the storage
@@ -54,13 +54,13 @@ class SessionsDataGameTest {
         // Check the game developer
         assertEquals("newDeveloper", gameData?.developer)
         // Check the game genres
-        assertEquals(listOf("newGenre1", "newGenre2"), gameData?.genres)
+        assertEquals(setOf("newGenre1", "newGenre2"), gameData?.genres)
     }
 
     @Test
     fun testDeleteGame() {
         // Create a game
-        val game = Game(1, "game", "developer", listOf("genre1", "genre2"))
+        val game = Game(1, "game", "developer", setOf("genre1", "genre2"))
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // Create the game (add it to the storage)

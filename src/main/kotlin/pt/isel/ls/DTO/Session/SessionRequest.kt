@@ -6,6 +6,7 @@ import java.sql.Timestamp
 
 /**
  * The [SessionRequest] class is used to represent the request body of a session
+ *
  * If an empty date or capacity is provided, an exception is thrown
  * @param capacity The session capacity
  * @param date The session date

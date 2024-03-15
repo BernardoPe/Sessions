@@ -63,13 +63,13 @@ class SessionsDataGameSessionTest {
                 1,
                 "Test Game 1",
                 "Test Developer",
-                listOf("Genre1", "Genre2")
+                setOf("Genre1", "Genre2")
             ), sessionData?.gameSession
         )
         // Check the session date
         assertEquals("2022-01-02 15:00:00", sessionData?.date)
         assertEquals(
-            listOf(
+            setOf(
                 Player(1, "player1", "player1@example.com"),
                 Player(2, "player2", "player2@example.com"),
                 Player(3, "player3", "player3@example.com"),
@@ -99,16 +99,16 @@ class SessionsDataGameSessionTest {
             1,
             "Test Game 1",
             "Test Developer",
-            listOf("Genre1", "Genre2")
+            setOf("Genre1", "Genre2")
         )
 
-        fun newPlayersTest1() = listOf(
+        fun newPlayersTest1() = setOf(
             Player(1, "player1", "player1@example.com"),
             Player(2, "player2", "player2@example.com"),
             Player(3, "player3", "player3@example.com"),
         )
 
-        fun newPlayersTest2() = listOf(
+        fun newPlayersTest2() = setOf(
             Player(4, "player4", "player4@example.com"),
             Player(5, "player5", "player5@example.com"),
             Player(6, "player6", "player6@example.com"),

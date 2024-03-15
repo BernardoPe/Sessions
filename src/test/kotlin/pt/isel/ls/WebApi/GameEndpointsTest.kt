@@ -12,7 +12,7 @@ import pt.isel.ls.Services.playerService
 import pt.isel.ls.Services.sessionsService
 import kotlin.test.Test
 
-/*
+/**
 class GameEndpointsTest {
 
     private val api = SessionsApi(playerService(), gameService(), sessionsService())
@@ -21,7 +21,7 @@ class GameEndpointsTest {
         // Arrange
         val request = Request(Method.POST, "/games")
             .header("Content-Type", "application/json")
-            .body("""{"name":"Test","developer":"Test","genres":["Test"]}""")
+            .body("""{"name":"Test3","developer":"Test","genres":["Test"]}""")
         // Act
         val response = api.processRequest(request, Operation.CREATE_GAME)
         // Assert
@@ -45,6 +45,17 @@ class GameEndpointsTest {
         val request = Request(Method.POST, "/games")
             .header("Content-Type", "application/json")
             .body("""{"name":"Test"}""")
+        // Act
+        val response = api.processRequest(request, Operation.CREATE_GAME)
+        // Assert
+        assert(response.status == Status.BAD_REQUEST)
+    }
+    @Test
+    fun `test create game, game with name already exists`() {
+        // Arrange
+        val request = Request(Method.POST, "/games")
+            .header("Content-Type", "application/json")
+            .body("""{"name":"Test","developer":"Test","genres":["Test"]}""")
         // Act
         val response = api.processRequest(request, Operation.CREATE_GAME)
         // Assert

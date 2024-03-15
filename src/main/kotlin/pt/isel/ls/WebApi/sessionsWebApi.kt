@@ -52,14 +52,14 @@ class SessionsApi(val playerServices: playerService,
 
     private val processors = mapOf(
         Operation.CREATE_PLAYER to SessionsRequest(::createPlayer, false),
-        Operation.GET_PLAYER_DETAILS to SessionsRequest(::getPlayerDetails, true),
+        Operation.GET_PLAYER_DETAILS to SessionsRequest(::getPlayerDetails, false),
         Operation.CREATE_GAME to SessionsRequest(::createGame, true),
-        Operation.GET_GAME_DETAILS to SessionsRequest(::getGameDetails, true),
-        Operation.GET_GAME_LIST to SessionsRequest(::getGameList, true),
+        Operation.GET_GAME_DETAILS to SessionsRequest(::getGameDetails, false),
+        Operation.GET_GAME_LIST to SessionsRequest(::getGameList, false),
         Operation.CREATE_SESSION to SessionsRequest(::createSession, true),
-        Operation.ADD_PLAYER_TO_SESSION to SessionsRequest(::addPlayerToSession, true),
-        Operation.GET_SESSION_DETAILS to SessionsRequest(::getSessionDetails, true),
-        Operation.GET_SESSION_LIST to SessionsRequest(::getSessionList, true)
+        Operation.ADD_PLAYER_TO_SESSION to SessionsRequest(::addPlayerToSession, false),
+        Operation.GET_SESSION_DETAILS to SessionsRequest(::getSessionDetails, false),
+        Operation.GET_SESSION_LIST to SessionsRequest(::getSessionList, false)
     )
 
     private fun createPlayer(request: Request): Response {

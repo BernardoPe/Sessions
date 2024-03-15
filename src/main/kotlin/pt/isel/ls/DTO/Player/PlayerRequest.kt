@@ -20,5 +20,7 @@ data class PlayerRequest (
     init {
         require(name.isNotBlank()) { "The player name must not be empty" }
         require(email.isNotBlank()) { "The player email must not be empty" }
+        require(name.length in 1..40) { "The player name must be between 1 and 40 characters" }
+        require(email.matches(Regex("^[A-Za-z0-9]+@(.+)\$"))) { "The player email must be a valid e-mail" }
     }
 }
