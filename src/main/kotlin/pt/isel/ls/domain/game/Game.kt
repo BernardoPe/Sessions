@@ -1,5 +1,8 @@
 package pt.isel.ls.domain.game
 
+import pt.isel.ls.domain.DomainMapper
+import pt.isel.ls.dto.GameInfoOutputModel
+
 /**
  *  Game
  *
@@ -14,7 +17,7 @@ data class Game (
         val name: String,
         val developer: String,
         val genres: Set<String>
-) {
+) : DomainMapper<GameInfoOutputModel> {
         init {
                 require(gid >= 0) { "The game identifier must be a positive integer" }
                 require(name.isNotBlank() ) { "The game name must not be empty" }
@@ -26,6 +29,9 @@ data class Game (
                 require(developer.length in 1..40) { "The game developer must be between 1 and 40 characters" }
                 require(genres.all { it.length in 1..40 }) { "The game genres must be between 1 and 40 characters" }
         }
+
+        override fun toInfoDTO() = GameInfoOutputModel(gid, name, developer, genres)
+
 }
 
 
