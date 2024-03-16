@@ -18,7 +18,21 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": null
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                      "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "email"
+                ]
+              }
             }
           }
         },
@@ -67,7 +81,26 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": null
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "developer": {
+                    "type": "string"
+                  },
+                  "genres": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
             }
           }
         },
@@ -129,7 +162,22 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": null
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "capacity": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "date": {
+                    "type": "string"
+                  },
+                  "gid": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              }
             }
           }
         },
@@ -151,7 +199,29 @@
             "description": "List of sessions retrieved successfully",
             "content": {
               "application/json": {
-                "schema": null
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "sid": {
+                        "type": "integer",
+                        "format": "int32"
+                      },
+                      "capacity": {
+                        "type": "integer",
+                        "format": "int32"
+                      },
+                      "date": {
+                        "type": "string"
+                      },
+                      "gid": {
+                        "type": "integer",
+                        "format": "int32"
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -177,7 +247,26 @@
             "description": "Session details retrieved successfully",
             "content": {
               "application/json": {
-                "schema": null
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sid": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "capacity": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "date": {
+                      "type": "string"
+                    },
+                    "gid": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  }
+                }
               }
             }
           }
@@ -194,16 +283,17 @@
               "type": "integer",
               "format": "int32"
             }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": null
+          },
+          {
+            "name": "pid",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
             }
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "Player added to session successfully",
