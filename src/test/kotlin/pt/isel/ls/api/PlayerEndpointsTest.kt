@@ -17,6 +17,30 @@ class PlayerEndpointsTest {
     }
 
     @Test
+    fun `test create player, invalid email`() {
+        // Arrange
+        val request = Request(Method.POST, "/players")
+            .header("Content-Type", "application/json")
+            .body("""{"name":"TestName","email":"Test.com"}""")
+        // Act
+        val response = api.processRequest(request, Operation.CREATE_PLAYER)
+        // Assert
+        assert(response.status == Status.BAD_REQUEST)
+    }
+
+    @Test
+    fun `test create player, player with email already exists`() {
+        // Arrange
+        val request = Request(Method.POST, "/players")
+            .header("Content-Type", "application/json")
+            .body("""{"name":"TestName","email":"TestEmail@gmail.com"}""")
+        // Act
+        val response = api.processRequest(request, Operation.CREATE_PLAYER)
+        // Assert
+        assert(response.status == Status.BAD_REQUEST)
+    }
+
+    @Test
     fun `test create player empty fields should give bad request`() {
         // Arrange
         val request = Request(Method.POST, "/players")
@@ -68,5 +92,6 @@ class PlayerEndpointsTest {
         assert(response.status == Status.NOT_FOUND)
     }
 
-}*/
+}
 
+*/

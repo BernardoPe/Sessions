@@ -61,6 +61,31 @@ class ServerTest {
         assert(response.status == Status.BAD_REQUEST)
     }
 
+
+    @Test
+    fun `test create player, invalid email`() {
+        // Arrange
+        val request = Request(Method.POST, "/players")
+            .header("Content-Type", "application/json")
+            .body("""{"name":"TestName","email":"Test.com"}""")
+        // Act
+        val response = server.sessionsHandler(request)
+        // Assert
+        assert(response.status == Status.BAD_REQUEST)
+    }
+
+    @Test
+    fun `test create player, player with email already exists`() {
+        // Arrange
+        val request = Request(Method.POST, "/players")
+            .header("Content-Type", "application/json")
+            .body("""{"name":"TestName","email":"TestEmail@gmail.com"}""")
+        // Act
+        val response = server.sessionsHandler(request)
+        // Assert
+        assert(response.status == Status.BAD_REQUEST)
+    }
+
     @Test
     fun `test create player with invalid body should give bad request`() {
         // Arrange
@@ -103,11 +128,23 @@ class ServerTest {
         // Arrange
         val request = Request(Method.POST, "/games")
             .header("Content-Type", "application/json")
-            .body("""{"name":"Test","developer":"Test","genres":["Test"]}""")
+            .body("""{"name":"Test2","developer":"Test","genres":["Test"]}""")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
         assert(response.status == Status.CREATED)
+    }
+
+    @Test
+    fun `test create game, game with name already exists`() {
+        // Arrange
+        val request = Request(Method.POST, "/games")
+            .header("Content-Type", "application/json")
+            .body("""{"name":"Test","developer":"Test","genres":["Test"]}""")
+        // Act
+        val response = server.sessionsHandler(request)
+        // Assert
+        assert(response.status == Status.BAD_REQUEST)
     }
 
     @Test
@@ -340,6 +377,18 @@ class ServerTest {
         val response = server.sessionsHandler(request)
         //  Assert
         assert(response.status == Status.OK)
+    }
+
+    @Test
+    fun `add player to session player already in session`() {
+        // Arrange
+        val request = Request(Method.PUT, "/sessions/1")
+            .header("Content-Type", "application/json")
+            .body("""{"pid":2}""")
+        // Act
+        val response = server.sessionsHandler(request)
+        //  Assert
+        assert(response.status == Status.BAD_REQUEST)
     }
 
     @Test

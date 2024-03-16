@@ -27,7 +27,6 @@ data class Session(
         require(capacity > 1) { "Session capacity must be a positive number" }
         require(capacity <= SESSION_MAX_CAPACITY) { "Session capacity must be less than or equal to $SESSION_MAX_CAPACITY" }
         require(date.isNotBlank() && date.isValidTimeStamp()) { "Session date must be a valid date format" }
-        // require(gameSession.gid > 0) { "Game identifier must be a positive number" }
     }
 
     enum class State {
