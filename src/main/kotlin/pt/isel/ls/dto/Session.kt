@@ -53,7 +53,7 @@ data class SessionInfoOutputModel(
     val capacity: Int,
     val date: String,
     val gameSession: GameInfoOutputModel,
-    val playersSession: List<PlayerInfoOutputModel>
+    val playersSession: Set<PlayerInfoOutputModel>
 )
 
 /**
@@ -77,4 +77,4 @@ data class SessionSearchInputModel(
  */
 
 @Serializable
-data class SessionSearchOutputModel(val sessions: List<SessionInfoOutputModel>)
+data class SessionSearchOutputModel(val sessions: Set<SessionInfoOutputModel>)

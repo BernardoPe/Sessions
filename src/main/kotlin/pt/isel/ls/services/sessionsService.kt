@@ -1,24 +1,22 @@
 package pt.isel.ls.services
 
 import pt.isel.ls.domain.session.Session
-import pt.isel.ls.dto.session.SessionRequest
-import pt.isel.ls.dto.session.SessionSearch
 
 class sessionsService {
 
-    fun createSession(session : SessionRequest) {
+    fun createSession(capacity: Int, gid: Int, date: String): Int {
         TODO()
     }
 
-    fun addPlayer(sid: Int, pid: Int) {
+    fun addPlayer(sid: Int, pid: Int): String {
         TODO()
     }
 
-    fun listSessions(session: SessionSearch, limit : Int, skip : Int) {
+    fun listSessions(gid: Int, date: String?, state: String?, pid: Int?, limit: Int?, skip: Int?): Set<Session> {
         TODO()
     }
 
-    fun getSessionDetails(sid: Int): Session {
+    fun getSessionById(sid: Int): Session {
         TODO()
     }
 

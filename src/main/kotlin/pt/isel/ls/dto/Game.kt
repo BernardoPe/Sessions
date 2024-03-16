@@ -14,7 +14,7 @@ import pt.isel.ls.domain.game.*
  *
  */
 @Serializable
-data class GameCreationInputModel(val name: String, val developer: String, val genres: List<String>)
+data class GameCreationInputModel(val name: String, val developer: String, val genres: Set<String>)
 
 /**
  * The [GameCreationOutputModel] class is used to represent the response body of the created game
@@ -24,13 +24,10 @@ data class GameCreationInputModel(val name: String, val developer: String, val g
  */
 
 @Serializable
-data class GameCreationOutputModel(
-    val gid: Int
-    /** or UUID */
-)
+data class GameCreationOutputModel(val gid: Int)
 
 /**
- * The [PlayerInfoOutputModel] class is used to represent the response body of the game details
+ * The [GameInfoOutputModel] class is used to represent the response body of the game details
  *
  * @param gid The game identifier
  * @param name The game name
@@ -40,7 +37,7 @@ data class GameCreationOutputModel(
  */
 
 @Serializable
-data class GameInfoOutputModel(val gid: Int, val name: String, val developer: String, val genres: List<String>)
+data class GameInfoOutputModel(val gid: Int, val name: String, val developer: String, val genres: Set<String>)
 
 /**
  * The [GameSearchInputModel] class is used to represent the request body of list of games
@@ -48,7 +45,7 @@ data class GameInfoOutputModel(val gid: Int, val name: String, val developer: St
  * @param genres The list of genres
  */
 @Serializable
-data class GameSearchInputModel(val developer: String, val genres: List<String>)
+data class GameSearchInputModel(val developer: String, val genres: Set<String>)
 
 /**
  * The [GameSearchOutputModel] class is used to represent the response body of list of games
@@ -56,4 +53,4 @@ data class GameSearchInputModel(val developer: String, val genres: List<String>)
  */
 
 @Serializable
-data class GameSearchOutputModel(val games: List<GameInfoOutputModel>)
+data class GameSearchOutputModel(val games: Set<GameInfoOutputModel>)

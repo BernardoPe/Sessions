@@ -20,7 +20,7 @@ data class Session(
     val capacity: Int,
     val date: String,
     val gameSession: Game,
-    val playersSession: List<Player>
+    val playersSession: Set<Player>
 ) {
     init {
         require(sid >= 0) { "Session identifier must be a positive number" }
@@ -28,6 +28,21 @@ data class Session(
         require(capacity <= SESSION_MAX_CAPACITY) { "Session capacity must be less than or equal to $SESSION_MAX_CAPACITY" }
         require(date.isNotBlank() && date.isValidTimeStamp()) { "Session date must be a valid date format" }
         // require(gameSession.gid > 0) { "Game identifier must be a positive number" }
+    }
+
+    enum class State {
+        OPEN,
+        CLOSE;
+
+        val isOpen: Boolean
+            get() = this == OPEN
+
+        override fun toString(): String {
+            return when (this) {
+                OPEN -> "OPEN"
+                CLOSE -> "CLOSE"
+            }
+        }
     }
 }
 

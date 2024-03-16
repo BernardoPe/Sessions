@@ -13,7 +13,7 @@ data class Game (
         val gid: Int,
         val name: String,
         val developer: String,
-        val genres: List<String>
+        val genres: Set<String>
 ) {
         init {
                 require(gid >= 0) { "The game identifier must be a positive integer" }

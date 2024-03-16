@@ -16,14 +16,13 @@ data class PlayerCreationInputModel(val name: String, val email: String)
  * The [PlayerCreationOutputModel] class is used to represent the response body of player creation
  *
  * @param pid The player identifier
- * @param token The player token
+ * @param token The player token in UUID type
  *
  */
 
 @Serializable
 data class PlayerCreationOutputModel(
     val pid: Int
-    /** or UUID */
     , val token: String
 )
 

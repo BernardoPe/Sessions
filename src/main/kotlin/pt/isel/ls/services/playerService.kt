@@ -1,10 +1,9 @@
 package pt.isel.ls.services
 
 import pt.isel.ls.domain.player.Player
-import pt.isel.ls.dto.player.PlayerRequest
 
 class playerService {
-    fun createPlayer (player : PlayerRequest) : Pair<Int, String> {
+    fun createPlayer(name: String, email: String): Pair<Int, String> {
         TODO()
     }
 

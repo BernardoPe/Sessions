@@ -16,9 +16,9 @@ class SessionTest {
         assertEquals(1, session.sid)
         assertEquals(50, session.capacity)
         assertEquals("2023-03-01 15:00:00", session.date)
-        assertEquals(Game(1, "Test Game 1", "Test Developer", listOf("Genre1", "Genre2")), session.gameSession)
+        assertEquals(Game(1, "Test Game 1", "Test Developer", setOf("Genre1", "Genre2")), session.gameSession)
         assertEquals(
-            listOf(
+            setOf(
                 Player(1, "player1", "player1@example.com"),
                 Player(2, "player2", "player2@example.com"),
                 Player(3, "player3", "player3@example.com"),
@@ -59,10 +59,10 @@ class SessionTest {
             1,
             "Test Game 1",
             "Test Developer",
-            listOf("Genre1", "Genre2")
+            setOf("Genre1", "Genre2")
         )
 
-        fun newPlayersTest() = listOf(
+        fun newPlayersTest() = setOf(
             Player(1, "player1", "player1@example.com"),
             Player(2, "player2", "player2@example.com"),
             Player(3, "player3", "player3@example.com"),

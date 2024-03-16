@@ -12,12 +12,7 @@ import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Status.Companion.UNAUTHORIZED
 import org.http4k.routing.path
-import pt.isel.ls.dto.game.GameRequest
-import pt.isel.ls.dto.game.GameSearch
-import pt.isel.ls.dto.player.PlayerRequest
-import pt.isel.ls.dto.session.SessionPlayer
-import pt.isel.ls.dto.session.SessionRequest
-import pt.isel.ls.dto.session.SessionSearch
+import pt.isel.ls.dto.*
 import pt.isel.ls.exceptions.*
 import pt.isel.ls.services.*
 
@@ -53,69 +48,170 @@ class SessionsApi(val playerServices: playerService,
         Operation.CREATE_PLAYER to SessionsRequest(::createPlayer, false),
         Operation.GET_PLAYER_DETAILS to SessionsRequest(::getPlayerDetails, true),
         Operation.CREATE_GAME to SessionsRequest(::createGame, true),
-        Operation.GET_GAME_DETAILS to SessionsRequest(::getGameDetails, true),
+        Operation.GET_GAME_DETAILS to SessionsRequest(::getGameById, true),
         Operation.GET_GAME_LIST to SessionsRequest(::getGameList, true),
         Operation.CREATE_SESSION to SessionsRequest(::createSession, true),
         Operation.ADD_PLAYER_TO_SESSION to SessionsRequest(::addPlayerToSession, true),
-        Operation.GET_SESSION_DETAILS to SessionsRequest(::getSessionDetails, true),
+        Operation.GET_SESSION_DETAILS to SessionsRequest(::getSessionById, true),
         Operation.GET_SESSION_LIST to SessionsRequest(::getSessionList, true)
     )
 
     private fun createPlayer(request: Request): Response {
-        val player = parseJsonBody<PlayerRequest>(request)
-        val res = playerServices.createPlayer(player)
-        return Response(CREATED).header("content-type", "application/json").body("{\"pid\":${res.first},\"token\":\"${res.second}\"}")
+        val player = parseJsonBody<PlayerCreationInputModel>(request)
+        val res = playerServices.createPlayer(player.name, player.email)
+        return Response(CREATED)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(PlayerCreationOutputModel(res.first, res.second)))
     }
 
     private fun getPlayerDetails(request: Request): Response {
         val pid = request.path("pid")?.toIntOrNull() ?: throw BadRequestException("Invalid Player Identifier")
-        val player = playerServices.getPlayerDetails(pid)
-        return Response(OK).header("content-type", "application/json").body(Json.encodeToString(player))
+        val res = playerServices.getPlayerDetails(pid)
+        return Response(OK)
+            .header("content-type", "application/json")
+            .body(
+                Json.encodeToString(
+                    PlayerInfoOutputModel(
+                        res.pid,
+                        res.name,
+                        res.email
+                    )
+                )
+            )
     }
 
     private fun createGame(request: Request): Response {
-        val game = parseJsonBody<GameRequest>(request)
-        val gid = gameServices.createGame(game)
-        return Response(CREATED).header("content-type", "application/json").body("{\"gid\":$gid}")
+        val game = parseJsonBody<GameCreationInputModel>(request)
+        val res = gameServices.createGame(game.name, game.developer, game.genres)
+        return Response(CREATED)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(GameCreationOutputModel(res)))
     }
 
-    private fun getGameDetails(request: Request): Response {
+    private fun getGameById(request: Request): Response {
         val gid = request.path("gid")?.toIntOrNull() ?: throw BadRequestException("Invalid Game Identifier")
-        val game = gameServices.getGameById(gid)
-        return Response(OK).header("content-type", "application/json").body(Json.encodeToString(game))
+        val res = gameServices.getGameById(gid)
+        return Response(OK)
+            .header("content-type", "application/json")
+            .body(
+                Json.encodeToString(
+                    GameInfoOutputModel(
+                        res.gid,
+                        res.name,
+                        res.developer,
+                        res.genres
+                    )
+                )
+            )
     }
 
     private fun getGameList(request: Request): Response {
         val (limit, skip) = (request.query("limit")?.toInt() ?: 5) to (request.query("skip")?.toInt() ?: 0)
-        val gameSearch = parseJsonBody<GameSearch>(request)
-        val games = gameServices.listGames(gameSearch, limit, skip)
-        return Response(OK).header("content-type", "application/json").body(Json.encodeToString(games))
+        val gameSearch = parseJsonBody<GameSearchInputModel>(request)
+        val res = gameServices.searchGames(gameSearch.genres, gameSearch.developer, limit, skip)
+        return Response(OK)
+            .header("content-type", "application/json")
+            .body(
+                Json.encodeToString(
+                    GameSearchOutputModel(
+                        res.map {
+                            GameInfoOutputModel(
+                                it.gid,
+                                it.name,
+                                it.developer,
+                                it.genres
+                            )
+                        }.toSet()
+                    )
+                )
+            )
     }
 
     private fun createSession(request: Request): Response {
-        val session = parseJsonBody<SessionRequest>(request)
-        val sid = sessionServices.createSession(session)
-        return Response(CREATED).header("content-type", "application/json").body("{\"sid\":$sid}")
+        val session = parseJsonBody<SessionCreationInputModel>(request)
+        val res = sessionServices.createSession(session.capacity, session.gid, session.date)
+        return Response(CREATED)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(SessionCreationOutputModel(res)))
     }
 
     private fun addPlayerToSession(request: Request): Response {
         val sid = request.path("sid")?.toIntOrNull() ?: throw BadRequestException("Invalid Session Identifier")
-        val player = parseJsonBody<SessionPlayer>(request)
-        sessionServices.addPlayer(sid, player.pid)
+        val pid = request.path("pid")?.toIntOrNull() ?: throw BadRequestException("Invalid Player Identifier")
+        val res = sessionServices.addPlayer(sid, pid)
         return Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(SessionAddPlayerOutputModel(res)))
     }
 
-    private fun getSessionDetails(request: Request): Response {
+    private fun getSessionById(request: Request): Response {
         val sid = request.path("sid")?.toIntOrNull() ?: throw BadRequestException("Invalid Session Identifier")
-        val session = sessionServices.getSessionDetails(sid)
-        return Response(OK).header("content-type", "application/json").body(Json.encodeToString(session))
+        val res = sessionServices.getSessionById(sid)
+        return Response(OK)
+            .header("content-type", "application/json")
+            .body(
+                Json.encodeToString(
+                    SessionInfoOutputModel(
+                        res.sid,
+                        res.capacity,
+                        res.date,
+                        GameInfoOutputModel(
+                            res.gameSession.gid,
+                            res.gameSession.name,
+                            res.gameSession.developer,
+                            res.gameSession.genres
+                        ),
+                        res.playersSession.map {
+                            PlayerInfoOutputModel(
+                                it.pid,
+                                it.name,
+                                it.email
+                            )
+                        }.toSet()
+                    )
+                )
+            )
     }
 
     private fun getSessionList(request: Request): Response {
         val (limit, skip) = (request.query("limit")?.toIntOrNull() ?: 5) to (request.query("skip")?.toIntOrNull() ?: 0)
-        val sessionSearch = parseJsonBody<SessionSearch>(request)
-        val sessions = sessionServices.listSessions(sessionSearch, limit, skip)
-        return Response(OK).header("content-type", "application/json").body(Json.encodeToString(sessions))
+        val sessionSearch = parseJsonBody<SessionSearchInputModel>(request)
+        val res = sessionServices.listSessions(
+            sessionSearch.gid,
+            sessionSearch.date,
+            sessionSearch.state,
+            sessionSearch.pid,
+            limit,
+            skip
+        )
+        return Response(OK)
+            .header("content-type", "application/json")
+            .body(
+                Json.encodeToString(
+                    SessionSearchOutputModel(
+                        res.map {
+                            SessionInfoOutputModel(
+                                it.sid,
+                                it.capacity,
+                                it.date,
+                                GameInfoOutputModel(
+                                    it.gameSession.gid,
+                                    it.gameSession.name,
+                                    it.gameSession.developer,
+                                    it.gameSession.genres
+                                ),
+                                it.playersSession.map {
+                                    PlayerInfoOutputModel(
+                                        it.pid,
+                                        it.name,
+                                        it.email
+                                    )
+                                }.toSet()
+                            )
+                        }.toSet()
+                    )
+                )
+            )
     }
 
     /**
