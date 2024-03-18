@@ -18,16 +18,25 @@ import pt.isel.ls.services.*
 
 
 /**
- * The [SessionsApi] class is responsible for processing HTTP requests and returning the responses.
+ * The [SessionsApi] class is responsible for processing client requests and returning the appropriate response.
  *
- * Requests are handled using the processRequest method, which receives a request and an [Operation].
+ * The user should use the processRequest method, passing the HTTP request and the desired processor from the available list.
  *
- * @param playerServices The [playerService] instance
- * @param gameServices The [gameService] instance
- * @param sessionServices The [sessionsService] instance
+ * @param playerServices The playerService instance
+ * @param gameServices The gameService instance
+ * @param sessionServices The sessionsService instance
+ *
+ * @property createPlayer The processor for creating a player
+ * @property getPlayerDetails The processor for getting player details
+ * @property createGame The processor for creating a game
+ * @property getGameDetails The processor for getting game details
+ * @property getGameList The processor for getting the game list
+ * @property createSession The processor for creating a session
+ * @property addPlayerToSession The processor for adding a player to a session
+ * @property getSessionDetails The processor for getting session details
+ * @property getSessionList The processor for getting the session list
+ *
  * @property processRequest The method that processes the request and returns the response
- *
- *
  */
 
 class SessionsApi(val playerServices: playerService,
@@ -60,15 +69,7 @@ class SessionsApi(val playerServices: playerService,
         val res = playerServices.getPlayerDetails(pid)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(
-                Json.encodeToString(
-                    PlayerInfoOutputModel(
-                        res.pid,
-                        res.name,
-                        res.email
-                    )
-                )
-            )
+            .body(Json.encodeToString(res.toInfoDTO()))
     }
 
     private fun createGame(request: Request): Response {
@@ -84,16 +85,7 @@ class SessionsApi(val playerServices: playerService,
         val res = gameServices.getGameById(gid)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(
-                Json.encodeToString(
-                    GameInfoOutputModel(
-                        res.gid,
-                        res.name,
-                        res.developer,
-                        res.genres.toList()
-                    )
-                )
-            )
+            .body(Json.encodeToString(res.toInfoDTO()))
     }
 
     private fun getGameList(request: Request): Response {
@@ -102,20 +94,7 @@ class SessionsApi(val playerServices: playerService,
         val res = gameServices.searchGames(gameSearch.genres, gameSearch.developer, limit, skip)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(
-                Json.encodeToString(
-                    GameSearchOutputModel(
-                        res.map {
-                            GameInfoOutputModel(
-                                it.gid,
-                                it.name,
-                                it.developer,
-                                it.genres.toList()
-                            )
-                        }
-                    )
-                )
-            )
+            .body(Json.encodeToString(GameSearchOutputModel(res.map { it.toInfoDTO() }.toSet())))
     }
 
     private fun createSession(request: Request): Response {
@@ -140,28 +119,7 @@ class SessionsApi(val playerServices: playerService,
         val res = sessionServices.getSessionById(sid)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(
-                Json.encodeToString(
-                    SessionInfoOutputModel(
-                        res.sid,
-                        res.capacity,
-                        res.date,
-                        GameInfoOutputModel(
-                            res.gameSession.gid,
-                            res.gameSession.name,
-                            res.gameSession.developer,
-                            res.gameSession.genres.toList()
-                        ),
-                        res.playersSession.map {
-                            PlayerInfoOutputModel(
-                                it.pid,
-                                it.name,
-                                it.email
-                            )
-                        }
-                    )
-                )
-            )
+            .body(Json.encodeToString(res.toInfoDTO()))
     }
 
     private fun getSessionList(request: Request): Response {
@@ -177,32 +135,7 @@ class SessionsApi(val playerServices: playerService,
         )
         return Response(OK)
             .header("content-type", "application/json")
-            .body(
-                Json.encodeToString(
-                    SessionSearchOutputModel(
-                        res.map {
-                            SessionInfoOutputModel(
-                                it.sid,
-                                it.capacity,
-                                it.date,
-                                GameInfoOutputModel(
-                                    it.gameSession.gid,
-                                    it.gameSession.name,
-                                    it.gameSession.developer,
-                                    it.gameSession.genres.toList()
-                                ),
-                                it.playersSession.map {
-                                    PlayerInfoOutputModel(
-                                        it.pid,
-                                        it.name,
-                                        it.email
-                                    )
-                                }
-                            )
-                        }
-                    )
-                )
-            )
+            .body(Json.encodeToString(SessionSearchOutputModel(res.map { it.toInfoDTO() }.toSet())))
     }
 
     /**
@@ -251,6 +184,7 @@ class SessionsApi(val playerServices: playerService,
             throw BadRequestException(e.message)
         }
     }
+
 }
 
 
