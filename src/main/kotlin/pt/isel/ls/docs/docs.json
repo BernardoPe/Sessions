@@ -22,10 +22,12 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "John Doe"
                   },
                   "email": {
-                      "type": "string"
+                    "type": "string",
+                    "format": "email"
                   }
                 },
                 "required": [
@@ -41,7 +43,66 @@
             "description": "Player created successfully",
             "content": {
               "application/json": {
-                "schema": null
+                "schema":  {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "token": {
+                      "type": "string",
+                      "format" : "uuid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Bad Request"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Invalid body"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 409
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Conflict"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Player with email already exists"
+                    }
+                  }
+                }
               }
             }
           }
@@ -63,11 +124,74 @@
           }
         ],
         "responses": {
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Not Found"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Player not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Bad Request"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Invalid ID"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "200": {
             "description": "Player details retrieved successfully",
             "content": {
               "application/json": {
-                "schema": null
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "pid": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    }
+                  }
+                }
               }
             }
           }
@@ -76,6 +200,11 @@
     },
     "/games": {
       "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "summary": "Create a new game",
         "requestBody": {
           "required": true,
@@ -85,31 +214,92 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Chess"
                   },
                   "developer": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Chess.com"
                   },
                   "genres": {
                     "type": "array",
                     "items": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "Strategy"
                     }
                   }
                 },
                 "required": [
-                  "name"
+                  "name",
+                  "developer",
+                  "genres"
                 ]
               }
             }
           }
         },
         "responses": {
-          "200": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 401
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Invalid token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Bad Request"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Invalid body"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
             "description": "Game created successfully",
             "content": {
               "application/json": {
-                "schema": null
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "gid": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  }
+                }
               }
             }
           }
@@ -117,12 +307,108 @@
       },
       "get": {
         "summary": "Get list of games",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "int",
+              "default": 5
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "int",
+              "default": 0
+            }
+          }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "developer": {
+                    "type": "string",
+                    "example": "Chess.com"
+                  },
+                  "genres": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "Strategy"
+                    }
+                  }
+                },
+                "required": [
+                  "developer",
+                  "genres"
+                ]
+              }
+            }
+          }
+        },
         "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Bad Request"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Invalid body"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "200": {
             "description": "List of games retrieved successfully",
             "content": {
               "application/json": {
-                "schema": null
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "gid": {
+                        "type": "integer",
+                        "format": "int32"
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Chess"
+                      },
+                      "developer": {
+                        "type": "string",
+                        "example": "Chess.com"
+                      },
+                      "genres": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "example": "Strategy"
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -144,11 +430,81 @@
           }
         ],
         "responses": {
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Not Found"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Game not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Bad Request"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Invalid ID"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "200": {
             "description": "Game details retrieved successfully",
             "content": {
               "application/json": {
-                "schema": null
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "gid": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Chess"
+                    },
+                    "developer": {
+                      "type": "string",
+                      "example": "Chess.com"
+                    },
+                    "genres": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -157,6 +513,11 @@
     },
     "/sessions": {
       "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "summary": "Create a new session",
         "requestBody": {
           "required": true,
@@ -170,23 +531,109 @@
                     "format": "int32"
                   },
                   "date": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                   },
                   "gid": {
                     "type": "integer",
                     "format": "int32"
                   }
-                }
+                },
+                "required": [
+                  "capacity",
+                  "date",
+                  "gid"
+                ]
               }
             }
           }
         },
         "responses": {
-          "200": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 401
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Invalid token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
             "description": "Session created successfully",
             "content": {
               "application/json": {
-                "schema": null
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sid": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Bad Request"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Invalid body"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Not Found"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Game not found"
+                    }
+                  }
+                }
               }
             }
           }
@@ -194,7 +641,82 @@
       },
       "get": {
         "summary": "Get list of sessions",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "gid": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "capacity": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "pid": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                },
+                "required": [
+                  "gid"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "int",
+              "default": 5
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "int",
+              "default": 0
+            }
+          }
+        ],
         "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Bad Request"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Invalid body"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "200": {
             "description": "List of sessions retrieved successfully",
             "content": {
@@ -213,11 +735,52 @@
                         "format": "int32"
                       },
                       "date": {
-                        "type": "string"
+                        "type": "string",
+                        "format": "date-time"
                       },
-                      "gid": {
-                        "type": "integer",
-                        "format": "int32"
+                      "gameSession": {
+                        "type": "object",
+                        "properties": {
+                          "gid": {
+                            "type": "integer",
+                            "format": "int32"
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Chess"
+                          },
+                          "developer": {
+                            "type": "string",
+                            "example": "Chess.com"
+                          },
+                          "genres": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "example": "Strategy"
+                            }
+                          }
+                        }
+                      },
+                      "players": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "pid": {
+                              "type": "integer",
+                              "format": "int32"
+                            },
+                            "name": {
+                              "type": "string",
+                              "example": "John Doe"
+                            },
+                            "email": {
+                              "type": "string",
+                              "format": "email"
+                            }
+                          }
+                        }
                       }
                     }
                   }
@@ -243,6 +806,54 @@
           }
         ],
         "responses": {
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Not Found"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Session not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Bad Request"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Invalid ID"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "200": {
             "description": "Session details retrieved successfully",
             "content": {
@@ -259,11 +870,52 @@
                       "format": "int32"
                     },
                     "date": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "date-time"
                     },
-                    "gid": {
-                      "type": "integer",
-                      "format": "int32"
+                    "gameSession": {
+                      "type": "object",
+                      "properties": {
+                        "gid": {
+                          "type": "integer",
+                          "format": "int32"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Chess"
+                        },
+                        "developer": {
+                          "type": "string",
+                          "example": "Chess.com"
+                        },
+                        "genres": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "example": "Strategy"
+                          }
+                        }
+                      }
+                    },
+                    "players": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "pid": {
+                            "type": "integer",
+                            "format": "int32"
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "John Doe"
+                          },
+                          "email": {
+                            "type": "string",
+                            "format": "email"
+                          }
+                        }
+                      }
                     }
                   }
                 }
@@ -271,9 +923,35 @@
             }
           }
         }
-      },
+      }
+    },
+    "/sessions/{sid}/players": {
       "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "summary": "Add player to session",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "pid": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                },
+                "required": [
+                  "pid"
+                ]
+              }
+            }
+          }
+        },
         "parameters": [
           {
             "name": "sid",
@@ -283,27 +961,106 @@
               "type": "integer",
               "format": "int32"
             }
-          },
-          {
-            "name": "pid",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
           }
         ],
         "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 401
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Invalid token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Not Found"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Session not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Bad Request"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Invalid body"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "200": {
             "description": "Player added to session successfully",
             "content": {
               "application/json": {
-                "schema": null
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Player added to session successfully"
+                    }
+                  }
+                }
               }
             }
           }
         }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
       }
     }
   }
