@@ -1,5 +1,17 @@
 package pt.isel.ls.api
 
+import kotlinx.serialization.json.Json
+import org.http4k.core.Method
+import org.http4k.core.Request
+import org.http4k.core.Status
+import org.http4k.core.UriTemplate
+import org.http4k.routing.RoutedRequest
+import pt.isel.ls.dto.PlayerInfoOutputModel
+import pt.isel.ls.services.gameService
+import pt.isel.ls.services.playerService
+import pt.isel.ls.services.sessionsService
+import kotlin.test.Test
+
 /*
 class PlayerEndpointsTest {
 
@@ -72,7 +84,7 @@ class PlayerEndpointsTest {
         // Act
         val response = api.processRequest(routedRequest, Operation.GET_PLAYER_DETAILS)
         val playerDetailsJson = response.bodyString()
-        val playerDetails = Json.decodeFromString<Player>(playerDetailsJson)
+        val playerDetails = Json.decodeFromString<PlayerInfoOutputModel>(playerDetailsJson)
         // Assert
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
@@ -93,5 +105,4 @@ class PlayerEndpointsTest {
     }
 
 }
-
 */

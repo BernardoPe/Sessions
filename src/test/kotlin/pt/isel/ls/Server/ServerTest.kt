@@ -1,7 +1,20 @@
 package pt.isel.ls.Server
 
+import kotlinx.serialization.json.Json
+import org.http4k.core.Method
+import org.http4k.core.Request
+import org.http4k.core.Status
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import pt.isel.ls.api.SessionsApi
+import pt.isel.ls.dto.*
+import pt.isel.ls.pt.isel.ls.SessionsServer
+import pt.isel.ls.services.gameService
+import pt.isel.ls.services.playerService
+import pt.isel.ls.services.sessionsService
 
-/*
+/**
 class ServerTest {
 
 
@@ -105,7 +118,7 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         val playerDetailsJson = response.bodyString()
-        val playerDetails = Json.decodeFromString<Player>(playerDetailsJson)
+        val playerDetails = Json.decodeFromString<PlayerInfoOutputModel>(playerDetailsJson)
         // Assert
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
@@ -188,7 +201,7 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         val gameDetailsJson = response.bodyString()
-        val gameDetails = Json.decodeFromString<Game>(gameDetailsJson)
+        val gameDetails = Json.decodeFromString<GameInfoOutputModel>(gameDetailsJson)
         // Assert
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
@@ -216,19 +229,19 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         val gameListJson = response.bodyString()
-        val gameList = Json.decodeFromString<List<Game>>(gameListJson)
+        val gameList = Json.decodeFromString<GameSearchOutputModel>(gameListJson)
         // Assert
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
-        assert(gameList.size == 2)
-        assert(gameList[0].name == "TestName1")
-        assert(gameList[0].developer == "TestDeveloper1")
-        assert(gameList[0].genres == listOf("TestGenre1"))
-        assert(gameList[0].gid == 1)
-        assert(gameList[1].name == "TestName2")
-        assert(gameList[1].developer == "TestDeveloper2")
-        assert(gameList[1].genres == listOf("TestGenre2"))
-        assert(gameList[1].gid == 2)
+        assert(gameList.games.size == 2)
+        assert(gameList.games[0].name == "TestName1")
+        assert(gameList.games[0].developer == "TestDeveloper1")
+        assert(gameList.games[0].genres == listOf("TestGenre1"))
+        assert(gameList.games[0].gid == 1)
+        assert(gameList.games[1].name == "TestName2")
+        assert(gameList.games[1].developer == "TestDeveloper2")
+        assert(gameList.games[1].genres == listOf("TestGenre2"))
+        assert(gameList.games[1].gid == 2)
     }
 
     @Test
@@ -266,15 +279,15 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         val gameListJson = response.bodyString()
-        val gameList = Json.decodeFromString<List<Game>>(gameListJson)
+        val gameList = Json.decodeFromString<GameSearchOutputModel>(gameListJson)
         // Assert
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
-        assert(gameList.size == 1)
-        assert(gameList[0].name == "TestName2")
-        assert(gameList[0].developer == "TestDeveloper2")
-        assert(gameList[0].genres == listOf("TestGenre2"))
-        assert(gameList[0].gid == 2)
+        assert(gameList.games.size == 1)
+        assert(gameList.games[0].name == "TestName2")
+        assert(gameList.games[0].developer == "TestDeveloper2")
+        assert(gameList.games[0].genres == listOf("TestGenre2"))
+        assert(gameList.games[0].gid == 2)
     }
 
     @Test
@@ -463,7 +476,7 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         val sessionBodyString = response.bodyString()
-        val session = Json.decodeFromString<Session>(sessionBodyString)
+        val session = Json.decodeFromString<SessionInfoOutputModel>(sessionBodyString)
         //  Assert
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
@@ -494,15 +507,15 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         val sessionListJson = response.bodyString()
-        val sessionList = Json.decodeFromString<List<Session>>(sessionListJson)
+        val sessionList = Json.decodeFromString<SessionSearchOutputModel>(sessionListJson)
         //  Assert
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
-        assert(sessionList.size == 1)
-        assert(sessionList[0].gameSession.gid == 1)
-        assert(sessionList[0].capacity == 100)
-        assert(sessionList[0].date == "2021-05-01T00:00:00")
-        assert(sessionList[0].sid == 1)
+        assert(sessionList.sessions.size == 1)
+        assert(sessionList.sessions[0].gameSession.gid == 1)
+        assert(sessionList.sessions[0].capacity == 100)
+        assert(sessionList.sessions[0].date == "2021-05-01T00:00:00")
+        assert(sessionList.sessions[0].sid == 1)
     }
 
     @Test
@@ -539,19 +552,19 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         val sessionListJson = response.bodyString()
-        val sessionList = Json.decodeFromString<List<Session>>(sessionListJson)
+        val sessionList = Json.decodeFromString<SessionSearchOutputModel>(sessionListJson)
         //  Assert
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
-        assert(sessionList.size == 2)
-        assert(sessionList[0].gameSession.gid == 1)
-        assert(sessionList[0].capacity == 100)
-        assert(sessionList[0].date == "2021-05-01T00:00:00")
-        assert(sessionList[0].sid == 1)
-        assert(sessionList[1].gameSession.gid == 1)
-        assert(sessionList[1].capacity == 100)
-        assert(sessionList[1].date == "2021-06-01T00:00:00")
-        assert(sessionList[1].sid == 2)
+        assert(sessionList.sessions.size == 2)
+        assert(sessionList.sessions[0].gameSession.gid == 1)
+        assert(sessionList.sessions[0].capacity == 100)
+        assert(sessionList.sessions[0].date == "2021-05-01T00:00:00")
+        assert(sessionList.sessions[0].sid == 1)
+        assert(sessionList.sessions[1].gameSession.gid == 1)
+        assert(sessionList.sessions[1].capacity == 100)
+        assert(sessionList.sessions[1].date == "2021-06-01T00:00:00")
+        assert(sessionList.sessions[1].sid == 2)
     }
 
     companion object {
@@ -569,6 +582,7 @@ class ServerTest {
         fun stopServer(): Unit {
             server.stop()
         }
+
     }
 
 

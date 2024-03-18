@@ -1,5 +1,18 @@
 package pt.isel.ls.api
 
+import kotlinx.serialization.json.Json
+import org.http4k.core.Method
+import org.http4k.core.Request
+import org.http4k.core.Status
+import org.http4k.core.UriTemplate
+import org.http4k.routing.RoutedRequest
+import pt.isel.ls.dto.GameInfoOutputModel
+import pt.isel.ls.dto.GameSearchOutputModel
+import pt.isel.ls.services.gameService
+import pt.isel.ls.services.playerService
+import pt.isel.ls.services.sessionsService
+import kotlin.test.Test
+
 /**
 class GameEndpointsTest {
 
@@ -69,7 +82,7 @@ class GameEndpointsTest {
         // Act
         val response = api.processRequest(routedRequest, Operation.GET_GAME_DETAILS)
         val gameDetailsJson = response.bodyString()
-        val gameDetails = Json.decodeFromString<Game>(gameDetailsJson)
+        val gameDetails = Json.decodeFromString<GameInfoOutputModel>(gameDetailsJson)
         // Assert
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
@@ -98,19 +111,19 @@ class GameEndpointsTest {
         // Act
         val response = api.processRequest(request, Operation.GET_GAME_LIST)
         val gameListJson = response.bodyString()
-        val gameList = Json.decodeFromString<List<Game>>(gameListJson)
+        val gameList = Json.decodeFromString<GameSearchOutputModel>(gameListJson)
         // Assert
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
-        assert(gameList.size == 2)
-        assert(gameList[0].name == "TestName1")
-        assert(gameList[0].developer == "TestDeveloper1")
-        assert(gameList[0].genres == listOf("TestGenre1"))
-        assert(gameList[0].gid == 1)
-        assert(gameList[1].name == "TestName2")
-        assert(gameList[1].developer == "TestDeveloper2")
-        assert(gameList[1].genres == listOf("TestGenre2"))
-        assert(gameList[1].gid == 2)
+        assert(gameList.games.size == 2)
+        assert(gameList.games[0].name == "TestName1")
+        assert(gameList.games[0].developer == "TestDeveloper1")
+        assert(gameList.games[0].genres == listOf("TestGenre1"))
+        assert(gameList.games[0].gid == 1)
+        assert(gameList.games[1].name == "TestName2")
+        assert(gameList.games[1].developer == "TestDeveloper2")
+        assert(gameList.games[1].genres == listOf("TestGenre2"))
+        assert(gameList.games[1].gid == 2)
     }
 
     @Test
@@ -151,15 +164,15 @@ class GameEndpointsTest {
         // Act
         val response = api.processRequest(request, Operation.GET_GAME_LIST)
         val gameListJson = response.bodyString()
-        val gameList = Json.decodeFromString<List<Game>>(gameListJson)
+        val gameList = Json.decodeFromString<GameSearchOutputModel>(gameListJson)
         // Assert
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
-        assert(gameList.size == 1)
-        assert(gameList[0].name == "TestName2")
-        assert(gameList[0].developer == "TestDeveloper2")
-        assert(gameList[0].genres == listOf("TestGenre2"))
-        assert(gameList[0].gid == 2)
+        assert(gameList.games.size == 1)
+        assert(gameList.games[0].name == "TestName2")
+        assert(gameList.games[0].developer == "TestDeveloper2")
+        assert(gameList.games[0].genres == listOf("TestGenre2"))
+        assert(gameList.games[0].gid == 2)
     }
 
 }*/

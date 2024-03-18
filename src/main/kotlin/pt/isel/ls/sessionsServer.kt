@@ -52,20 +52,20 @@ class SessionsServer(api: SessionsApi, port: Int = 8080) {
     private fun bindRoute(route: String, method: org.http4k.core.Method, operation: Operation) =
         route bind method to { req -> dispatcher(req, operation) }
 
-    val playerRoutes =
+    private val playerRoutes =
         routes(
             bindRoute(PLAYER_ROUTE, POST, Operation.CREATE_PLAYER),
             bindRoute(PLAYER_DETAILS_ROUTE, GET, Operation.GET_PLAYER_DETAILS)
         )
 
-    val gameRoutes =
+    private val gameRoutes =
         routes(
             bindRoute(GAME_ROUTE, POST, Operation.CREATE_GAME),
             bindRoute(GAME_DETAILS_ROUTE, GET, Operation.GET_GAME_DETAILS),
             bindRoute(GAME_ROUTE, GET, Operation.GET_GAME_LIST)
         )
 
-    val sessionRoutes =
+    private val sessionRoutes =
         routes(
             bindRoute(SESSION_ROUTE, POST, Operation.CREATE_SESSION),
             bindRoute(SESSION_DETAILS_ROUTE, PUT, Operation.ADD_PLAYER_TO_SESSION),

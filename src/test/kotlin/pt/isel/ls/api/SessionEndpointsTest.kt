@@ -1,5 +1,18 @@
 package pt.isel.ls.api
 
+import kotlinx.serialization.json.Json
+import org.http4k.core.Method
+import org.http4k.core.Request
+import org.http4k.core.Status
+import org.http4k.core.UriTemplate
+import org.http4k.routing.RoutedRequest
+import pt.isel.ls.dto.SessionInfoOutputModel
+import pt.isel.ls.dto.SessionSearchOutputModel
+import pt.isel.ls.services.gameService
+import pt.isel.ls.services.playerService
+import pt.isel.ls.services.sessionsService
+import kotlin.test.Test
+
 /**
 class SessionEndpointsTest {
 
@@ -199,7 +212,7 @@ class SessionEndpointsTest {
         // Act
         val response = api.processRequest(routedRequest, Operation.GET_SESSION_DETAILS)
         val sessionBodyString = response.bodyString()
-        val session = Json.decodeFromString<Session>(sessionBodyString)
+        val session = Json.decodeFromString<SessionInfoOutputModel>(sessionBodyString)
         //  Assert
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
@@ -232,15 +245,15 @@ class SessionEndpointsTest {
         // Act
         val response = api.processRequest(request, Operation.GET_SESSION_LIST)
         val sessionListJson = response.bodyString()
-        val sessionList = Json.decodeFromString<List<Session>>(sessionListJson)
+        val sessionList = Json.decodeFromString<SessionSearchOutputModel>(sessionListJson)
         //  Assert
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
-        assert(sessionList.size == 1)
-        assert(sessionList[0].gameSession.gid == 1)
-        assert(sessionList[0].capacity == 100)
-        assert(sessionList[0].date == "2021-05-01T00:00:00")
-        assert(sessionList[0].sid == 1)
+        assert(sessionList.sessions.size == 1)
+        assert(sessionList.sessions[0].gameSession.gid == 1)
+        assert(sessionList.sessions[0].capacity == 100)
+        assert(sessionList.sessions[0].date == "2021-05-01T00:00:00")
+        assert(sessionList.sessions[0].sid == 1)
     }
 
     @Test
@@ -277,18 +290,18 @@ class SessionEndpointsTest {
         // Act
         val response = api.processRequest(request, Operation.GET_SESSION_LIST)
         val sessionListJson = response.bodyString()
-        val sessionList = Json.decodeFromString<List<Session>>(sessionListJson)
+        val sessionList = Json.decodeFromString<SessionSearchOutputModel>(sessionListJson)
         //  Assert
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
-        assert(sessionList.size == 2)
-        assert(sessionList[0].gameSession.gid == 1)
-        assert(sessionList[0].capacity == 100)
-        assert(sessionList[0].date == "2021-05-01T00:00:00")
-        assert(sessionList[0].sid == 1)
-        assert(sessionList[1].gameSession.gid == 1)
-        assert(sessionList[1].capacity == 100)
-        assert(sessionList[1].date == "2021-06-01T00:00:00")
-        assert(sessionList[1].sid == 2)
+        assert(sessionList.sessions.size == 2)
+        assert(sessionList.sessions[0].gameSession.gid == 1)
+        assert(sessionList.sessions[0].capacity == 100)
+        assert(sessionList.sessions[0].date == "2021-05-01T00:00:00")
+        assert(sessionList.sessions[0].sid == 1)
+        assert(sessionList.sessions[1].gameSession.gid == 1)
+        assert(sessionList.sessions[1].capacity == 100)
+        assert(sessionList.sessions[1].date == "2021-06-01T00:00:00")
+        assert(sessionList.sessions[1].sid == 2)
     }
 }*/

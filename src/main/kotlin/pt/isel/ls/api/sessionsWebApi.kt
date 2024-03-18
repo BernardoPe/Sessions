@@ -18,25 +18,16 @@ import pt.isel.ls.services.*
 
 
 /**
- * The [SessionsApi] class is responsible for processing client requests and returning the appropriate response.
+ * The [SessionsApi] class is responsible for processing HTTP requests and returning the responses.
  *
- * The user should use the processRequest method, passing the HTTP request and the desired processor from the available list.
+ * Requests are handled using the processRequest method, which receives a request and an [Operation].
  *
- * @param playerServices The playerService instance
- * @param gameServices The gameService instance
- * @param sessionServices The sessionsService instance
- *
- * @property createPlayer The processor for creating a player
- * @property getPlayerDetails The processor for getting player details
- * @property createGame The processor for creating a game
- * @property getGameDetails The processor for getting game details
- * @property getGameList The processor for getting the game list
- * @property createSession The processor for creating a session
- * @property addPlayerToSession The processor for adding a player to a session
- * @property getSessionDetails The processor for getting session details
- * @property getSessionList The processor for getting the session list
- *
+ * @param playerServices The [playerService] instance
+ * @param gameServices The [gameService] instance
+ * @param sessionServices The [sessionsService] instance
  * @property processRequest The method that processes the request and returns the response
+ *
+ *
  */
 
 class SessionsApi(val playerServices: playerService,
@@ -99,7 +90,7 @@ class SessionsApi(val playerServices: playerService,
                         res.gid,
                         res.name,
                         res.developer,
-                        res.genres
+                        res.genres.toList()
                     )
                 )
             )
@@ -119,9 +110,9 @@ class SessionsApi(val playerServices: playerService,
                                 it.gid,
                                 it.name,
                                 it.developer,
-                                it.genres
+                                it.genres.toList()
                             )
-                        }.toSet()
+                        }
                     )
                 )
             )
@@ -159,7 +150,7 @@ class SessionsApi(val playerServices: playerService,
                             res.gameSession.gid,
                             res.gameSession.name,
                             res.gameSession.developer,
-                            res.gameSession.genres
+                            res.gameSession.genres.toList()
                         ),
                         res.playersSession.map {
                             PlayerInfoOutputModel(
@@ -167,7 +158,7 @@ class SessionsApi(val playerServices: playerService,
                                 it.name,
                                 it.email
                             )
-                        }.toSet()
+                        }
                     )
                 )
             )
@@ -198,7 +189,7 @@ class SessionsApi(val playerServices: playerService,
                                     it.gameSession.gid,
                                     it.gameSession.name,
                                     it.gameSession.developer,
-                                    it.gameSession.genres
+                                    it.gameSession.genres.toList()
                                 ),
                                 it.playersSession.map {
                                     PlayerInfoOutputModel(
@@ -206,9 +197,9 @@ class SessionsApi(val playerServices: playerService,
                                         it.name,
                                         it.email
                                     )
-                                }.toSet()
+                                }
                             )
-                        }.toSet()
+                        }
                     )
                 )
             )

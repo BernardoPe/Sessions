@@ -37,7 +37,7 @@ data class GameCreationOutputModel(val gid: Int)
  */
 
 @Serializable
-data class GameInfoOutputModel(val gid: Int, val name: String, val developer: String, val genres: Set<String>)
+data class GameInfoOutputModel(val gid: Int, val name: String, val developer: String, val genres: List<String>)
 
 /**
  * The [GameSearchInputModel] class is used to represent the request body of list of games
@@ -53,4 +53,4 @@ data class GameSearchInputModel(val developer: String, val genres: Set<String>)
  */
 
 @Serializable
-data class GameSearchOutputModel(val games: Set<GameInfoOutputModel>)
+data class GameSearchOutputModel(val games: List<GameInfoOutputModel>)
