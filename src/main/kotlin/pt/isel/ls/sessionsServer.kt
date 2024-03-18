@@ -13,6 +13,9 @@ import pt.isel.ls.api.SessionsApi
 import pt.isel.ls.services.gameService
 import pt.isel.ls.services.playerService
 import pt.isel.ls.services.sessionsService
+import pt.isel.ls.storage.mem.SessionsDataMemGame
+import pt.isel.ls.storage.mem.SessionsDataMemPlayer
+import pt.isel.ls.storage.mem.SessionsDataMemSession
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -128,7 +131,12 @@ class SessionsServer(api: SessionsApi, port: Int = 8080) {
 
 
 fun main() {
-    val server = SessionsServer(SessionsApi(playerService(), gameService(), sessionsService()))
+    val server = SessionsServer(
+        SessionsApi(
+            playerService(SessionsDataMemPlayer()),
+            gameService(SessionsDataMemGame()),
+            sessionsService(SessionsDataMemSession()))
+    )
     server.start()
     readln()
     server.stop()

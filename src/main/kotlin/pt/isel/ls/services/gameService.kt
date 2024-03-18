@@ -1,9 +1,10 @@
 package pt.isel.ls.services
 
 import pt.isel.ls.domain.game.Game
+import pt.isel.ls.storage.SessionsDataGame
 
 
-class gameService() {//val storage: SessionsDataGame) {
+class gameService(val storage: SessionsDataGame) {
 
     fun createGame(name: String, developer: String, genres: Set<String>): Int {
         //storage.create(game)
