@@ -6,17 +6,24 @@ import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
+import org.junit.jupiter.api.BeforeAll
+import pt.isel.ls.domain.game.Game
+import pt.isel.ls.domain.player.Player
+import pt.isel.ls.domain.session.Session
 import pt.isel.ls.dto.SessionInfoOutputModel
 import pt.isel.ls.dto.SessionSearchOutputModel
 import pt.isel.ls.services.gameService
 import pt.isel.ls.services.playerService
 import pt.isel.ls.services.sessionsService
+import pt.isel.ls.storage.SessionsDataPlayer
+import pt.isel.ls.storage.mem.SessionsDataMemGame
+import pt.isel.ls.storage.mem.SessionsDataMemPlayer
+import pt.isel.ls.storage.mem.SessionsDataMemSession
 import kotlin.test.Test
 
-/**
+/*
 class SessionEndpointsTest {
 
-    private val api = SessionsApi(playerService(), gameService(), sessionsService())
     @Test
     fun `test create session should create player`() {
         // Arrange
@@ -303,5 +310,31 @@ class SessionEndpointsTest {
         assert(sessionList.sessions[1].capacity == 100)
         assert(sessionList.sessions[1].date == "2021-06-01T00:00:00")
         assert(sessionList.sessions[1].sid == 2)
+    }
+
+
+    companion object {
+
+        private val sessionStorage = SessionsDataMemSession()
+
+        private val api = SessionsApi(
+                playerService(SessionsDataMemPlayer()),
+                gameService(SessionsDataMemGame()),
+                sessionsService(sessionStorage)
+            )
+
+        @JvmStatic
+        @BeforeAll
+        fun `setup`(): Unit {
+
+            val mockGame1 = Game(1, "TestName", "TestDeveloper", setOf("TestGenre"))
+            val mockSession = Session(1, 100, "2021-05-01T00:00:00", mockGame1, setOf())
+            val mockSession2 = Session(2, 100, "2021-06-01T00:00:00", mockGame1, setOf())
+
+            sessionStorage.create(mockSession)
+            sessionStorage.create(mockSession2)
+
+        }
+
     }
 }*/

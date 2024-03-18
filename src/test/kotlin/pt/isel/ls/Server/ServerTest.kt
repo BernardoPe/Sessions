@@ -8,13 +8,21 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import pt.isel.ls.api.SessionsApi
+import pt.isel.ls.domain.game.Game
+import pt.isel.ls.domain.player.Player
 import pt.isel.ls.dto.*
 import pt.isel.ls.pt.isel.ls.SessionsServer
 import pt.isel.ls.services.gameService
 import pt.isel.ls.services.playerService
 import pt.isel.ls.services.sessionsService
+import pt.isel.ls.storage.mem.SessionsDataMemGame
+import pt.isel.ls.storage.mem.SessionsDataMemPlayer
+import pt.isel.ls.storage.mem.SessionsDataMemSession
+import pt.isel.ls.domain.session.Session
+
 
 /**
+
 class ServerTest {
 
 
@@ -129,7 +137,7 @@ class ServerTest {
     @Test
     fun `test get player details not found`() {
         // Arrange
-        val request = Request(Method.GET, "/players/2")
+        val request = Request(Method.GET, "/players/3")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
@@ -153,7 +161,7 @@ class ServerTest {
         // Arrange
         val request = Request(Method.POST, "/games")
             .header("Content-Type", "application/json")
-            .body("""{"name":"Test","developer":"Test","genres":["Test"]}""")
+            .body("""{"name":"TestName","developer":"Test","genres":["Test"]}""")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
@@ -213,7 +221,7 @@ class ServerTest {
     @Test
     fun `test get game details not found`() {
         // Arrange
-        val request = Request(Method.GET, "/games/2")
+        val request = Request(Method.GET, "/games/3")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
@@ -316,7 +324,7 @@ class ServerTest {
     }
 
     @Test
-    fun `test create session exceeding incorrect date format should give bad request`() {
+    fun `test create session incorrect date format should give bad request`() {
         // Arrange
         val request = Request(Method.POST, "/sessions")
             .header("Content-Type", "application/json")
@@ -569,11 +577,35 @@ class ServerTest {
 
     companion object {
 
-        private val server = SessionsServer(SessionsApi(playerService(), gameService(), sessionsService()))
+        private val playerStorage = SessionsDataMemPlayer()
+        private val gameStorage = SessionsDataMemGame()
+        private val sessionStorage = SessionsDataMemSession()
+
+        private val server = SessionsServer(
+            SessionsApi(
+                playerService(playerStorage),
+                gameService(gameStorage),
+                sessionsService(sessionStorage)
+        ))
 
         @JvmStatic
         @BeforeAll
-        fun startServer(): Unit {
+        fun `create mocks and start server`(): Unit {
+
+            val mockPlayer = Player(1, "TestName", "TestEmail")
+            val mockPlayer2 = Player(2, "TestName2", "TestEmail@gmail.com")
+            val mockGame1 = Game(1, "TestName", "TestDeveloper", setOf("TestGenre"))
+            val mockGame2 = Game(2, "TestName2", "TestDeveloper2", setOf("TestGenre"))
+            val mockSession = Session(1, 100, "2021-05-01T00:00:00", mockGame1, setOf())
+            val mockSession2 = Session(2, 100, "2021-06-01T00:00:00", mockGame1, setOf())
+
+            playerStorage.create(mockPlayer)
+            playerStorage.create(mockPlayer2)
+            gameStorage.create(mockGame1)
+            gameStorage.create(mockGame2)
+            sessionStorage.create(mockSession)
+            sessionStorage.create(mockSession2)
+
             server.start()
         }
 

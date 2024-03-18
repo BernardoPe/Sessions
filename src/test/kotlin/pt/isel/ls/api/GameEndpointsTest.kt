@@ -6,17 +6,22 @@ import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
+import org.junit.jupiter.api.BeforeAll
+import pt.isel.ls.domain.game.Game
 import pt.isel.ls.dto.GameInfoOutputModel
 import pt.isel.ls.dto.GameSearchOutputModel
 import pt.isel.ls.services.gameService
 import pt.isel.ls.services.playerService
 import pt.isel.ls.services.sessionsService
+import pt.isel.ls.storage.SessionsDataPlayer
+import pt.isel.ls.storage.mem.SessionsDataMemGame
+import pt.isel.ls.storage.mem.SessionsDataMemPlayer
+import pt.isel.ls.storage.mem.SessionsDataMemSession
 import kotlin.test.Test
 
-/**
+/*
 class GameEndpointsTest {
 
-    private val api = SessionsApi(playerService(), gameService(), sessionsService())
     @Test
     fun `test create game should create game`() {
         // Arrange
@@ -94,7 +99,7 @@ class GameEndpointsTest {
     @Test
     fun `test get game details should give not found`() {
         // Arrange
-        val request = Request(Method.GET, "/games/2")
+        val request = Request(Method.GET, "/games/3")
         val routedRequest = RoutedRequest(request, UriTemplate.from("/games/{gid}"))
         // Act
         val response = api.processRequest(routedRequest, Operation.GET_GAME_DETAILS)
@@ -173,6 +178,22 @@ class GameEndpointsTest {
         assert(gameList.games[0].developer == "TestDeveloper2")
         assert(gameList.games[0].genres == listOf("TestGenre2"))
         assert(gameList.games[0].gid == 2)
+    }
+
+    companion object {
+
+        private val gameStorage = SessionsDataMemGame()
+
+        private val api = SessionsApi(playerService(SessionsDataMemPlayer()), gameService(gameStorage), sessionsService(SessionsDataMemSession()))
+        @JvmStatic
+        @BeforeAll
+        fun setup(): Unit {
+            val mockGame1 = Game(1, "TestName", "TestDeveloper", setOf("TestGenre"))
+            val mockGame2 = Game(2, "TestName2", "TestDeveloper2", setOf("TestGenre"))
+            gameStorage.create(mockGame1)
+            gameStorage.create(mockGame2)
+        }
+
     }
 
 }*/

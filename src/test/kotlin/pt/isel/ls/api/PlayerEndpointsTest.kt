@@ -6,16 +6,22 @@ import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
+import org.junit.jupiter.api.BeforeAll
+import pt.isel.ls.domain.player.Player
 import pt.isel.ls.dto.PlayerInfoOutputModel
 import pt.isel.ls.services.gameService
 import pt.isel.ls.services.playerService
 import pt.isel.ls.services.sessionsService
+import pt.isel.ls.storage.mem.SessionsDataMemGame
+import pt.isel.ls.storage.mem.SessionsDataMemPlayer
+import pt.isel.ls.storage.mem.SessionsDataMemSession
 import kotlin.test.Test
 
+
 /*
+
 class PlayerEndpointsTest {
 
-    private val api = SessionsApi(playerService(), gameService(), sessionsService())
     @Test
     fun `test create player should create player`() {
         // Arrange
@@ -95,13 +101,28 @@ class PlayerEndpointsTest {
     @Test
     fun `test get player details should give not found`() {
         // Arrange
-        val request = Request(Method.GET, "/players/2")
+        val request = Request(Method.GET, "/players/3")
         val routedRequest = RoutedRequest(request, UriTemplate.from("/players/{pid}"))
         // Act
         val response = api.processRequest(routedRequest, Operation.GET_PLAYER_DETAILS)
         // Assert
         assert(response.header("Content-Type") == "application/json")
         assert(response.status == Status.NOT_FOUND)
+    }
+
+    companion object {
+
+        private val playerStorage = SessionsDataMemPlayer()
+        private val api = SessionsApi(playerService(playerStorage), gameService(SessionsDataMemGame()), sessionsService(SessionsDataMemSession()))
+
+        @JvmStatic
+        @BeforeAll
+        fun setup() {
+            val mockPlayer = Player(1, "TestName", "TestEmail")
+            val mockPlayer2 = Player(2, "TestName2", "TestEmail@gmail.com")
+            playerStorage.create(mockPlayer)
+            playerStorage.create(mockPlayer2)
+        }
     }
 
 }
