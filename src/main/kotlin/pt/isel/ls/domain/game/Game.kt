@@ -30,7 +30,7 @@ data class Game (
                 require(genres.all { it.length in 1..40 }) { "The game genres must be between 1 and 40 characters" }
         }
 
-        override fun toInfoDTO() = GameInfoOutputModel(gid, name, developer, genres)
+        override fun toDTO() = GameInfoOutputModel(gid, name, developer, genres.toList())
 
 }
 

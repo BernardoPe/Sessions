@@ -25,17 +25,6 @@ import pt.isel.ls.services.*
  * @param playerServices The playerService instance
  * @param gameServices The gameService instance
  * @param sessionServices The sessionsService instance
- *
- * @property createPlayer The processor for creating a player
- * @property getPlayerDetails The processor for getting player details
- * @property createGame The processor for creating a game
- * @property getGameDetails The processor for getting game details
- * @property getGameList The processor for getting the game list
- * @property createSession The processor for creating a session
- * @property addPlayerToSession The processor for adding a player to a session
- * @property getSessionDetails The processor for getting session details
- * @property getSessionList The processor for getting the session list
- *
  * @property processRequest The method that processes the request and returns the response
  */
 
@@ -46,14 +35,14 @@ class SessionsApi(val playerServices: playerService,
 
     private val processors = mapOf(
         Operation.CREATE_PLAYER to SessionsRequest(::createPlayer, false),
-        Operation.GET_PLAYER_DETAILS to SessionsRequest(::getPlayerDetails, true),
+        Operation.GET_PLAYER_DETAILS to SessionsRequest(::getPlayerDetails, false),
         Operation.CREATE_GAME to SessionsRequest(::createGame, true),
-        Operation.GET_GAME_DETAILS to SessionsRequest(::getGameById, true),
-        Operation.GET_GAME_LIST to SessionsRequest(::getGameList, true),
+        Operation.GET_GAME_DETAILS to SessionsRequest(::getGameById, false),
+        Operation.GET_GAME_LIST to SessionsRequest(::getGameList, false),
         Operation.CREATE_SESSION to SessionsRequest(::createSession, true),
         Operation.ADD_PLAYER_TO_SESSION to SessionsRequest(::addPlayerToSession, true),
-        Operation.GET_SESSION_DETAILS to SessionsRequest(::getSessionById, true),
-        Operation.GET_SESSION_LIST to SessionsRequest(::getSessionList, true)
+        Operation.GET_SESSION_DETAILS to SessionsRequest(::getSessionById, false),
+        Operation.GET_SESSION_LIST to SessionsRequest(::getSessionList, false)
     )
 
     private fun createPlayer(request: Request): Response {
@@ -69,7 +58,7 @@ class SessionsApi(val playerServices: playerService,
         val res = playerServices.getPlayerDetails(pid)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(res.toInfoDTO()))
+            .body(Json.encodeToString(res.toDTO()))
     }
 
     private fun createGame(request: Request): Response {
@@ -85,7 +74,7 @@ class SessionsApi(val playerServices: playerService,
         val res = gameServices.getGameById(gid)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(res.toInfoDTO()))
+            .body(Json.encodeToString(res.toDTO()))
     }
 
     private fun getGameList(request: Request): Response {
@@ -94,7 +83,7 @@ class SessionsApi(val playerServices: playerService,
         val res = gameServices.searchGames(gameSearch.genres, gameSearch.developer, limit, skip)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(GameSearchOutputModel(res.map { it.toInfoDTO() }.toSet())))
+            .body(Json.encodeToString(GameSearchOutputModel(res.map { it.toDTO() })))
     }
 
     private fun createSession(request: Request): Response {
@@ -119,7 +108,7 @@ class SessionsApi(val playerServices: playerService,
         val res = sessionServices.getSessionById(sid)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(res.toInfoDTO()))
+            .body(Json.encodeToString(res.toDTO()))
     }
 
     private fun getSessionList(request: Request): Response {
@@ -135,7 +124,7 @@ class SessionsApi(val playerServices: playerService,
         )
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(SessionSearchOutputModel(res.map { it.toInfoDTO() }.toSet())))
+            .body(Json.encodeToString(SessionSearchOutputModel(res.map { it.toDTO() })))
     }
 
     /**

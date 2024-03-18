@@ -25,7 +25,7 @@ data class Player (
                 require(email.matches(Regex("^[A-Za-z0-9+_.-]+@(.+)\$"))) { "The player email must be a valid e-mail" }
         }
 
-        override fun toInfoDTO() = PlayerInfoOutputModel(pid, name, email)
+        override fun toDTO() = PlayerInfoOutputModel(pid, name, email)
 
 }
 

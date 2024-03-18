@@ -46,7 +46,7 @@ data class Session(
         }
     }
 
-    override fun toInfoDTO() = SessionInfoOutputModel(sid, capacity, date, gameSession.toInfoDTO(), playersSession.map { it.toInfoDTO() }.toSet())
+    override fun toDTO() = SessionInfoOutputModel(sid, capacity, date, gameSession.toDTO(), playersSession.map { it.toDTO() })
 
 
 }
