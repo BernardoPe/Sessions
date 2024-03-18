@@ -1,10 +1,10 @@
 package pt.isel.ls.services
 
-import pt.isel.ls.domain.player.Player
+import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.storage.SessionsDataPlayer
 
 class playerService(val storage : SessionsDataPlayer) {
-    fun createPlayer(name: String, email: String): Pair<Int, String> {
+    fun createPlayer(name: String, email: String): PlayerCredentials {
         TODO()
     }
 
@@ -18,3 +18,5 @@ class playerService(val storage : SessionsDataPlayer) {
 
     /** More methods to come */
 }
+
+typealias PlayerCredentials = Pair<Int, String>

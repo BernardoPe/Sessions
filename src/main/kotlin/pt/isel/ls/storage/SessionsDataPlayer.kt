@@ -1,6 +1,6 @@
 package pt.isel.ls.storage
 
-import pt.isel.ls.domain.player.Player
+import pt.isel.ls.data.domain.player.Player
 
 /**
  *  Player Data management interface

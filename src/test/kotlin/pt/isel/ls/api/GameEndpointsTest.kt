@@ -7,7 +7,7 @@ import org.http4k.core.Status
 import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeAll
-import pt.isel.ls.domain.game.Game
+import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.dto.GameInfoOutputModel
 import pt.isel.ls.dto.GameSearchOutputModel
 import pt.isel.ls.services.gameService

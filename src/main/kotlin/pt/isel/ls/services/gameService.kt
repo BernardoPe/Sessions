@@ -1,12 +1,12 @@
 package pt.isel.ls.services
 
-import pt.isel.ls.domain.game.Game
+import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.storage.SessionsDataGame
 
 
 class gameService(val storage: SessionsDataGame) {
 
-    fun createGame(name: String, developer: String, genres: Set<String>): Int {
+    fun createGame(name: String, developer: String, genres: Set<String>): GameIdentifier {
         //storage.create(game)
         TODO()
     }
@@ -15,10 +15,14 @@ class gameService(val storage: SessionsDataGame) {
         TODO()
     }
 
-    fun searchGames(genres: Set<String>, developer: String, limit: Int?, skip: Int?): Set<Game> {
+    fun searchGames(genres: Set<String>, developer: String, limit: Int?, skip: Int?): GameSearchResult {
         TODO()
     }
 
     /** More methods to come */
 
 }
+
+typealias GameIdentifier = Int
+
+typealias GameSearchResult = Set<Game>

@@ -1,6 +1,6 @@
 package pt.isel.ls.storage.mem
 
-import pt.isel.ls.domain.game.Game
+import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.storage.SessionsDataGame
 
 /**

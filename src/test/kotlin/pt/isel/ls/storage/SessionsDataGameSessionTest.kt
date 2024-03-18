@@ -1,8 +1,8 @@
 package pt.isel.ls.storage
 
-import pt.isel.ls.domain.game.Game
-import pt.isel.ls.domain.player.Player
-import pt.isel.ls.domain.session.Session
+import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.storage.mem.SessionsDataMemSession
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -1,8 +1,7 @@
-package pt.isel.ls.domain.session
+package pt.isel.ls.data.domain.session
 
-import pt.isel.ls.domain.DomainMapper
-import pt.isel.ls.domain.game.Game
-import pt.isel.ls.domain.player.Player
+import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.dto.SessionInfoOutputModel
 import pt.isel.ls.utils.isValidTimeStamp
 
@@ -23,7 +22,7 @@ data class Session(
     val date: String,
     val gameSession: Game,
     val playersSession: Set<Player>
-) : DomainMapper<SessionInfoOutputModel> {
+) {
     init {
         require(sid >= 0) { "Session identifier must be a positive number" }
         require(capacity > 1) { "Session capacity must be a positive number" }
@@ -45,9 +44,6 @@ data class Session(
             }
         }
     }
-
-    override fun toDTO() = SessionInfoOutputModel(sid, capacity, date, gameSession.toDTO(), playersSession.map { it.toDTO() })
-
 
 }
 

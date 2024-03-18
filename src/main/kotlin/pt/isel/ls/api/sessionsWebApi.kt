@@ -12,6 +12,7 @@ import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Status.Companion.UNAUTHORIZED
 import org.http4k.routing.path
+import pt.isel.ls.data.mapper.*
 import pt.isel.ls.dto.*
 import pt.isel.ls.exceptions.*
 import pt.isel.ls.services.*
@@ -50,7 +51,7 @@ class SessionsApi(val playerServices: playerService,
         val res = playerServices.createPlayer(player.name, player.email)
         return Response(CREATED)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(PlayerCreationOutputModel(res.first, res.second)))
+            .body(Json.encodeToString(res.toPlayerCreationDTO()))
     }
 
     private fun getPlayerDetails(request: Request): Response {
@@ -58,7 +59,7 @@ class SessionsApi(val playerServices: playerService,
         val res = playerServices.getPlayerDetails(pid)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(res.toDTO()))
+            .body(Json.encodeToString(res.toPlayerInfoDTO()))
     }
 
     private fun createGame(request: Request): Response {
@@ -66,7 +67,7 @@ class SessionsApi(val playerServices: playerService,
         val res = gameServices.createGame(game.name, game.developer, game.genres)
         return Response(CREATED)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(GameCreationOutputModel(res)))
+            .body(Json.encodeToString(res.toGameCreationDTO()))
     }
 
     private fun getGameById(request: Request): Response {
@@ -74,7 +75,7 @@ class SessionsApi(val playerServices: playerService,
         val res = gameServices.getGameById(gid)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(res.toDTO()))
+            .body(Json.encodeToString(res.toGameInfoDTO()))
     }
 
     private fun getGameList(request: Request): Response {
@@ -83,7 +84,7 @@ class SessionsApi(val playerServices: playerService,
         val res = gameServices.searchGames(gameSearch.genres, gameSearch.developer, limit, skip)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(GameSearchOutputModel(res.map { it.toDTO() })))
+            .body(Json.encodeToString(res.toGameSearchDTO()))
     }
 
     private fun createSession(request: Request): Response {
@@ -91,7 +92,7 @@ class SessionsApi(val playerServices: playerService,
         val res = sessionServices.createSession(session.capacity, session.gid, session.date)
         return Response(CREATED)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(SessionCreationOutputModel(res)))
+            .body(Json.encodeToString(res.toSessionCreationDTO()))
     }
 
     private fun addPlayerToSession(request: Request): Response {
@@ -100,7 +101,7 @@ class SessionsApi(val playerServices: playerService,
         val res = sessionServices.addPlayer(sid, pid)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(SessionAddPlayerOutputModel(res)))
+            .body(Json.encodeToString(res.toSessionAddPlayerDTO()))
     }
 
     private fun getSessionById(request: Request): Response {
@@ -108,7 +109,7 @@ class SessionsApi(val playerServices: playerService,
         val res = sessionServices.getSessionById(sid)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(res.toDTO()))
+            .body(Json.encodeToString(res.toSessionInfoDTO()))
     }
 
     private fun getSessionList(request: Request): Response {
@@ -124,7 +125,7 @@ class SessionsApi(val playerServices: playerService,
         )
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(SessionSearchOutputModel(res.map { it.toDTO() })))
+            .body(Json.encodeToString(res.toSessionSearchDTO()))
     }
 
     /**

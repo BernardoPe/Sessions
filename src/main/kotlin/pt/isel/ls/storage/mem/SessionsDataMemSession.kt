@@ -1,6 +1,6 @@
 package pt.isel.ls.storage.mem
 
-import pt.isel.ls.domain.session.Session
+import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.storage.SessionsDataSession
 
 /**

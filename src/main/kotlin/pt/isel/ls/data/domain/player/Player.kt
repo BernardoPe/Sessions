@@ -1,6 +1,5 @@
-package pt.isel.ls.domain.player
+package pt.isel.ls.data.domain.player
 
-import pt.isel.ls.domain.DomainMapper
 import pt.isel.ls.dto.PlayerInfoOutputModel
 
 /**
@@ -16,7 +15,7 @@ data class Player (
         val pid: Int,
         val name: String,
         val email: String
-) : DomainMapper<PlayerInfoOutputModel> {
+) {
         init {
                 require(pid >= 0) { "The player identifier must be a positive integer" }
                 require(name.isNotBlank()) { "The player name must not be empty" }
@@ -24,8 +23,6 @@ data class Player (
                 require(name.length in 1..40) { "The player name must be between 1 and 40 characters" }
                 require(email.matches(Regex("^[A-Za-z0-9+_.-]+@(.+)\$"))) { "The player email must be a valid e-mail" }
         }
-
-        override fun toDTO() = PlayerInfoOutputModel(pid, name, email)
 
 }
 
