@@ -11,7 +11,7 @@ class playerService(val storage : SessionsDataPlayer) {
 
     /** May not be necessary to implement */
 //    fun authenticatePlayer(token: String) : Boolean {
-//        TODO()
+//
 //    }
 
     fun getPlayerDetails(pid: Int) : Player {

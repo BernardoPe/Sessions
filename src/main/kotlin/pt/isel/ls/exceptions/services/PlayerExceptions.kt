@@ -13,15 +13,15 @@ import java.util.*
 //typealias UserCreationResult = Either<UserCreationError, Int>
 
 sealed class PlayerCreationException {
-    object PlayerAlreadyExists : PlayerCreationException()
-    object EmailAlreadyExists : PlayerCreationException()
-    object UnsafeEmail : PlayerCreationException()
+    data object PlayerAlreadyExists : PlayerCreationException()
+    data object EmailAlreadyExists : PlayerCreationException()
+    data object UnsafeEmail : PlayerCreationException()
 }
 
 typealias PlayerCreationResult = Either<PlayerCreationException, Pair<Int, UUID>>
 
 sealed class PlayerDetailsException {
-    object PlayerNotFound : PlayerDetailsException()
+    data object PlayerNotFound : PlayerDetailsException()
 }
 
 typealias PlayerDetailsResult = Either<PlayerDetailsException, Player>
