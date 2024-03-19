@@ -13,8 +13,10 @@ import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Status.Companion.UNAUTHORIZED
 import org.http4k.routing.path
 import pt.isel.ls.dto.*
-import pt.isel.ls.exceptions.*
-import pt.isel.ls.services.*
+import pt.isel.ls.exceptions.api.*
+import pt.isel.ls.services.gameService
+import pt.isel.ls.services.playerService
+import pt.isel.ls.services.sessionsService
 
 
 /**
@@ -52,7 +54,7 @@ class SessionsApi(val playerServices: playerService,
         val res = playerServices.createPlayer(player.name, player.email)
         return Response(CREATED)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(PlayerCreationOutputModel(res.first, res.second)))
+            .body(Json.encodeToString(PlayerCreationOutputModel(res.first, res.second.toString())))
     }
 
     private fun getPlayerDetails(request: Request): Response {
@@ -218,10 +220,18 @@ class SessionsApi(val playerServices: playerService,
         val (processor, requiresAuth) = processors[service] ?: return Response(INTERNAL_SERVER_ERROR)
 
         if (request.bodyString().isNotBlank() && request.header("content-type") != "application/json")
-            return Response(BAD_REQUEST).header("content-type", "application/json").body(Json.encodeToString(UnsupportedMediaTypeException()))
+            return Response(BAD_REQUEST).header("content-type", "application/json").body(
+                Json.encodeToString(
+                    UnsupportedMediaTypeException()
+                )
+            )
 
         if (requiresAuth && !verifyAuth(request))
-            return Response(UNAUTHORIZED).header("content-type", "application/json").body(Json.encodeToString(UnauthorizedException()))
+            return Response(UNAUTHORIZED).header("content-type", "application/json").body(
+                Json.encodeToString(
+                    UnauthorizedException()
+                )
+            )
 
         return try {
             processor(request)
@@ -229,7 +239,11 @@ class SessionsApi(val playerServices: playerService,
             Response(Status(e.status, e.description)).header("content-type", "application/json").body(Json.encodeToString(e))
         }
         catch (e: Exception) {
-            Response(INTERNAL_SERVER_ERROR).header("content-type", "application/json").body(Json.encodeToString(InternalServerErrorException()))
+            Response(INTERNAL_SERVER_ERROR).header("content-type", "application/json").body(
+                Json.encodeToString(
+                    InternalServerErrorException()
+                )
+            )
         }
 
     }

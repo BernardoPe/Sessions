@@ -1,4 +1,4 @@
-package pt.isel.ls.exceptions
+package pt.isel.ls.exceptions.api
 
 import kotlinx.serialization.Serializable
 import org.http4k.core.Status
