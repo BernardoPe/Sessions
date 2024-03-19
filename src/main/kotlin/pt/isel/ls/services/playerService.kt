@@ -9,9 +9,10 @@ class playerService(val storage : SessionsDataPlayer) {
         TODO()
     }
 
-    fun authenticatePlayer(token: String) : Boolean {
-        TODO()
-    }
+    /** May not be necessary to implement */
+//    fun authenticatePlayer(token: String) : Boolean {
+//        TODO()
+//    }
 
     fun getPlayerDetails(pid: Int) : Player {
         TODO()
