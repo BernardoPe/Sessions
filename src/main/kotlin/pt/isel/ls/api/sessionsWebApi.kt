@@ -79,7 +79,7 @@ class SessionsApi(val playerServices: playerService,
     }
 
     private fun getGameList(request: Request): Response {
-        val (limit, skip) = (request.query("limit")?.toInt() ?: 5) to (request.query("skip")?.toInt() ?: 0)
+        val (limit, skip) = (request.query("limit")?.toIntOrNull() ?: 5) to (request.query("skip")?.toIntOrNull() ?: 0)
         val gameSearch = parseJsonBody<GameSearchInputModel>(request)
         val res = gameServices.searchGames(gameSearch.genres, gameSearch.developer, limit, skip)
         return Response(OK)
