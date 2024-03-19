@@ -2,6 +2,7 @@ package pt.isel.ls.storage.mem
 
 import pt.isel.ls.domain.player.Player
 import pt.isel.ls.storage.SessionsDataPlayer
+import java.util.*
 
 /**
  *  SessionsDataMemPlayer
@@ -42,7 +43,7 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
      *
      * @param value The player object to be created
      */
-    override fun create(value: Player) {
+    override fun create(name: String, email: String): Pair<Int, UUID> {
         // Add the player object to the database mock
         // Start by incrementing the last identifier
         lastId++
@@ -50,10 +51,11 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
         db.add(
             Player(
             lastId,
-            value.name,
-            value.email
+                name,
+                email
             )
         )
+        /** This method like the rest of the other database memory methods needs more work */
     }
 
     /**

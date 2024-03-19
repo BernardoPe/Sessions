@@ -14,9 +14,9 @@ import org.http4k.core.Status.Companion.UNAUTHORIZED
 import org.http4k.routing.path
 import pt.isel.ls.dto.*
 import pt.isel.ls.exceptions.api.*
-import pt.isel.ls.services.gameService
-import pt.isel.ls.services.playerService
-import pt.isel.ls.services.sessionsService
+import pt.isel.ls.services.GameService
+import pt.isel.ls.services.PlayerService
+import pt.isel.ls.services.SessionsService
 
 
 /**
@@ -24,17 +24,18 @@ import pt.isel.ls.services.sessionsService
  *
  * Requests are handled using the processRequest method, which receives a request and an [Operation].
  *
- * @param playerServices The [playerService] instance
- * @param gameServices The [gameService] instance
- * @param sessionServices The [sessionsService] instance
+ * @param playerServices The [PlayerService] instance
+ * @param gameServices The [GameService] instance
+ * @param sessionServices The [SessionsService] instance
  * @property processRequest The method that processes the request and returns the response
  *
  *
  */
 
-class SessionsApi(val playerServices: playerService,
-                  val gameServices: gameService,
-                  val sessionServices: sessionsService
+class SessionsApi(
+    val playerServices: PlayerService,
+    val gameServices: GameService,
+    val sessionServices: SessionsService
 ) {
 
     private val processors = mapOf(

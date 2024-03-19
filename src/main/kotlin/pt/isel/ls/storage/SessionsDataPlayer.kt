@@ -1,6 +1,7 @@
 package pt.isel.ls.storage
 
 import pt.isel.ls.domain.player.Player
+import java.util.*
 
 /**
  *  Player Data management interface
@@ -19,7 +20,7 @@ interface SessionsDataPlayer {
      *
      * @param value The player object to be created
      */
-    fun create(value: Player)
+    fun create(name: String, email: String): Pair<Int, UUID>
 
     /**
      * Read a player from the database
@@ -28,6 +29,15 @@ interface SessionsDataPlayer {
      * @return The player object with the given id or null if it does not exist
      */
     fun getById(id: Int): Player?
+
+    /**
+     * Returns an boolean if there is an email store on the database
+     *
+     * @param email The player identifier
+     * @return Boolean if the email exists or not on the databse
+     */
+
+    fun isEmailStored(email: String): Boolean
 
     /**
      * Get all players from the database

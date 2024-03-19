@@ -5,7 +5,6 @@ import pt.isel.ls.utils.Either
 import java.util.*
 
 sealed class PlayerCreationException {
-    data object PlayerAlreadyExists : PlayerCreationException()
     data object EmailAlreadyExists : PlayerCreationException()
     data object UnsafeEmail : PlayerCreationException()
 }

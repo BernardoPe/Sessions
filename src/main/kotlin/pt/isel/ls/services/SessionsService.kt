@@ -3,7 +3,7 @@ package pt.isel.ls.services
 import pt.isel.ls.domain.session.Session
 import pt.isel.ls.storage.SessionsDataSession
 
-class sessionsService(val storage: SessionsDataSession) {
+class SessionsService(val storage: SessionsDataSession) {
 
     fun createSession(capacity: Int, gid: Int, date: String): Int {
         TODO()

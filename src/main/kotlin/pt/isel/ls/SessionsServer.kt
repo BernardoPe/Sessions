@@ -10,9 +10,9 @@ import org.http4k.server.asServer
 import org.slf4j.LoggerFactory
 import pt.isel.ls.api.Operation
 import pt.isel.ls.api.SessionsApi
-import pt.isel.ls.services.gameService
-import pt.isel.ls.services.playerService
-import pt.isel.ls.services.sessionsService
+import pt.isel.ls.services.GameService
+import pt.isel.ls.services.PlayerService
+import pt.isel.ls.services.SessionsService
 import pt.isel.ls.storage.mem.SessionsDataMemGame
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import pt.isel.ls.storage.mem.SessionsDataMemSession
@@ -134,9 +134,10 @@ class SessionsServer(api: SessionsApi, port: Int = 8080) {
 fun main() {
     val server = SessionsServer(
         SessionsApi(
-            playerService(SessionsDataMemPlayer()),
-            gameService(SessionsDataMemGame()),
-            sessionsService(SessionsDataMemSession()))
+            PlayerService(SessionsDataMemPlayer()),
+            GameService(SessionsDataMemGame()),
+            SessionsService(SessionsDataMemSession())
+        )
     )
     server.start()
     readln()
