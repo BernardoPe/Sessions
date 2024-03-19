@@ -1,6 +1,3 @@
-
-
-
 ## Sessions API
 API for managing game sessions
 
@@ -20,6 +17,8 @@ Create a new player
 | Code | Description |
 | ---- | ----------- |
 | 200 | Player created successfully |
+| 400 | Invalid body |
+| 409 | Conflict |
 
 ---
 
@@ -41,6 +40,8 @@ Get player details
 | Code | Description |
 | ---- | ----------- |
 | 200 | Player details retrieved successfully |
+| 400 | Bad Request |
+| 404 | Not found |
 
 ---
 
@@ -55,18 +56,35 @@ Create a new game
 
 | Code | Description |
 | ---- | ----------- |
-| 200 | Game created successfully |
+| 201 | Game created successfully |
+| 400 | Bad Request |
+| 401 | Unauthorized |
+
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| bearerAuth | |
 
 #### GET
 ##### Summary:
 
 Get list of games
 
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| limit | query |  | No | int |
+| skip | query |  | No | int |
+
 ##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 200 | List of games retrieved successfully |
+| 400 | Bad Request |
+
 
 ---
 
@@ -88,6 +106,8 @@ Get game details
 | Code | Description |
 | ---- | ----------- |
 | 200 | Game details retrieved successfully |
+| 400 | Bad Request |
+| 404 | Not found |
 
 ---
 
@@ -102,18 +122,35 @@ Create a new session
 
 | Code | Description |
 | ---- | ----------- |
-| 200 | Session created successfully |
+| 201 | Session created successfully |
+| 400 | Bad Request |
+| 401 | Unauthorized |
+| 404 | Not found |
+
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| bearerAuth | |
 
 #### GET
 ##### Summary:
 
 Get list of sessions
 
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| limit | query |  | No | int |
+| skip | query |  | No | int |
+
 ##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 200 | List of sessions retrieved successfully |
+| 400 | Bad Request |
 
 ---
 
@@ -135,6 +172,12 @@ Get session details
 | Code | Description |
 | ---- | ----------- |
 | 200 | Session details retrieved successfully |
+| 400 | Bad Request |
+| 404 | Not found |
+
+---
+
+### /sessions/{sid}/players
 
 #### PUT
 ##### Summary:
@@ -146,10 +189,18 @@ Add player to session
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | sid | path |  | Yes | integer |
-| pid | query |  | Yes | integer |
 
 ##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 200 | Player added to session successfully |
+| 400 | Bad Request |
+| 401 | Unauthorized |
+| 404 | Not found |
+
+##### Security
+
+| Security Schema | Scopes |
+| --- | --- |
+| bearerAuth | |

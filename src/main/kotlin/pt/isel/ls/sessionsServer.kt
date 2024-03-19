@@ -27,6 +27,7 @@ const val GAME_ROUTE = "/games"
 const val GAME_DETAILS_ROUTE = "/games/{gid}"
 const val SESSION_ROUTE = "/sessions"
 const val SESSION_DETAILS_ROUTE = "/sessions/{sid}"
+const val SESSION_PLAYER_ROUTE = "/sessions/{sid}/players"
 
 
 /**
@@ -47,10 +48,10 @@ class SessionsServer(api: SessionsApi, port: Int = 8080) {
         private val executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
     }
     private fun dispatcher(req: Request, operation: Operation): Response
-        = executor.submit<Response> {
-            logRequest(req)
-            requestHandler(req, operation).also { logResponse(it) }
-        }.get()
+            = executor.submit<Response> {
+        logRequest(req)
+        requestHandler(req, operation).also { logResponse(it) }
+    }.get()
 
     private fun bindRoute(route: String, method: org.http4k.core.Method, operation: Operation) =
         route bind method to { req -> dispatcher(req, operation) }
@@ -71,7 +72,7 @@ class SessionsServer(api: SessionsApi, port: Int = 8080) {
     private val sessionRoutes =
         routes(
             bindRoute(SESSION_ROUTE, POST, Operation.CREATE_SESSION),
-            bindRoute(SESSION_DETAILS_ROUTE, PUT, Operation.ADD_PLAYER_TO_SESSION),
+            bindRoute(SESSION_PLAYER_ROUTE, PUT, Operation.ADD_PLAYER_TO_SESSION),
             bindRoute(SESSION_DETAILS_ROUTE, GET, Operation.GET_SESSION_DETAILS),
             bindRoute(SESSION_ROUTE, GET, Operation.GET_SESSION_LIST)
         )
@@ -141,4 +142,3 @@ fun main() {
     readln()
     server.stop()
 }
-
