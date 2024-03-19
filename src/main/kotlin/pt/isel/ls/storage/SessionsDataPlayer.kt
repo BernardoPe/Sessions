@@ -31,10 +31,10 @@ interface SessionsDataPlayer {
     fun getById(id: Int): Player?
 
     /**
-     * Returns an boolean if there is an email store on the database
+     * Returns a boolean to verify is an email already stored on the database
      *
      * @param email The player identifier
-     * @return Boolean if the email exists or not on the databse
+     * @return Boolean to verify the existence of the player's email
      */
 
     fun isEmailStored(email: String): Boolean

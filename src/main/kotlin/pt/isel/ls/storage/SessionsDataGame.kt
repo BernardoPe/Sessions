@@ -18,16 +18,46 @@ interface SessionsDataGame {
     /**
      * Create a game in the database
      *
-     * @param value The game object to be created
+     * @param name The game name to be created for the game
+     * @param developer The name of the developer to be created for the game
+     * @param genres The list of genres to be created for the game
      */
-    fun create(value: Game)
+    fun create(name: String, developer: String, genres: Set<String>): Int
+
+    /**
+     * Returns a boolean to verify if a game name already stored on the database
+     * @param email Email of the player
+     * @return Boolean to verify the existence of the name of a game on the database
+     */
+
+    // This may or may not be a necessary method
+    fun isGameNameStored(name: String): Boolean
+
+    /**
+     * Returns a boolean to verify if a list of genres of an game are already stored on the database
+     * @param genres List of genres
+     * @return Boolean to verify the existence of list of genres on the database
+     */
+
+    // This may or may not be a necessary method
+    fun isGenresStored(genres: Set<String>): Boolean
+
+    /**
+     * Returns a boolean to verify if the name of a developer already stored on the database
+     * @param developer Name of the developer
+     * @return Boolean to verify the name of a developer stored on the datebase
+     */
+
+    // This may or may not be a necessary method
+    fun isDeveloperStored(developer: String): Boolean
 
     /**
      * Read all games from the database
      *
      * @return A list with all the games in the database
      */
-    fun getAll(): List<Game>
+
+    fun getGamesSearch(genres: Set<String>, developer: String): Set<Game>
 
     /**
      * Read a game from the database

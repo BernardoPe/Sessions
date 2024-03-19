@@ -41,7 +41,8 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
      *
      * This function uses the [create] function from the [SessionsDataMemPlayer] class
      *
-     * @param value The player object to be created
+     * @param name The player name to be created
+     * @param email The player email to be created
      */
     override fun create(name: String, email: String): Pair<Int, UUID> {
         // Add the player object to the database mock
@@ -56,6 +57,18 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
             )
         )
         /** This method like the rest of the other database memory methods needs more work */
+    }
+
+    /**
+     * Checks the player's email on the database mock
+     *
+     * This function uses the [isEmailStored] function from the [SessionsDataMemPlayer] class
+     *
+     * @param email The player email to be checked
+     */
+
+    override fun isEmailStored(email: String): Boolean {
+        TODO("Not yet implemented")
     }
 
     /**

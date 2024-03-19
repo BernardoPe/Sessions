@@ -10,11 +10,9 @@ import pt.isel.ls.utils.success
 
 class PlayerService(val storage: SessionsDataPlayer) {
     fun createPlayer(name: String, email: String): PlayerCreationResult {
-        if (!isSafeEmail(email)) {
-            return failure(PlayerCreationException.UnsafeEmail)
-        }
-
-        return if (storage.isEmailStored(email)) {
+        return if (!isSafeEmail(email)) {
+            failure(PlayerCreationException.UnsafeEmail)
+        } else if (storage.isEmailStored(email)) {
             failure(PlayerCreationException.EmailAlreadyExists)
         } else {
             success(storage.create(name, email))
@@ -41,5 +39,4 @@ class PlayerService(val storage: SessionsDataPlayer) {
                 && email.contains('@')
                 && email.contains(".com")
 
-    /** More methods to come */
 }

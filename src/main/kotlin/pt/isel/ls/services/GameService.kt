@@ -1,24 +1,37 @@
 package pt.isel.ls.services
 
-import pt.isel.ls.domain.game.Game
+import pt.isel.ls.exceptions.services.*
 import pt.isel.ls.storage.SessionsDataGame
+import pt.isel.ls.utils.failure
+import pt.isel.ls.utils.success
 
 
 class GameService(val storage: SessionsDataGame) {
-
-    fun createGame(name: String, developer: String, genres: Set<String>): Int {
-        //storage.create(game)
-        TODO()
-    }
-    fun getGameById(id: Int) : Game {
-        //val game = storage.getById(id)
-        TODO()
+    fun createGame(name: String, developer: String, genres: Set<String>): GameCreationResult {
+        return if (storage.isGameNameStored(name)) {
+            failure(GameCreationException.GameNameAlreadyExists)
+        } else {
+            success(storage.create(name, developer, genres))
+        }
     }
 
-    fun searchGames(genres: Set<String>, developer: String, limit: Int?, skip: Int?): Set<Game> {
-        TODO()
+    fun getGameById(id: Int): GameDetailsResult {
+        val getGame = storage.getById(id)
+
+        return if (getGame == null) {
+            failure(GameDetailsException.GameNotFound)
+        } else {
+            success(getGame)
+        }
     }
 
-    /** More methods to come */
-
+    fun searchGames(genres: Set<String>, developer: String, limit: Int?, skip: Int?): GameSearchResult {
+        return if (storage.isGenresStored(genres)) {
+            failure(GameSearchException.GenresNotFound)
+        } else if (storage.isDeveloperStored(developer)) {
+            failure(GameSearchException.DeveloperNotFound)
+        } else {
+            success(storage.getGamesSearch(genres, developer))
+        }
+    }
 }

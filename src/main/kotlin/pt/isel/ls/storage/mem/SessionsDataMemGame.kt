@@ -39,7 +39,7 @@ class SessionsDataMemGame : SessionsDataGame {
      *
      * @param value The game object to be created
      */
-    override fun create(value: Game) {
+    override fun create(name: String, developer: String, genres: Set<String>): Int {
         // Add the game object to the database mock
         // Start by incrementing the last identifier
         lastId++
@@ -47,11 +47,47 @@ class SessionsDataMemGame : SessionsDataGame {
         db.add(
             Game(
             lastId,
-            value.name,
-            value.developer,
-            value.genres
+                name,
+                developer,
+                genres
             )
         )
+    }
+
+    /**
+     * Checks for the name of a game in the database mock
+     *
+     * This function uses the [isGameNameStored] function from the [SessionsDataMemGame] class
+     *
+     * @param name The game name to be checked
+     */
+
+    override fun isGameNameStored(name: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    /**
+     * Checks a list of genres in the database mock
+     *
+     * This function uses the [isGenresStored] function from the [SessionsDataMemGame] class
+     *
+     * @param genres The game name to be checked
+     */
+
+    override fun isGenresStored(genres: Set<String>): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    /**
+     * Checks for the name of the developer in the database mock
+     *
+     * This function uses the [isDeveloperStored] function from the [SessionsDataMemGame] class
+     *
+     * @param developer The name of the developer to be checked
+     */
+
+    override fun isDeveloperStored(developer: String): Boolean {
+        TODO("Not yet implemented")
     }
 
     /**
@@ -82,9 +118,10 @@ class SessionsDataMemGame : SessionsDataGame {
      *
      * @return A list with all the games in the database
      */
-    override fun getAll(): List<Game> {
+    override fun getGamesSearch(genres: Set<String>, developer: String): Set<Game> {
         // Read all the game objects from the database mock
         return db
+        TODO()
     }
 
     /**

@@ -20,6 +20,4 @@ class SessionsService(val storage: SessionsDataSession) {
     fun getSessionById(sid: Int): Session {
         TODO()
     }
-
-    /** More methods to come */
 }
