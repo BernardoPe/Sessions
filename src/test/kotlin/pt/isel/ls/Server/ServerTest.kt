@@ -12,9 +12,6 @@ import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.dto.*
 import pt.isel.ls.pt.isel.ls.SessionsServer
-import pt.isel.ls.services.gameService
-import pt.isel.ls.services.playerService
-import pt.isel.ls.services.sessionsService
 import pt.isel.ls.storage.mem.SessionsDataMemGame
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import pt.isel.ls.storage.mem.SessionsDataMemSession

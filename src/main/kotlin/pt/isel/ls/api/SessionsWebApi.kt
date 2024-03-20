@@ -9,10 +9,10 @@ import org.http4k.core.Status
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.CREATED
 import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
+import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Status.Companion.UNAUTHORIZED
 import org.http4k.routing.path
-import pt.isel.ls.data.mapper.*
 import pt.isel.ls.dto.*
 import pt.isel.ls.exceptions.api.*
 import pt.isel.ls.exceptions.services.*
@@ -59,7 +59,7 @@ class SessionsApi(
         return when (val res = playerServices.createPlayer(player.name, player.email)) {
             is Success -> Response(CREATED)
                 .header("content-type", "application/json")
-                .body(Json.encodeToString(res.value.toPlayerCreationDTO()))
+                .body(Json.encodeToString(PlayerCreationOutputModel(res.value.first, res.value.second.toString())))
 
             is Failure -> when (res.value) {
                 PlayerCreationException.UnsafeEmail -> throw BadRequestException("Invalid Email")
@@ -94,7 +94,7 @@ class SessionsApi(
         return when (val res = gameServices.createGame(game.name, game.developer, game.genres)) {
             is Success -> Response(CREATED)
                 .header("content-type", "application/json")
-                .body(Json.encodeToString(res.value.toGameCreationDTO()))
+                .body(Json.encodeToString(GameCreationOutputModel(res.value)))
 
             is Failure -> when (res.value) {
                 GameCreationException.GameNameAlreadyExists -> throw BadRequestException("Game Name Already Exists")
@@ -107,7 +107,16 @@ class SessionsApi(
         return when (val res = gameServices.getGameById(gid)) {
             is Success -> Response(OK)
                 .header("content-type", "application/json")
-                .body(Json.encodeToString(res.value.toGameInfoDTO()))
+                .body(
+                    Json.encodeToString(
+                        GameInfoOutputModel(
+                            res.value.gid,
+                            res.value.name,
+                            res.value.developer,
+                            res.value.genres.toList()
+                        )
+                    )
+                )
 
             is Failure -> when (res.value) {
                 GameDetailsException.GameNotFound -> throw NotFoundException("Game Not Found")
@@ -121,7 +130,20 @@ class SessionsApi(
         return when (val res = gameServices.searchGames(gameSearch.genres, gameSearch.developer, limit, skip)) {
             is Success -> Response(OK)
                 .header("content-type", "application/json")
-                .body(Json.encodeToString(res.value.toGameSearchDTO()))
+                .body(
+                    Json.encodeToString(
+                        GameSearchOutputModel(
+                            res.value.map {
+                                GameInfoOutputModel(
+                                    it.gid,
+                                    it.name,
+                                    it.developer,
+                                    it.genres.toList()
+                                )
+                            }
+                        )
+                    )
+                )
 
             is Failure -> when (res.value) {
                 GameSearchException.GenresNotFound -> throw NotFoundException("Genres Not Found")
@@ -135,7 +157,7 @@ class SessionsApi(
         return when (val res = sessionServices.createSession(session.capacity, session.gid, session.date)) {
             is Success -> Response(CREATED)
                 .header("content-type", "application/json")
-                .body(Json.encodeToString(res.value.toSessionCreationDTO()))
+                .body(Json.encodeToString(SessionCreationOutputModel(res.value)))
 
             is Failure -> when (res.value) {
                 SessionCreationException.InvalidCapacity -> throw BadRequestException("Invalid Capacity")
@@ -151,7 +173,7 @@ class SessionsApi(
         return when (val res = sessionServices.addPlayer(sid, pid)) {
             is Success -> Response(OK)
                 .header("content-type", "application/json")
-                .body(Json.encodeToString(res.value.toSessionAddPlayerDTO()))
+                .body(Json.encodeToString(SessionAddPlayerOutputModel(res.value.toString())))
 
             is Failure -> when (res.value) {
                 SessionAddPlayerException.SessionNotFound -> throw NotFoundException("Session Not Found")
@@ -167,7 +189,28 @@ class SessionsApi(
         return when (val res = sessionServices.getSessionById(sid)) {
             is Success -> Response(OK)
                 .header("content-type", "application/json")
-                .body(Json.encodeToString(res.value.toSessionInfoDTO()))
+                .body(
+                    Json.encodeToString(
+                        SessionInfoOutputModel(
+                            res.value.sid,
+                            res.value.capacity,
+                            res.value.date,
+                            GameInfoOutputModel(
+                                res.value.gameSession.gid,
+                                res.value.gameSession.name,
+                                res.value.gameSession.developer,
+                                res.value.gameSession.genres.toList()
+                            ),
+                            res.value.playersSession.map {
+                                PlayerInfoOutputModel(
+                                    it.pid,
+                                    it.name,
+                                    it.email
+                                )
+                            }
+                        )
+                    )
+                )
 
             is Failure -> when (res.value) {
                 SessionDetailsException.SessionNotFound -> throw NotFoundException("Session Not Found")
@@ -190,7 +233,32 @@ class SessionsApi(
         return when (res) {
             is Success -> Response(OK)
                 .header("content-type", "application/json")
-                .body(Json.encodeToString(res.value.toSessionSearchDTO()))
+                .body(
+                    Json.encodeToString(
+                        SessionSearchOutputModel(
+                            res.value.map { session ->
+                                SessionInfoOutputModel(
+                                    session.sid,
+                                    session.capacity,
+                                    session.date,
+                                    GameInfoOutputModel(
+                                        session.gameSession.gid,
+                                        session.gameSession.name,
+                                        session.gameSession.developer,
+                                        session.gameSession.genres.toList()
+                                    ),
+                                    session.playersSession.map {
+                                        PlayerInfoOutputModel(
+                                            it.pid,
+                                            it.name,
+                                            it.email
+                                        )
+                                    }
+                                )
+                            }
+                        )
+                    )
+                )
 
             is Failure -> when (res.value) {
                 SessionSearchException.GameNotFound -> throw NotFoundException("Game Not Found")

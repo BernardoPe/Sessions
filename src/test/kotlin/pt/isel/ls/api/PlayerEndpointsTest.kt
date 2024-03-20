@@ -9,14 +9,10 @@ import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeAll
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.dto.PlayerInfoOutputModel
-import pt.isel.ls.services.gameService
-import pt.isel.ls.services.playerService
-import pt.isel.ls.services.sessionsService
 import pt.isel.ls.storage.mem.SessionsDataMemGame
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import pt.isel.ls.storage.mem.SessionsDataMemSession
 import kotlin.test.Test
-
 
 /**
 

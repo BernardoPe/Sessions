@@ -24,9 +24,9 @@ data class Session(
     val playersSession: Set<Player>
 ) {
     init {
-        require(sid >= 0) { "Session identifier must be a positive number" }
-        require(capacity > 1) { "Session capacity must be a positive number" }
-        require(capacity <= SESSION_MAX_CAPACITY) { "Session capacity must be less than or equal to $SESSION_MAX_CAPACITY" }
+        /** require(sid >= 0) { "Session identifier must be a positive number" } */ // Unnecessary require
+        /** require(capacity > 1) { "Session capacity must be a positive number" } */ // It's used on the service excpetions
+        /** require(capacity <= SESSION_MAX_CAPACITY) { "Session capacity must be less than or equal to $SESSION_MAX_CAPACITY" } */ // It's used on the service excpetions
         require(date.isNotBlank() && date.isValidTimeStamp()) { "Session date must be a valid date format" }
     }
 

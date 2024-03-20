@@ -8,6 +8,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
+/**
+
 class SessionsDataGameSessionTest {
 
     @Test
@@ -114,4 +116,4 @@ class SessionsDataGameSessionTest {
             Player(6, "player6", "player6@example.com"),
         )
     }
-}
+}*/

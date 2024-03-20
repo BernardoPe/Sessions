@@ -1,6 +1,8 @@
 package pt.isel.ls.storage.mem
 
 import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.exceptions.GameNameAlreadyExistsException
+import pt.isel.ls.exceptions.GameNotFoundException
 import pt.isel.ls.storage.SessionsDataGame
 
 /**
@@ -39,19 +41,62 @@ class SessionsDataMemGame : SessionsDataGame {
      *
      * @param value The game object to be created
      */
-    override fun create(value: Game) {
+    override fun create(name: String, developer: String, genres: Set<String>): Int {
         // Add the game object to the database mock
-        // Start by incrementing the last identifier
-        lastId++
+        // Start by checking if the game name already exists
+        db.any { it.name == name }.let {
+            if (it) throw GameNameAlreadyExistsException("Provided game name already exists.")
+        }
         // Add the updated game object to the database mock
         db.add(
             Game(
-            lastId,
-            value.name,
-            value.developer,
-            value.genres
+                lastId++,
+                name,
+                developer,
+                genres
             )
         )
+        // Return the last identifier
+        return lastId
+    }
+
+    /**
+     * Checks for the name of a game in the database mock
+     *
+     * This function uses the [isGameNameStored] function from the [SessionsDataMemGame] class
+     *
+     * @param name The game name to be checked
+     */
+
+    override fun isGameNameStored(name: String): Boolean {
+        // Check if the game name already exists in the database mock
+        return db.any { it.name == name }
+    }
+
+    /**
+     * Checks a list of genres in the database mock
+     *
+     * This function uses the [isGenresStored] function from the [SessionsDataMemGame] class
+     *
+     * @param genres The game name to be checked
+     */
+
+    override fun isGenresStored(genres: Set<String>): Boolean {
+        // Check if the list of genres already exists in the database mock
+        return db.any { it.genres == genres }
+    }
+
+    /**
+     * Checks for the name of the developer in the database mock
+     *
+     * This function uses the [isDeveloperStored] function from the [SessionsDataMemGame] class
+     *
+     * @param developer The name of the developer to be checked
+     */
+
+    override fun isDeveloperStored(developer: String): Boolean {
+        // Check if the developer name already exists in the database mock
+        return db.any { it.developer == developer }
     }
 
     /**
@@ -82,9 +127,12 @@ class SessionsDataMemGame : SessionsDataGame {
      *
      * @return A list with all the games in the database
      */
-    override fun getAll(): List<Game> {
-        // Read all the game objects from the database mock
-        return db
+    override fun getGamesSearch(genres: Set<String>, developer: String, limit: Int, skip: Int): List<Game> {
+        // Read all the game objects from the database mock that match the given genres and developer
+        // Start by checking the genres
+        val games = db.filter { it.genres.containsAll(genres) }
+        // Then check the developer
+        return games.filter { it.developer == developer }.subList(skip, skip + limit)
     }
 
     /**
@@ -95,7 +143,7 @@ class SessionsDataMemGame : SessionsDataGame {
      * @param id The game identifier
      * @param value The new game object
      */
-    override fun update(id: Int, value: Game): Boolean {
+    override fun update(id: Int, value: Game) {
         // Update the game object in the database mock
         db.forEach {
             // search for the game with the given id
@@ -105,12 +153,10 @@ class SessionsDataMemGame : SessionsDataGame {
                 db.remove(it)
                 // add the new game to the database mock
                 db.add(value)
-                // alert that the game was updated
-                return true
             }
         }
-        // alert otherwise
-        return false
+        // alert if the game was not found
+        throw GameNotFoundException("Game with the given id does not exist")
     }
 
     /**
@@ -120,7 +166,7 @@ class SessionsDataMemGame : SessionsDataGame {
      *
      * @param id The game identifier
      */
-    override fun delete(id: Int): Boolean {
+    override fun delete(id: Int) {
         // Delete the game object from the database mock
         db.forEach {
             // search for the game with the given id
@@ -128,11 +174,9 @@ class SessionsDataMemGame : SessionsDataGame {
                 // if found
                 // remove the game from the database mock
                 db.remove(it)
-                // alert that the game was deleted
-                return true
             }
         }
-        // alert otherwise
-        return false
+        // alert if the game was not found
+        throw GameNotFoundException("Game with the given id does not exist")
     }
 }

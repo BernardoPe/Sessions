@@ -5,10 +5,7 @@ import pt.isel.ls.dto.SessionAddPlayerOutputModel
 import pt.isel.ls.dto.SessionCreationOutputModel
 import pt.isel.ls.dto.SessionInfoOutputModel
 import pt.isel.ls.dto.SessionSearchOutputModel
-import pt.isel.ls.services.SessionAddPlayerResult
-import pt.isel.ls.services.SessionIdentifier
-import pt.isel.ls.services.SessionSearchResult
-
+import pt.isel.ls.exceptions.services.*
 
 /**
  * Converts a [SessionIdentifier] to a [SessionCreationOutputModel]
@@ -21,7 +18,7 @@ fun SessionIdentifier.toSessionCreationDTO() = SessionCreationOutputModel(this)
  * @return The session add player DTO
  */
 
-fun SessionAddPlayerResult.toSessionAddPlayerDTO() = SessionAddPlayerOutputModel(this)
+fun SessionAddPlayerMessage.toSessionAddPlayerDTO() = SessionAddPlayerOutputModel(this)
 
 /**
  * Converts a [Session] to [SessionInfoOutputModel]
@@ -33,4 +30,4 @@ fun Session.toSessionInfoDTO() = SessionInfoOutputModel(sid, capacity, date, gam
  * Converts [SessionSearchResult] to [SessionSearchOutputModel]
  * @return The session search DTO
  */
-fun SessionSearchResult.toSessionSearchDTO() = SessionSearchOutputModel(map { it.toSessionInfoDTO() })
+fun SessionList.toSessionSearchDTO() = SessionSearchOutputModel(map { it.toSessionInfoDTO() })

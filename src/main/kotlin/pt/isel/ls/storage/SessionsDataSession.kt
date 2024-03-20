@@ -1,5 +1,6 @@
 package pt.isel.ls.storage
 
+import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.session.Session
 
 /**
@@ -20,7 +21,7 @@ interface SessionsDataSession {
         *
         * @param value The session object to be created
         */
-        fun create(value: Session)
+        fun create(capacity: Int, game: Game, date: String): Int
 
         /**
         * Read a session from the database
@@ -35,15 +36,15 @@ interface SessionsDataSession {
          *
          * @return A list with all the sessions in the database
          */
-        fun getAll(): List<Session>
+        fun getSessionsSearch(gid: Int, date: String?, state: String?, pid: Int?, limit: Int, skip: Int): List<Session>
 
         /**
         * Update a session in the database
         *
-        * @param id The session identifier
-        * @param value The new session object
+        * @param sid The session identifier
+        * @param pid The player identifier
         */
-        fun update(id: Int, value: Session): Boolean
+        fun update(sid: Int, pid: Int) : String
 
         /**
         * Delete a session from the database
@@ -51,5 +52,5 @@ interface SessionsDataSession {
         * @param id The session identifier
         * @return true if the session was deleted, false otherwise
         */
-        fun delete(id: Int): Boolean
+        fun delete(id: Int)
 }

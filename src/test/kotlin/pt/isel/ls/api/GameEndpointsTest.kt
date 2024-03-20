@@ -10,9 +10,6 @@ import org.junit.jupiter.api.BeforeAll
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.dto.GameInfoOutputModel
 import pt.isel.ls.dto.GameSearchOutputModel
-import pt.isel.ls.services.gameService
-import pt.isel.ls.services.playerService
-import pt.isel.ls.services.sessionsService
 import pt.isel.ls.storage.SessionsDataPlayer
 import pt.isel.ls.storage.mem.SessionsDataMemGame
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
