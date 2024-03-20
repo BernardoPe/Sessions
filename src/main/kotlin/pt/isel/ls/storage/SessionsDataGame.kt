@@ -1,9 +1,11 @@
 package pt.isel.ls.storage
 
+import pt.isel.ls.data.domain.Genre
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.exceptions.GameNameAlreadyExistsException
 import pt.isel.ls.exceptions.GameNotFoundException
 import pt.isel.ls.storage.mem.SessionsDataMemGame
+import pt.isel.ls.data.domain.Name
 
 /**
  *  Game Data management interface
@@ -33,7 +35,7 @@ interface SessionsDataGame {
      * @return The last identifier
      * @throws GameNameAlreadyExistsException If the game name already exists
      */
-    fun create(name: String, developer: String, genres: Set<String>): Int
+    fun create(name: Name, developer: Name, genres: Set<Genre>): UInt
 
     /**
      * Checks for the name of a game in the database mock
@@ -43,7 +45,7 @@ interface SessionsDataGame {
      * @param name The game name to be checked
      */
     // This may or may not be a necessary method
-    fun isGameNameStored(name: String): Boolean
+    fun isGameNameStored(name: Name): Boolean
 
     /**
      * Checks a list of genres in the database mock
@@ -53,7 +55,7 @@ interface SessionsDataGame {
      * @param genres The game name to be checked
      */
     // This may or may not be a necessary method
-    fun isGenresStored(genres: Set<String>): Boolean
+    fun isGenresStored(genres: Set<Genre>): Boolean
 
     /**
      * Checks for the name of the developer in the database mock
@@ -63,7 +65,7 @@ interface SessionsDataGame {
      * @param developer The name of the developer to be checked
      */
     // This may or may not be a necessary method
-    fun isDeveloperStored(developer: String): Boolean
+    fun isDeveloperStored(developer: Name): Boolean
 
     /**
      * Read games from the database mock
@@ -74,7 +76,7 @@ interface SessionsDataGame {
      * @param developer The game developer
      * @return The list of game objects that match the given genres and developer
      */
-    fun getGamesSearch(genres: Set<String>, developer: String, limit: Int, skip: Int): List<Game>
+    fun getGamesSearch(genres: Set<Genre>, developer: Name, limit: UInt, skip: UInt): List<Game>
 
     /**
      * Read all games from the database mock
@@ -93,7 +95,7 @@ interface SessionsDataGame {
      * @param id The game identifier
      * @return The game object with the given id or null if it does not exist
      */
-    fun getById(id: Int): Game?
+    fun getById(id: UInt): Game?
 
     /**
      * Update a game in the database mock
@@ -104,7 +106,7 @@ interface SessionsDataGame {
      * @param value The new game object
      * @throws GameNotFoundException If the game with the given id does not exist
      */
-    fun update(id: Int, value: Game)
+    fun update(value: Game)
 
     /**
      * Delete a game from the database mock
@@ -114,5 +116,5 @@ interface SessionsDataGame {
      * @param id The game identifier
      * @throws GameNotFoundException If the game with the given id does not exist
      */
-    fun delete(id: Int)
+    fun delete(id: UInt)
 }

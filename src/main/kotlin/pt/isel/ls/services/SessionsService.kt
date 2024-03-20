@@ -1,81 +1,73 @@
 package pt.isel.ls.services
 
-import pt.isel.ls.domain.session.SESSION_MAX_CAPACITY
+import kotlinx.datetime.LocalDateTime
+import pt.isel.ls.data.domain.session.SESSION_MAX_CAPACITY
+import pt.isel.ls.data.domain.session.State
 import pt.isel.ls.exceptions.services.*
 import pt.isel.ls.storage.SessionsDataManager
 import pt.isel.ls.utils.failure
-import pt.isel.ls.utils.isValidTimeStamp
 import pt.isel.ls.utils.success
 
 class SessionsService(val storage: SessionsDataManager) {
 
     // Sessions exceptions must be discussed
-    fun createSession(capacity: Int, gid: Int, date: String): SessionCreationResult {
-        if (capacity <= 1 || capacity > SESSION_MAX_CAPACITY) {
+    fun createSession(capacity: UInt, gid: UInt, date: LocalDateTime): SessionCreationResult {
+
+        if (capacity <= 1u || capacity > SESSION_MAX_CAPACITY) {
             return failure(SessionCreationException.InvalidCapacity)
         }
 
-        if (date.isNotBlank() && date.isValidTimeStamp()) {
-            return failure(SessionCreationException.InvalidDate)
-        }
+        val getGame = storage.game.getById(gid)
 
-        return storage.apply {
-            val getGame = it.storageGame.getById(gid)
-            val storageSession = it.storageSession
-            if (getGame == null) {
-                failure(SessionCreationException.GameNotFound)
-            } else {
-                success(storageSession.create(capacity, getGame, date))
-            }
+        val storageSession = storage.session
+
+        return if (getGame == null) {
+            failure(SessionCreationException.GameNotFound)
+        } else {
+            success(storageSession.create(capacity, getGame, date))
         }
 
     }
 
-    fun addPlayer(sid: Int, pid: Int): SessionAddPlayerResult {
-        return storage.apply {
-            val getSession =
-                it.storageSession.getById(sid) ?: return@apply failure(SessionAddPlayerException.SessionNotFound)
-            if (getSession.capacity <= 1 || getSession.capacity > SESSION_MAX_CAPACITY) {
-                return@apply failure(SessionAddPlayerException.InvalidCapacity)
+    fun addPlayer(sid: UInt, pid: UInt): SessionAddPlayerResult {
+
+            val getSession = storage.session.getById(sid) ?: return failure(SessionAddPlayerException.SessionNotFound)
+
+            if (getSession.capacity <= 1u || getSession.capacity > SESSION_MAX_CAPACITY) {
+                 failure(SessionAddPlayerException.InvalidCapacity)
             }
 
-            val getPlayer = it.storagePlayer.getById(pid)
+            val getPlayer = storage.player.getById(pid)
 
-            if (getPlayer == null) {
+            return if (getPlayer == null) {
                 failure(SessionAddPlayerException.PlayerNotFound)
             } else {
-                success(it.storageSession.update(sid, pid))
+                success(storage.session.update(sid, pid))
             }
-        }
+
     }
 
-    fun listSessions(gid: Int, date: String?, state: String?, pid: Int?, limit: Int?, skip: Int?): SessionSearchResult {
+    fun listSessions(gid: UInt, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): SessionSearchResult {
 
-        if (date != null) {
-            if (date.isNotBlank() && date.isValidTimeStamp()) {
-                return failure(SessionSearchException.InvalidDate)
-            }
-        }
-
-        return storage.apply { storage ->
-            if (storage.storageSession.getById(gid) == null) {
+            return if (storage.session.getById(gid) == null) {
                 failure(SessionSearchException.GameNotFound)
-            } else if (pid?.let { storage.storagePlayer.getById(it) } == null) {
+            } else if (pid?.let { storage.player.getById(it) } == null) {
                 failure(SessionSearchException.PLayerNotFound)
             } else {
-                success(storage.storageSession.getSessionsSearch())
+                success(storage.session.getSessionsSearch(gid, date, state, pid, limit, skip))
             }
-        }
+
     }
 
-    fun getSessionById(sid: Int): SessionDetailsResult {
-        return storage.apply {
-            val getSession = it.storageSession.getById(sid)
-            if (getSession == null) {
-                failure(SessionDetailsException.SessionNotFound)
-            } else {
-                success(getSession)
-            }
+    fun getSessionById(sid: UInt): SessionDetailsResult {
+
+        val getSession = storage.session.getById(sid)
+
+        return if (getSession == null) {
+            failure(SessionDetailsException.SessionNotFound)
+        } else {
+            success(getSession)
         }
+
     }
 }

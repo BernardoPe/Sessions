@@ -1,20 +1,21 @@
 package pt.isel.ls.utils
 
-import java.sql.Timestamp
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
-fun String.isValidTimeStamp(): Boolean {
-    try {
-        Timestamp.valueOf(this)
-        return true
+fun String.toLocalDateTime(): LocalDateTime {
+    return try {
+        LocalDateTime.parse(this)
     } catch (e: Exception) {
-        return false
+        throw IllegalArgumentException("Invalid date format")
     }
 }
 
-fun String.toTimeStamp(): Timestamp {
-    return Timestamp.valueOf(this)
-}
 
-fun Timestamp.isGreaterThan(timestamp: Timestamp): Boolean {
-    return this.after(timestamp)
-}
+fun currentLocalTime() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+
+fun LocalDateTime.isBefore(other: LocalDateTime) = this < other
+
+fun LocalDateTime.isAfter(other: LocalDateTime) = this > other

@@ -7,7 +7,7 @@ sealed class GameCreationException {
     data object GameNameAlreadyExists : GameCreationException()
 }
 
-typealias GameCreationResult = Either<GameCreationException, Int>
+typealias GameCreationResult = Either<GameCreationException, UInt>
 
 sealed class GameDetailsException {
     data object GameNotFound : GameDetailsException()
@@ -21,7 +21,7 @@ sealed class GameSearchException {
     data object DeveloperNotFound : GameSearchException()
 }
 
-typealias GameIdentifier = Int
+typealias GameIdentifier = UInt
 
 typealias GameList = List<Game>
 

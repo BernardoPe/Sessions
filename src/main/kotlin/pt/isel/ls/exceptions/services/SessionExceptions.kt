@@ -11,7 +11,7 @@ sealed class SessionCreationException {
     data object InvalidDate : SessionCreationException()
 }
 
-typealias SessionCreationResult = Either<SessionCreationException, Int>
+typealias SessionCreationResult = Either<SessionCreationException, UInt>
 
 sealed class SessionAddPlayerException {
     data object SessionNotFound : SessionAddPlayerException()
@@ -42,7 +42,7 @@ sealed class SessionSearchException {
 
 }
 
-typealias SessionIdentifier = Int
+typealias SessionIdentifier = UInt
 
 typealias SessionList = List<Session>
 

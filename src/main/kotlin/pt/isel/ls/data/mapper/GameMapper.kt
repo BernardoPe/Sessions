@@ -12,7 +12,7 @@ import pt.isel.ls.exceptions.services.GameList
  * Converts a [Game] to [GameInfoOutputModel]
  * @return The game info DTO
  */
-fun Game.toGameInfoDTO() = GameInfoOutputModel(gid, name, developer, genres.toList())
+fun Game.toGameInfoDTO() = GameInfoOutputModel(id, name.toString(), developer.toString(), genres.map {it.toString()})
 
 
 /**

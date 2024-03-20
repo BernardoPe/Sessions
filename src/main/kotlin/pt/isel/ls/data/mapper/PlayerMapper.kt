@@ -9,7 +9,7 @@ import pt.isel.ls.exceptions.services.PlayerCredentials
  * Converts [Player] to [PlayerInfoOutputModel]
  * @return The player info DTO
  */
-fun Player.toPlayerInfoDTO() = PlayerInfoOutputModel(pid, name, email)
+fun Player.toPlayerInfoDTO() = PlayerInfoOutputModel(id, name.toString(), email.toString())
 
 
 /**

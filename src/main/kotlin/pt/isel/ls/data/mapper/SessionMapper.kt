@@ -24,7 +24,7 @@ fun SessionAddPlayerMessage.toSessionAddPlayerDTO() = SessionAddPlayerOutputMode
  * Converts a [Session] to [SessionInfoOutputModel]
  * @return The session info DTO
  */
-fun Session.toSessionInfoDTO() = SessionInfoOutputModel(sid, capacity, date, gameSession.toGameInfoDTO(), playersSession.map { it.toPlayerInfoDTO() })
+fun Session.toSessionInfoDTO() = SessionInfoOutputModel(id, capacity, date.toString(), gameSession.toGameInfoDTO(), playersSession.map { it.toPlayerInfoDTO() })
 
 /**
  * Converts [SessionSearchResult] to [SessionSearchOutputModel]

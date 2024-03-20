@@ -1,11 +1,15 @@
 package pt.isel.ls.data.domain.session
 
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.toLocalDateTime
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
-import pt.isel.ls.dto.SessionInfoOutputModel
-import pt.isel.ls.utils.isValidTimeStamp
+import pt.isel.ls.utils.currentLocalTime
+import pt.isel.ls.utils.isAfter
+import pt.isel.ls.utils.isBefore
+import java.util.*
 
-const val SESSION_MAX_CAPACITY = 100
+const val SESSION_MAX_CAPACITY = 100u
 
 /**
  *  Session
@@ -17,36 +21,40 @@ const val SESSION_MAX_CAPACITY = 100
  *  @param date The session date
  */
 data class Session(
-    val sid: Int,
-    val capacity: Int,
-    val date: String,
+    val id: UInt,
+    val capacity: UInt,
+    val date: LocalDateTime,
     val gameSession: Game,
     val playersSession: Set<Player>
 ) {
+    val state : State
+        get() = if (playersSession.size.toUInt() == capacity && date.isBefore(currentLocalTime())) State.CLOSE else State.OPEN
     init {
-        /** require(sid >= 0) { "Session identifier must be a positive number" } */ // Unnecessary require
-        /** require(capacity > 1) { "Session capacity must be a positive number" } */ // It's used on the service excpetions
-        /** require(capacity <= SESSION_MAX_CAPACITY) { "Session capacity must be less than or equal to $SESSION_MAX_CAPACITY" } */ // It's used on the service excpetions
-        require(date.isNotBlank() && date.isValidTimeStamp()) { "Session date must be a valid date format" }
-    }
-
-    enum class State {
-        OPEN,
-        CLOSE;
-
-        val isOpen: Boolean
-            get() = this == OPEN
-
-        override fun toString(): String {
-            return when (this) {
-                OPEN -> "OPEN"
-                CLOSE -> "CLOSE"
-            }
-        }
+        require(capacity in (2u..SESSION_MAX_CAPACITY)) { "Session capacity must be at least 2 and at most $SESSION_MAX_CAPACITY" }
+        require(playersSession.size.toUInt() <= capacity) { "Session players must be less than or equal to capacity" }
+        require(date.isAfter(currentLocalTime())) { "Session date must be in the future" }
     }
 
 }
 
+enum class State {
+    OPEN,
+    CLOSE;
+    override fun toString(): String {
+        return when (this) {
+            OPEN -> "OPEN"
+            CLOSE -> "CLOSE"
+        }
+    }
 
+    fun from(value: String): State {
+        return when (value.uppercase(Locale.getDefault())) {
+            "OPEN" -> OPEN
+            "CLOSE" -> CLOSE
+            else -> throw IllegalArgumentException("Invalid state")
+        }
+    }
+
+}
 
 

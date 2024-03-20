@@ -1,5 +1,10 @@
 package pt.isel.ls.storage
 
-interface SessionsDataManager {
-    fun <T> apply(block: (SessionsData) -> T): T
-}
+class SessionsDataManager(
+    val game : SessionsDataGame,
+    val player : SessionsDataPlayer,
+    val session : SessionsDataSession
+)
+
+
+

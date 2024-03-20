@@ -1,7 +1,9 @@
 package pt.isel.ls.storage
 
+import kotlinx.datetime.LocalDateTime
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.session.Session
+import pt.isel.ls.data.domain.session.State
 import pt.isel.ls.exceptions.SessionNotFoundException
 
 /**
@@ -29,7 +31,7 @@ interface SessionsDataSession {
          * @param date The date
          * @return The session identifier
          */
-        fun create(capacity: Int, game: Game, date: String): Int
+        fun create(capacity: UInt, game: Game, date: LocalDateTime): UInt
 
         /**
          * Read a session from the database mock
@@ -39,7 +41,7 @@ interface SessionsDataSession {
          * @param id The session identifier
          * @return The session object with the given id or null if it does not exist
          */
-        fun getById(id: Int): Session?
+        fun getById(id: UInt): Session?
 
         /**
          *  Read sessions from the database mock that match the given parameters
@@ -52,7 +54,7 @@ interface SessionsDataSession {
          *  @param pid The player identifier
          *  @return A list with all the sessions in the database that match the given parameters
          */
-        fun getSessionsSearch(gid: Int, date: String?, state: String?, pid: Int?, limit: Int, skip: Int): List<Session>
+        fun getSessionsSearch(gid: UInt, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): List<Session>
 
         /**
          * Update a session in the database mock
@@ -64,7 +66,7 @@ interface SessionsDataSession {
          * @param pid The player identifier
          * @throws SessionNotFoundException If the session is not found
          */
-        fun update(sid: Int, pid: Int) : String
+        fun update(sid: UInt, pid: UInt) : String
 
         /**
          * Delete a session from the database mock
@@ -74,5 +76,5 @@ interface SessionsDataSession {
          * @param id The session identifier
          * @throws SessionNotFoundException If the session is not found
          */
-        fun delete(id: Int)
+        fun delete(id: UInt)
 }

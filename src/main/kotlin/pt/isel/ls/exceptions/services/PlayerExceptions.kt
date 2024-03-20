@@ -18,4 +18,4 @@ sealed class PlayerDetailsException {
 typealias PlayerDetailsResult = Either<PlayerDetailsException, Player>
 
 
-typealias PlayerCredentials = Pair<Int, UUID>
+typealias PlayerCredentials = Pair<UInt, UUID>

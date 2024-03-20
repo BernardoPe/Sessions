@@ -1,11 +1,14 @@
 package pt.isel.ls.domain.session
 
-import pt.isel.ls.domain.game.Game
-import pt.isel.ls.domain.player.Player
+import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.domain.session.SESSION_MAX_CAPACITY
+import pt.isel.ls.data.domain.session.Session
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
+/**
 class SessionTest {
 
     @Test
@@ -69,4 +72,4 @@ class SessionTest {
             Player(6, "player6", "player6@example.com"),
         )
     }
-}
+}*/

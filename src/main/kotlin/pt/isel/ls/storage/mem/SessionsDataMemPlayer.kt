@@ -1,5 +1,7 @@
 package pt.isel.ls.storage.mem
 
+import pt.isel.ls.data.domain.Email
+import pt.isel.ls.data.domain.Name
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.exceptions.PlayerEmailAlreadyExistsException
 import pt.isel.ls.exceptions.PlayerNotFoundException
@@ -31,18 +33,13 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
      *
      * @property lastId The last identifier.
      */
-    private var lastId = 0
-
-    private fun hashToken(token: UUID): Long {
-        return token.leastSignificantBits xor token.mostSignificantBits
-    }
+    private var lastId = 0u
 
     override fun getByToken(token: UUID): Player? {
-        val tokenHash = hashToken(token)
-        return db.find { it.tokenHash == tokenHash }
+        return db.find { it.token == token }
     }
 
-    override fun create(name: String, email: String): Pair<Int, UUID> {
+    override fun create(name: Name, email: Email): Pair<UInt, UUID> {
         // Add the player object to the database mock
         // Set by checking if the player email already exists
         if (isEmailStored(email)) {
@@ -56,26 +53,26 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
 
         db.add(
             Player(
-            lastId,
+                lastId,
                 name,
                 email,
-                hashToken(playerToken)
+                playerToken
             )
         )
         // Return the last identifier and a new UUID
         return Pair(lastId, playerToken)
     }
 
-    override fun isEmailStored(email: String): Boolean {
+    override fun isEmailStored(email: Email): Boolean {
         // Check if the player email exists in the database mock
         return db.any{it.email == email}
     }
 
-    override fun getById(id: Int): Player? {
+    override fun getById(id: UInt): Player? {
         // Read the player object from the database mock
         db.forEach {
             // search for the player with the given id
-            if (it.pid == id) {
+            if (it.id == id) {
                 // if found
                 // return the player object
                 return it
@@ -89,11 +86,11 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
         return db
     }
 
-    override fun update(id: Int, value: Player) {
+    override fun update(id: UInt, value: Player) {
         // Update the player object in the database mock
         db.forEach {
             // search for the player with the given id
-            if (it.pid == id) {
+            if (it.id == id) {
                 // if found
                 // remove the player from the database mock
                 db.remove(it)
@@ -105,11 +102,11 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
         throw PlayerNotFoundException("Given Player does not exist")
     }
 
-    override fun delete(id: Int) {
+    override fun delete(id: UInt) {
         // Delete the player object from the database mock
         db.forEach {
             // search for the player with the given id
-            if (it.pid == id) {
+            if (it.id == id) {
                 // if found
                 // remove the player from the database mock
                 db.remove(it)

@@ -1,5 +1,7 @@
 package pt.isel.ls.storage
 
+import pt.isel.ls.data.domain.Email
+import pt.isel.ls.data.domain.Name
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.exceptions.PlayerEmailAlreadyExistsException
 import pt.isel.ls.exceptions.PlayerNotFoundException
@@ -28,7 +30,7 @@ interface SessionsDataPlayer {
      * @return A pair with the last identifier and a new UUID
      * @throws PlayerEmailAlreadyExistsException If the player email already exists
      */
-    fun create(name: String, email: String): Pair<Int, UUID>
+    fun create(name: Name, email: Email): Pair<UInt, UUID>
 
     /**
      * Read a player from the database mock
@@ -38,7 +40,7 @@ interface SessionsDataPlayer {
      * @param id The player identifier
      * @return The player object with the given id or null if it does not exist
      */
-    fun getById(id: Int): Player?
+    fun getById(id: UInt): Player?
 
     /**
      * Checks the player's email on the database mock
@@ -48,7 +50,7 @@ interface SessionsDataPlayer {
      * @param email The player email to be checked
      * @return A boolean indicating if the player email exists in the database mock
      */
-    fun isEmailStored(email: String): Boolean
+    fun isEmailStored(email: Email): Boolean
 
     /**
      * Read all players from the database mock
@@ -68,7 +70,7 @@ interface SessionsDataPlayer {
      * @param value The new player object
      * @throws PlayerNotFoundException If the player does not exist
      */
-    fun update(id: Int, value: Player)
+    fun update(id: UInt, value: Player)
 
     /**
      * Delete a player from the database mock
@@ -78,7 +80,7 @@ interface SessionsDataPlayer {
      * @param id The player identifier
      * @throws PlayerNotFoundException If the player does not exist
      */
-    fun delete(id: Int)
+    fun delete(id: UInt)
 
     /**
      * Checks the player's token on the database

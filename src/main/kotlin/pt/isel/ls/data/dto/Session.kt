@@ -23,7 +23,7 @@ data class SessionAddPlayerOutputModel(val message: String)
  * @param gid The game identifier
  */
 @Serializable
-data class SessionCreationInputModel(val capacity: Int, val date: String, val gid: Int)
+data class SessionCreationInputModel(val capacity: UInt, val date: String, val id: UInt)
 
 /**
  * The [SessionCreationOutputModel] class is used to represent the response body of a created session
@@ -32,7 +32,7 @@ data class SessionCreationInputModel(val capacity: Int, val date: String, val gi
 
 @Serializable
 data class SessionCreationOutputModel(
-    val sid: Int
+    val id: UInt
     /** or UUID */
 )
 
@@ -49,8 +49,8 @@ data class SessionCreationOutputModel(
 
 @Serializable
 data class SessionInfoOutputModel(
-    val sid: Int,
-    val capacity: Int,
+    val id: UInt,
+    val capacity: UInt,
     val date: String,
     val gameSession: GameInfoOutputModel,
     val playersSession: List<PlayerInfoOutputModel>
@@ -65,10 +65,10 @@ data class SessionInfoOutputModel(
  */
 @Serializable
 data class SessionSearchInputModel(
-    val gid: Int,
+    val gid: UInt,
     val date: String? = null,
     val state: String? = null,
-    val pid: Int? = null
+    val pid: UInt? = null
 )
 
 /**

@@ -12,15 +12,21 @@ import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Status.Companion.UNAUTHORIZED
 import org.http4k.routing.path
+import pt.isel.ls.data.domain.Email
+import pt.isel.ls.data.domain.Genre
+import pt.isel.ls.data.domain.Name
+import pt.isel.ls.data.domain.session.State
 import pt.isel.ls.data.mapper.*
 import pt.isel.ls.dto.*
 import pt.isel.ls.exceptions.api.*
 import pt.isel.ls.exceptions.services.*
+import pt.isel.ls.pt.isel.ls.logger
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
 import pt.isel.ls.utils.Failure
 import pt.isel.ls.utils.Success
+import pt.isel.ls.utils.toLocalDateTime
 import java.util.*
 
 
@@ -43,21 +49,11 @@ class SessionsApi(
     val sessionServices: SessionsService
 ) {
 
-    private val processors = mapOf(
-        Operation.CREATE_PLAYER to SessionsRequest(::createPlayer, false),
-        Operation.GET_PLAYER_DETAILS to SessionsRequest(::getPlayerDetails, false),
-        Operation.CREATE_GAME to SessionsRequest(::createGame, true),
-        Operation.GET_GAME_DETAILS to SessionsRequest(::getGameById, false),
-        Operation.GET_GAME_LIST to SessionsRequest(::getGameList, false),
-        Operation.CREATE_SESSION to SessionsRequest(::createSession, true),
-        Operation.ADD_PLAYER_TO_SESSION to SessionsRequest(::addPlayerToSession, true),
-        Operation.GET_SESSION_DETAILS to SessionsRequest(::getSessionById, false),
-        Operation.GET_SESSION_LIST to SessionsRequest(::getSessionList, false)
-    )
 
-    private fun createPlayer(request: Request): Response {
+    fun createPlayer(request: Request): Response = processRequest(request) {
         val player = parseJsonBody<PlayerCreationInputModel>(request)
-        return when (val res = playerServices.createPlayer(player.name, player.email)) {
+
+        when (val res = playerServices.createPlayer(Name(player.name), Email(player.email))) {
             is Success -> Response(CREATED)
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(res.value.toPlayerCreationDTO()))
@@ -69,10 +65,11 @@ class SessionsApi(
         }
     }
 
-    private fun getPlayerDetails(request: Request): Response {
-        val pid = request.path("pid")?.toIntOrNull() ?: throw BadRequestException("Invalid Player Identifier")
-        return when (val res = playerServices.getPlayerDetails(pid)) {
-            is Success -> return Response(OK)
+
+    fun getPlayerDetails(request: Request) = processRequest(request) {
+        val pid = request.path("pid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Player Identifier")
+        when (val res = playerServices.getPlayerDetails(pid)) {
+            is Success -> Response(OK)
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(res.value.toPlayerInfoDTO()))
 
@@ -82,9 +79,10 @@ class SessionsApi(
         }
     }
 
-    private fun createGame(request: Request): Response {
+    fun createGame(request: Request) = authHandler(request) {
         val game = parseJsonBody<GameCreationInputModel>(request)
-        return when (val res = gameServices.createGame(game.name, game.developer, game.genres)) {
+        when (val res = gameServices.createGame(Name(game.name), Name(game.developer), game.genres.map { Genre(it) }.toSet())) {
+
             is Success -> Response(CREATED)
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(res.value.toGameCreationDTO()))
@@ -95,9 +93,9 @@ class SessionsApi(
         }
     }
 
-    private fun getGameById(request: Request): Response {
-        val gid = request.path("gid")?.toIntOrNull() ?: throw BadRequestException("Invalid Game Identifier")
-        return when (val res = gameServices.getGameById(gid)) {
+    fun getGameById(request: Request) = processRequest(request) {
+        val gid = request.path("gid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Game Identifier")
+        when (val res = gameServices.getGameById(gid)) {
             is Success -> Response(OK)
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(res.value.toGameInfoDTO()))
@@ -108,10 +106,13 @@ class SessionsApi(
         }
     }
 
-    private fun getGameList(request: Request): Response {
-        val (limit, skip) = (request.query("limit")?.toInt() ?: 5) to (request.query("skip")?.toInt() ?: 0)
+    fun getGameList(request: Request) = processRequest(request) {
+
+        val (limit, skip) = (request.query("limit")?.toUIntOrNull() ?: 5u) to (request.query("skip")?.toUIntOrNull() ?: 0u)
+
         val gameSearch = parseJsonBody<GameSearchInputModel>(request)
-        return when (val res = gameServices.searchGames(gameSearch.genres, gameSearch.developer, limit, skip)) {
+
+        when(val res = gameServices.searchGames(gameSearch.genres.map { Genre(it) }.toSet(), Name(gameSearch.developer), limit, skip)) {
             is Success -> Response(OK)
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(res.value.toGameSearchDTO()))
@@ -123,9 +124,11 @@ class SessionsApi(
         }
     }
 
-    private fun createSession(request: Request): Response {
+    fun createSession(request: Request) = authHandler(request) {
+
         val session = parseJsonBody<SessionCreationInputModel>(request)
-        return when (val res = sessionServices.createSession(session.capacity, session.gid, session.date)) {
+
+        when (val res = sessionServices.createSession(session.capacity, session.id, session.date.toLocalDateTime())) {
             is Success -> Response(CREATED)
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(res.value.toSessionCreationDTO()))
@@ -138,10 +141,10 @@ class SessionsApi(
         }
     }
 
-    private fun addPlayerToSession(request: Request): Response {
-        val sid = request.path("sid")?.toIntOrNull() ?: throw BadRequestException("Invalid Session Identifier")
-        val pid = request.path("pid")?.toIntOrNull() ?: throw BadRequestException("Invalid Player Identifier")
-        return when (val res = sessionServices.addPlayer(sid, pid)) {
+    fun addPlayerToSession(request: Request) = authHandler(request) {
+        val sid = request.path("sid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Session Identifier")
+        val pid = request.path("pid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Player Identifier")
+        when (val res = sessionServices.addPlayer(sid, pid)) {
             is Success -> Response(OK)
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(res.value.toSessionAddPlayerDTO()))
@@ -155,9 +158,9 @@ class SessionsApi(
         }
     }
 
-    private fun getSessionById(request: Request): Response {
-        val sid = request.path("sid")?.toIntOrNull() ?: throw BadRequestException("Invalid Session Identifier")
-        return when (val res = sessionServices.getSessionById(sid)) {
+    fun getSessionById(request: Request) = processRequest(request) {
+        val sid = request.path("sid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Session Identifier")
+        when (val res = sessionServices.getSessionById(sid)) {
             is Success -> Response(OK)
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(res.value.toSessionInfoDTO()))
@@ -169,18 +172,19 @@ class SessionsApi(
 
     }
 
-    private fun getSessionList(request: Request): Response {
-        val (limit, skip) = (request.query("limit")?.toIntOrNull() ?: 5) to (request.query("skip")?.toIntOrNull() ?: 0)
+
+    fun getSessionList(request: Request) = processRequest(request) {
+        val (limit, skip) = (request.query("limit")?.toUIntOrNull() ?: 5u) to (request.query("skip")?.toUIntOrNull() ?: 0u)
         val sessionSearch = parseJsonBody<SessionSearchInputModel>(request)
         val res = sessionServices.listSessions(
             sessionSearch.gid,
-            sessionSearch.date,
-            sessionSearch.state,
+            sessionSearch.date?.toLocalDateTime(),
+            sessionSearch.state?.let { State.valueOf(it) },
             sessionSearch.pid,
             limit,
             skip
         )
-        return when (res) {
+        when (res) {
             is Success -> Response(OK)
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(res.value.toSessionSearchDTO()))
@@ -193,6 +197,21 @@ class SessionsApi(
         }
     }
 
+
+    /**
+     * Handles the authentication and processes the request
+     * @param request The HTTP request
+     * @param service The desired processor
+     */
+
+    private fun authHandler(request: Request, service: (Request) -> Response): Response {
+        return if (verifyAuth(request)) {
+            service(request)
+        } else {
+            Response(UNAUTHORIZED).header("content-type", "application/json").body(Json.encodeToString(UnauthorizedException()))
+        }
+    }
+
     /**
      * Processes the request and returns the response
      *
@@ -201,9 +220,9 @@ class SessionsApi(
      *
      * @return The response
      */
-    fun processRequest(request: Request, service: Operation): Response {
+    private fun processRequest(request: Request, service: (Request) -> Response): Response {
 
-        val (processor, requiresAuth) = processors[service] ?: return Response(INTERNAL_SERVER_ERROR)
+        logRequest(request)
 
         if (request.bodyString().isNotBlank() && request.header("content-type") != "application/json")
             return Response(BAD_REQUEST).header("content-type", "application/json").body(
@@ -212,17 +231,13 @@ class SessionsApi(
                 )
             )
 
-        if (requiresAuth && !verifyAuth(request))
-            return Response(UNAUTHORIZED).header("content-type", "application/json").body(
-                Json.encodeToString(
-                    UnauthorizedException()
-                )
-            )
-
-        return try {
-            processor(request)
+        val res = try {
+            service(request)
         } catch (e: WebExceptions) {
             Response(Status(e.status, e.description)).header("content-type", "application/json").body(Json.encodeToString(e))
+        }
+        catch (e: IllegalArgumentException) {
+            Response(BAD_REQUEST).header("content-type", "application/json").body(Json.encodeToString(BadRequestException(e.message)))
         }
         catch (e: Exception) {
             Response(INTERNAL_SERVER_ERROR).header("content-type", "application/json").body(
@@ -230,17 +245,9 @@ class SessionsApi(
             )
         }
 
-    }
+        return res.also { logResponse(it) }
 
-    private fun verifyAuth(request: Request) : Boolean {
-        return try {
-            val token = UUID.fromString(
-                request.header("Authorization")?.split(" ")?.get(1) ?: return false
-            )
-            playerServices.authenticatePlayer(token)
-        } catch (e: Exception) {
-            false
-        }
+
     }
 
     private inline fun <reified T> parseJsonBody(request: Request): T {
@@ -254,27 +261,36 @@ class SessionsApi(
             throw BadRequestException(e.message)
         }
     }
+
+    private fun verifyAuth(request: Request) : Boolean {
+        return try {
+            val token = UUID.fromString(
+                request.header("Authorization")?.split(" ")?.get(1) ?: return false
+            )
+            playerServices.authenticatePlayer(token)
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private fun logRequest(request: Request) {
+        logger.info(
+            "incoming request: method={}, uri={}, content-type={} accept={}",
+            request.method,
+            request.uri,
+            request.header("content-type"),
+            request.header("accept"),
+        )
+    }
+
+    private fun logResponse(response: Response) {
+        logger.info(
+            "outgoing response: status={}, content-type={}",
+            response.status,
+            response.header("content-type"),
+        )
+    }
+
+
+
 }
-
-
-/**
- * The [Operation] enum represents the available operations that the client can request.
- */
-enum class Operation {
-    CREATE_PLAYER,
-    GET_PLAYER_DETAILS,
-    CREATE_GAME,
-    GET_GAME_DETAILS,
-    GET_GAME_LIST,
-    CREATE_SESSION,
-    ADD_PLAYER_TO_SESSION,
-    GET_SESSION_DETAILS,
-    GET_SESSION_LIST
-}
-
-/**
- * The [SessionsRequest] represents a request to the Sessions Server.
- *
- * It is a pair of a request processor and a boolean that indicates if the request requires authentication.
- */
-typealias SessionsRequest = Pair<(Request) -> Response, Boolean>

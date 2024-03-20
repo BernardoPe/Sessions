@@ -1,6 +1,9 @@
 package pt.isel.ls.data.domain.player
 
-import pt.isel.ls.dto.PlayerInfoOutputModel
+import pt.isel.ls.data.domain.Email
+import pt.isel.ls.data.domain.Name
+import java.util.UUID
+
 
 /**
  *  Player
@@ -12,18 +15,8 @@ import pt.isel.ls.dto.PlayerInfoOutputModel
  *  @param email The player email
  */
 data class Player (
-        val pid: Int,
-        val name: String,
-        val email: String,
-        val tokenHash : Long
-) {
-        init {
-                require(pid >= 0) { "The player identifier must be a positive integer" }
-                require(name.isNotBlank()) { "The player name must not be empty" }
-                require(email.isNotBlank()) { "The player email must not be empty" }
-                require(name.length in 1..40) { "The player name must be between 1 and 40 characters" }
-                require(email.matches(Regex("^[A-Za-z0-9+_.-]+@(.+)\$"))) { "The player email must be a valid e-mail" }
-        }
-
-}
-
+        val id: UInt,
+        val name: Name,
+        val email: Email,
+        val token : UUID
+)
