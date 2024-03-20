@@ -132,7 +132,7 @@ class SessionsDataMemGame : SessionsDataGame {
         // Start by checking the genres
         val games = db.filter { it.genres.containsAll(genres) }
         // Then check the developer
-        return games.filter { it.developer == developer }
+        return games.filter { it.developer == developer }.subList(skip, skip + limit)
     }
 
     /**

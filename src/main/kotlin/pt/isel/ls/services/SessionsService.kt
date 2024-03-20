@@ -40,7 +40,7 @@ class SessionsService(
     fun addPlayer(sid: Int, pid: Int): Either<SessionAddPlayerException, Unit> {
         val getSession = storageSession.getById(sid) ?: return failure(SessionAddPlayerException.SessionNotFound)
 
-        if (getSession.capacity + 1 > SESSION_MAX_CAPACITY) {
+        if (getSession.playersSession.size + 1 > SESSION_MAX_CAPACITY) {
             return failure(SessionAddPlayerException.SessionFull)
         }
 

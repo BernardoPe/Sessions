@@ -110,7 +110,7 @@ class SessionsDataMemSession : SessionsDataSession {
         pid?.let {
             sessions = sessions.filter { it.playersSession.any { it.pid == pid } }
         }
-        return sessions
+        return sessions.subList(skip, skip + limit)
     }
 
     /**
