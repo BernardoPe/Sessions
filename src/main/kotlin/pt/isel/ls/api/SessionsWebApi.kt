@@ -173,7 +173,7 @@ class SessionsApi(
         return when (val res = sessionServices.addPlayer(sid, pid)) {
             is Success -> Response(OK)
                 .header("content-type", "application/json")
-                .body(Json.encodeToString(SessionAddPlayerOutputModel(res.value)))
+                .body(Json.encodeToString(SessionAddPlayerOutputModel(res.value.toString())))
 
             is Failure -> when (res.value) {
                 SessionAddPlayerException.SessionNotFound -> throw NotFoundException("Session Not Found")

@@ -57,7 +57,7 @@ interface SessionsDataGame {
      * @return A list with all the games in the database
      */
 
-    fun getGamesSearch(genres: Set<String>, developer: String): List<Game>
+    fun getGamesSearch(genres: Set<String>, developer: String, limit: Int, skip: Int): List<Game>
 
     /**
      * Read a game from the database

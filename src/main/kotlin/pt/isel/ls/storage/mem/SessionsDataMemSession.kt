@@ -93,7 +93,7 @@ class SessionsDataMemSession : SessionsDataSession {
      *  @param pid The player identifier
      *  @return A list with all the sessions in the database that match the given parameters
      */
-    override fun getSessionsSearch(gid: Int, date: String?, state: String?, pid: Int?): List<Session> {
+    override fun getSessionsSearch(gid: Int, date: String?, state: String?, pid: Int?, limit : Int, skip: Int): List<Session> {
         // Get all the session objects from the database mock that match the given parameters
         // Start by checking the game identifier
         var sessions = db.filter { it.gameSession.gid == gid }

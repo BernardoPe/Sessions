@@ -1,10 +1,12 @@
 package pt.isel.ls.services
 
 import pt.isel.ls.domain.session.SESSION_MAX_CAPACITY
+import pt.isel.ls.domain.session.Session
 import pt.isel.ls.exceptions.services.*
 import pt.isel.ls.storage.SessionsDataGame
 import pt.isel.ls.storage.SessionsDataPlayer
 import pt.isel.ls.storage.SessionsDataSession
+import pt.isel.ls.utils.Either
 import pt.isel.ls.utils.failure
 import pt.isel.ls.utils.isValidTimeStamp
 import pt.isel.ls.utils.success
@@ -35,7 +37,7 @@ class SessionsService(
 
     }
 
-    fun addPlayer(sid: Int, pid: Int): SessionAddPlayerResult {
+    fun addPlayer(sid: Int, pid: Int): Either<SessionAddPlayerException, Unit> {
         val getSession = storageSession.getById(sid) ?: return failure(SessionAddPlayerException.SessionNotFound)
 
         if (getSession.capacity + 1 > SESSION_MAX_CAPACITY) {
@@ -51,7 +53,7 @@ class SessionsService(
         }
     }
 
-    fun listSessions(gid: Int, date: String?, state: String?, pid: Int?, limit: Int?, skip: Int?): SessionSearchResult {
+    fun listSessions(gid: Int, date: String?, state: String?, pid: Int?, limit: Int, skip: Int): Either<SessionSearchException, List<Session>> {
 
         if (date != null) {
             if (date.isNotBlank() && date.isValidTimeStamp()) {
@@ -64,7 +66,7 @@ class SessionsService(
         } else if (pid?.let { storagePlayer.getById(it) } == null) {
             failure(SessionSearchException.PLayerNotFound)
         } else {
-            success(storageSession.getSessionsSearch())
+            success(storageSession.getSessionsSearch(gid, date, state, pid, limit, skip))
         }
     }
 

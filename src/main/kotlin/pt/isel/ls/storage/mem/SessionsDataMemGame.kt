@@ -127,7 +127,7 @@ class SessionsDataMemGame : SessionsDataGame {
      *
      * @return A list with all the games in the database
      */
-    override fun getGamesSearch(genres: Set<String>, developer: String): List<Game> {
+    override fun getGamesSearch(genres: Set<String>, developer: String, limit: Int, skip: Int): List<Game> {
         // Read all the game objects from the database mock that match the given genres and developer
         // Start by checking the genres
         val games = db.filter { it.genres.containsAll(genres) }

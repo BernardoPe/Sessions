@@ -36,7 +36,7 @@ interface SessionsDataSession {
          *
          * @return A list with all the sessions in the database
          */
-        fun getSessionsSearch(gid: Int, date: String?, state: String?, pid: Int?): List<Session>
+        fun getSessionsSearch(gid: Int, date: String?, state: String?, pid: Int?, limit: Int, skip: Int): List<Session>
 
         /**
         * Update a session in the database
