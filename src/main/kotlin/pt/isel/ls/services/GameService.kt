@@ -1,9 +1,7 @@
 package pt.isel.ls.services
 
-import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.exceptions.services.*
 import pt.isel.ls.storage.SessionsDataGame
-import pt.isel.ls.utils.Either
 import pt.isel.ls.utils.failure
 import pt.isel.ls.utils.success
 
