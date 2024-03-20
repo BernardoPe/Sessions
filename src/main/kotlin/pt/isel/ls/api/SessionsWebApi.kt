@@ -9,14 +9,18 @@ import org.http4k.core.Status
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.CREATED
 import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
+import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Status.Companion.UNAUTHORIZED
 import org.http4k.routing.path
 import pt.isel.ls.dto.*
 import pt.isel.ls.exceptions.api.*
+import pt.isel.ls.exceptions.services.*
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
+import pt.isel.ls.utils.Failure
+import pt.isel.ls.utils.Success
 
 
 /**
@@ -52,119 +56,166 @@ class SessionsApi(
 
     private fun createPlayer(request: Request): Response {
         val player = parseJsonBody<PlayerCreationInputModel>(request)
-        val res = playerServices.createPlayer(player.name, player.email)
-        return Response(CREATED)
-            .header("content-type", "application/json")
-            .body(Json.encodeToString(PlayerCreationOutputModel(res.first, res.second.toString())))
+        return when (val res = playerServices.createPlayer(player.name, player.email)) {
+            is Success -> Response(CREATED)
+                .header("content-type", "application/json")
+                .body(Json.encodeToString(PlayerCreationOutputModel(res.value.first, res.value.second.toString())))
+
+            is Failure -> when (res.value) {
+                PlayerCreationException.UnsafeEmail -> Response(BAD_REQUEST)
+                PlayerCreationException.EmailAlreadyExists -> Response(BAD_REQUEST)
+            }
+        }
     }
 
     private fun getPlayerDetails(request: Request): Response {
         val pid = request.path("pid")?.toIntOrNull() ?: throw BadRequestException("Invalid Player Identifier")
-        val res = playerServices.getPlayerDetails(pid)
-        return Response(OK)
-            .header("content-type", "application/json")
-            .body(
-                Json.encodeToString(
-                    PlayerInfoOutputModel(
-                        res.pid,
-                        res.name,
-                        res.email
+        return when (val res = playerServices.getPlayerDetails(pid)) {
+            is Success -> return Response(OK)
+                .header("content-type", "application/json")
+                .body(
+                    Json.encodeToString(
+                        PlayerInfoOutputModel(
+                            res.value.pid,
+                            res.value.name,
+                            res.value.email
+                        )
                     )
                 )
-            )
+
+            is Failure -> when (res.value) {
+                PlayerDetailsException.PlayerNotFound -> Response(NOT_FOUND)
+            }
+        }
     }
 
     private fun createGame(request: Request): Response {
         val game = parseJsonBody<GameCreationInputModel>(request)
-        val res = gameServices.createGame(game.name, game.developer, game.genres)
-        return Response(CREATED)
-            .header("content-type", "application/json")
-            .body(Json.encodeToString(GameCreationOutputModel(res)))
+        return when (val res = gameServices.createGame(game.name, game.developer, game.genres)) {
+            is Success -> Response(CREATED)
+                .header("content-type", "application/json")
+                .body(Json.encodeToString(GameCreationOutputModel(res.value)))
+
+            is Failure -> when (res.value) {
+                GameCreationException.GameNameAlreadyExists -> Response(BAD_REQUEST)
+            }
+        }
     }
 
     private fun getGameById(request: Request): Response {
         val gid = request.path("gid")?.toIntOrNull() ?: throw BadRequestException("Invalid Game Identifier")
-        val res = gameServices.getGameById(gid)
-        return Response(OK)
-            .header("content-type", "application/json")
-            .body(
-                Json.encodeToString(
-                    GameInfoOutputModel(
-                        res.gid,
-                        res.name,
-                        res.developer,
-                        res.genres.toList()
+        return when (val res = gameServices.getGameById(gid)) {
+            is Success -> Response(OK)
+                .header("content-type", "application/json")
+                .body(
+                    Json.encodeToString(
+                        GameInfoOutputModel(
+                            res.value.gid,
+                            res.value.name,
+                            res.value.developer,
+                            res.value.genres.toList()
+                        )
                     )
                 )
-            )
+
+            is Failure -> when (res.value) {
+                GameDetailsException.GameNotFound -> Response(NOT_FOUND)
+            }
+        }
     }
 
     private fun getGameList(request: Request): Response {
         val (limit, skip) = (request.query("limit")?.toInt() ?: 5) to (request.query("skip")?.toInt() ?: 0)
         val gameSearch = parseJsonBody<GameSearchInputModel>(request)
-        val res = gameServices.searchGames(gameSearch.genres, gameSearch.developer, limit, skip)
-        return Response(OK)
-            .header("content-type", "application/json")
-            .body(
-                Json.encodeToString(
-                    GameSearchOutputModel(
-                        res.map {
-                            GameInfoOutputModel(
-                                it.gid,
-                                it.name,
-                                it.developer,
-                                it.genres.toList()
-                            )
-                        }
+        return when (val res = gameServices.searchGames(gameSearch.genres, gameSearch.developer, limit, skip)) {
+            is Success -> Response(OK)
+                .header("content-type", "application/json")
+                .body(
+                    Json.encodeToString(
+                        GameSearchOutputModel(
+                            res.value.map {
+                                GameInfoOutputModel(
+                                    it.gid,
+                                    it.name,
+                                    it.developer,
+                                    it.genres.toList()
+                                )
+                            }
+                        )
                     )
                 )
-            )
+
+            is Failure -> when (res.value) {
+                GameSearchException.GenresNotFound -> Response(NOT_FOUND)
+                GameSearchException.DeveloperNotFound -> Response(NOT_FOUND)
+            }
+        }
     }
 
     private fun createSession(request: Request): Response {
         val session = parseJsonBody<SessionCreationInputModel>(request)
-        val res = sessionServices.createSession(session.capacity, session.gid, session.date)
-        return Response(CREATED)
-            .header("content-type", "application/json")
-            .body(Json.encodeToString(SessionCreationOutputModel(res)))
+        return when (val res = sessionServices.createSession(session.capacity, session.gid, session.date)) {
+            is Success -> Response(CREATED)
+                .header("content-type", "application/json")
+                .body(Json.encodeToString(SessionCreationOutputModel(res.value)))
+
+            is Failure -> when (res.value) {
+                SessionCreationException.InvalidCapacity -> Response(BAD_REQUEST)
+                SessionCreationException.InvalidDate -> Response(BAD_REQUEST)
+                SessionCreationException.GameNotFound -> Response(NOT_FOUND)
+            }
+        }
     }
 
     private fun addPlayerToSession(request: Request): Response {
         val sid = request.path("sid")?.toIntOrNull() ?: throw BadRequestException("Invalid Session Identifier")
         val pid = request.path("pid")?.toIntOrNull() ?: throw BadRequestException("Invalid Player Identifier")
-        val res = sessionServices.addPlayer(sid, pid)
-        return Response(OK)
-            .header("content-type", "application/json")
-            .body(Json.encodeToString(SessionAddPlayerOutputModel(res)))
+        return when (val res = sessionServices.addPlayer(sid, pid)) {
+            is Success -> Response(OK)
+                .header("content-type", "application/json")
+                .body(Json.encodeToString(SessionAddPlayerOutputModel(res.value)))
+
+            is Failure -> when (res.value) {
+                SessionAddPlayerException.SessionNotFound -> Response(NOT_FOUND)
+                SessionAddPlayerException.PlayerNotFound -> Response(NOT_FOUND)
+                SessionAddPlayerException.InvalidCapacity -> Response(BAD_REQUEST)
+            }
+        }
     }
 
     private fun getSessionById(request: Request): Response {
         val sid = request.path("sid")?.toIntOrNull() ?: throw BadRequestException("Invalid Session Identifier")
-        val res = sessionServices.getSessionById(sid)
-        return Response(OK)
-            .header("content-type", "application/json")
-            .body(
-                Json.encodeToString(
-                    SessionInfoOutputModel(
-                        res.sid,
-                        res.capacity,
-                        res.date,
-                        GameInfoOutputModel(
-                            res.gameSession.gid,
-                            res.gameSession.name,
-                            res.gameSession.developer,
-                            res.gameSession.genres.toList()
-                        ),
-                        res.playersSession.map {
-                            PlayerInfoOutputModel(
-                                it.pid,
-                                it.name,
-                                it.email
-                            )
-                        }
+        return when (val res = sessionServices.getSessionById(sid)) {
+            is Success -> Response(OK)
+                .header("content-type", "application/json")
+                .body(
+                    Json.encodeToString(
+                        SessionInfoOutputModel(
+                            res.value.sid,
+                            res.value.capacity,
+                            res.value.date,
+                            GameInfoOutputModel(
+                                res.value.gameSession.gid,
+                                res.value.gameSession.name,
+                                res.value.gameSession.developer,
+                                res.value.gameSession.genres.toList()
+                            ),
+                            res.value.playersSession.map {
+                                PlayerInfoOutputModel(
+                                    it.pid,
+                                    it.name,
+                                    it.email
+                                )
+                            }
+                        )
                     )
                 )
-            )
+
+            is Failure -> when (res.value) {
+                SessionDetailsException.SessionNotFound -> Response(NOT_FOUND)
+            }
+        }
+
     }
 
     private fun getSessionList(request: Request): Response {
@@ -178,34 +229,42 @@ class SessionsApi(
             limit,
             skip
         )
-        return Response(OK)
-            .header("content-type", "application/json")
-            .body(
-                Json.encodeToString(
-                    SessionSearchOutputModel(
-                        res.map {
-                            SessionInfoOutputModel(
-                                it.sid,
-                                it.capacity,
-                                it.date,
-                                GameInfoOutputModel(
-                                    it.gameSession.gid,
-                                    it.gameSession.name,
-                                    it.gameSession.developer,
-                                    it.gameSession.genres.toList()
-                                ),
-                                it.playersSession.map {
-                                    PlayerInfoOutputModel(
-                                        it.pid,
-                                        it.name,
-                                        it.email
-                                    )
-                                }
-                            )
-                        }
+        return when (res) {
+            is Success -> Response(OK)
+                .header("content-type", "application/json")
+                .body(
+                    Json.encodeToString(
+                        SessionSearchOutputModel(
+                            res.value.map { session ->
+                                SessionInfoOutputModel(
+                                    session.sid,
+                                    session.capacity,
+                                    session.date,
+                                    GameInfoOutputModel(
+                                        session.gameSession.gid,
+                                        session.gameSession.name,
+                                        session.gameSession.developer,
+                                        session.gameSession.genres.toList()
+                                    ),
+                                    session.playersSession.map {
+                                        PlayerInfoOutputModel(
+                                            it.pid,
+                                            it.name,
+                                            it.email
+                                        )
+                                    }
+                                )
+                            }
+                        )
                     )
                 )
-            )
+
+            is Failure -> when (res.value) {
+                SessionSearchException.GameNotFound -> Response(Status.NOT_FOUND)
+                SessionSearchException.PLayerNotFound -> Response(Status.NOT_FOUND)
+                SessionSearchException.InvalidDate -> Response(BAD_REQUEST)
+            }
+        }
     }
 
     /**

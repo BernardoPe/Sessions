@@ -136,7 +136,8 @@ fun main() {
         SessionsApi(
             PlayerService(SessionsDataMemPlayer()),
             GameService(SessionsDataMemGame()),
-            SessionsService(SessionsDataMemSession())
+            SessionsService(SessionsDataMemSession(), SessionsDataMemGame(), SessionsDataMemPlayer())
+            // Must modify services in later times or stick with this implementation
         )
     )
     server.start()
