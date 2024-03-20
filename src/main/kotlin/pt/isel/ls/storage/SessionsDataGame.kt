@@ -1,6 +1,6 @@
 package pt.isel.ls.storage
 
-import pt.isel.ls.domain.game.Game
+import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.exceptions.GameNameAlreadyExistsException
 import pt.isel.ls.exceptions.GameNotFoundException
 import pt.isel.ls.storage.mem.SessionsDataMemGame
