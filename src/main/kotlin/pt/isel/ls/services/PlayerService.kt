@@ -7,6 +7,7 @@ import pt.isel.ls.exceptions.services.PlayerDetailsResult
 import pt.isel.ls.storage.SessionsDataPlayer
 import pt.isel.ls.utils.failure
 import pt.isel.ls.utils.success
+import java.util.UUID
 
 class PlayerService(val storage: SessionsDataPlayer) {
     fun createPlayer(name: String, email: String): PlayerCreationResult {
@@ -19,10 +20,14 @@ class PlayerService(val storage: SessionsDataPlayer) {
         }
     }
 
-    /** May not be necessary to implement */
-//    fun authenticatePlayer(token: String) : Boolean {
-//
-//    }
+    /**
+     * Authenticates a player by its token
+     * @param token The player token
+     * @return A boolean indicating if the player is authenticated
+     */
+    fun authenticatePlayer(token: UUID) : Boolean {
+        return storage.getByToken(token) != null
+    }
 
     fun getPlayerDetails(pid: Int): PlayerDetailsResult {
         val getPlayer = storage.getById(pid)

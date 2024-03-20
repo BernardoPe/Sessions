@@ -21,6 +21,7 @@ import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
 import pt.isel.ls.utils.Failure
 import pt.isel.ls.utils.Success
+import java.util.*
 
 
 /**
@@ -232,9 +233,14 @@ class SessionsApi(
     }
 
     private fun verifyAuth(request: Request) : Boolean {
-        return true
-        //val token = request.header("Authorization")?.split(" ")?.get(1) ?: return false
-       // return playerServices.authenticatePlayer(token)
+        return try {
+            val token = UUID.fromString(
+                request.header("Authorization")?.split(" ")?.get(1) ?: return false
+            )
+            playerServices.authenticatePlayer(token)
+        } catch (e: Exception) {
+            false
+        }
     }
 
     private inline fun <reified T> parseJsonBody(request: Request): T {

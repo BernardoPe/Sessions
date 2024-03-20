@@ -14,7 +14,8 @@ import pt.isel.ls.dto.PlayerInfoOutputModel
 data class Player (
         val pid: Int,
         val name: String,
-        val email: String
+        val email: String,
+        val tokenHash : Long
 ) {
         init {
                 require(pid >= 0) { "The player identifier must be a positive integer" }

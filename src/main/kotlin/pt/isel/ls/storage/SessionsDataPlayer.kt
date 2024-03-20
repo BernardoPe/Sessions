@@ -80,4 +80,12 @@ interface SessionsDataPlayer {
      */
     fun delete(id: Int)
 
+    /**
+     * Checks the player's token on the database
+     *
+     * @param token The player token to be checked
+     * @return A boolean indicating if the player token exists in the database mock
+     */
+    fun getByToken(token: UUID): Player?
+
 }

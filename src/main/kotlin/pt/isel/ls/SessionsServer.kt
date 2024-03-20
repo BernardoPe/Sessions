@@ -47,7 +47,7 @@ class SessionsServer(api: SessionsApi, port: Int = 8080) {
 
     private val executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
     private fun dispatcher(req: Request, operation: Operation): Response
-            = executor.submit<Response> {
+    = executor.submit<Response> {
         logRequest(req)
         requestHandler(req, operation).also { logResponse(it) }
     }.get()

@@ -33,6 +33,15 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
      */
     private var lastId = 0
 
+    private fun hashToken(token: UUID): Long {
+        return token.leastSignificantBits xor token.mostSignificantBits
+    }
+
+    override fun getByToken(token: UUID): Player? {
+        val tokenHash = hashToken(token)
+        return db.find { it.tokenHash == tokenHash }
+    }
+
     override fun create(name: String, email: String): Pair<Int, UUID> {
         // Add the player object to the database mock
         // Set by checking if the player email already exists
@@ -42,15 +51,19 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
         // Increment the last identifier
         lastId++
         // Add the updated player object to the database mock
+
+        val playerToken = UUID.randomUUID()
+
         db.add(
             Player(
             lastId,
                 name,
-                email
+                email,
+                hashToken(playerToken)
             )
         )
         // Return the last identifier and a new UUID
-        return Pair(lastId, UUID.randomUUID())
+        return Pair(lastId, playerToken)
     }
 
     override fun isEmailStored(email: String): Boolean {
