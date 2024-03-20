@@ -1,6 +1,5 @@
-package pt.isel.ls.dto.player
+package pt.isel.ls.domain.player
 
-import pt.isel.ls.data.domain.player.Player
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

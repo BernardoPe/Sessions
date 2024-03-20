@@ -1,13 +1,11 @@
-package pt.isel.ls.dto.session
+package pt.isel.ls.domain.session
 
-import pt.isel.ls.data.domain.game.Game
-import pt.isel.ls.data.domain.player.Player
-import pt.isel.ls.data.domain.session.SESSION_MAX_CAPACITY
-import pt.isel.ls.data.domain.session.Session
+import pt.isel.ls.domain.game.Game
+import pt.isel.ls.domain.player.Player
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-/**
+
 class SessionTest {
 
     @Test
@@ -33,7 +31,7 @@ class SessionTest {
     @Test
     fun `test session creation with negative ssid`() {
         val exception = assertFailsWith<IllegalArgumentException> {
-            Session(-1, 50, "2023-03-01 23:00:00", newGameTest(), newPlayersTest())
+            Session(-1, 50, "2023-03-01", newGameTest(), newPlayersTest())
         }
         assertEquals("Session identifier must be a positive number", exception.message)
     }
@@ -41,7 +39,7 @@ class SessionTest {
     @Test
     fun `test session creation with capacity less than 1`() {
         val exception = assertFailsWith<IllegalArgumentException> {
-            Session(1, 0, "2023-03-01 23:00:00", newGameTest(), newPlayersTest())
+            Session(1, 0, "2023-03-01", newGameTest(), newPlayersTest())
         }
         assertEquals("Session capacity must be a positive number", exception.message)
     }
@@ -49,7 +47,7 @@ class SessionTest {
     @Test
     fun `test session creation with capacity greater than max`() {
         val exception = assertFailsWith<IllegalArgumentException> {
-            Session(1, SESSION_MAX_CAPACITY + 1, "2023-03-01 23:00:00", newGameTest(), newPlayersTest())
+            Session(1, SESSION_MAX_CAPACITY + 1, "2023-03-01", newGameTest(), newPlayersTest())
         }
         assertEquals("Session capacity must be less than or equal to $SESSION_MAX_CAPACITY", exception.message)
     }
@@ -71,4 +69,4 @@ class SessionTest {
             Player(6, "player6", "player6@example.com"),
         )
     }
-}*/
+}
