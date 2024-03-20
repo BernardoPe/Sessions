@@ -44,14 +44,14 @@ class SessionsApi(
 
     private val processors = mapOf(
         Operation.CREATE_PLAYER to SessionsRequest(::createPlayer, false),
-        Operation.GET_PLAYER_DETAILS to SessionsRequest(::getPlayerDetails, true),
+        Operation.GET_PLAYER_DETAILS to SessionsRequest(::getPlayerDetails, false),
         Operation.CREATE_GAME to SessionsRequest(::createGame, true),
-        Operation.GET_GAME_DETAILS to SessionsRequest(::getGameById, true),
-        Operation.GET_GAME_LIST to SessionsRequest(::getGameList, true),
+        Operation.GET_GAME_DETAILS to SessionsRequest(::getGameById, false),
+        Operation.GET_GAME_LIST to SessionsRequest(::getGameList, false),
         Operation.CREATE_SESSION to SessionsRequest(::createSession, true),
         Operation.ADD_PLAYER_TO_SESSION to SessionsRequest(::addPlayerToSession, true),
-        Operation.GET_SESSION_DETAILS to SessionsRequest(::getSessionById, true),
-        Operation.GET_SESSION_LIST to SessionsRequest(::getSessionList, true)
+        Operation.GET_SESSION_DETAILS to SessionsRequest(::getSessionById, false),
+        Operation.GET_SESSION_LIST to SessionsRequest(::getSessionList, false)
     )
 
     private fun createPlayer(request: Request): Response {
@@ -62,8 +62,8 @@ class SessionsApi(
                 .body(Json.encodeToString(PlayerCreationOutputModel(res.value.first, res.value.second.toString())))
 
             is Failure -> when (res.value) {
-                PlayerCreationException.UnsafeEmail -> Response(BAD_REQUEST)
-                PlayerCreationException.EmailAlreadyExists -> Response(BAD_REQUEST)
+                PlayerCreationException.UnsafeEmail -> throw BadRequestException("Invalid Email")
+                PlayerCreationException.EmailAlreadyExists -> throw BadRequestException("Email Already Exists")
             }
         }
     }
@@ -84,7 +84,7 @@ class SessionsApi(
                 )
 
             is Failure -> when (res.value) {
-                PlayerDetailsException.PlayerNotFound -> Response(NOT_FOUND)
+                PlayerDetailsException.PlayerNotFound -> throw NotFoundException("Player Not Found")
             }
         }
     }
@@ -97,7 +97,7 @@ class SessionsApi(
                 .body(Json.encodeToString(GameCreationOutputModel(res.value)))
 
             is Failure -> when (res.value) {
-                GameCreationException.GameNameAlreadyExists -> Response(BAD_REQUEST)
+                GameCreationException.GameNameAlreadyExists -> throw BadRequestException("Game Name Already Exists")
             }
         }
     }
@@ -119,7 +119,7 @@ class SessionsApi(
                 )
 
             is Failure -> when (res.value) {
-                GameDetailsException.GameNotFound -> Response(NOT_FOUND)
+                GameDetailsException.GameNotFound -> throw NotFoundException("Game Not Found")
             }
         }
     }
@@ -146,8 +146,8 @@ class SessionsApi(
                 )
 
             is Failure -> when (res.value) {
-                GameSearchException.GenresNotFound -> Response(NOT_FOUND)
-                GameSearchException.DeveloperNotFound -> Response(NOT_FOUND)
+                GameSearchException.GenresNotFound -> throw NotFoundException("Genres Not Found")
+                GameSearchException.DeveloperNotFound -> throw NotFoundException("Developer Not Found")
             }
         }
     }
@@ -160,9 +160,9 @@ class SessionsApi(
                 .body(Json.encodeToString(SessionCreationOutputModel(res.value)))
 
             is Failure -> when (res.value) {
-                SessionCreationException.InvalidCapacity -> Response(BAD_REQUEST)
-                SessionCreationException.InvalidDate -> Response(BAD_REQUEST)
-                SessionCreationException.GameNotFound -> Response(NOT_FOUND)
+                SessionCreationException.InvalidCapacity -> throw BadRequestException("Invalid Capacity")
+                SessionCreationException.InvalidDate -> throw BadRequestException("Invalid Date")
+                SessionCreationException.GameNotFound -> throw NotFoundException("Game Not Found")
             }
         }
     }
@@ -176,9 +176,10 @@ class SessionsApi(
                 .body(Json.encodeToString(SessionAddPlayerOutputModel(res.value)))
 
             is Failure -> when (res.value) {
-                SessionAddPlayerException.SessionNotFound -> Response(NOT_FOUND)
-                SessionAddPlayerException.PlayerNotFound -> Response(NOT_FOUND)
-                SessionAddPlayerException.InvalidCapacity -> Response(BAD_REQUEST)
+                SessionAddPlayerException.SessionNotFound -> throw NotFoundException("Session Not Found")
+                SessionAddPlayerException.PlayerNotFound -> throw NotFoundException("Player Not Found")
+                SessionAddPlayerException.InvalidCapacity -> throw BadRequestException("Invalid Capacity")
+                SessionAddPlayerException.SessionFull -> throw BadRequestException("Session Full")
             }
         }
     }
@@ -212,7 +213,7 @@ class SessionsApi(
                 )
 
             is Failure -> when (res.value) {
-                SessionDetailsException.SessionNotFound -> Response(NOT_FOUND)
+                SessionDetailsException.SessionNotFound -> throw NotFoundException("Session Not Found")
             }
         }
 
@@ -260,9 +261,9 @@ class SessionsApi(
                 )
 
             is Failure -> when (res.value) {
-                SessionSearchException.GameNotFound -> Response(Status.NOT_FOUND)
-                SessionSearchException.PLayerNotFound -> Response(Status.NOT_FOUND)
-                SessionSearchException.InvalidDate -> Response(BAD_REQUEST)
+                SessionSearchException.GameNotFound -> throw NotFoundException("Game Not Found")
+                SessionSearchException.PLayerNotFound -> throw NotFoundException("Player Not Found")
+                SessionSearchException.InvalidDate -> throw BadRequestException("Invalid Date")
             }
         }
     }
@@ -300,9 +301,7 @@ class SessionsApi(
         }
         catch (e: Exception) {
             Response(INTERNAL_SERVER_ERROR).header("content-type", "application/json").body(
-                Json.encodeToString(
-                    InternalServerErrorException()
-                )
+                Json.encodeToString(InternalServerErrorException())
             )
         }
 

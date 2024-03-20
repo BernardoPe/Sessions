@@ -19,6 +19,8 @@ sealed class SessionAddPlayerException {
     data object PlayerNotFound : SessionAddPlayerException()
 
     data object InvalidCapacity : SessionAddPlayerException()
+
+    data object SessionFull : SessionAddPlayerException()
 }
 
 typealias SessionAddPlayerResult = Either<SessionAddPlayerException, String>
