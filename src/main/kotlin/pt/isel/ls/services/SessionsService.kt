@@ -2,18 +2,12 @@ package pt.isel.ls.services
 
 import pt.isel.ls.domain.session.SESSION_MAX_CAPACITY
 import pt.isel.ls.exceptions.services.*
-import pt.isel.ls.storage.SessionsDataGame
-import pt.isel.ls.storage.SessionsDataPlayer
-import pt.isel.ls.storage.SessionsDataSession
+import pt.isel.ls.storage.SessionsDataManager
 import pt.isel.ls.utils.failure
 import pt.isel.ls.utils.isValidTimeStamp
 import pt.isel.ls.utils.success
 
-class SessionsService(
-    val storageSession: SessionsDataSession,
-    val storageGame: SessionsDataGame,
-    val storagePlayer: SessionsDataPlayer
-) {
+class SessionsService(val storage: SessionsDataManager) {
 
     // Sessions exceptions must be discussed
     fun createSession(capacity: Int, gid: Int, date: String): SessionCreationResult {
@@ -25,28 +19,33 @@ class SessionsService(
             return failure(SessionCreationException.InvalidDate)
         }
 
-        val getGame = storageGame.getById(gid)
-
-        return if (getGame == null) {
-            failure(SessionCreationException.GameNotFound)
-        } else {
-            success(storageSession.create(capacity, getGame, date))
+        return storage.apply {
+            val getGame = it.storageGame.getById(gid)
+            val storageSession = it.storageSession
+            if (getGame == null) {
+                failure(SessionCreationException.GameNotFound)
+            } else {
+                success(storageSession.create(capacity, getGame, date))
+            }
         }
 
     }
 
     fun addPlayer(sid: Int, pid: Int): SessionAddPlayerResult {
-        val getSession = storageSession.getById(sid) ?: return failure(SessionAddPlayerException.SessionNotFound)
-        if (getSession.capacity <= 1 || getSession.capacity > SESSION_MAX_CAPACITY) {
-            return failure(SessionAddPlayerException.InvalidCapacity)
-        }
+        return storage.apply {
+            val getSession =
+                it.storageSession.getById(sid) ?: return@apply failure(SessionAddPlayerException.SessionNotFound)
+            if (getSession.capacity <= 1 || getSession.capacity > SESSION_MAX_CAPACITY) {
+                return@apply failure(SessionAddPlayerException.InvalidCapacity)
+            }
 
-        val getPlayer = storagePlayer.getById(pid)
+            val getPlayer = it.storagePlayer.getById(pid)
 
-        return if (getPlayer == null) {
-            failure(SessionAddPlayerException.PlayerNotFound)
-        } else {
-            success(storageSession.update(sid, pid))
+            if (getPlayer == null) {
+                failure(SessionAddPlayerException.PlayerNotFound)
+            } else {
+                success(it.storageSession.update(sid, pid))
+            }
         }
     }
 
@@ -58,21 +57,25 @@ class SessionsService(
             }
         }
 
-        return if (storageGame.getById(gid) == null) {
-            failure(SessionSearchException.GameNotFound)
-        } else if (pid?.let { storagePlayer.getById(it) } == null) {
-            failure(SessionSearchException.PLayerNotFound)
-        } else {
-            success(storageSession.getSessionsSearch())
+        return storage.apply { storage ->
+            if (storage.storageSession.getById(gid) == null) {
+                failure(SessionSearchException.GameNotFound)
+            } else if (pid?.let { storage.storagePlayer.getById(it) } == null) {
+                failure(SessionSearchException.PLayerNotFound)
+            } else {
+                success(storage.storageSession.getSessionsSearch())
+            }
         }
     }
 
     fun getSessionById(sid: Int): SessionDetailsResult {
-        val getSession = storageSession.getById(sid)
-        return if (getSession == null) {
-            failure(SessionDetailsException.SessionNotFound)
-        } else {
-            success(getSession)
+        return storage.apply {
+            val getSession = it.storageSession.getById(sid)
+            if (getSession == null) {
+                failure(SessionDetailsException.SessionNotFound)
+            } else {
+                success(getSession)
+            }
         }
     }
 }

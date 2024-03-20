@@ -1,9 +1,7 @@
-package pt.isel.ls.dto.session
+package pt.isel.ls.domain.session
 
 import pt.isel.ls.domain.game.Game
 import pt.isel.ls.domain.player.Player
-import pt.isel.ls.domain.session.SESSION_MAX_CAPACITY
-import pt.isel.ls.domain.session.Session
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

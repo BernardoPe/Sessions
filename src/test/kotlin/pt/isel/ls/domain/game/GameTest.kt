@@ -1,6 +1,5 @@
-package pt.isel.ls.dto.game
+package pt.isel.ls.domain.game
 
-import pt.isel.ls.domain.game.Game
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
