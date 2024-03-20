@@ -1,6 +1,7 @@
 package pt.isel.ls.storage
 
 import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.exceptions.SessionNotFoundException
 
@@ -64,7 +65,7 @@ interface SessionsDataSession {
          * @param pid The player identifier
          * @throws SessionNotFoundException If the session is not found
          */
-        fun update(sid: Int, pid: Int) : String
+        fun update(sid: Int, player: Player) : String
 
         /**
          * Delete a session from the database mock

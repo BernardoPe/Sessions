@@ -2,6 +2,7 @@ package pt.isel.ls.storage
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.storage.mem.SessionsDataMemSession
 import kotlin.test.Test
 
@@ -91,7 +92,7 @@ class SessionsDataSessionTest {
         // Add a session to the storage
         storage.create(1, Game(0, "game", "developer", setOf("genre1", "genre2")), "2021-05-05 12:00:00")
         // Add a player to the session
-        storage.update(0, 0)
+        storage.update(0, Player(0, "player", "testemail@test.com"))
         // Get the sessions from the storage
         val sessions = storage.getSessionsSearch(0, null, null, 0, 10, 0)
         // Check if the session was added
@@ -120,7 +121,7 @@ class SessionsDataSessionTest {
         // Add a session to the storage
         storage.create(1, Game(0, "game", "developer", setOf("genre1", "genre2")), "2021-05-05 12:00:00")
         // Add a player to the session
-        storage.update(0, 0)
+        storage.update(0, Player(0, "player", "testemail@test.com"))
         // Get the session from the storage
         val session = storage.getById(0)
         // Check if the player was added

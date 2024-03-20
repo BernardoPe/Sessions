@@ -123,7 +123,7 @@ class SessionsDataMemSession : SessionsDataSession {
      * @param pid The player identifier
      * @throws SessionNotFoundException If the session is not found
      */
-    override fun update(sid: Int, pid: Int) : String {
+    override fun update(sid: Int, player: Player) : String {
         // Update the session object in the database mock
         db.forEach { session ->
             // search for the session with the given id
@@ -138,13 +138,7 @@ class SessionsDataMemSession : SessionsDataSession {
                         session.capacity,
                         session.date,
                         session.gameSession,
-                        session.playersSession.plus(
-                            Player(
-                                pid,
-                                "player",
-                                "testEmail@test.com",
-                            )
-                        )
+                        session.playersSession.plus(player)
                     )
                 )
                 return "Session successfully updated"
