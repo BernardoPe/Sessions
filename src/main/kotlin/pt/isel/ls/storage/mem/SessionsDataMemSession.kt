@@ -1,7 +1,9 @@
 package pt.isel.ls.storage.mem
 
 import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
+import pt.isel.ls.exceptions.PlayerNotFoundException
 import pt.isel.ls.exceptions.SessionNotFoundException
 import pt.isel.ls.storage.SessionsDataSession
 
@@ -48,9 +50,7 @@ class SessionsDataMemSession : SessionsDataSession {
      * @return The session identifier
      */
     override fun create(capacity: Int, game: Game, date: String): Int {
-        // Add the session object to the database mock
-        // Increment the last identifier
-        lastId++
+        // Add the session object to the database moc
         // Add the updated session object to the database mock
         db.add(
             // The session object to be added to the database mock
@@ -58,7 +58,7 @@ class SessionsDataMemSession : SessionsDataSession {
             // - sid: The last identifier. This is the last identifier available in the database mock
             // - playersSession: An empty set. This is because the session is created with no players by default
             Session(
-                lastId,
+                lastId++,
                 capacity,
                 date,
                 game,
@@ -110,7 +110,7 @@ class SessionsDataMemSession : SessionsDataSession {
         pid?.let {
             sessions = sessions.filter { it.playersSession.any { it.pid == pid } }
         }
-        return sessions.subList(skip, skip + limit)
+        return sessions.subList(skip, if (sessions.size < skip + limit) sessions.size else skip + limit)
     }
 
     /**
@@ -139,7 +139,11 @@ class SessionsDataMemSession : SessionsDataSession {
                         session.date,
                         session.gameSession,
                         session.playersSession.plus(
-                            session.playersSession.find { it.pid == pid } ?: throw SessionNotFoundException("Player not found")
+                            Player(
+                                pid,
+                                "player",
+                                "testEmail@test.com",
+                            )
                         )
                     )
                 )
@@ -166,6 +170,7 @@ class SessionsDataMemSession : SessionsDataSession {
                 // if found
                 // remove the session from the database mock
                 db.remove(it)
+                return
             }
         }
         // tell the caller that the delete was not successful

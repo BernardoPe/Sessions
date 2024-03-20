@@ -39,12 +39,10 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
         if (isEmailStored(email)) {
             throw PlayerEmailAlreadyExistsException("Given Player email already exists")
         }
-        // Increment the last identifier
-        lastId++
         // Add the updated player object to the database mock
         db.add(
             Player(
-            lastId,
+            lastId++,
                 name,
                 email
             )
@@ -86,6 +84,7 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
                 db.remove(it)
                 // add the new player to the database mock
                 db.add(value)
+                return
             }
         }
         // alert the user that the player does not exist
@@ -100,6 +99,7 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
                 // if found
                 // remove the player from the database mock
                 db.remove(it)
+                return
             }
         }
         // alert the user that the player does not exist

@@ -5,7 +5,7 @@ import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.storage.mem.SessionsDataMemSession
 import kotlin.test.Test
 
-/**
+
 class SessionsDataSessionTest {
 
     @Test
@@ -13,7 +13,7 @@ class SessionsDataSessionTest {
         // Create a session storage
         val storage = SessionsDataMemSession()
         // Add a session to the storage
-        storage.create(1, Game(0, "game", "developer", setOf("genre1", "genre2")), "2020-01-01")
+        storage.create(1, Game(0, "game", "developer", setOf("genre1", "genre2")), "2021-05-05 12:00:00")
         // Check if the session was added
         // Get the session from the storage
         val session = storage.getById(0)
@@ -30,7 +30,7 @@ class SessionsDataSessionTest {
         // Check the genres
         assertEquals(setOf("genre1", "genre2"), session?.gameSession?.genres)
         // Check the date
-        assertEquals("2020-01-01", session?.date)
+        assertEquals("2021-05-05 12:00:00", session?.date)
     }
 
     @Test
@@ -38,7 +38,7 @@ class SessionsDataSessionTest {
         // Create a session storage
         val storage = SessionsDataMemSession()
         // Add a session to the storage
-        storage.create(1, Game(0, "game", "developer", setOf("genre1", "genre2")), "2020-01-01")
+        storage.create(1, Game(0, "game", "developer", setOf("genre1", "genre2")), "2021-05-05 12:00:00")
         // Get the session from the storage
         val session = storage.getById(0)
         // Check each field of the session
@@ -54,7 +54,7 @@ class SessionsDataSessionTest {
         // Check the genres
         assertEquals(setOf("genre1", "genre2"), session?.gameSession?.genres)
         // Check the date
-        assertEquals("2020-01-01", session?.date)
+        assertEquals("2021-05-05 12:00:00", session?.date)
     }
 
     @Test
@@ -62,9 +62,9 @@ class SessionsDataSessionTest {
         // Create a session storage
         val storage = SessionsDataMemSession()
         // Add a session to the storage
-        storage.create(1, Game(0, "game", "developer", setOf("genre1", "genre2")), "2020-01-01")
+        storage.create(1, Game(0, "game", "developer", setOf("genre1", "genre2")), "2021-05-05 12:00:00")
         // Get the sessions from the storage
-        val sessions = storage.getSessionsSearch(0, "2020-01-01", null, null, 10, 0)
+        val sessions = storage.getSessionsSearch(0, "2021-05-05 12:00:00", null, null, 10, 0)
         // Check if the session was added
         // Check the number of sessions
         assertEquals(1, sessions.size)
@@ -81,7 +81,7 @@ class SessionsDataSessionTest {
         // Check the genres
         assertEquals(setOf("genre1", "genre2"), sessions[0].gameSession.genres)
         // Check the date
-        assertEquals("2020-01-01", sessions[0].date)
+        assertEquals("2021-05-05 12:00:00", sessions[0].date)
     }
 
     @Test
@@ -89,7 +89,7 @@ class SessionsDataSessionTest {
         // Create a session storage
         val storage = SessionsDataMemSession()
         // Add a session to the storage
-        storage.create(1, Game(0, "game", "developer", setOf("genre1", "genre2")), "2020-01-01")
+        storage.create(1, Game(0, "game", "developer", setOf("genre1", "genre2")), "2021-05-05 12:00:00")
         // Add a player to the session
         storage.update(0, 0)
         // Get the sessions from the storage
@@ -110,7 +110,7 @@ class SessionsDataSessionTest {
         // Check the genres
         assertEquals(setOf("genre1", "genre2"), sessions[0].gameSession.genres)
         // Check the date
-        assertEquals("2020-01-01", sessions[0].date)
+        assertEquals("2021-05-05 12:00:00", sessions[0].date)
     }
 
     @Test
@@ -118,7 +118,7 @@ class SessionsDataSessionTest {
         // Create a session storage
         val storage = SessionsDataMemSession()
         // Add a session to the storage
-        storage.create(1, Game(0, "game", "developer", setOf("genre1", "genre2")), "2020-01-01")
+        storage.create(1, Game(0, "game", "developer", setOf("genre1", "genre2")), "2021-05-05 12:00:00")
         // Add a player to the session
         storage.update(0, 0)
         // Get the session from the storage
@@ -135,7 +135,7 @@ class SessionsDataSessionTest {
         // Create a session storage
         val storage = SessionsDataMemSession()
         // Add a session to the storage
-        storage.create(1, Game(0, "game", "developer", setOf("genre1", "genre2")), "2020-01-01")
+        storage.create(1, Game(0, "game", "developer", setOf("genre1", "genre2")), "2021-05-05 12:00:00")
         // Delete the session from the storage
         storage.delete(0)
         // Get the session from the storage
@@ -149,7 +149,7 @@ class SessionsDataSessionTest {
         // Create a session storage
         val storage = SessionsDataMemSession()
         // Add a session to the storage
-        storage.create(1, Game(0, "game", "developer", setOf("genre1", "genre2")), "2020-01-01")
+        storage.create(1, Game(0, "game", "developer", setOf("genre1", "genre2")), "2021-05-05 12:00:00")
         // Get the sessions from the storage
         val sessions = storage.getSessionsSearch(0, null, null, null, 10, 0)
         // Check if the session was added
@@ -168,7 +168,7 @@ class SessionsDataSessionTest {
         // Check the genres
         assertEquals(setOf("genre1", "genre2"), sessions[0].gameSession.genres)
         // Check the date
-        assertEquals("2020-01-01", sessions[0].date)
+        assertEquals("2021-05-05 12:00:00", sessions[0].date)
     }
 
     @Test
@@ -176,9 +176,9 @@ class SessionsDataSessionTest {
         // Create a session storage
         val storage = SessionsDataMemSession()
         // Add a session to the storage
-        storage.create(1, Game(0, "game", "developer", setOf("genre1", "genre2")), "2020-01-01")
+        storage.create(1, Game(0, "game", "developer", setOf("genre1", "genre2")), "2021-05-05 12:00:00")
         // Get the sessions from the storage
-        val sessions = storage.getSessionsSearch(0, "2020-01-01", null, null, 10, 0)
+        val sessions = storage.getSessionsSearch(0, "2021-05-05 12:00:00", null, null, 10, 0)
         // Check if the session was added
         // Check the number of sessions
         assertEquals(1, sessions.size)
@@ -195,6 +195,6 @@ class SessionsDataSessionTest {
         // Check the genres
         assertEquals(setOf("genre1", "genre2"), sessions[0].gameSession.genres)
         // Check the date
-        assertEquals("2020-01-01", sessions[0].date)
+        assertEquals("2021-05-05 12:00:00", sessions[0].date)
     }
-}*/
+}

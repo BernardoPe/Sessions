@@ -84,9 +84,13 @@ class SessionsDataMemGame : SessionsDataGame {
     override fun getGamesSearch(genres: Set<String>, developer: String, limit: Int, skip: Int): List<Game> {
         // Read all the game objects from the database mock that match the given genres and developer
         // Start by checking the genres
-        val games = db.filter { it.genres.containsAll(genres) }
+        var games = db.filter { it.genres.containsAll(genres) }
         // Then check the developer
-        return games.filter { it.developer == developer }.subList(skip, skip + limit)
+        games = games.filter { it.developer == developer }
+        // Check if skip + limit is greater than the size of the list
+        val endIndex = if (skip + limit > games.size) games.size else skip + limit
+        // Return the sublist
+        return games.subList(skip, endIndex)
     }
 
     override fun getAllGames(): List<Game> {
@@ -104,6 +108,7 @@ class SessionsDataMemGame : SessionsDataGame {
                 db.remove(it)
                 // add the new game to the database mock
                 db.add(value)
+                return
             }
         }
         // alert if the game was not found
@@ -118,6 +123,7 @@ class SessionsDataMemGame : SessionsDataGame {
                 // if found
                 // remove the game from the database mock
                 db.remove(it)
+                return
             }
         }
         // alert if the game was not found
