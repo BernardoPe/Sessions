@@ -57,7 +57,7 @@ interface SessionsDataGame {
      * @return A list with all the games in the database
      */
 
-    fun getGamesSearch(genres: Set<String>, developer: String): Set<Game>
+    fun getGamesSearch(genres: Set<String>, developer: String): List<Game>
 
     /**
      * Read a game from the database
@@ -73,12 +73,12 @@ interface SessionsDataGame {
      * @param id The game identifier
      * @param value The new game object
      */
-    fun update(id: Int, value: Game): Boolean
+    fun update(id: Int, value: Game)
 
     /**
      * Delete a game from the database
      *
      * @param id The game identifier
      */
-    fun delete(id: Int): Boolean
+    fun delete(id: Int)
 }

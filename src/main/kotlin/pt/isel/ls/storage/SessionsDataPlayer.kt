@@ -18,7 +18,9 @@ interface SessionsDataPlayer {
     /**
      * Create a player in the database
      *
-     * @param value The player object to be created
+     * @param name The player name to be created
+     * @param email The player email to be created
+     * @return The player identifier and the player UUID
      */
     fun create(name: String, email: String): Pair<Int, UUID>
 
@@ -52,13 +54,13 @@ interface SessionsDataPlayer {
      * @param id The player identifier
      * @param value The new player object
      */
-    fun update(id: Int, value: Player): Boolean
+    fun update(id: Int, value: Player)
 
     /**
      * Delete a player from the database
      *
      * @param id The player identifier
      */
-    fun delete(id: Int): Boolean
+    fun delete(id: Int)
 
 }
