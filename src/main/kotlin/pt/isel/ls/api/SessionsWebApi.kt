@@ -73,15 +73,7 @@ class SessionsApi(
         return when (val res = playerServices.getPlayerDetails(pid)) {
             is Success -> return Response(OK)
                 .header("content-type", "application/json")
-                .body(
-                    Json.encodeToString(
-                        PlayerInfoOutputModel(
-                            res.value.pid,
-                            res.value.name,
-                            res.value.email
-                        )
-                    )
-                )
+                .body(Json.encodeToString(res.value.toPlayerInfoDTO()))
 
             is Failure -> when (res.value) {
                 PlayerDetailsException.PlayerNotFound -> throw NotFoundException("Player Not Found")
