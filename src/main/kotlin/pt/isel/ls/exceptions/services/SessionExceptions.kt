@@ -1,6 +1,6 @@
 package pt.isel.ls.exceptions.services
 
-import pt.isel.ls.domain.session.Session
+import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.utils.Either
 
 sealed class SessionCreationException {
@@ -19,9 +19,13 @@ sealed class SessionAddPlayerException {
     data object PlayerNotFound : SessionAddPlayerException()
 
     data object InvalidCapacity : SessionAddPlayerException()
+
+    data object SessionFull : SessionAddPlayerException()
 }
 
-typealias SessionAddPlayerResult = Either<SessionAddPlayerException, String>
+typealias SessionAddPlayerMessage = String
+
+typealias SessionAddPlayerResult = Either<SessionAddPlayerException, SessionAddPlayerMessage>
 
 sealed class SessionDetailsException {
     data object SessionNotFound : SessionDetailsException()
@@ -38,4 +42,9 @@ sealed class SessionSearchException {
 
 }
 
-typealias SessionSearchResult = Either<SessionSearchException, Set<Session>>
+typealias SessionIdentifier = Int
+
+typealias SessionList = List<Session>
+
+typealias SessionSearchResult = Either<SessionSearchException, SessionList>
+

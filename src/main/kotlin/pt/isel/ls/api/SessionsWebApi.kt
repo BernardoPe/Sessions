@@ -9,10 +9,10 @@ import org.http4k.core.Status
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.CREATED
 import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
-import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Status.Companion.UNAUTHORIZED
 import org.http4k.routing.path
+import pt.isel.ls.data.mapper.*
 import pt.isel.ls.dto.*
 import pt.isel.ls.exceptions.api.*
 import pt.isel.ls.exceptions.services.*
@@ -44,14 +44,14 @@ class SessionsApi(
 
     private val processors = mapOf(
         Operation.CREATE_PLAYER to SessionsRequest(::createPlayer, false),
-        Operation.GET_PLAYER_DETAILS to SessionsRequest(::getPlayerDetails, true),
+        Operation.GET_PLAYER_DETAILS to SessionsRequest(::getPlayerDetails, false),
         Operation.CREATE_GAME to SessionsRequest(::createGame, true),
-        Operation.GET_GAME_DETAILS to SessionsRequest(::getGameById, true),
-        Operation.GET_GAME_LIST to SessionsRequest(::getGameList, true),
+        Operation.GET_GAME_DETAILS to SessionsRequest(::getGameById, false),
+        Operation.GET_GAME_LIST to SessionsRequest(::getGameList, false),
         Operation.CREATE_SESSION to SessionsRequest(::createSession, true),
         Operation.ADD_PLAYER_TO_SESSION to SessionsRequest(::addPlayerToSession, true),
-        Operation.GET_SESSION_DETAILS to SessionsRequest(::getSessionById, true),
-        Operation.GET_SESSION_LIST to SessionsRequest(::getSessionList, true)
+        Operation.GET_SESSION_DETAILS to SessionsRequest(::getSessionById, false),
+        Operation.GET_SESSION_LIST to SessionsRequest(::getSessionList, false)
     )
 
     private fun createPlayer(request: Request): Response {
@@ -59,11 +59,11 @@ class SessionsApi(
         return when (val res = playerServices.createPlayer(player.name, player.email)) {
             is Success -> Response(CREATED)
                 .header("content-type", "application/json")
-                .body(Json.encodeToString(PlayerCreationOutputModel(res.value.first, res.value.second.toString())))
+                .body(Json.encodeToString(res.value.toPlayerCreationDTO()))
 
             is Failure -> when (res.value) {
-                PlayerCreationException.UnsafeEmail -> Response(BAD_REQUEST)
-                PlayerCreationException.EmailAlreadyExists -> Response(BAD_REQUEST)
+                PlayerCreationException.UnsafeEmail -> throw BadRequestException("Invalid Email")
+                PlayerCreationException.EmailAlreadyExists -> throw BadRequestException("Email Already Exists")
             }
         }
     }
@@ -73,18 +73,10 @@ class SessionsApi(
         return when (val res = playerServices.getPlayerDetails(pid)) {
             is Success -> return Response(OK)
                 .header("content-type", "application/json")
-                .body(
-                    Json.encodeToString(
-                        PlayerInfoOutputModel(
-                            res.value.pid,
-                            res.value.name,
-                            res.value.email
-                        )
-                    )
-                )
+                .body(Json.encodeToString(res.value.toPlayerInfoDTO()))
 
             is Failure -> when (res.value) {
-                PlayerDetailsException.PlayerNotFound -> Response(NOT_FOUND)
+                PlayerDetailsException.PlayerNotFound -> throw NotFoundException("Player Not Found")
             }
         }
     }
@@ -94,10 +86,10 @@ class SessionsApi(
         return when (val res = gameServices.createGame(game.name, game.developer, game.genres)) {
             is Success -> Response(CREATED)
                 .header("content-type", "application/json")
-                .body(Json.encodeToString(GameCreationOutputModel(res.value)))
+                .body(Json.encodeToString(res.value.toGameCreationDTO()))
 
             is Failure -> when (res.value) {
-                GameCreationException.GameNameAlreadyExists -> Response(BAD_REQUEST)
+                GameCreationException.GameNameAlreadyExists -> throw BadRequestException("Game Name Already Exists")
             }
         }
     }
@@ -107,19 +99,10 @@ class SessionsApi(
         return when (val res = gameServices.getGameById(gid)) {
             is Success -> Response(OK)
                 .header("content-type", "application/json")
-                .body(
-                    Json.encodeToString(
-                        GameInfoOutputModel(
-                            res.value.gid,
-                            res.value.name,
-                            res.value.developer,
-                            res.value.genres.toList()
-                        )
-                    )
-                )
+                .body(Json.encodeToString(res.value.toGameInfoDTO()))
 
             is Failure -> when (res.value) {
-                GameDetailsException.GameNotFound -> Response(NOT_FOUND)
+                GameDetailsException.GameNotFound -> throw NotFoundException("Game Not Found")
             }
         }
     }
@@ -130,24 +113,11 @@ class SessionsApi(
         return when (val res = gameServices.searchGames(gameSearch.genres, gameSearch.developer, limit, skip)) {
             is Success -> Response(OK)
                 .header("content-type", "application/json")
-                .body(
-                    Json.encodeToString(
-                        GameSearchOutputModel(
-                            res.value.map {
-                                GameInfoOutputModel(
-                                    it.gid,
-                                    it.name,
-                                    it.developer,
-                                    it.genres.toList()
-                                )
-                            }
-                        )
-                    )
-                )
+                .body(Json.encodeToString(res.value.toGameSearchDTO()))
 
             is Failure -> when (res.value) {
-                GameSearchException.GenresNotFound -> Response(NOT_FOUND)
-                GameSearchException.DeveloperNotFound -> Response(NOT_FOUND)
+                GameSearchException.GenresNotFound -> throw NotFoundException("Genres Not Found")
+                GameSearchException.DeveloperNotFound -> throw NotFoundException("Developer Not Found")
             }
         }
     }
@@ -157,12 +127,12 @@ class SessionsApi(
         return when (val res = sessionServices.createSession(session.capacity, session.gid, session.date)) {
             is Success -> Response(CREATED)
                 .header("content-type", "application/json")
-                .body(Json.encodeToString(SessionCreationOutputModel(res.value)))
+                .body(Json.encodeToString(res.value.toSessionCreationDTO()))
 
             is Failure -> when (res.value) {
-                SessionCreationException.InvalidCapacity -> Response(BAD_REQUEST)
-                SessionCreationException.InvalidDate -> Response(BAD_REQUEST)
-                SessionCreationException.GameNotFound -> Response(NOT_FOUND)
+                SessionCreationException.InvalidCapacity -> throw BadRequestException("Invalid Capacity")
+                SessionCreationException.InvalidDate -> throw BadRequestException("Invalid Date")
+                SessionCreationException.GameNotFound -> throw NotFoundException("Game Not Found")
             }
         }
     }
@@ -173,12 +143,13 @@ class SessionsApi(
         return when (val res = sessionServices.addPlayer(sid, pid)) {
             is Success -> Response(OK)
                 .header("content-type", "application/json")
-                .body(Json.encodeToString(SessionAddPlayerOutputModel(res.value)))
+                .body(Json.encodeToString(res.value.toSessionAddPlayerDTO()))
 
             is Failure -> when (res.value) {
-                SessionAddPlayerException.SessionNotFound -> Response(NOT_FOUND)
-                SessionAddPlayerException.PlayerNotFound -> Response(NOT_FOUND)
-                SessionAddPlayerException.InvalidCapacity -> Response(BAD_REQUEST)
+                SessionAddPlayerException.SessionNotFound -> throw NotFoundException("Session Not Found")
+                SessionAddPlayerException.PlayerNotFound -> throw NotFoundException("Player Not Found")
+                SessionAddPlayerException.InvalidCapacity -> throw BadRequestException("Invalid Capacity")
+                SessionAddPlayerException.SessionFull -> throw BadRequestException("Session Full")
             }
         }
     }
@@ -188,31 +159,10 @@ class SessionsApi(
         return when (val res = sessionServices.getSessionById(sid)) {
             is Success -> Response(OK)
                 .header("content-type", "application/json")
-                .body(
-                    Json.encodeToString(
-                        SessionInfoOutputModel(
-                            res.value.sid,
-                            res.value.capacity,
-                            res.value.date,
-                            GameInfoOutputModel(
-                                res.value.gameSession.gid,
-                                res.value.gameSession.name,
-                                res.value.gameSession.developer,
-                                res.value.gameSession.genres.toList()
-                            ),
-                            res.value.playersSession.map {
-                                PlayerInfoOutputModel(
-                                    it.pid,
-                                    it.name,
-                                    it.email
-                                )
-                            }
-                        )
-                    )
-                )
+                .body(Json.encodeToString(res.value.toSessionInfoDTO()))
 
             is Failure -> when (res.value) {
-                SessionDetailsException.SessionNotFound -> Response(NOT_FOUND)
+                SessionDetailsException.SessionNotFound -> throw NotFoundException("Session Not Found")
             }
         }
 
@@ -232,37 +182,12 @@ class SessionsApi(
         return when (res) {
             is Success -> Response(OK)
                 .header("content-type", "application/json")
-                .body(
-                    Json.encodeToString(
-                        SessionSearchOutputModel(
-                            res.value.map { session ->
-                                SessionInfoOutputModel(
-                                    session.sid,
-                                    session.capacity,
-                                    session.date,
-                                    GameInfoOutputModel(
-                                        session.gameSession.gid,
-                                        session.gameSession.name,
-                                        session.gameSession.developer,
-                                        session.gameSession.genres.toList()
-                                    ),
-                                    session.playersSession.map {
-                                        PlayerInfoOutputModel(
-                                            it.pid,
-                                            it.name,
-                                            it.email
-                                        )
-                                    }
-                                )
-                            }
-                        )
-                    )
-                )
+                .body(Json.encodeToString(res.value.toSessionSearchDTO()))
 
             is Failure -> when (res.value) {
-                SessionSearchException.GameNotFound -> Response(Status.NOT_FOUND)
-                SessionSearchException.PLayerNotFound -> Response(Status.NOT_FOUND)
-                SessionSearchException.InvalidDate -> Response(BAD_REQUEST)
+                SessionSearchException.GameNotFound -> throw NotFoundException("Game Not Found")
+                SessionSearchException.PLayerNotFound -> throw NotFoundException("Player Not Found")
+                SessionSearchException.InvalidDate -> throw BadRequestException("Invalid Date")
             }
         }
     }
@@ -300,9 +225,7 @@ class SessionsApi(
         }
         catch (e: Exception) {
             Response(INTERNAL_SERVER_ERROR).header("content-type", "application/json").body(
-                Json.encodeToString(
-                    InternalServerErrorException()
-                )
+                Json.encodeToString(InternalServerErrorException())
             )
         }
 
