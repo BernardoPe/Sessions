@@ -1,6 +1,6 @@
 package pt.isel.ls.services
 
-import pt.isel.ls.domain.game.Game
+import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.exceptions.services.*
 import pt.isel.ls.storage.SessionsDataGame
 import pt.isel.ls.utils.Either
@@ -28,7 +28,7 @@ class GameService(val storage: SessionsDataGame) {
 
     }
 
-    fun searchGames(genres: Set<String>, developer: String, limit: Int, skip: Int): Either<GameSearchException, List<Game>> {
+    fun searchGames(genres: Set<String>, developer: String, limit: Int, skip: Int): GameSearchResult {
         return if (storage.isGenresStored(genres)) {
             failure(GameSearchException.GenresNotFound)
         } else if (storage.isDeveloperStored(developer)) {
