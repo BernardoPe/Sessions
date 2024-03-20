@@ -9,20 +9,15 @@ import java.util.*
 /**
  *  SessionsDataMemPlayer
  *
- *  Player Data management class
- *
- *  Uses the [SessionsDataPlayer] class to manage the player data
- *
- *  In this case the [getter] is a lambda function used as a comparator
- *
- */
-
+ *  Player Data management class for the in-memory database
+*/
 class SessionsDataMemPlayer : SessionsDataPlayer {
 
     /**
      * Database Mock
      *
      * This is a mockup of the database, used for testing purposes.
+     * It is a mutable list of player objects
      *
      * @property db The database.
      */
@@ -38,14 +33,6 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
      */
     private var lastId = 0
 
-    /**
-     * Create a player in the database mock
-     *
-     * This function uses the [create] function from the [SessionsDataMemPlayer] class
-     *
-     * @param name The player name to be created
-     * @param email The player email to be created
-     */
     override fun create(name: String, email: String): Pair<Int, UUID> {
         // Add the player object to the database mock
         // Set by checking if the player email already exists
@@ -66,27 +53,11 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
         return Pair(lastId, UUID.randomUUID())
     }
 
-    /**
-     * Checks the player's email on the database mock
-     *
-     * This function uses the [isEmailStored] function from the [SessionsDataMemPlayer] class
-     *
-     * @param email The player email to be checked
-     */
-
     override fun isEmailStored(email: String): Boolean {
         // Check if the player email exists in the database mock
         return db.any{it.email == email}
     }
 
-    /**
-     * Read a player from the database mock
-     *
-     * This function uses the [get] function from the [SessionsDataMemPlayer] class
-     *
-     * @param id The player identifier
-     * @return The player object with the given id or null if it does not exist
-     */
     override fun getById(id: Int): Player? {
         // Read the player object from the database mock
         db.forEach {
@@ -100,26 +71,11 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
         return null
     }
 
-    /**
-     * Read all players from the database mock
-     *
-     * This function uses the [getAll] function from the [SessionsDataMemPlayer] class
-     *
-     * @return A list with all the players in the database
-     */
     override fun getAll(): List<Player> {
         // Read all the player objects from the database mock
         return db
     }
 
-    /**
-     * Update a player in the database mock
-     *
-     * This function uses the [update] function from the [SessionsDataMemPlayer] class
-     *
-     * @param id The player identifier
-     * @param value The new player object
-     */
     override fun update(id: Int, value: Player) {
         // Update the player object in the database mock
         db.forEach {
@@ -136,13 +92,6 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
         throw PlayerNotFoundException("Given Player does not exist")
     }
 
-    /**
-     * Delete a player from the database mock
-     *
-     * This function uses the [delete] function from the [SessionsDataMemPlayer] class
-     *
-     * @param id The player identifier
-     */
     override fun delete(id: Int) {
         // Delete the player object from the database mock
         db.forEach {

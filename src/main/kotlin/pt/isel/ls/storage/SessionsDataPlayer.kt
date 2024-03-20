@@ -1,6 +1,9 @@
 package pt.isel.ls.storage
 
 import pt.isel.ls.domain.player.Player
+import pt.isel.ls.exceptions.PlayerEmailAlreadyExistsException
+import pt.isel.ls.exceptions.PlayerNotFoundException
+import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import java.util.*
 
 /**
@@ -16,16 +19,21 @@ import java.util.*
 interface SessionsDataPlayer {
 
     /**
-     * Create a player in the database
+     * Create a player in the database mock
+     *
+     * This function uses the [create] function from the [SessionsDataMemPlayer] class
      *
      * @param name The player name to be created
      * @param email The player email to be created
-     * @return The player identifier and the player UUID
+     * @return A pair with the last identifier and a new UUID
+     * @throws PlayerEmailAlreadyExistsException If the player email already exists
      */
     fun create(name: String, email: String): Pair<Int, UUID>
 
     /**
-     * Read a player from the database
+     * Read a player from the database mock
+     *
+     * This function uses the [get] function from the [SessionsDataMemPlayer] class
      *
      * @param id The player identifier
      * @return The player object with the given id or null if it does not exist
@@ -33,33 +41,42 @@ interface SessionsDataPlayer {
     fun getById(id: Int): Player?
 
     /**
-     * Returns a boolean to verify is an email already stored on the database
+     * Checks the player's email on the database mock
      *
-     * @param email The player identifier
-     * @return Boolean to verify the existence of the player's email
+     * This function uses the [isEmailStored] function from the [SessionsDataMemPlayer] class
+     *
+     * @param email The player email to be checked
+     * @return A boolean indicating if the player email exists in the database mock
      */
-
     fun isEmailStored(email: String): Boolean
 
     /**
-     * Get all players from the database
+     * Read all players from the database mock
+     *
+     * This function uses the [getAll] function from the [SessionsDataMemPlayer] class
      *
      * @return A list with all the players in the database
      */
     fun getAll(): List<Player>
 
     /**
-     * Update a player in the database
+     * Update a player in the database mock
+     *
+     * This function uses the [update] function from the [SessionsDataMemPlayer] class
      *
      * @param id The player identifier
      * @param value The new player object
+     * @throws PlayerNotFoundException If the player does not exist
      */
     fun update(id: Int, value: Player)
 
     /**
-     * Delete a player from the database
+     * Delete a player from the database mock
+     *
+     * This function uses the [delete] function from the [SessionsDataMemPlayer] class
      *
      * @param id The player identifier
+     * @throws PlayerNotFoundException If the player does not exist
      */
     fun delete(id: Int)
 

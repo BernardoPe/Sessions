@@ -34,13 +34,6 @@ class SessionsDataMemGame : SessionsDataGame {
      */
     private var lastId = 0
 
-    /**
-     * Create a game in the database mock
-     *
-     * This function uses the [create] function from the [SessionsDataMemGame] class
-     *
-     * @param value The game object to be created
-     */
     override fun create(name: String, developer: String, genres: Set<String>): Int {
         // Add the game object to the database mock
         // Start by checking if the game name already exists
@@ -60,53 +53,21 @@ class SessionsDataMemGame : SessionsDataGame {
         return lastId
     }
 
-    /**
-     * Checks for the name of a game in the database mock
-     *
-     * This function uses the [isGameNameStored] function from the [SessionsDataMemGame] class
-     *
-     * @param name The game name to be checked
-     */
-
     override fun isGameNameStored(name: String): Boolean {
         // Check if the game name already exists in the database mock
         return db.any { it.name == name }
     }
-
-    /**
-     * Checks a list of genres in the database mock
-     *
-     * This function uses the [isGenresStored] function from the [SessionsDataMemGame] class
-     *
-     * @param genres The game name to be checked
-     */
 
     override fun isGenresStored(genres: Set<String>): Boolean {
         // Check if the list of genres already exists in the database mock
         return db.any { it.genres == genres }
     }
 
-    /**
-     * Checks for the name of the developer in the database mock
-     *
-     * This function uses the [isDeveloperStored] function from the [SessionsDataMemGame] class
-     *
-     * @param developer The name of the developer to be checked
-     */
-
     override fun isDeveloperStored(developer: String): Boolean {
         // Check if the developer name already exists in the database mock
         return db.any { it.developer == developer }
     }
 
-    /**
-     * Read a game from the database mock
-     *
-     * This function uses the [get] function from the [SessionsDataMemGame] class
-     *
-     * @param id The game identifier
-     * @return The game object with the given id or null if it does not exist
-     */
     override fun getById(id: Int): Game? {
         // Read the game object from the database mock
         db.forEach {
@@ -120,13 +81,6 @@ class SessionsDataMemGame : SessionsDataGame {
         return null
     }
 
-    /**
-     * Read all games from the database mock
-     *
-     * This function uses the [getAll] function from the [SessionsDataMemGame] class
-     *
-     * @return A list with all the games in the database
-     */
     override fun getGamesSearch(genres: Set<String>, developer: String, limit: Int, skip: Int): List<Game> {
         // Read all the game objects from the database mock that match the given genres and developer
         // Start by checking the genres
@@ -135,16 +89,13 @@ class SessionsDataMemGame : SessionsDataGame {
         return games.filter { it.developer == developer }.subList(skip, skip + limit)
     }
 
-    /**
-     * Update a game in the database mock
-     *
-     * This function uses the [update] function from the [SessionsDataMemGame] class
-     *
-     * @param id The game identifier
-     * @param value The new game object
-     */
+    override fun getAllGames(): List<Game> {
+        // Read all the game objects from the database mock
+        return db
+    }
+
     override fun update(id: Int, value: Game) {
-        // Update the game object in the database mock
+        // UpdaUses the SessionsDataMemGame class to managete the game object in the database mock
         db.forEach {
             // search for the game with the given id
             if (it.gid == id) {
@@ -159,13 +110,6 @@ class SessionsDataMemGame : SessionsDataGame {
         throw GameNotFoundException("Game with the given id does not exist")
     }
 
-    /**
-     * Delete a game from the database mock
-     *
-     * This function uses the [delete] function from the [SessionsDataMemGame] class
-     *
-     * @param id The game identifier
-     */
     override fun delete(id: Int) {
         // Delete the game object from the database mock
         db.forEach {
