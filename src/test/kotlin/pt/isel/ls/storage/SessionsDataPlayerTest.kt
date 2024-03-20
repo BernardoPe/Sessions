@@ -6,7 +6,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-/**
+
 class SessionsDataPlayerTest {
 
     @Test
@@ -14,7 +14,7 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create("testPlayer", "testEmail")
+        playerStorage.create("testPlayer", "testEmail@test.com")
         // Check if the player was added
         // Start by getting the player
         val player = playerStorage.getById(0)
@@ -26,7 +26,7 @@ class SessionsDataPlayerTest {
         // Check the name
         assertEquals("testPlayer", player.name)
         // Check the email
-        assertEquals("testEmail", player.email)
+        assertEquals("testEmail@test.com", player.email)
     }
 
     @Test
@@ -34,9 +34,9 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create("testPlayer", "testEmail")
+        playerStorage.create("testPlayer", "testEmail@test.com")
         // Update the player
-        playerStorage.update(0, Player(0, "newName", "newEmail"))
+        playerStorage.update(0, Player(0, "newName", "newEmail@test.com"))
         // Check if the player was updated
         // Start by getting the player
         val player = playerStorage.getById(0)
@@ -48,7 +48,7 @@ class SessionsDataPlayerTest {
         // Check the name
         assertEquals("newName", player.name)
         // Check the email
-        assertEquals("newEmail", player.email)
+        assertEquals("newEmail@test.com", player.email)
     }
 
     @Test
@@ -56,7 +56,7 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create("testPlayer", "testEmail")
+        playerStorage.create("testPlayer", "testEmail@test.com")
         // Delete the player
         playerStorage.delete(0)
         // Check if the player was deleted
@@ -71,10 +71,10 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create("testPlayer", "testEmail")
+        playerStorage.create("testPlayer", "testEmail@test.com")
         // Check if the email is stored
         // Check if the email is stored
-        assert(playerStorage.isEmailStored("testEmail"))
+        assert(playerStorage.isEmailStored("testEmail@test.com"))
     }
 
     @Test
@@ -82,7 +82,7 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create("testPlayer", "testEmail")
+        playerStorage.create("testPlayer", "testEmail@test.com")
         // Get all players
         val players = playerStorage.getAll()
         // Check if the player is the same
@@ -93,7 +93,7 @@ class SessionsDataPlayerTest {
         // Check the name
         assertEquals("testPlayer", players[0].name)
         // Check the email
-        assertEquals("testEmail", players[0].email)
+        assertEquals("testEmail@test.com", players[0].email)
     }
 
     @Test
@@ -101,7 +101,7 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create("testPlayer", "testEmail")
+        playerStorage.create("testPlayer", "testEmail@test.com")
         // Get the player
         val player = playerStorage.getById(0)
         // Check if the player is the same
@@ -112,7 +112,7 @@ class SessionsDataPlayerTest {
         // Check the name
         assertEquals("testPlayer", player.name)
         // Check the email
-        assertEquals("testEmail", player.email)
+        assertEquals("testEmail@test.com", player.email)
     }
 
     @Test
@@ -124,4 +124,4 @@ class SessionsDataPlayerTest {
         // Check if the player is null
         assertNull(player)
     }
-}*/
+}

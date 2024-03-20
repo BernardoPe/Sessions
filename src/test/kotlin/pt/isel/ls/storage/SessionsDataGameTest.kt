@@ -5,7 +5,7 @@ import pt.isel.ls.exceptions.GameNotFoundException
 import pt.isel.ls.storage.mem.SessionsDataMemGame
 import kotlin.test.*
 
-/**
+
 class SessionsDataGameTest {
 
     @Test
@@ -159,4 +159,4 @@ class SessionsDataGameTest {
         // Check if the developer is stored
         assertTrue(gameStorage.isDeveloperStored("developer"))
     }
-}*/
+}
