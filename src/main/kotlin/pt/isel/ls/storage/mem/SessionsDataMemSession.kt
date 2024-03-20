@@ -1,5 +1,6 @@
 package pt.isel.ls.storage.mem
 
+import pt.isel.ls.domain.game.Game
 import pt.isel.ls.domain.session.Session
 import pt.isel.ls.storage.SessionsDataSession
 
@@ -40,7 +41,7 @@ class SessionsDataMemSession : SessionsDataSession {
      *
      * @param value The session object to be created
      */
-    override fun create(value: Session) {
+    override fun create(capacity: Int, game: Game, date: String): Int {
         // Add the session object to the database mock
         // Start by incrementing the last identifier
         lastId++
@@ -48,10 +49,10 @@ class SessionsDataMemSession : SessionsDataSession {
         db.add(
             Session(
                 lastId,
-                value.capacity,
-                value.date,
-                value.gameSession,
-                value.playersSession
+                capacity,
+                date,
+                game,
+                emptySet()
             )
         )
     }
@@ -84,9 +85,10 @@ class SessionsDataMemSession : SessionsDataSession {
      *
      * @return A list with all the sessions in the database
      */
-    override fun getAll(): List<Session> {
+    override fun getSessionsSearch(gid: Int, date: String?, state: String?, pid: Int?): Set<Session> {
         // Read all the session objects from the database mock
         return db
+        TODO()
     }
 
     /**
