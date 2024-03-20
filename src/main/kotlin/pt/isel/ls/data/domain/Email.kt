@@ -6,3 +6,5 @@ data class Email(val email: String) {
         require(email.matches(Regex("^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})\$"))) { "Emails must be a valid e-mail format" }
     }
 }
+
+fun String.toEmail(): Email = Email(this)

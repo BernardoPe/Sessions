@@ -10,4 +10,7 @@ data class Genre(val genre: String) {
         require(genre.length in 3..40) { "Genres must be between 1 and 40 characters" }
         require(genre in genresList) { "Genres must be one of the following: $genresList" }
     }
+
 }
+
+fun String.toGenre(): Genre = Genre(this)

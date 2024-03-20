@@ -1,7 +1,10 @@
 package pt.isel.ls.storage
 
 import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.domain.toEmail
+import pt.isel.ls.data.domain.toName
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
+import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -14,19 +17,19 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create("testPlayer", "testEmail@test.com")
+        playerStorage.create("testPlayer".toName(), "testEmail@test.com".toEmail())
         // Check if the player was added
         // Start by getting the player
-        val player = playerStorage.getById(0)
+        val player = playerStorage.getById(0u)
         // Check if the player is the same
         // Check if the player is not null
         assert(player != null)
-        // Check the pid
-        assertEquals(0, player!!.pid)
+        // Check the id
+        assertEquals(0u, player!!.id)
         // Check the name
-        assertEquals("testPlayer", player.name)
+        assertEquals("testPlayer".toName(), player.name)
         // Check the email
-        assertEquals("testEmail@test.com", player.email)
+        assertEquals("testEmail@test.com".toEmail(), player.email)
     }
 
     @Test
@@ -34,21 +37,21 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create("testPlayer", "testEmail@test.com")
+        playerStorage.create("testPlayer".toName(), "testEmail@test.com".toEmail())
         // Update the player
-        playerStorage.update(0, Player(0, "newName", "newEmail@test.com"))
+        playerStorage.update(0u, Player(0u, "newName".toName(), "newEmail@test.com".toEmail(), UUID.randomUUID()))
         // Check if the player was updated
         // Start by getting the player
-        val player = playerStorage.getById(0)
+        val player = playerStorage.getById(0u)
         // Check if the player is the same
         // Check if the player is not null
         assert(player != null)
-        // Check the pid
-        assertEquals(0, player!!.pid)
+        // Check the id
+        assertEquals(0u, player!!.id)
         // Check the name
-        assertEquals("newName", player.name)
+        assertEquals("newName".toName(), player.name)
         // Check the email
-        assertEquals("newEmail@test.com", player.email)
+        assertEquals("newEmail@test.com".toEmail(), player.email)
     }
 
     @Test
@@ -56,12 +59,12 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create("testPlayer", "testEmail@test.com")
+        playerStorage.create("testPlayer".toName(), "testEmail@test.com".toEmail())
         // Delete the player
-        playerStorage.delete(0)
+        playerStorage.delete(0u)
         // Check if the player was deleted
         // Start by getting the player
-        val player = playerStorage.getById(0)
+        val player = playerStorage.getById(0u)
         // Check if the player is null
         assertNull(player)
     }
@@ -71,10 +74,10 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create("testPlayer", "testEmail@test.com")
+        playerStorage.create("testPlayer".toName(), "testEmail@test.com".toEmail())
         // Check if the email is stored
         // Check if the email is stored
-        assert(playerStorage.isEmailStored("testEmail@test.com"))
+        assert(playerStorage.isEmailStored("testEmail@test.com".toEmail()))
     }
 
     @Test
@@ -82,18 +85,18 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create("testPlayer", "testEmail@test.com")
+        playerStorage.create("testPlayer".toName(), "testEmail@test.com".toEmail())
         // Get all players
         val players = playerStorage.getAll()
         // Check if the player is the same
         // Check if the player is not null
         assert(players.isNotEmpty())
-        // Check the pid
-        assertEquals(0, players[0].pid)
+        // Check the id
+        assertEquals(0u, players[0].id)
         // Check the name
-        assertEquals("testPlayer", players[0].name)
+        assertEquals("testPlayer".toName(), players[0].name)
         // Check the email
-        assertEquals("testEmail@test.com", players[0].email)
+        assertEquals("testEmail@test.com".toEmail(), players[0].email)
     }
 
     @Test
@@ -101,18 +104,18 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create("testPlayer", "testEmail@test.com")
+        playerStorage.create("testPlayer".toName(), "testEmail@test.com".toEmail())
         // Get the player
-        val player = playerStorage.getById(0)
+        val player = playerStorage.getById(0u)
         // Check if the player is the same
         // Check if the player is not null
         assert(player != null)
-        // Check the pid
-        assertEquals(0, player!!.pid)
+        // Check the id
+        assertEquals(0u, player!!.id)
         // Check the name
-        assertEquals("testPlayer", player.name)
+        assertEquals("testPlayer".toName(), player.name)
         // Check the email
-        assertEquals("testEmail@test.com", player.email)
+        assertEquals("testEmail@test.com".toEmail(), player.email)
     }
 
     @Test
@@ -120,7 +123,7 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Get the player
-        val player = playerStorage.getById(0)
+        val player = playerStorage.getById(0u)
         // Check if the player is null
         assertNull(player)
     }

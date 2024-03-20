@@ -42,7 +42,7 @@ class SessionsService(val storage: SessionsDataManager) {
             return if (getPlayer == null) {
                 failure(SessionAddPlayerException.PlayerNotFound)
             } else {
-                success(storage.session.update(sid, pid))
+                success(storage.session.update(sid, getPlayer))
             }
 
     }

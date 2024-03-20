@@ -2,6 +2,7 @@ package pt.isel.ls.storage.mem
 
 import kotlinx.datetime.LocalDateTime
 import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
 import pt.isel.ls.exceptions.SessionNotFoundException
@@ -129,7 +130,7 @@ class SessionsDataMemSession : SessionsDataSession {
      * @param pid The player identifier
      * @throws SessionNotFoundException If the session is not found
      */
-    override fun update(sid: UInt, pid: UInt) : String {
+    override fun update(sid: UInt, player: Player) : String {
         // Update the session object in the database mock
         db.forEach { session ->
             // search for the session with the given id
@@ -138,17 +139,13 @@ class SessionsDataMemSession : SessionsDataSession {
                 // remove the session from the database mock
                 db.remove(session)
                 // add the new session to the database mock
-                db.add(
-                    Session(
-                        session.id,
-                        session.capacity,
-                        session.date,
-                        session.gameSession,
-                        session.playersSession.plus(
-                            session.playersSession.find { it.id == pid } ?: throw SessionNotFoundException("Player not found")
-                        )
-                    )
-                )
+                db.add(Session(
+                    session.id,
+                    session.capacity,
+                    session.date,
+                    session.gameSession,
+                    session.playersSession.plus(player)
+                ))
                 return "Session successfully updated"
             }
         }

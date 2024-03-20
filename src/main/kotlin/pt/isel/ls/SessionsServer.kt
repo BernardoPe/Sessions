@@ -103,6 +103,7 @@ fun main() {
             SessionsService(storage)
         )
     )
+
     server.start()
     readln()
     server.stop()

@@ -6,3 +6,5 @@ data class Name(val name: String){
         require(name.length in 3..40) { "The name must be between 3 and 40 characters" }
     }
 }
+
+fun String.toName(): Name = Name(this)

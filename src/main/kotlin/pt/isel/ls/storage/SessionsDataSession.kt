@@ -2,6 +2,7 @@ package pt.isel.ls.storage
 
 import kotlinx.datetime.LocalDateTime
 import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
 import pt.isel.ls.exceptions.SessionNotFoundException
@@ -66,7 +67,7 @@ interface SessionsDataSession {
          * @param pid The player identifier
          * @throws SessionNotFoundException If the session is not found
          */
-        fun update(sid: UInt, pid: UInt) : String
+        fun update(sid: UInt, player: Player) : String
 
         /**
          * Delete a session from the database mock

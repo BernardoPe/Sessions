@@ -1,6 +1,10 @@
 package pt.isel.ls.storage
 
+import pt.isel.ls.data.domain.Genre
+import pt.isel.ls.data.domain.Name
 import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.data.domain.toGenre
+import pt.isel.ls.data.domain.toName
 import pt.isel.ls.exceptions.GameNotFoundException
 import pt.isel.ls.storage.mem.SessionsDataMemGame
 import kotlin.test.*
@@ -13,19 +17,19 @@ class SessionsDataGameTest {
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // Create the game (add it to the storage)
-        gameStorage.create("game", "developer", setOf("genre1", "genre2"))
+        gameStorage.create("game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
         // Check if the game was created
         // Start by reading the game from the storage
-        val gameData = gameStorage.getById(0)
+        val gameData = gameStorage.getById(0u)
         // Check the game data
         // Check the game id
-        assertEquals(0, gameData?.gid)
+        assertEquals(0u, gameData?.id)
         // Check the game name
-        assertEquals("game", gameData?.name)
+        assertEquals("game".toName(), gameData?.name)
         // Check the game developer
-        assertEquals("developer", gameData?.developer)
+        assertEquals("developer".toName(), gameData?.developer)
         // Check the game genres
-        assertEquals(setOf("genre1", "genre2"), gameData?.genres)
+        assertEquals(setOf("RPG".toGenre(), "Adventure".toGenre()), gameData?.genres)
     }
 
     @Test
@@ -33,20 +37,20 @@ class SessionsDataGameTest {
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // add a game to the storage
-        gameStorage.create("game", "developer", setOf("genre1", "genre2"))
+        gameStorage.create("game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
         // read the game from the storage
-        val gameData = gameStorage.getGamesSearch(setOf("genre1"), "developer", 2, 0)
+        val gameData = gameStorage.getGamesSearch(setOf("RPG".toGenre()), "developer".toName(), 2u, 0u)
         // Check the game data
         // Check if gameData is not null
         assertNotNull(gameData)
         // Check the game id
-        assertEquals(0, gameData[0].gid)
+        assertEquals(0u, gameData[0].id)
         // Check the game name
-        assertEquals("game", gameData[0].name)
+        assertEquals("game".toName(), gameData[0].name)
         // Check the game developer
-        assertEquals("developer", gameData[0].developer)
+        assertEquals("developer".toName(), gameData[0].developer)
         // Check the game genres
-        assertEquals(setOf("genre1", "genre2"), gameData[0].genres)
+        assertEquals(setOf("RPG".toGenre(), "Adventure".toGenre()), gameData[0].genres)
     }
 
     @Test
@@ -54,23 +58,23 @@ class SessionsDataGameTest {
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // Create the game (add it to the storage)
-        gameStorage.create("game", "developer", setOf("genre1", "genre2"))
+        gameStorage.create("game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
         // Update the game
         // Start by creating a new game object
-        val newGame = Game(0, "newGame", "newDeveloper", setOf("newGenre1", "newGenre2"))
-        gameStorage.update(0, newGame)
+        val newGame = Game(0u, "newGame".toName(), "newDeveloper".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
+        gameStorage.update(newGame)
         // Check if the game was updated
         // Start by reading the game from the storage
-        val gameData = gameStorage.getById(0)
+        val gameData = gameStorage.getById(0u)
         // Check the game data
         // Check the game id
-        assertEquals(0, gameData?.gid)
+        assertEquals(0u, gameData?.id)
         // Check the game name
-        assertEquals("newGame", gameData?.name)
+        assertEquals("newGame".toName(), gameData?.name)
         // Check the game developer
-        assertEquals("newDeveloper", gameData?.developer)
+        assertEquals("newDeveloper".toName(), gameData?.developer)
         // Check the game genres
-        assertEquals(setOf("newGenre1", "newGenre2"), gameData?.genres)
+        assertEquals(setOf("RPG".toGenre(), "Adventure".toGenre()), gameData?.genres)
     }
 
     @Test
@@ -78,12 +82,12 @@ class SessionsDataGameTest {
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // Create the game (add it to the storage)
-        gameStorage.create("game", "developer", setOf("genre1", "genre2"))
+        gameStorage.create("game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
         // Delete the game
-        gameStorage.delete(0)
+        gameStorage.delete(0u)
         // Check if the game was deleted
         // Start by reading the game from the storage
-        val gameData = gameStorage.getById(0)
+        val gameData = gameStorage.getById(0u)
         // Check if the game data is null
         assertNull(gameData)
     }
@@ -93,7 +97,7 @@ class SessionsDataGameTest {
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // read the game from the storage
-        val gameData = gameStorage.getById(0)
+        val gameData = gameStorage.getById(0u)
         // Check if gameData is null
         assertNull(gameData)
     }
@@ -103,7 +107,7 @@ class SessionsDataGameTest {
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // read the game from the storage
-        val gameData = gameStorage.getGamesSearch(setOf("genre1"), "developer", 2, 0)
+        val gameData = gameStorage.getGamesSearch(setOf("RPG".toGenre()), "developer".toName(), 2u, 0u)
         // Check if gameData is empty
         assertEquals(0, gameData.size)
     }
@@ -114,9 +118,9 @@ class SessionsDataGameTest {
         val gameStorage = SessionsDataMemGame()
         // Update the game
         // Start by creating a new game object
-        val newGame = Game(0, "newGame", "newDeveloper", setOf("newGenre1", "newGenre2"))
+        val newGame = Game(0u, "newGame".toName(), "newDeveloper".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
         assertFailsWith<GameNotFoundException> {
-            gameStorage.update(0, newGame)
+            gameStorage.update( newGame)
         }
     }
 
@@ -126,7 +130,7 @@ class SessionsDataGameTest {
         val gameStorage = SessionsDataMemGame()
         // Delete the game
         assertFailsWith<GameNotFoundException> {
-            gameStorage.delete(0)
+            gameStorage.delete(0u)
         }
     }
 
@@ -135,9 +139,9 @@ class SessionsDataGameTest {
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // Create the game (add it to the storage)
-        gameStorage.create("game", "developer", setOf("genre1", "genre2"))
+        gameStorage.create("game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
         // Check if the game name is stored
-        assertTrue(gameStorage.isGameNameStored("game"))
+        assertTrue(gameStorage.isGameNameStored("game".toName()))
     }
 
     @Test
@@ -145,9 +149,9 @@ class SessionsDataGameTest {
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // Create the game (add it to the storage)
-        gameStorage.create("game", "developer", setOf("genre1", "genre2"))
+        gameStorage.create("game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
         // Check if the genres are stored
-        assertTrue(gameStorage.isGenresStored(setOf("genre1", "genre2")))
+        assertTrue(gameStorage.isGenresStored(setOf("RPG".toGenre(), "Adventure".toGenre())))
     }
 
     @Test
@@ -155,8 +159,8 @@ class SessionsDataGameTest {
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // Create the game (add it to the storage)
-        gameStorage.create("game", "developer", setOf("genre1", "genre2"))
+        gameStorage.create("game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
         // Check if the developer is stored
-        assertTrue(gameStorage.isDeveloperStored("developer"))
+        assertTrue(gameStorage.isDeveloperStored("developer".toName()))
     }
 }
