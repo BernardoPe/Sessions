@@ -1,4 +1,6 @@
-package pt.isel.ls.domain.game
+package pt.isel.ls.data.domain.game
+
+import pt.isel.ls.dto.GameInfoOutputModel
 
 /**
  *  Game
@@ -26,6 +28,7 @@ data class Game (
                 require(developer.length in 1..40) { "The game developer must be between 1 and 40 characters" }
                 require(genres.all { it.length in 1..40 }) { "The game genres must be between 1 and 40 characters" }
         }
+
 }
 
 

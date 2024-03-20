@@ -1,7 +1,8 @@
-package pt.isel.ls.domain.session
+package pt.isel.ls.data.domain.session
 
-import pt.isel.ls.domain.game.Game
-import pt.isel.ls.domain.player.Player
+import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.dto.SessionInfoOutputModel
 import pt.isel.ls.utils.isValidTimeStamp
 
 const val SESSION_MAX_CAPACITY = 100
@@ -43,6 +44,7 @@ data class Session(
             }
         }
     }
+
 }
 
 

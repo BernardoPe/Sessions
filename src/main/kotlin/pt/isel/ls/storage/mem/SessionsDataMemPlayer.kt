@@ -1,6 +1,6 @@
 package pt.isel.ls.storage.mem
 
-import pt.isel.ls.domain.player.Player
+import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.exceptions.PlayerEmailAlreadyExistsException
 import pt.isel.ls.exceptions.PlayerNotFoundException
 import pt.isel.ls.storage.SessionsDataPlayer

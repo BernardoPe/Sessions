@@ -1,4 +1,6 @@
-package pt.isel.ls.domain.player
+package pt.isel.ls.data.domain.player
+
+import pt.isel.ls.dto.PlayerInfoOutputModel
 
 /**
  *  Player
@@ -21,5 +23,6 @@ data class Player (
                 require(name.length in 1..40) { "The player name must be between 1 and 40 characters" }
                 require(email.matches(Regex("^[A-Za-z0-9+_.-]+@(.+)\$"))) { "The player email must be a valid e-mail" }
         }
+
 }
 

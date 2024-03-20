@@ -44,9 +44,8 @@ const val SESSION_PLAYER_ROUTE = "/sessions/{sid}/players"
 class SessionsServer(api: SessionsApi, port: Int = 8080) {
 
     private val requestHandler = api::processRequest
-    companion object {
-        private val executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
-    }
+
+    private val executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
     private fun dispatcher(req: Request, operation: Operation): Response
             = executor.submit<Response> {
         logRequest(req)

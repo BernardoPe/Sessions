@@ -1,7 +1,6 @@
 package pt.isel.ls.dto
 
 import kotlinx.serialization.Serializable
-import pt.isel.ls.domain.game.*
 
 /**
  * The [GameCreationInputModel] class is used to represent the request body of the created game
