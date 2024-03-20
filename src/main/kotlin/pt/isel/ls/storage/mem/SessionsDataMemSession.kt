@@ -2,6 +2,7 @@ package pt.isel.ls.storage.mem
 
 import pt.isel.ls.domain.game.Game
 import pt.isel.ls.domain.session.Session
+import pt.isel.ls.exceptions.SessionNotFoundException
 import pt.isel.ls.storage.SessionsDataSession
 
 /**
@@ -37,16 +38,25 @@ class SessionsDataMemSession : SessionsDataSession {
     /**
      * Create a session in the database mock
      *
-     * This function uses the [create] function from the [SessionsDataMemSession] class
+     * This function creates a session object and adds it to the database mock
+     * The function does not have a Session as parameter, but the fields that are needed to create a session
+     * The playerSession is an empty set by default
      *
-     * @param value The session object to be created
+     * @param capacity The session capacity
+     * @param game The game object
+     * @param date The date
+     * @return The session identifier
      */
     override fun create(capacity: Int, game: Game, date: String): Int {
         // Add the session object to the database mock
-        // Start by incrementing the last identifier
+        // Increment the last identifier
         lastId++
         // Add the updated session object to the database mock
         db.add(
+            // The session object to be added to the database mock
+            // The only fields that are changed are:
+            // - sid: The last identifier. This is the last identifier available in the database mock
+            // - playersSession: An empty set. This is because the session is created with no players by default
             Session(
                 lastId,
                 capacity,
@@ -55,76 +65,99 @@ class SessionsDataMemSession : SessionsDataSession {
                 emptySet()
             )
         )
+        // Return the last identifier
+        return lastId
     }
 
     /**
      * Read a session from the database mock
      *
-     * This function uses the [get] function from the [SessionsDataMemSession] class
+     * This function gets the session object from the database mock with the given id
      *
      * @param id The session identifier
      * @return The session object with the given id or null if it does not exist
      */
     override fun getById(id: Int): Session? {
-        // Read the session object from the database mock
-        db.forEach {
-            // search for the session with the given id
-            if (it.sid == id) {
-                // if found
-                // return the session object
-                return it
-            }
-        }
-        return null
+        // Read the session object from the database mock with the given id
+        return db.find { it.sid == id }
     }
 
     /**
-     * Read all sessions from the database mock
+     *  Read sessions from the database mock that match the given parameters
      *
-     * This function uses the [getAll] function from the [SessionsDataSessionMem] class
+     *  The [getSessionsSearch] function searches the database mock for sessions that match the given parameters
      *
-     * @return A list with all the sessions in the database
+     *  @param gid The game identifier
+     *  @param date The date
+     *  @param state The state
+     *  @param pid The player identifier
+     *  @return A list with all the sessions in the database that match the given parameters
      */
-    override fun getSessionsSearch(gid: Int, date: String?, state: String?, pid: Int?): Set<Session> {
-        // Read all the session objects from the database mock
-        return db
-        TODO()
+    override fun getSessionsSearch(gid: Int, date: String?, state: String?, pid: Int?): List<Session> {
+        // Get all the session objects from the database mock that match the given parameters
+        // Start by checking the game identifier
+        var sessions = db.filter { it.gameSession.gid == gid }
+        // Then check the date
+        date?.let {
+            sessions = sessions.filter { it.date == date }
+        }
+        var tmp_state: String? = null
+        // Then check the state
+        state?.let {
+            sessions = sessions.filter { tmp_state == state }
+        }
+        // Then check the player identifier in the players set
+        pid?.let {
+            sessions = sessions.filter { it.playersSession.any { it.pid == pid } }
+        }
+        return sessions
     }
 
     /**
      * Update a session in the database mock
      *
-     * This function uses the [update] function from the [SessionsDataSessionMem] class
+     * This function updates the session object in the database mock with the given id
+     * The function does not have a Session as parameter, but the fields that are needed to update a session
      *
-     * @param id The session identifier
-     * @param value The new session object
+     * @param sid The session identifier
+     * @param pid The player identifier
+     * @throws SessionNotFoundException If the session is not found
      */
-    override fun update(id: Int, value: Session): Boolean {
+    override fun update(sid: Int, pid: Int) {
         // Update the session object in the database mock
-        db.forEach {
+        db.forEach { session ->
             // search for the session with the given id
-            if (it.sid == id) {
+            if (session.sid == sid) {
                 // if found
                 // remove the session from the database mock
-                db.remove(it)
+                db.remove(session)
                 // add the new session to the database mock
-                db.add(value)
-                // tell the caller that the update was successful
-                return true
+                db.add(
+                    Session(
+                        session.sid,
+                        session.capacity,
+                        session.date,
+                        session.gameSession,
+                        session.playersSession.plus(
+                            session.playersSession.find { it.pid == pid } ?: throw SessionNotFoundException("Player not found")
+                        )
+                    )
+                )
             }
         }
         // tell the caller that the update was not successful
-        return false
+        throw SessionNotFoundException("Session not found")
     }
 
     /**
      * Delete a session from the database mock
      *
-     * This function uses the [delete] function from the [SessionsDataSessionMem] class
+     * This function deletes the session object from the database mock with the given id
      *
      * @param id The session identifier
+     * @throws SessionNotFoundException If the session is not found
      */
-    override fun delete(id: Int): Boolean {
+    override fun delete(id: Int) {
         // Delete the session object from the database mock
         db.forEach {
             // search for the session with the given id
@@ -132,11 +165,9 @@ class SessionsDataMemSession : SessionsDataSession {
                 // if found
                 // remove the session from the database mock
                 db.remove(it)
-                // tell the caller that the delete was successful
-                return true
             }
         }
         // tell the caller that the delete was not successful
-        return false
+        throw SessionNotFoundException("Session not found")
     }
 }

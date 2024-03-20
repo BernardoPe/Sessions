@@ -36,15 +36,15 @@ interface SessionsDataSession {
          *
          * @return A list with all the sessions in the database
          */
-        fun getSessionsSearch(): Set<Session>
+        fun getSessionsSearch(gid: Int, date: String?, state: String?, pid: Int?): List<Session>
 
         /**
         * Update a session in the database
         *
-        * @param id The session identifier
-         * @param pid The player identifier
+        * @param sid The session identifier
+        * @param pid The player identifier
         */
-        fun update(sid: Int, pid: Int): String
+        fun update(sid: Int, pid: Int)
 
         /**
         * Delete a session from the database
@@ -52,5 +52,5 @@ interface SessionsDataSession {
         * @param id The session identifier
         * @return true if the session was deleted, false otherwise
         */
-        fun delete(id: Int): Boolean
+        fun delete(id: Int)
 }
