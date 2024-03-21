@@ -5,10 +5,7 @@ import pt.isel.ls.data.domain.Name
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.NotFoundException
-import pt.isel.ls.exceptions.services.*
 import pt.isel.ls.storage.SessionsDataManager
-import pt.isel.ls.utils.failure
-import pt.isel.ls.utils.success
 
 
 class GameService(val storage: SessionsDataManager) {

@@ -19,16 +19,12 @@ import pt.isel.ls.data.domain.session.toState
 import pt.isel.ls.data.mapper.*
 import pt.isel.ls.dto.*
 import pt.isel.ls.exceptions.*
-import pt.isel.ls.exceptions.services.*
 import pt.isel.ls.pt.isel.ls.logger
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
-import pt.isel.ls.utils.Failure
-import pt.isel.ls.utils.Success
 import pt.isel.ls.utils.toLocalDateTime
 import java.util.*
-import kotlin.math.log
 
 
 /**

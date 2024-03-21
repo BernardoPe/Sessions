@@ -5,7 +5,6 @@ import pt.isel.ls.data.domain.Name
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import java.util.*
-import pt.isel.ls.exceptions.*
 
 /**
  *  Player Data management interface

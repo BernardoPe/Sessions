@@ -1,4 +1,3 @@
 package pt.isel.ls.services.player
 
-class PlayerServiceTest {
-}
+class PlayerServiceTest

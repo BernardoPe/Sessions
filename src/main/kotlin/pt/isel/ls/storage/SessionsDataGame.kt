@@ -1,10 +1,10 @@
 package pt.isel.ls.storage
 
 import pt.isel.ls.data.domain.Genre
-import pt.isel.ls.data.domain.game.Game
-import pt.isel.ls.storage.mem.SessionsDataMemGame
 import pt.isel.ls.data.domain.Name
+import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.exceptions.*
+import pt.isel.ls.storage.mem.SessionsDataMemGame
 
 /**
  *  Game Data management interface

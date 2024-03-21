@@ -1,7 +1,6 @@
 package pt.isel.ls.data.domain.session
 
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.toLocalDateTime
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.utils.currentLocalTime

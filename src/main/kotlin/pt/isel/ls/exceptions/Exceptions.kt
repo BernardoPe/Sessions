@@ -29,23 +29,23 @@ class NotFoundException(item: String?) : SessionsExceptions(NOT_FOUND.code, "Not
  * The [NotImplementedException] class is an exception that is thrown when the request is not implemented.
  */
 @Serializable
-class NotImplementedException() : SessionsExceptions(NOT_IMPLEMENTED.code, "Not Implemented", null)
+class NotImplementedException : SessionsExceptions(NOT_IMPLEMENTED.code, "Not Implemented", null)
 
 
 /**
  * The [InternalServerErrorException] class is an exception that is thrown when the server has an internal error.
  */
 @Serializable
-class InternalServerErrorException() : SessionsExceptions(Status.INTERNAL_SERVER_ERROR.code, "Internal Server Error", null)
+class InternalServerErrorException : SessionsExceptions(Status.INTERNAL_SERVER_ERROR.code, "Internal Server Error", null)
 
 /**
  * The [UnsupportedMediaTypeException] class is an exception that is thrown when the media type is not supported.
  */
 @Serializable
-class UnsupportedMediaTypeException() : SessionsExceptions(Status.UNSUPPORTED_MEDIA_TYPE.code, "Unsupported Media Type", null)
+class UnsupportedMediaTypeException : SessionsExceptions(Status.UNSUPPORTED_MEDIA_TYPE.code, "Unsupported Media Type", null)
 
 /**
  * The [UnauthorizedException] class is an exception that is thrown when the user is not authorized.
  */
 @Serializable
-class UnauthorizedException() : SessionsExceptions(Status.UNAUTHORIZED.code, "Unauthorized", "Invalid Auth")
+class UnauthorizedException : SessionsExceptions(Status.UNAUTHORIZED.code, "Unauthorized", "Invalid Auth")

@@ -2,7 +2,7 @@ package pt.isel.ls.data.domain.player
 
 import pt.isel.ls.data.domain.Email
 import pt.isel.ls.data.domain.Name
-import java.util.UUID
+import java.util.*
 
 
 /**

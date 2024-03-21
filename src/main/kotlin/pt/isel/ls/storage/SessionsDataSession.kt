@@ -1,7 +1,6 @@
 package pt.isel.ls.storage
 
 import kotlinx.datetime.LocalDateTime
-import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State

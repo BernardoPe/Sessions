@@ -1,9 +1,9 @@
 package pt.isel.ls.storage
 
-import pt.isel.ls.data.domain.session.Session
 import org.junit.jupiter.api.Assertions.assertEquals
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.toEmail
 import pt.isel.ls.data.domain.toGenre
 import pt.isel.ls.data.domain.toName

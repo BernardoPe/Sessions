@@ -7,11 +7,9 @@ import org.http4k.core.Status
 import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeAll
-import pt.isel.ls.Server.ServerTest
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.toEmail
-
 import pt.isel.ls.data.domain.toGenre
 import pt.isel.ls.data.domain.toName
 import pt.isel.ls.dto.SessionInfoOutputModel

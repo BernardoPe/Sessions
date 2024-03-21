@@ -3,7 +3,6 @@ package pt.isel.ls.storage
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.toGenre
 import pt.isel.ls.data.domain.toName
-import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.storage.mem.SessionsDataMemGame
 import kotlin.test.*
 

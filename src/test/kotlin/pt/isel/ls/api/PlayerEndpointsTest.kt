@@ -7,7 +7,6 @@ import org.http4k.core.Status
 import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeAll
-import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.toEmail
 import pt.isel.ls.data.domain.toName
 import pt.isel.ls.dto.PlayerInfoOutputModel
@@ -18,7 +17,6 @@ import pt.isel.ls.storage.SessionsDataManager
 import pt.isel.ls.storage.mem.SessionsDataMemGame
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import pt.isel.ls.storage.mem.SessionsDataMemSession
-import java.util.*
 import kotlin.test.Test
 
 

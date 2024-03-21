@@ -1,10 +1,3 @@
-import pt.isel.ls.api.SessionsApi
-import pt.isel.ls.data.domain.toGenre
-import pt.isel.ls.data.domain.toName
-import pt.isel.ls.services.GameService
-import pt.isel.ls.services.PlayerService
-import pt.isel.ls.services.SessionsService
-import pt.isel.ls.storage.SessionsDataManager
 import kotlinx.serialization.json.Json
 import org.http4k.core.Method
 import org.http4k.core.Request
@@ -12,16 +5,21 @@ import org.http4k.core.Status
 import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeAll
-import pt.isel.ls.api.PlayerEndpointsTest
+import pt.isel.ls.api.SessionsApi
 import pt.isel.ls.data.domain.toEmail
+import pt.isel.ls.data.domain.toGenre
+import pt.isel.ls.data.domain.toName
 import pt.isel.ls.dto.GameInfoOutputModel
 import pt.isel.ls.dto.GameSearchOutputModel
+import pt.isel.ls.services.GameService
+import pt.isel.ls.services.PlayerService
+import pt.isel.ls.services.SessionsService
+import pt.isel.ls.storage.SessionsDataManager
 import pt.isel.ls.storage.mem.SessionsDataMemGame
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import pt.isel.ls.storage.mem.SessionsDataMemSession
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class GameEndpointsTest {
 

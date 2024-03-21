@@ -1,16 +1,12 @@
 package pt.isel.ls.services
 
 import kotlinx.datetime.LocalDateTime
-import pt.isel.ls.data.domain.session.SESSION_MAX_CAPACITY
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
 import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.InternalServerErrorException
 import pt.isel.ls.exceptions.NotFoundException
-import pt.isel.ls.exceptions.services.*
 import pt.isel.ls.storage.SessionsDataManager
-import pt.isel.ls.utils.failure
-import pt.isel.ls.utils.success
 
 class SessionsService(val storage: SessionsDataManager) {
 
