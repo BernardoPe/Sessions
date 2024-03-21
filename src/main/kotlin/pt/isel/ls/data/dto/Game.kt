@@ -38,10 +38,12 @@ data class GameCreationOutputModel(val gid: UInt)
 @Serializable
 data class GameInfoOutputModel(val gid: UInt, val name: String, val developer: String, val genres: List<String>)
 
+
 /**
- * The [GameSearchInputModel] class is used to represent the request body of list of games
- * @param developer The game developer
- * @param genres The list of genres
+ * The [GameSearchOutputModel] class is used to represent the response body of the game search
+ *
+ * @param games The list of game details
+ *
  */
 
 @Serializable

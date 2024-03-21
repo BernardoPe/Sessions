@@ -1,8 +1,6 @@
 package pt.isel.ls.storage.db
 
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.toInstant
-import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toKotlinLocalDateTime
 import pt.isel.ls.data.domain.Genre
 import pt.isel.ls.data.domain.game.Game
@@ -16,7 +14,6 @@ import pt.isel.ls.utils.toTimestamp
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Statement
-import java.sql.Timestamp
 
 class SessionsDataDBSession(private val connection: Connection): SessionsDataSession {
     override fun create(session: Session): UInt {

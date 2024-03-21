@@ -8,7 +8,6 @@ import pt.isel.ls.data.domain.toEmail
 import pt.isel.ls.data.domain.toGenre
 import pt.isel.ls.data.domain.toName
 import pt.isel.ls.utils.toLocalDateTime
-import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

@@ -35,7 +35,7 @@ const val SESSION_ROUTE = "/sessions"
  *
  * The user should use the start method to start the server and the stop method to stop the server.
  *
- * @param api The [SessionsApi] instance
+ * @param requestHandler The [SessionsApi] instance
  * @param port The port where the server will listen
  *
  * @property start The method that starts the server

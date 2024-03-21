@@ -17,8 +17,6 @@ import pt.isel.ls.storage.mem.SessionsDataMemGame
  *  @property update Update a game in the database
  *  @property delete Delete a game from the database
  *  @property isGameNameStored Returns a boolean to verify if a game name already stored on the database
- *  @property isGenresStored Returns a boolean to verify if a list of genres of an game are already stored on the database
- *  @property isDeveloperStored Returns a boolean to verify if the name of a developer already stored on the database
  *  @property getGamesSearch Read all games from the database
  */
 interface SessionsDataGame {

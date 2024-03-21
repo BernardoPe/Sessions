@@ -9,7 +9,6 @@ import pt.isel.ls.data.domain.toGenre
 import pt.isel.ls.data.domain.toName
 import pt.isel.ls.storage.mem.SessionsDataMemSession
 import pt.isel.ls.utils.toLocalDateTime
-import java.util.*
 import kotlin.test.Test
 
 
