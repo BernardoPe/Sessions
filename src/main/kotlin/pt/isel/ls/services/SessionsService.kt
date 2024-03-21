@@ -2,8 +2,11 @@ package pt.isel.ls.services
 
 import kotlinx.datetime.LocalDateTime
 import pt.isel.ls.data.domain.session.SESSION_MAX_CAPACITY
+import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
 import pt.isel.ls.exceptions.BadRequestException
+import pt.isel.ls.exceptions.InternalServerErrorException
+import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.exceptions.services.*
 import pt.isel.ls.storage.SessionsDataManager
 import pt.isel.ls.utils.failure
@@ -11,64 +14,51 @@ import pt.isel.ls.utils.success
 
 class SessionsService(val storage: SessionsDataManager) {
 
-    // Sessions exceptions must be discussed
-    fun createSession(capacity: UInt, gid: UInt, date: LocalDateTime): SessionCreationResult {
+    fun createSession(capacity: UInt, gid: UInt, date: LocalDateTime): UInt {
 
-        if (capacity <= 1u || capacity > SESSION_MAX_CAPACITY) {
-            return failure(SessionCreationException.InvalidCapacity)
-        }
+        val getGame = storage.game.getById(gid) ?: throw NotFoundException("Game not found")
 
-        val getGame = storage.game.getById(gid)
+        val session = Session(0u, capacity, date, getGame, emptySet())
 
-        val storageSession = storage.session
-
-        return if (getGame == null) {
-            failure(SessionCreationException.GameNotFound)
-        } else {
-            success(storageSession.create(capacity, getGame, date))
-        }
+        return storage.session.create(session)
 
     }
 
-    fun addPlayer(sid: UInt, pid: UInt): SessionAddPlayerResult {
+    fun addPlayer(sid: UInt, pid: UInt): SessionAddPlayerMessage {
 
-            val getSession = storage.session.getById(sid) ?: return failure(SessionAddPlayerException.SessionNotFound)
+        val getSession = storage.session.getById(sid) ?: throw NotFoundException("Session not found")
 
-            if (getSession.capacity <= 1u || getSession.capacity > SESSION_MAX_CAPACITY) {
-                 failure(SessionAddPlayerException.InvalidCapacity)
-            }
+        val getPlayer = storage.player.getById(pid) ?: throw NotFoundException("Player not found")
 
-            val getPlayer = storage.player.getById(pid)
+        if (getSession.playersSession.contains(getPlayer))
+            throw BadRequestException("Player already in session")
 
-            return if (getPlayer == null) {
-                failure(SessionAddPlayerException.PlayerNotFound)
-            } else {
-                success(storage.session.update(sid, getPlayer))
-            }
+        if (getSession.capacity == getSession.playersSession.size.toUInt())
+            throw BadRequestException("Session is full")
 
-    }
+        if (getSession.state == State.CLOSE)
+            throw BadRequestException("Session is closed")
 
-    fun listSessions(gid: UInt, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): SessionSearchResult {
-
-            return if (storage.session.getById(gid) == null) {
-                failure(SessionSearchException.GameNotFound)
-            } else if (pid != null && storage.player.getById(pid) == null) {
-                failure(SessionSearchException.PLayerNotFound)
-            } else {
-                success(storage.session.getSessionsSearch(gid, date, state, pid, limit, skip))
-            }
+        return if (storage.session.update(sid, getPlayer))
+            "Player successfully added to session"
+        else throw InternalServerErrorException()
+        // If update fails after checks this means that a services check must have failed, so it's an internal server error
 
     }
 
-    fun getSessionById(sid: UInt): SessionDetailsResult {
-
-        val getSession = storage.session.getById(sid)
-
-        return if (getSession == null) {
-            failure(SessionDetailsException.SessionNotFound)
-        } else {
-            success(getSession)
-        }
-
+    fun listSessions(gid: UInt, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): SessionList {
+        return storage.session.getSessionsSearch(gid, date, state, pid, limit, skip)
     }
+
+
+    fun getSessionById(sid: UInt): Session {
+        return storage.session.getById(sid) ?: throw NotFoundException("Session not found")
+    }
+
 }
+
+typealias SessionIdentifier = UInt
+
+typealias SessionList = List<Session>
+
+typealias SessionAddPlayerMessage = String

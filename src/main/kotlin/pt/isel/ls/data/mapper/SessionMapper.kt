@@ -5,7 +5,9 @@ import pt.isel.ls.dto.SessionAddPlayerOutputModel
 import pt.isel.ls.dto.SessionCreationOutputModel
 import pt.isel.ls.dto.SessionInfoOutputModel
 import pt.isel.ls.dto.SessionSearchOutputModel
-import pt.isel.ls.exceptions.services.*
+import pt.isel.ls.services.SessionAddPlayerMessage
+import pt.isel.ls.services.SessionIdentifier
+import pt.isel.ls.services.SessionList
 
 /**
  * Converts a [SessionIdentifier] to a [SessionCreationOutputModel]

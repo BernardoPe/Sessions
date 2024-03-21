@@ -4,8 +4,8 @@ import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.dto.GameCreationOutputModel
 import pt.isel.ls.dto.GameInfoOutputModel
 import pt.isel.ls.dto.GameSearchOutputModel
-import pt.isel.ls.exceptions.services.GameIdentifier
-import pt.isel.ls.exceptions.services.GameList
+import pt.isel.ls.services.GameIdentifier
+import pt.isel.ls.services.GameList
 
 
 /**

@@ -52,131 +52,96 @@ class SessionsApi(
 
 
     fun createPlayer(request: Request): Response = processRequest(request) {
+
         val player = parseJsonBody<PlayerCreationInputModel>(request)
+        val res = playerServices.createPlayer(Name(player.name), Email(player.email))
 
-        when (val res = playerServices.createPlayer(Name(player.name), Email(player.email))) {
-            is Success -> Response(CREATED)
-                .header("content-type", "application/json")
-                .body(Json.encodeToString(res.value.toPlayerCreationDTO()))
+        Response(CREATED)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(res.toPlayerCreationDTO()))
 
-            is Failure -> when (res.value) {
-                PlayerCreationException.UnsafeEmail -> throw BadRequestException("Invalid Email")
-                PlayerCreationException.EmailAlreadyExists -> throw BadRequestException("Email Already Exists")
-            }
-        }
     }
 
 
     fun getPlayerDetails(request: Request) = processRequest(request) {
-        val pid = request.path("pid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Player Identifier")
-        when (val res = playerServices.getPlayerDetails(pid)) {
-            is Success -> Response(OK)
-                .header("content-type", "application/json")
-                .body(Json.encodeToString(res.value.toPlayerInfoDTO()))
 
-            is Failure -> when (res.value) {
-                PlayerDetailsException.PlayerNotFound -> throw NotFoundException("Player Not Found")
-            }
-        }
+        val pid = request.path("pid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Player Identifier")
+        val res = playerServices.getPlayerDetails(pid)
+
+        Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(res.toPlayerInfoDTO()))
     }
 
     fun createGame(request: Request) = authHandler(request) {
+
         val game = parseJsonBody<GameCreationInputModel>(request)
-        when (val res = gameServices.createGame(Name(game.name), Name(game.developer), game.genres.map { Genre(it) }.toSet())) {
+        val res = gameServices.createGame(Name(game.name), Name(game.developer), game.genres.map { Genre(it) }.toSet())
 
-            is Success -> Response(CREATED)
-                .header("content-type", "application/json")
-                .body(Json.encodeToString(res.value.toGameCreationDTO()))
-
-            is Failure -> when (res.value) {
-                GameCreationException.GameNameAlreadyExists -> throw BadRequestException("Game Name Already Exists")
-            }
-        }
+        Response(CREATED)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(res.toGameCreationDTO()))
     }
 
     fun getGameById(request: Request) = processRequest(request) {
-        val gid = request.path("gid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Game Identifier")
-        when (val res = gameServices.getGameById(gid)) {
-            is Success -> Response(OK)
-                .header("content-type", "application/json")
-                .body(Json.encodeToString(res.value.toGameInfoDTO()))
 
-            is Failure -> when (res.value) {
-                GameDetailsException.GameNotFound -> throw NotFoundException("Game Not Found")
-            }
-        }
+        val gid = request.path("gid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Game Identifier")
+        val res = gameServices.getGameById(gid)
+
+        Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(res.toGameInfoDTO()))
     }
 
     fun getGameList(request: Request) = processRequest(request) {
 
         val (limit, skip) = (request.query("limit")?.toUIntOrNull() ?: 5u) to (request.query("skip")?.toUIntOrNull() ?: 0u)
-
         val gameSearch = parseJsonBody<GameSearchInputModel>(request)
 
-        when(val res = gameServices.searchGames(gameSearch.genres.map { Genre(it) }.toSet(), Name(gameSearch.developer), limit, skip)) {
-            is Success -> Response(OK)
-                .header("content-type", "application/json")
-                .body(Json.encodeToString(res.value.toGameSearchDTO()))
+        val res = gameServices.searchGames(gameSearch.genres.map { Genre(it) }.toSet(), Name(gameSearch.developer), limit, skip)
 
-            is Failure -> when (res.value) {
-                GameSearchException.GenresNotFound -> throw NotFoundException("Genres Not Found")
-                GameSearchException.DeveloperNotFound -> throw NotFoundException("Developer Not Found")
-            }
-        }
+        Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(res.toGameSearchDTO()))
     }
 
     fun createSession(request: Request) = authHandler(request) {
 
         val session = parseJsonBody<SessionCreationInputModel>(request)
+        val res = sessionServices.createSession(session.capacity, session.gid, session.date.toLocalDateTime())
 
-        when (val res = sessionServices.createSession(session.capacity, session.gid, session.date.toLocalDateTime())) {
-            is Success -> Response(CREATED)
-                .header("content-type", "application/json")
-                .body(Json.encodeToString(res.value.toSessionCreationDTO()))
-
-            is Failure -> when (res.value) {
-                SessionCreationException.InvalidCapacity -> throw BadRequestException("Invalid Capacity")
-                SessionCreationException.InvalidDate -> throw BadRequestException("Invalid Date")
-                SessionCreationException.GameNotFound -> throw NotFoundException("Game Not Found")
-            }
-        }
+        Response(CREATED)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(res.toSessionCreationDTO()))
     }
 
     fun addPlayerToSession(request: Request) = authHandler(request) {
+
         val sid = request.path("sid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Session Identifier")
         val player = parseJsonBody<SessionAddPlayerInputModel>(request)
-        when (val res = sessionServices.addPlayer(sid, player.pid)) {
-            is Success -> Response(OK)
-                .header("content-type", "application/json")
-                .body(Json.encodeToString(res.value.toSessionAddPlayerDTO()))
+        val res = sessionServices.addPlayer(sid, player.pid)
 
-            is Failure -> when (res.value) {
-                SessionAddPlayerException.SessionNotFound -> throw NotFoundException("Session Not Found")
-                SessionAddPlayerException.PlayerNotFound -> throw NotFoundException("Player Not Found")
-                SessionAddPlayerException.InvalidCapacity -> throw BadRequestException("Invalid Capacity")
-                SessionAddPlayerException.SessionFull -> throw BadRequestException("Session Full")
-            }
-        }
+        Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(res.toSessionAddPlayerDTO()))
     }
 
     fun getSessionById(request: Request) = processRequest(request) {
+
         val sid = request.path("sid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Session Identifier")
-        when (val res = sessionServices.getSessionById(sid)) {
-            is Success -> Response(OK)
-                .header("content-type", "application/json")
-                .body(Json.encodeToString(res.value.toSessionInfoDTO()))
+        val res = sessionServices.getSessionById(sid)
 
-            is Failure -> when (res.value) {
-                SessionDetailsException.SessionNotFound -> throw NotFoundException("Session Not Found")
-            }
-        }
-
+        Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(res.toSessionInfoDTO()))
     }
 
 
     fun getSessionList(request: Request) = processRequest(request) {
+
         val (limit, skip) = (request.query("limit")?.toUIntOrNull() ?: 5u) to (request.query("skip")?.toUIntOrNull() ?: 0u)
         val sessionSearch = parseJsonBody<SessionSearchInputModel>(request)
+
         val res = sessionServices.listSessions(
             sessionSearch.gid,
             sessionSearch.date?.toLocalDateTime(),
@@ -185,17 +150,10 @@ class SessionsApi(
             limit,
             skip
         )
-        when (res) {
-            is Success -> Response(OK)
-                .header("content-type", "application/json")
-                .body(Json.encodeToString(res.value.toSessionSearchDTO()))
 
-            is Failure -> when (res.value) {
-                SessionSearchException.GameNotFound -> throw NotFoundException("Game Not Found")
-                SessionSearchException.PLayerNotFound -> throw NotFoundException("Player Not Found")
-                SessionSearchException.InvalidDate -> throw BadRequestException("Invalid Date")
-            }
-        }
+        Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(res.toSessionSearchDTO()))
     }
 
 
@@ -294,7 +252,6 @@ class SessionsApi(
             response.header("content-type"),
         )
     }
-
 
 
 }

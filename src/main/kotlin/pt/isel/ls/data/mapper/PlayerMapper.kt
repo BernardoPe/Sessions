@@ -2,7 +2,7 @@ package pt.isel.ls.data.mapper
 
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.dto.PlayerInfoOutputModel
-import pt.isel.ls.exceptions.services.PlayerCredentials
+import pt.isel.ls.services.PlayerCredentials
 
 
 /**

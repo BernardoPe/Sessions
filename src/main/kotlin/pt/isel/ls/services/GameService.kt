@@ -2,6 +2,9 @@ package pt.isel.ls.services
 
 import pt.isel.ls.data.domain.Genre
 import pt.isel.ls.data.domain.Name
+import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.exceptions.BadRequestException
+import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.exceptions.services.*
 import pt.isel.ls.storage.SessionsDataManager
 import pt.isel.ls.utils.failure
@@ -9,42 +12,39 @@ import pt.isel.ls.utils.success
 
 
 class GameService(val storage: SessionsDataManager) {
-    fun createGame(name: Name, developer: Name, genres: Set<Genre>): GameCreationResult {
+    fun createGame(name: Name, developer: Name, genres: Set<Genre>): GameIdentifier {
 
-            val storageGame = storage.game
+        val storageGame = storage.game
 
-            return if (storageGame.isGameNameStored(name)) {
-                failure(GameCreationException.GameNameAlreadyExists)
-            } else {
-                success(storageGame.create(name, developer, genres))
-            }
-
-    }
-
-    fun getGameById(id: UInt): GameDetailsResult {
-
-        val getGame = storage.game.getById(id)
-
-        return if (getGame == null) {
-            failure(GameDetailsException.GameNotFound)
-        } else {
-            success(getGame)
+        if (storageGame.isGameNameStored(name)) {
+            throw BadRequestException("Game name already exists")
         }
 
+        return storageGame.create(name, developer, genres)
+
     }
 
-    fun searchGames(genres: Set<Genre>, developer: Name, limit: UInt, skip: UInt): GameSearchResult {
+    fun getGameById(id: UInt): Game {
+        return storage.game.getById(id) ?: throw NotFoundException("Game not found")
+    }
 
-            val storageGame = storage.game
+    fun searchGames(genres: Set<Genre>, developer: Name, limit: UInt, skip: UInt): GameList {
 
-            return if (!storageGame.isGenresStored(genres)) {
-                failure(GameSearchException.GenresNotFound)
-            } else if (!storageGame.isDeveloperStored(developer)) {
-                failure(GameSearchException.DeveloperNotFound)
-            } else {
-                success(storageGame.getGamesSearch(genres, developer, limit, skip))
-            }
+        val storageGame = storage.game
+
+        if (!storageGame.isGenresStored(genres))
+            throw NotFoundException("Genres not found")
+
+        if (!storageGame.isDeveloperStored(developer))
+            throw NotFoundException("Developer not found")
+
+
+        return storageGame.getGamesSearch(genres, developer, limit, skip)
 
     }
 
 }
+
+typealias GameIdentifier = UInt
+
+typealias GameList = List<Game>
