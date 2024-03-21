@@ -16,19 +16,22 @@ import java.sql.ResultSet
 import java.sql.Statement
 
 class SessionsDataDBSession(private val connection: Connection): SessionsDataSession {
+
+    init {
+        connection.autoCommit = false
+    }
+
     override fun create(session: Session): UInt {
         val statement = connection.prepareStatement(
             "INSERT INTO sessions (game_id, capacity, date) VALUES (?, ?, ?)",
             Statement.RETURN_GENERATED_KEYS
         )
 
-        connection.autoCommit = false
         statement.setInt(1, session.gameSession.id.toInt())
         statement.setInt(2, session.capacity.toInt())
         statement.setTimestamp(3, session.date.toTimestamp())
         statement.executeUpdate()
         connection.commit()
-        connection.autoCommit = true
 
         val generatedKeys = statement.generatedKeys
         generatedKeys.next()
@@ -40,11 +43,9 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
             "SELECT * FROM sessions WHERE id = ?"
         )
 
-        connection.autoCommit = false
         statement.setInt(1, id.toInt())
         val resultSet = statement.executeQuery()
         connection.commit()
-        connection.autoCommit = true
 
         return resultSet.getSessions().firstOrNull().also { statement.close() }
     }
@@ -68,7 +69,6 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
 
         val statement = connection.prepareStatement(query.toString())
 
-        connection.autoCommit = false
 
         for ((index, param) in queryParams.withIndex()) {
             statement.setObject(index + 1, param)
@@ -80,7 +80,6 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
         val resultSet = statement.executeQuery()
 
         connection.commit()
-        connection.autoCommit = true
 
         return if (state != null) {
             resultSet.getSessions().filter { it.state == state }.also { statement.close() }
@@ -95,12 +94,10 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
             "INSERT INTO sessions_players (session_id, player_id) VALUES (?, ?)"
         )
 
-        connection.autoCommit = false
         statement.setInt(1, sid.toInt())
         statement.setInt(2, player.id.toInt())
         val res = statement.executeUpdate()
         connection.commit()
-        connection.autoCommit = true
 
         return res > 0 .also { statement.close() }
     }
@@ -110,11 +107,9 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
             "DELETE FROM sessions WHERE id = ?"
         )
 
-        connection.autoCommit = false
         statement.setInt(1, id.toInt())
         val res = statement.executeUpdate()
         connection.commit()
-        connection.autoCommit = true
 
         return res > 0 .also { statement.close() }
     }
@@ -136,11 +131,9 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
             "SELECT * FROM games WHERE id = ?"
         )
 
-        connection.autoCommit = false
         statement.setInt(1, gid.toInt())
         val resultSet = statement.executeQuery()
         connection.commit()
-        connection.autoCommit = true
 
         resultSet.next()
 
@@ -165,11 +158,9 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
             "SELECT * FROM sessions_players WHERE session_id = ?"
         )
 
-        connection.autoCommit = false
         statement.setInt(1, sid.toInt())
         val resultSet = statement.executeQuery()
         connection.commit()
-        connection.autoCommit = true
 
         var playerIds = listOf<UInt>()
 
@@ -188,11 +179,9 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
             "SELECT * FROM players WHERE id = ANY(?)"
         )
 
-        connection.autoCommit = false
         statement.setArray(1, connection.createArrayOf("INTEGER", this.map { it.toInt() }.toTypedArray()))
         val resultSet = statement.executeQuery()
         connection.commit()
-        connection.autoCommit = true
 
         while (resultSet.next()) {
             players += Player(
