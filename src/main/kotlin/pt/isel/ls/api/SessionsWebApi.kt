@@ -28,6 +28,7 @@ import pt.isel.ls.utils.Failure
 import pt.isel.ls.utils.Success
 import pt.isel.ls.utils.toLocalDateTime
 import java.util.*
+import kotlin.math.log
 
 
 /**
@@ -205,9 +206,11 @@ class SessionsApi(
      */
 
     private fun authHandler(request: Request, service: (Request) -> Response): Response {
+        logger.info("Authenticating request")
         return if (verifyAuth(request)) {
             processRequest(request, service)
         } else {
+            logger.info("Unauthorized request")
             Response(UNAUTHORIZED).header("content-type", "application/json").body(Json.encodeToString(UnauthorizedException()))
         }
     }
@@ -236,7 +239,6 @@ class SessionsApi(
         } catch (e: SessionsExceptions) {
             Response(Status(e.status, e.description)).header("content-type", "application/json").body(Json.encodeToString(e))
         }
-
         catch (e: IllegalArgumentException) {
             Response(BAD_REQUEST).header("content-type", "application/json").body(Json.encodeToString(SessionsExceptions(BAD_REQUEST.code, "Bad Request", e.message)))
         }

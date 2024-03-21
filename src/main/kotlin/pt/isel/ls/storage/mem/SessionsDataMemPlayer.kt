@@ -53,14 +53,14 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
 
         db.add(
             Player(
-                lastId++,
+                lastId,
                 name,
                 email,
                 playerToken
             )
         )
         // Return the last identifier and a new UUID
-        return Pair(lastId, playerToken)
+        return Pair(lastId++, playerToken)
     }
 
     override fun isEmailStored(email: Email): Boolean {

@@ -45,14 +45,14 @@ class SessionsDataMemGame : SessionsDataGame {
         // Add the updated game object to the database mock
         db.add(
             Game(
-                lastId++,
+                lastId,
                 name,
                 developer,
                 genres
             )
         )
         // Return the last identifier
-        return lastId
+        return lastId++
     }
 
     override fun isGameNameStored(name: Name): Boolean {

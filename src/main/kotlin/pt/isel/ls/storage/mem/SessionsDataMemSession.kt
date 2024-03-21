@@ -61,7 +61,7 @@ class SessionsDataMemSession : SessionsDataSession {
             // - sid: The last identifier. This is the last identifier available in the database mock
             // - playersSession: An empty set. This is because the session is created with no players by default
             Session(
-                lastId++,
+                lastId,
                 capacity,
                 date,
                 game,
@@ -69,7 +69,7 @@ class SessionsDataMemSession : SessionsDataSession {
             )
         )
         // Return the last identifier
-        return lastId
+        return lastId++
     }
 
     /**
