@@ -194,7 +194,7 @@ class GameEndpointsTest {
 
         @JvmStatic
         @BeforeAll
-        fun setup(): Unit {
+        fun setup() {
             storage.game.create( "TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
             storage.game.create( "TestName2".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre()))
             storage.player.create("TestName".toName(), "TestEmail@test.pt".toEmail())

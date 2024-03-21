@@ -15,7 +15,7 @@ const val SESSION_MAX_CAPACITY = 100u
  *
  *  The [Session] Data Class is the representation of a Game in the system.
  *
- *  @param sid The session identifier
+ *  @param id The session identifier
  *  @param capacity The session capacity
  *  @param date The session date
  */

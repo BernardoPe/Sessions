@@ -600,7 +600,7 @@ class ServerTest {
 
         @JvmStatic
         @AfterAll
-        fun stopServer(): Unit {
+        fun stopServer() {
             server.stop()
         }
 
