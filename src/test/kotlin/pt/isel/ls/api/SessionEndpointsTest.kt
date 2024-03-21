@@ -7,7 +7,9 @@ import org.http4k.core.Status
 import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeAll
+import pt.isel.ls.Server.ServerTest
 import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.toEmail
 
 import pt.isel.ls.data.domain.toGenre
@@ -338,8 +340,8 @@ class SessionEndpointsTest {
             val mockGame = Game(1u, "TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre()))
             storage.game.create("TestName123".toName(), "TestDeveloper123".toName(), setOf("RPG".toGenre()))
             storage.game.create("TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre()))
-            storage.session.create(100u, mockGame, "2030-05-01T00:00:00".toLocalDateTime())
-            storage.session.create(100u, mockGame, "2030-06-01T00:00:00".toLocalDateTime())
+            storage.session.create(Session(0u,100u, "2030-05-01T00:00:00".toLocalDateTime(), mockGame, setOf()))
+            storage.session.create(Session(1u,100u, "2030-06-01T00:00:00".toLocalDateTime(), mockGame, setOf()))
             storage.player.create("TestName".toName(), "testemail@test.pt".toEmail())
             val req = Request(Method.PUT, "/sessions/1")
                 .header("Content-Type", "application/json")

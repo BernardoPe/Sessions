@@ -117,9 +117,7 @@ class SessionsDataGameTest {
         // Update the game
         // Start by creating a new game object
         val newGame = Game(0u, "newGame".toName(), "newDeveloper".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
-        assertFailsWith<NotFoundException> {
-            gameStorage.update( newGame)
-        }
+        assertFalse  { gameStorage.update( newGame) }
     }
 
     @Test
@@ -127,9 +125,7 @@ class SessionsDataGameTest {
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // Delete the game
-        assertFailsWith<NotFoundException> {
-            gameStorage.delete(0u)
-        }
+        assertFalse  { gameStorage.delete(0u) }
     }
 
     @Test

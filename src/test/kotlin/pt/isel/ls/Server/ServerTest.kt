@@ -589,8 +589,8 @@ class ServerTest {
             storage.player.create("TestName2".toName(), "TestEmail2@test.pt".toEmail())
 
             val mockGame = Game(1u, "TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre()))
-            storage.session.create(100u, mockGame, "2030-05-01T00:00:00".toLocalDateTime())
-            storage.session.create(100u, mockGame, "2030-06-01T00:00:00".toLocalDateTime())
+            storage.session.create(Session(0u,100u, "2030-05-01T00:00:00".toLocalDateTime(), mockGame, setOf()))
+            storage.session.create(Session(1u,100u, "2030-06-01T00:00:00".toLocalDateTime(), mockGame, setOf()))
 
             val req = Request(Method.PUT, "/sessions/1")
                 .header("Content-Type", "application/json")
