@@ -18,6 +18,7 @@ import pt.isel.ls.storage.mem.SessionsDataMemGame
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import pt.isel.ls.storage.mem.SessionsDataMemSession
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 
 class PlayerEndpointsTest {
@@ -31,7 +32,7 @@ class PlayerEndpointsTest {
         // Act
         val response = api.createPlayer(request)
         // Assert
-        assert(response.status == Status.CREATED)
+        assertEquals(response.status , Status.CREATED)
     }
 
     @Test
@@ -43,7 +44,7 @@ class PlayerEndpointsTest {
         // Act
         val response = api.createPlayer(request)
         // Assert
-        assert(response.status == Status.BAD_REQUEST)
+        assertEquals(response.status , Status.BAD_REQUEST)
     }
 
     @Test
@@ -55,7 +56,7 @@ class PlayerEndpointsTest {
         // Act
         val response = api.createPlayer(request)
         // Assert
-        assert(response.status == Status.BAD_REQUEST)
+        assertEquals(response.status , Status.CONFLICT)
     }
 
     @Test
@@ -67,7 +68,7 @@ class PlayerEndpointsTest {
         // Act
         val response = api.createPlayer(request)
         // Assert
-        assert(response.status == Status.BAD_REQUEST)
+        assertEquals(response.status , Status.BAD_REQUEST)
     }
 
     @Test
@@ -79,35 +80,35 @@ class PlayerEndpointsTest {
         // Act
         val response = api.createPlayer(request)
         // Assert
-        assert(response.header("Content-Type") == "application/json")
-        assert(response.status == Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type") , "application/json")
+        assertEquals(response.status , Status.BAD_REQUEST)
     }
     @Test
     fun `test get player details should give player details`() {
         // Arrange
-        val request = Request(Method.GET, "/players/1")
+        val request = Request(Method.GET, "/players/2")
         val routedRequest = RoutedRequest(request, UriTemplate.from("/players/{pid}"))
         // Act
         val response = api.getPlayerDetails(routedRequest)
         val playerDetailsJson = response.bodyString()
         val playerDetails = Json.decodeFromString<PlayerInfoOutputModel>(playerDetailsJson)
         // Assert
-        assert(response.status == Status.OK)
-        assert(response.header("Content-Type") == "application/json")
-        assert(playerDetails.name == "TestName")
-        assert(playerDetails.email == "TestEmail@test.pt")
-        assert(playerDetails.pid == 1u)
+        assertEquals(response.status , Status.OK)
+        assertEquals(response.header("Content-Type") , "application/json")
+        assertEquals(playerDetails.name , "TestName")
+        assertEquals(playerDetails.email , "TestEmail@test.pt")
+        assertEquals(playerDetails.pid , 2u)
     }
     @Test
     fun `test get player details should give not found`() {
         // Arrange
-        val request = Request(Method.GET, "/players/3")
+        val request = Request(Method.GET, "/players/4")
         val routedRequest = RoutedRequest(request, UriTemplate.from("/players/{pid}"))
         // Act
         val response = api.getPlayerDetails(routedRequest)
         // Assert
-        assert(response.header("Content-Type") == "application/json")
-        assert(response.status == Status.NOT_FOUND)
+        assertEquals(response.header("Content-Type") , "application/json")
+        assertEquals(response.status , Status.NOT_FOUND)
     }
 
     companion object {

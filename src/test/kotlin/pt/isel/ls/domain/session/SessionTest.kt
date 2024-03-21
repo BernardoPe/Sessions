@@ -60,7 +60,7 @@ class SessionTest {
             setOf("Adventure".toGenre(), "RPG".toGenre())
         )
 
-        val uuid = UUID.randomUUID()
+        val uuid = 0L
 
         fun newPlayersTest() = setOf(
             Player(1u, "player1".toName(), "player1@example.com".toEmail(), uuid),

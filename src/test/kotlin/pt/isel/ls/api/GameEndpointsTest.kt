@@ -90,7 +90,7 @@ class GameEndpointsTest {
     @Test
     fun `test get game details should return game details`() {
         // Arrange
-        val request = Request(Method.GET, "/games/1")
+        val request = Request(Method.GET, "/games/2")
         val routedRequest = RoutedRequest(request, UriTemplate.from("/games/{gid}"))
         // Act
         val response = api.getGameById(routedRequest)
@@ -102,13 +102,13 @@ class GameEndpointsTest {
         assertEquals("TestName2", gameDetails.name)
         assertEquals("TestDeveloper", gameDetails.developer)
         assertEquals(listOf("RPG"), gameDetails.genres)
-        assertEquals(1u, gameDetails.gid)
+        assertEquals(2u, gameDetails.gid)
     }
 
     @Test
     fun `test get game details should give not found`() {
         // Arrange
-        val request = Request(Method.GET, "/games/3")
+        val request = Request(Method.GET, "/games/4")
         val routedRequest = RoutedRequest(request, UriTemplate.from("/games/{gid}"))
         // Act
         val response = api.getGameById(routedRequest)
@@ -119,11 +119,11 @@ class GameEndpointsTest {
     @Test
     fun `test get game list should return game list`() {
         // Arrange
-        val request = Request(Method.GET, "/games")
-            .header("Content-Type", "application/json")
-            .body("""{"developer":"TestDeveloper","genres":["RPG"]}""")
+        val request = Request(Method.GET, "/games?developer=TestDeveloper&genres=RPG")
+
+        val routedRequest = RoutedRequest(request, UriTemplate.from("/games"))
         // Act
-        val response = api.getGameList(request)
+        val response = api.getGameList(routedRequest)
         val gameListJson = response.bodyString()
         val gameList = Json.decodeFromString<GameSearchOutputModel>(gameListJson)
         // Assert
@@ -133,19 +133,17 @@ class GameEndpointsTest {
         assertEquals("TestName", gameList.games[0].name)
         assertEquals("TestDeveloper", gameList.games[0].developer)
         assertEquals(listOf("RPG", "Adventure"), gameList.games[0].genres)
-        assertEquals(0u, gameList.games[0].gid)
+        assertEquals(1u, gameList.games[0].gid)
         assertEquals("TestName2", gameList.games[1].name)
         assertEquals("TestDeveloper", gameList.games[1].developer)
         assertEquals(listOf("RPG"), gameList.games[1].genres)
-        assertEquals(1u, gameList.games[1].gid)
+        assertEquals(2u, gameList.games[1].gid)
     }
 
     @Test
     fun `test get game list empty fields should give bad request`() {
         // Arrange
-        val request = Request(Method.GET, "/games")
-            .header("Content-Type", "application/json")
-            .body("""{"developer":"","genres":[]}""")
+        val request = Request(Method.GET, "/games?developer=&genres=")
         // Act
         val response = api.getGameList(request)
         // Assert
@@ -154,11 +152,9 @@ class GameEndpointsTest {
     }
 
     @Test
-    fun `test get game list invalid body should give bad request`() {
+    fun `test get game list invalid params should give bad request`() {
         // Arrange
-        val request = Request(Method.GET, "/games")
-            .header("Content-Type", "application/json")
-            .body("")
+        val request = Request(Method.GET, "/games?developer=asd&genres=asd")
         // Act
         val response = api.getGameList(request)
         // Assert
@@ -169,9 +165,7 @@ class GameEndpointsTest {
     @Test
     fun `test get game list limit and skip should return game list`() {
         // Arrange
-        val request = Request(Method.GET, "/games?limit=1&skip=1")
-            .header("Content-Type", "application/json")
-            .body("""{"developer":"TestDeveloper","genres":["RPG"]}""")
+        val request = Request(Method.GET, "/games?limit=1&skip=1&developer=TestDeveloper&genres=RPG")
         // Act
         val response = api.getGameList(request)
         val gameListJson = response.bodyString()
@@ -183,7 +177,7 @@ class GameEndpointsTest {
         assertEquals("TestName2", gameList.games[0].name)
         assertEquals("TestDeveloper", gameList.games[0].developer)
         assertEquals(listOf("RPG"), gameList.games[0].genres)
-        assertEquals(1u, gameList.games[0].gid)
+        assertEquals(2u, gameList.games[0].gid)
     }
 
     companion object {

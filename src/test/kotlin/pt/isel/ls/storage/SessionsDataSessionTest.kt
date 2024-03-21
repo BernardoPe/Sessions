@@ -20,16 +20,16 @@ class SessionsDataSessionTest {
         // Create a session storage
         val storage = SessionsDataMemSession()
         // Add a session to the storage
-        val sessionMock = Session(0u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(0u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
+        val sessionMock = Session(1u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(1u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
         storage.create(sessionMock) // Add a player to the session
         // Get the session from the storage
-        val session = storage.getById(0u)
+        val session = storage.getById(1u)
         // Check each field of the session
         // Check the capacity
         assertEquals(2u, session?.capacity)
         // Check each field of the game
         // Check the identifier
-        assertEquals(0u, session?.gameSession?.id)
+        assertEquals(1u, session?.gameSession?.id)
         // Check the name
         assertEquals("game".toName(), session?.gameSession?.name)
         // Check the developer
@@ -45,15 +45,15 @@ class SessionsDataSessionTest {
         // Create a session storage
         val storage = SessionsDataMemSession()
         // Add a session to the storage
-        val sessionMock = Session(0u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(0u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
+        val sessionMock = Session(1u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(1u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
         storage.create(sessionMock) // Add a player to the session
-        val session = storage.getById(0u)
+        val session = storage.getById(1u)
         // Check each field of the session
         // Check the capacity
         assertEquals(2u, session?.capacity)
         // Check each field of the game
         // Check the identifier
-        assertEquals(0u, session?.gameSession?.id)
+        assertEquals(1u, session?.gameSession?.id)
         // Check the name
         assertEquals("game".toName(), session?.gameSession?.name)
         // Check the developer
@@ -69,9 +69,9 @@ class SessionsDataSessionTest {
         // Create a session storage
         val storage = SessionsDataMemSession()
         // Add a session to the storage
-        val session = Session(0u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(0u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
+        val session = Session(1u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(1u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
         storage.create(session)        // Get the sessions from the storage
-        val sessions = storage.getSessionsSearch(0u, "2030-05-05T12:00:00".toLocalDateTime(), null, null, 10u, 0u)
+        val sessions = storage.getSessionsSearch(1u, "2030-05-05T12:00:00".toLocalDateTime(), null, null, 10u, 0u)
         // Check if the session was added
         // Check the number of sessions
         assertEquals(1, sessions.size)
@@ -80,7 +80,7 @@ class SessionsDataSessionTest {
         assertEquals(2u, sessions[0].capacity)
         // Check each field of the game
         // Check the identifier
-        assertEquals(0u, sessions[0].gameSession.id)
+        assertEquals(1u, sessions[0].gameSession.id)
         // Check the name
         assertEquals("game".toName(), sessions[0].gameSession.name)
         // Check the developer
@@ -96,11 +96,11 @@ class SessionsDataSessionTest {
         // Create a session storage
         val storage = SessionsDataMemSession()
         // Add a session to the storage
-        val session = Session(0u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(0u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
+        val session = Session(1u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(1u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
         storage.create(session)        // Add a player to the session
-        storage.update(0u, Player(0u, "player".toName(), "testemail@test.com".toEmail(), UUID.randomUUID()))
+        storage.update(1u, Player(1u, "player".toName(), "testemail@test.com".toEmail(), 0L))
         // Get the sessions from the storage
-        val sessions = storage.getSessionsSearch(0u, null, null, 0u, 10u, 0u)
+        val sessions = storage.getSessionsSearch(1u, null, null, null, 10u, 0u)
         // Check if the session was added
         // Check the number of sessions
         assertEquals(1, sessions.size)
@@ -109,7 +109,7 @@ class SessionsDataSessionTest {
         assertEquals(2u, sessions[0].capacity)
         // Check each field of the game
         // Check the identifier
-        assertEquals(0u, sessions[0].gameSession.id)
+        assertEquals(1u, sessions[0].gameSession.id)
         // Check the name
         assertEquals("game".toName(), sessions[0].gameSession.name)
         // Check the developer
@@ -125,16 +125,16 @@ class SessionsDataSessionTest {
         // Create a session storage
         val storage = SessionsDataMemSession()
         // Add a session to the storage
-        val sessionMock = Session(0u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(0u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
+        val sessionMock = Session(1u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(1u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
         storage.create(sessionMock) // Add a player to the session
-        storage.update(0u, Player(0u, "player".toName(), "testemail@test.com".toEmail(), UUID.randomUUID()))
+        storage.update(1u, Player(1u, "player".toName(), "testemail@test.com".toEmail(), 0L))
         // Get the session from the storage
-        val session = storage.getById(0u)
+        val session = storage.getById(1u)
         // Check if the player was added
         // Check the number of players
         assertEquals(1, session?.playersSession?.size)
         // Check the player identifier
-        assertEquals(0u, session?.playersSession?.first()!!.id)
+        assertEquals(1u, session?.playersSession?.first()!!.id)
     }
 
     @Test
@@ -142,11 +142,11 @@ class SessionsDataSessionTest {
         // Create a session storage
         val storage = SessionsDataMemSession()
         // Add a session to the storage
-        val sessionMock = Session(0u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(0u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
+        val sessionMock = Session(1u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(0u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
         storage.create(sessionMock) // Add a player to the session
-        storage.delete(0u)
+        storage.delete(1u)
         // Get the session from the storage
-        val session = storage.getById(0u)
+        val session = storage.getById(1u)
         // Check if the session was deleted
         assertEquals(null, session)
     }
@@ -156,9 +156,9 @@ class SessionsDataSessionTest {
         // Create a session storage
         val storage = SessionsDataMemSession()
         // Add a session to the storage
-        val session = Session(0u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(0u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
+        val session = Session(1u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(1u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
         storage.create(session)        // Get the sessions from the storage
-        val sessions = storage.getSessionsSearch(0u, null, null, null, 10u, 0u)
+        val sessions = storage.getSessionsSearch(1u, null, null, null, 10u, 0u)
         // Check if the session was added
         // Check the number of sessions
         assertEquals(1, sessions.size)
@@ -167,7 +167,7 @@ class SessionsDataSessionTest {
         assertEquals(2u, sessions[0].capacity)
         // Check each field of the game
         // Check the identifier
-        assertEquals(0u, sessions[0].gameSession.id)
+        assertEquals(1u, sessions[0].gameSession.id)
         // Check the name
         assertEquals("game".toName(), sessions[0].gameSession.name)
         // Check the developer
@@ -183,10 +183,10 @@ class SessionsDataSessionTest {
         // Create a session storage
         val storage = SessionsDataMemSession()
         // Add a session to the storage
-        val session = Session(0u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(0u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
+        val session = Session(1u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(1u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
         storage.create(session)
         // Get the sessions from the storage
-        val sessions = storage.getSessionsSearch(0u, "2030-05-05T12:00:00".toLocalDateTime(), null, null, 10u, 0u)
+        val sessions = storage.getSessionsSearch(1u, "2030-05-05T12:00:00".toLocalDateTime(), null, null, 10u, 0u)
         // Check if the session was added
         // Check the number of sessions
         assertEquals(1, sessions.size)
@@ -195,7 +195,7 @@ class SessionsDataSessionTest {
         assertEquals(2u, sessions[0].capacity)
         // Check each field of the game
         // Check the identifier
-        assertEquals(0u, sessions[0].gameSession.id)
+        assertEquals(1u, sessions[0].gameSession.id)
         // Check the name
         assertEquals("game".toName(), sessions[0].gameSession.name)
         // Check the developer

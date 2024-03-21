@@ -40,7 +40,7 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assert(response.status == Status.CREATED)
+        assertEquals(response.status , Status.CREATED)
     }
 
     @Test
@@ -52,7 +52,7 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assert(response.status == Status.BAD_REQUEST)
+        assertEquals(response.status , Status.BAD_REQUEST)
     }
 
     @Test
@@ -64,7 +64,7 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assert(response.status == Status.BAD_REQUEST)
+        assertEquals(response.status , Status.CONFLICT)
     }
 
     @Test
@@ -76,7 +76,7 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assert(response.status == Status.BAD_REQUEST)
+        assertEquals(response.status , Status.BAD_REQUEST)
     }
 
     @Test
@@ -88,35 +88,34 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assert(response.header("Content-Type") == "application/json")
-        assert(response.status == Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type") , "application/json")
+        assertEquals(response.status , Status.BAD_REQUEST)
     }
     @Test
     fun `test get player details should give player details`() {
         // Arrange
-        val request = Request(Method.GET, "/players/1")
+        val request = Request(Method.GET, "/players/2")
         // Act
         val response = server.sessionsHandler(request)
         val playerDetailsJson = response.bodyString()
         val playerDetails = Json.decodeFromString<PlayerInfoOutputModel>(playerDetailsJson)
         // Assert
-        assert(response.status == Status.OK)
-        assert(response.header("Content-Type") == "application/json")
-        assert(playerDetails.name == "TestName")
-        assert(playerDetails.email == "TestEmail@test.pt")
-        assert(playerDetails.pid == 1u)
+        assertEquals(response.status , Status.OK)
+        assertEquals(response.header("Content-Type") , "application/json")
+        assertEquals(playerDetails.name , "TestName")
+        assertEquals(playerDetails.email , "TestEmail@test.pt")
+        assertEquals(playerDetails.pid , 2u)
     }
     @Test
     fun `test get player details should give not found`() {
         // Arrange
-        val request = Request(Method.GET, "/players/3")
+        val request = Request(Method.GET, "/players/4")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assert(response.header("Content-Type") == "application/json")
-        assert(response.status == Status.NOT_FOUND)
+        assertEquals(response.header("Content-Type") , "application/json")
+        assertEquals(response.status , Status.NOT_FOUND)
     }
-
     @Test
     fun `test create game should create game`() {
         // Arrange
@@ -184,7 +183,7 @@ class ServerTest {
     @Test
     fun `test get game details should return game details`() {
         // Arrange
-        val request = Request(Method.GET, "/games/1")
+        val request = Request(Method.GET, "/games/2")
         // Act
         val response = server.sessionsHandler(request)
         val gameDetailsJson = response.bodyString()
@@ -195,13 +194,13 @@ class ServerTest {
         assertEquals("TestName2", gameDetails.name)
         assertEquals("TestDeveloper", gameDetails.developer)
         assertEquals(listOf("RPG"), gameDetails.genres)
-        assertEquals(1u, gameDetails.gid)
+        assertEquals(2u, gameDetails.gid)
     }
 
     @Test
     fun `test get game details should give not found`() {
         // Arrange
-        val request = Request(Method.GET, "/games/3")
+        val request = Request(Method.GET, "/games/4")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
@@ -211,9 +210,7 @@ class ServerTest {
     @Test
     fun `test get game list should return game list`() {
         // Arrange
-        val request = Request(Method.GET, "/games")
-            .header("Content-Type", "application/json")
-            .body("""{"developer":"TestDeveloper","genres":["RPG"]}""")
+        val request = Request(Method.GET, "/games?developer=TestDeveloper&genres=RPG")
         // Act
         val response = server.sessionsHandler(request)
         val gameListJson = response.bodyString()
@@ -225,19 +222,17 @@ class ServerTest {
         assertEquals("TestName", gameList.games[0].name)
         assertEquals("TestDeveloper", gameList.games[0].developer)
         assertEquals(listOf("RPG", "Adventure"), gameList.games[0].genres)
-        assertEquals(0u, gameList.games[0].gid)
+        assertEquals(1u, gameList.games[0].gid)
         assertEquals("TestName2", gameList.games[1].name)
         assertEquals("TestDeveloper", gameList.games[1].developer)
         assertEquals(listOf("RPG"), gameList.games[1].genres)
-        assertEquals(1u, gameList.games[1].gid)
+        assertEquals(2u, gameList.games[1].gid)
     }
 
     @Test
     fun `test get game list empty fields should give bad request`() {
         // Arrange
-        val request = Request(Method.GET, "/games")
-            .header("Content-Type", "application/json")
-            .body("""{"developer":"","genres":[]}""")
+        val request = Request(Method.GET, "/games?developer=&genres=")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
@@ -246,11 +241,9 @@ class ServerTest {
     }
 
     @Test
-    fun `test get game list invalid body should give bad request`() {
+    fun `test get game list invalid params should give bad request`() {
         // Arrange
-        val request = Request(Method.GET, "/games")
-            .header("Content-Type", "application/json")
-            .body("")
+        val request = Request(Method.GET, "/games?developer=asd&genres=asd")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
@@ -261,9 +254,7 @@ class ServerTest {
     @Test
     fun `test get game list limit and skip should return game list`() {
         // Arrange
-        val request = Request(Method.GET, "/games?limit=1&skip=1")
-            .header("Content-Type", "application/json")
-            .body("""{"developer":"TestDeveloper","genres":["RPG"]}""")
+        val request = Request(Method.GET, "/games?limit=1&skip=1&developer=TestDeveloper&genres=RPG")
         // Act
         val response = server.sessionsHandler(request)
         val gameListJson = response.bodyString()
@@ -275,11 +266,10 @@ class ServerTest {
         assertEquals("TestName2", gameList.games[0].name)
         assertEquals("TestDeveloper", gameList.games[0].developer)
         assertEquals(listOf("RPG"), gameList.games[0].genres)
-        assertEquals(1u, gameList.games[0].gid)
+        assertEquals(2u, gameList.games[0].gid)
     }
-
     @Test
-    fun `test create session should create player`() {
+    fun `test create session should create session`() {
         // Arrange
         val request = Request(Method.POST, "/sessions")
             .header("Content-Type", "application/json")
@@ -288,7 +278,7 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assert(response.status == Status.CREATED)
+        assertEquals(response.status,Status.CREATED)
     }
 
     @Test
@@ -301,8 +291,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assert(response.header("Content-Type") == "application/json")
-        assert(response.status == Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.BAD_REQUEST)
     }
 
     @Test
@@ -315,8 +305,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assert(response.header("Content-Type") == "application/json")
-        assert(response.status == Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.BAD_REQUEST)
     }
 
     @Test
@@ -328,8 +318,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assert(response.header("Content-Type") == "application/json")
-        assert(response.status == Status.UNAUTHORIZED)
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.UNAUTHORIZED)
     }
 
     @Test
@@ -342,8 +332,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assert(response.header("Content-Type") == "application/json")
-        assert(response.status == Status.NOT_FOUND)
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.NOT_FOUND)
     }
 
     @Test
@@ -356,8 +346,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assert(response.header("Content-Type") == "application/json")
-        assert(response.status == Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.BAD_REQUEST)
     }
 
     @Test
@@ -370,21 +360,21 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assert(response.header("Content-Type") == "application/json")
-        assert(response.status == Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.BAD_REQUEST)
     }
 
     @Test
     fun `add player to session should add player to session`() {
         // Arrange
-        val request = Request(Method.PUT, "/sessions/1/players")
+        val request = Request(Method.PUT, "/sessions/2/players")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
             .body("""{"pid":1}""")
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assert(response.status == Status.OK)
+        assertEquals(response.status,Status.OK)
     }
 
     @Test
@@ -396,8 +386,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assert(response.header("Content-Type") == "application/json")
-        assert(response.status == Status.UNAUTHORIZED)
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.UNAUTHORIZED)
     }
     @Test
     fun `add player to session, session not found`() {
@@ -409,8 +399,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assert(response.header("Content-Type") == "application/json")
-        assert(response.status == Status.NOT_FOUND)
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.NOT_FOUND)
     }
 
     @Test
@@ -423,8 +413,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assert(response.header("Content-Type") == "application/json")
-        assert(response.status == Status.NOT_FOUND)
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.NOT_FOUND)
     }
 
     @Test
@@ -437,8 +427,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assert(response.header("Content-Type") == "application/json")
-        assert(response.status == Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.BAD_REQUEST)
     }
 
     @Test
@@ -451,8 +441,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assert(response.header("Content-Type") == "application/json")
-        assert(response.status == Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.BAD_REQUEST)
     }
 
     @Test
@@ -461,29 +451,29 @@ class ServerTest {
         val request = Request(Method.PUT, "/sessions/1/players")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
-            .body("""{"pid":0}""")
+            .body("""{"pid":2}""")
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assert(response.status == Status.BAD_REQUEST)
+        assertEquals(response.status, Status.CONFLICT)
     }
 
     @Test
     fun `get session details should give session details`() {
         // Arrange
-        val request = Request(Method.GET, "/sessions/0")
+        val request = Request(Method.GET, "/sessions/1")
             .header("Content-Type", "application/json")
         // Act
         val response = server.sessionsHandler(request)
         val sessionBodyString = response.bodyString()
         val session = Json.decodeFromString<SessionInfoOutputModel>(sessionBodyString)
         //  Assert
-        assert(response.status == Status.OK)
-        assert(response.header("Content-Type") == "application/json")
-        assert(session.gameSession.gid == 1u)
-        assert(session.capacity == 100u)
-        assert(session.date == "2030-05-01T00:00:00".toLocalDateTime().toString())
-        assert(session.sid == 0u)
+        assertEquals(response.status,Status.OK)
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(session.gameSession.gid,2u)
+        assertEquals(session.capacity,100u)
+        assertEquals(session.date,"2030-05-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(session.sid,1u)
     }
 
     @Test
@@ -494,73 +484,57 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assert(response.header("Content-Type") == "application/json")
-        assert(response.status == Status.NOT_FOUND)
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.NOT_FOUND)
     }
 
     @Test
     fun `test get session list should return sessions`() {
         // Arrange
-        val request = Request(Method.GET, "/sessions")
-            .header("Content-Type", "application/json")
-            .body("""{"gid":1,"state":"open","pid":0}""")
+        val request = Request(Method.GET, "/sessions/2/list?state=open")
         // Act
         val response = server.sessionsHandler(request)
         val sessionListJson = response.bodyString()
         val sessionList = Json.decodeFromString<SessionSearchOutputModel>(sessionListJson)
         //  Assert
-        assert(response.status == Status.OK)
-        assert(response.header("Content-Type") == "application/json")
-        assert(sessionList.sessions.size == 1)
-        assert(sessionList.sessions[0].gameSession.gid == 1u)
-        assert(sessionList.sessions[0].capacity == 100u)
-        assert(sessionList.sessions[0].date == "2030-06-01T00:00:00".toLocalDateTime().toString())
-        assert(sessionList.sessions[0].sid == 1u)
-    }
-
-    @Test
-    fun `test get session list empty fields should give bad request`() {
-        // Arrange
-        val request = Request(Method.GET, "/sessions")
-            .header("Content-Type", "application/json")
-            .body("""{"gid":""")
-        // Act
-        val response = server.sessionsHandler(request)
-        //  Assert
-        assert(response.status == Status.BAD_REQUEST)
-
+        assertEquals(response.status,Status.OK)
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(sessionList.sessions.size,2)
+        assertEquals(sessionList.sessions[0].gameSession.gid,2u)
+        assertEquals(sessionList.sessions[0].capacity,100u)
+        assertEquals(sessionList.sessions[0].date,"2030-05-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList.sessions[0].sid,1u)
+        assertEquals(sessionList.sessions[1].gameSession.gid,2u)
+        assertEquals(sessionList.sessions[1].capacity,100u)
+        assertEquals(sessionList.sessions[1].date,"2030-06-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList.sessions[1].sid,2u)
     }
     @Test
-    fun `test get session list invalid body should give bad request`() {
+    fun `test get session list invalid params should give bad request`() {
         // Arrange
-        val request = Request(Method.GET, "/sessions")
-            .header("Content-Type", "application/json")
-            .body("")
+        val request = Request(Method.GET, "/sessions/asd/list")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assert(response.header("Content-Type") == "application/json")
-        assert(response.status == Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.BAD_REQUEST)
     }
     @Test
     fun `test get session list limit and skip should give session list`() {
         // Arrange
-        val request = Request(Method.GET, "/sessions?limit=1&skip=1")
-            .header("Content-Type", "application/json")
-            .body("""{"gid":1}""")
+        val request = Request(Method.GET, "/sessions/2/list?limit=1&skip=1")
         // Act
         val response = server.sessionsHandler(request)
         val sessionListJson = response.bodyString()
         val sessionList = Json.decodeFromString<SessionSearchOutputModel>(sessionListJson)
         //  Assert
-        assert(response.status == Status.OK)
-        assert(response.header("Content-Type") == "application/json")
-        assert(sessionList.sessions.size == 1)
-        assert(sessionList.sessions[0].gameSession.gid == 1u)
-        assert(sessionList.sessions[0].capacity == 100u)
-        assert(sessionList.sessions[0].date == "2030-06-01T00:00:00".toLocalDateTime().toString())
-        assert(sessionList.sessions[0].sid == 1u)
-        assert(sessionList.sessions[0].playersSession.any { it.pid == 0u })
+        assertEquals(response.status,Status.OK)
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(sessionList.sessions.size,1)
+        assertEquals(sessionList.sessions[0].gameSession.gid,2u)
+        assertEquals(sessionList.sessions[0].capacity,100u)
+        assertEquals(sessionList.sessions[0].date,"2030-06-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList.sessions[0].sid,2u)
     }
 
 
@@ -568,29 +542,38 @@ class ServerTest {
 
     companion object {
 
-        private val storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+        private val storage = SessionsDataManager(
+            SessionsDataMemGame(),
+            SessionsDataMemPlayer(),
+            SessionsDataMemSession()
+        )
 
-        private val api = SessionsApi(PlayerService(storage), GameService(storage), SessionsService(storage))
+        private val api = SessionsApi(
+            PlayerService(storage),
+            GameService(storage),
+            SessionsService(storage)
+        )
 
         private val server = SessionsServer(api)
+
         @JvmStatic
         @BeforeAll
         fun `create mocks and start server`() {
 
-            storage.game.create( "TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
-            storage.game.create( "TestName2".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre()))
+            storage.game.create("TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
+            storage.game.create("TestName2".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre()))
 
             storage.player.create("TestName".toName(), "TestEmail@test.pt".toEmail())
             storage.player.create("TestName2".toName(), "TestEmail2@test.pt".toEmail())
 
-            val mockGame = Game(1u, "TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre()))
-            storage.session.create(Session(0u,100u, "2030-05-01T00:00:00".toLocalDateTime(), mockGame, setOf()))
-            storage.session.create(Session(1u,100u, "2030-06-01T00:00:00".toLocalDateTime(), mockGame, setOf()))
+            val mockGame = Game(2u, "TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre()))
+            storage.session.create(Session(1u,100u, "2030-05-01T00:00:00".toLocalDateTime(), mockGame, setOf()))
+            storage.session.create(Session(2u,100u, "2030-06-01T00:00:00".toLocalDateTime(), mockGame, setOf()))
 
             val req = Request(Method.PUT, "/sessions/1")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
-                .body("""{"pid":0}""")
+                .body("""{"pid":2}""")
             val routedReq = RoutedRequest(req, UriTemplate.from("/sessions/{sid}"))
 
             api.addPlayerToSession(routedReq)
