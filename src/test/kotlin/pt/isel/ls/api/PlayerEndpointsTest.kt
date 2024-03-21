@@ -8,13 +8,19 @@ import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeAll
 import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.domain.toEmail
+import pt.isel.ls.data.domain.toName
 import pt.isel.ls.dto.PlayerInfoOutputModel
+import pt.isel.ls.services.GameService
+import pt.isel.ls.services.PlayerService
+import pt.isel.ls.services.SessionsService
+import pt.isel.ls.storage.SessionsDataManager
 import pt.isel.ls.storage.mem.SessionsDataMemGame
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import pt.isel.ls.storage.mem.SessionsDataMemSession
+import java.util.*
 import kotlin.test.Test
 
-/**
 
 class PlayerEndpointsTest {
 
@@ -23,9 +29,9 @@ class PlayerEndpointsTest {
         // Arrange
         val request = Request(Method.POST, "/players")
             .header("Content-Type", "application/json")
-            .body("""{"name":"Test","email":"Test"}""")
+            .body("""{"name":"Test","email":"Testemail@test.pt"}""")
         // Act
-        val response = api.processRequest(request, Operation.CREATE_PLAYER)
+        val response = api.createPlayer(request)
         // Assert
         assert(response.status == Status.CREATED)
     }
@@ -37,7 +43,7 @@ class PlayerEndpointsTest {
             .header("Content-Type", "application/json")
             .body("""{"name":"TestName","email":"Test.com"}""")
         // Act
-        val response = api.processRequest(request, Operation.CREATE_PLAYER)
+        val response = api.createPlayer(request)
         // Assert
         assert(response.status == Status.BAD_REQUEST)
     }
@@ -47,11 +53,11 @@ class PlayerEndpointsTest {
         // Arrange
         val request = Request(Method.POST, "/players")
             .header("Content-Type", "application/json")
-            .body("""{"name":"TestName","email":"TestEmail@gmail.com"}""")
+            .body("""{"name":"TestName","email":"TestEmail@test.pt"}""")
         // Act
-        val response = api.processRequest(request, Operation.CREATE_PLAYER)
+        val response = api.createPlayer(request)
         // Assert
-        assert(response.status == Status.CONFLICT)
+        assert(response.status == Status.BAD_REQUEST)
     }
 
     @Test
@@ -61,7 +67,7 @@ class PlayerEndpointsTest {
             .header("Content-Type", "application/json")
             .body("""{"name":"","email":""}""")
         // Act
-        val response = api.processRequest(request, Operation.CREATE_PLAYER)
+        val response = api.createPlayer(request)
         // Assert
         assert(response.status == Status.BAD_REQUEST)
     }
@@ -73,7 +79,7 @@ class PlayerEndpointsTest {
             .header("Content-Type", "application/json")
             .body("""{"name":"Test",""")
         // Act
-        val response = api.processRequest(request, Operation.CREATE_PLAYER)
+        val response = api.createPlayer(request)
         // Assert
         assert(response.header("Content-Type") == "application/json")
         assert(response.status == Status.BAD_REQUEST)
@@ -84,15 +90,15 @@ class PlayerEndpointsTest {
         val request = Request(Method.GET, "/players/1")
         val routedRequest = RoutedRequest(request, UriTemplate.from("/players/{pid}"))
         // Act
-        val response = api.processRequest(routedRequest, Operation.GET_PLAYER_DETAILS)
+        val response = api.getPlayerDetails(routedRequest)
         val playerDetailsJson = response.bodyString()
         val playerDetails = Json.decodeFromString<PlayerInfoOutputModel>(playerDetailsJson)
         // Assert
         assert(response.status == Status.OK)
         assert(response.header("Content-Type") == "application/json")
         assert(playerDetails.name == "TestName")
-        assert(playerDetails.email == "TestEmail")
-        assert(playerDetails.pid == 1)
+        assert(playerDetails.email == "TestEmail@test.pt")
+        assert(playerDetails.pid == 1u)
     }
     @Test
     fun `test get player details should give not found`() {
@@ -100,7 +106,7 @@ class PlayerEndpointsTest {
         val request = Request(Method.GET, "/players/3")
         val routedRequest = RoutedRequest(request, UriTemplate.from("/players/{pid}"))
         // Act
-        val response = api.processRequest(routedRequest, Operation.GET_PLAYER_DETAILS)
+        val response = api.getPlayerDetails(routedRequest)
         // Assert
         assert(response.header("Content-Type") == "application/json")
         assert(response.status == Status.NOT_FOUND)
@@ -108,19 +114,16 @@ class PlayerEndpointsTest {
 
     companion object {
 
-        private val playerStorage = SessionsDataMemPlayer()
-        private val api = SessionsApi(playerService(playerStorage), gameService(SessionsDataMemGame()), sessionsService(SessionsDataMemSession()))
+        private val storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+
+        private val api = SessionsApi(PlayerService(storage), GameService(storage), SessionsService(storage))
 
         @JvmStatic
         @BeforeAll
         fun setup() {
-            val mockPlayer = Player(1, "TestName", "TestEmail")
-            val mockPlayer2 = Player(2, "TestName2", "TestEmail@gmail.com")
-            playerStorage.create(mockPlayer)
-            playerStorage.create(mockPlayer2)
+            storage.player.create("TestName".toName(), "TestEmail@test.pt".toEmail())
+            storage.player.create("TestName2".toName(), "TestEmail2@test.pt".toEmail())
         }
     }
 
 }
-
-*/

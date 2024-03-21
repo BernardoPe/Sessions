@@ -1,51 +1,44 @@
 package pt.isel.ls.domain.game
 
+import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.data.domain.toGenre
+import pt.isel.ls.data.domain.toName
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-/**
+
 class GameTest {
 
     @Test
     fun `test successful game creation`() {
-        val game = Game(1, "Test Game", "Test Developer", setOf("Genre1", "Genre2"))
-        assertEquals(1, game.gid)
-        assertEquals("Test Game", game.name)
-        assertEquals("Test Developer", game.developer)
-        assertEquals(setOf("Genre1", "Genre2"), game.genres)
+        val game = Game(1u, "Test Game".toName(), "Test Developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
+        assertEquals(1u, game.id)
+        assertEquals("Test Game".toName(), game.name)
+        assertEquals("Test Developer".toName(), game.developer)
+        assertEquals(setOf("RPG".toGenre(), "Adventure".toGenre()), game.genres)
     }
-
-    @Test
-    fun `test game creation with negative gid`() {
-        val exception = assertFailsWith<IllegalArgumentException> {
-            Game(-1, "Test Game", "Test Developer", setOf("Genre1", "Genre2"))
-        }
-        assertEquals("The game identifier must be a positive integer", exception.message)
-    }
-
     @Test
     fun `test game creation with empty name`() {
         val exception = assertFailsWith<IllegalArgumentException> {
-            Game(1, "", "Test Developer", setOf("Genre1", "Genre2"))
+            Game(1u, "".toName(), "Test Developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
         }
-        assertEquals("The game name must not be empty", exception.message)
+        assertEquals("The name must not be empty", exception.message)
     }
 
     @Test
     fun `test game creation with empty developer`() {
         val exception = assertFailsWith<IllegalArgumentException> {
-            Game(1, "Test Game", "", setOf("Genre1", "Genre2"))
+            Game(1u, "Test Game".toName(), "".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
         }
-        assertEquals("The game developer must not be empty", exception.message)
+        assertEquals("The name must not be empty", exception.message)
     }
 
     @Test
     fun `test game creation with empty genres`() {
         val exception = assertFailsWith<IllegalArgumentException> {
-            Game(1, "Test Game", "Test Developer", setOf("", ""))
+            Game(1u, "Test Game".toName(), "Test Developer".toName(), setOf("".toGenre(), "".toGenre()))
         }
-        assertEquals("The game genres must not be empty", exception.message)
+        assertEquals("Genres must not be blank", exception.message)
     }
 }
- */

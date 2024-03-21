@@ -1,11 +1,9 @@
 package pt.isel.ls.storage
 
-import pt.isel.ls.data.domain.Genre
-import pt.isel.ls.data.domain.Name
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.toGenre
 import pt.isel.ls.data.domain.toName
-import pt.isel.ls.exceptions.GameNotFoundException
+import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.storage.mem.SessionsDataMemGame
 import kotlin.test.*
 
@@ -119,7 +117,7 @@ class SessionsDataGameTest {
         // Update the game
         // Start by creating a new game object
         val newGame = Game(0u, "newGame".toName(), "newDeveloper".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
-        assertFailsWith<GameNotFoundException> {
+        assertFailsWith<NotFoundException> {
             gameStorage.update( newGame)
         }
     }
@@ -129,7 +127,7 @@ class SessionsDataGameTest {
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // Delete the game
-        assertFailsWith<GameNotFoundException> {
+        assertFailsWith<NotFoundException> {
             gameStorage.delete(0u)
         }
     }

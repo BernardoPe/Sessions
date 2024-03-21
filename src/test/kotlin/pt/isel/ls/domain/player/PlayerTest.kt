@@ -1,38 +1,35 @@
 package pt.isel.ls.domain.player
 
+import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.domain.toEmail
+import pt.isel.ls.data.domain.toName
+import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-/**
+
 class PlayerTest {
 
     @Test
     fun `Player creation should succeed when all parameters are valid`() {
-        val player = Player(1, "Test Player", "testplayer@example.com", 0L)
-        assertEquals(1, player.pid)
-        assertEquals("Test Player", player.name)
-        assertEquals("testplayer@example.com", player.email)
-    }
-
-    @Test
-    fun `Player creation should fail when pid is negative`() {
-        assertFailsWith<IllegalArgumentException> {
-            Player(-1, "Test Player", "", 0L)
-        }
+        val player = Player(1u, "Test Player".toName(), "testplayer@example.com".toEmail(), UUID.randomUUID())
+        assertEquals(1u, player.id)
+        assertEquals("Test Player".toName(), player.name)
+        assertEquals("testplayer@example.com".toEmail(), player.email)
     }
 
     @Test
     fun `Player creation should fail when name is empty`() {
         assertFailsWith<IllegalArgumentException> {
-            Player(1, "", "testplayer@example.com", 0L)
+            Player(1u, "".toName(), "testplayer@example.com".toEmail(), UUID.randomUUID())
         }
     }
 
     @Test
     fun `Player creation should fail when email is empty`() {
         assertFailsWith<IllegalArgumentException> {
-            Player(1, "Test Player", "", 0L)
+            Player(1u, "Test Player".toName(), "".toEmail(), UUID.randomUUID())
         }
     }
-}*/
+}

@@ -20,12 +20,12 @@ class SessionsDataPlayerTest {
         playerStorage.create("testPlayer".toName(), "testEmail@test.com".toEmail())
         // Check if the player was added
         // Start by getting the player
-        val player = playerStorage.getById(0u)
+        val player = playerStorage.getById(1u)
         // Check if the player is the same
         // Check if the player is not null
         assert(player != null)
         // Check the id
-        assertEquals(0u, player!!.id)
+        assertEquals(1u, player!!.id)
         // Check the name
         assertEquals("testPlayer".toName(), player.name)
         // Check the email
@@ -39,15 +39,15 @@ class SessionsDataPlayerTest {
         // Add a player to the storage
         playerStorage.create("testPlayer".toName(), "testEmail@test.com".toEmail())
         // Update the player
-        playerStorage.update(0u, Player(0u, "newName".toName(), "newEmail@test.com".toEmail(), UUID.randomUUID()))
+        playerStorage.update(1u, Player(1u, "newName".toName(), "newEmail@test.com".toEmail(), UUID.randomUUID()))
         // Check if the player was updated
         // Start by getting the player
-        val player = playerStorage.getById(0u)
+        val player = playerStorage.getById(1u)
         // Check if the player is the same
         // Check if the player is not null
         assert(player != null)
         // Check the id
-        assertEquals(0u, player!!.id)
+        assertEquals(1u, player!!.id)
         // Check the name
         assertEquals("newName".toName(), player.name)
         // Check the email
@@ -61,10 +61,10 @@ class SessionsDataPlayerTest {
         // Add a player to the storage
         playerStorage.create("testPlayer".toName(), "testEmail@test.com".toEmail())
         // Delete the player
-        playerStorage.delete(0u)
+        playerStorage.delete(1u)
         // Check if the player was deleted
         // Start by getting the player
-        val player = playerStorage.getById(0u)
+        val player = playerStorage.getById(1u)
         // Check if the player is null
         assertNull(player)
     }
@@ -92,11 +92,11 @@ class SessionsDataPlayerTest {
         // Check if the player is not null
         assert(players.isNotEmpty())
         // Check the id
-        assertEquals(0u, players[0].id)
+        assertEquals(1u, players[1].id)
         // Check the name
-        assertEquals("testPlayer".toName(), players[0].name)
+        assertEquals("testPlayer".toName(), players[1].name)
         // Check the email
-        assertEquals("testEmail@test.com".toEmail(), players[0].email)
+        assertEquals("testEmail@test.com".toEmail(), players[1].email)
     }
 
     @Test
@@ -106,12 +106,12 @@ class SessionsDataPlayerTest {
         // Add a player to the storage
         playerStorage.create("testPlayer".toName(), "testEmail@test.com".toEmail())
         // Get the player
-        val player = playerStorage.getById(0u)
+        val player = playerStorage.getById(1u)
         // Check if the player is the same
         // Check if the player is not null
         assert(player != null)
         // Check the id
-        assertEquals(0u, player!!.id)
+        assertEquals(1u, player!!.id)
         // Check the name
         assertEquals("testPlayer".toName(), player.name)
         // Check the email
@@ -123,7 +123,7 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Get the player
-        val player = playerStorage.getById(0u)
+        val player = playerStorage.getById(1u)
         // Check if the player is null
         assertNull(player)
     }

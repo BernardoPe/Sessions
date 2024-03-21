@@ -4,72 +4,71 @@ import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.SESSION_MAX_CAPACITY
 import pt.isel.ls.data.domain.session.Session
+import pt.isel.ls.data.domain.toEmail
+import pt.isel.ls.data.domain.toGenre
+import pt.isel.ls.data.domain.toName
+import pt.isel.ls.utils.toLocalDateTime
+import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-/**
+
 class SessionTest {
 
     @Test
     fun `test successful session creation`() {
-        val session = Session(1, 50, "2023-03-01 15:00:00", newGameTest(), newPlayersTest())
-        assertEquals(1, session.sid)
-        assertEquals(50, session.capacity)
-        assertEquals("2023-03-01 15:00:00", session.date)
-        assertEquals(Game(1, "Test Game 1", "Test Developer", setOf("Genre1", "Genre2")), session.gameSession)
+        val session = Session(1u, 50u, "2030-03-01T15:00:00".toLocalDateTime(), newGameTest(), newPlayersTest())
+        assertEquals(1u, session.id)
+        assertEquals(50u, session.capacity)
+        assertEquals("2030-03-01T15:00:00".toLocalDateTime(), session.date)
+        assertEquals(Game(1u, "Test Game 1".toName(), "Test Developer".toName(), setOf("Adventure".toGenre(), "RPG".toGenre())), session.gameSession)
         assertEquals(
             setOf(
-                Player(1, "player1", "player1@example.com"),
-                Player(2, "player2", "player2@example.com"),
-                Player(3, "player3", "player3@example.com"),
-                Player(4, "player4", "player4@example.com"),
-                Player(5, "player5", "player5@example.com"),
-                Player(6, "player6", "player6@example.com"),
+                Player(1u, "player1".toName(), "player1@example.com".toEmail(), uuid),
+                Player(2u, "player2".toName(), "player2@example.com".toEmail(), uuid),
+                Player(3u, "player3".toName(), "player3@example.com".toEmail(), uuid),
+                Player(4u, "player4".toName(), "player4@example.com".toEmail(), uuid),
+                Player(5u, "player5".toName(), "player5@example.com".toEmail(), uuid),
+                Player(6u, "player6".toName(), "player6@example.com".toEmail(), uuid)
             ), session.playersSession
         )
 
     }
 
     @Test
-    fun `test session creation with negative ssid`() {
-        val exception = assertFailsWith<IllegalArgumentException> {
-            Session(-1, 50, "2023-03-01", newGameTest(), newPlayersTest())
-        }
-        assertEquals("Session identifier must be a positive number", exception.message)
-    }
-
-    @Test
     fun `test session creation with capacity less than 1`() {
         val exception = assertFailsWith<IllegalArgumentException> {
-            Session(1, 0, "2023-03-01", newGameTest(), newPlayersTest())
+            Session(1u, 0u, "2030-03-01T15:00:00".toLocalDateTime(), newGameTest(), newPlayersTest())
         }
-        assertEquals("Session capacity must be a positive number", exception.message)
+        assertEquals("Session capacity must be at least 1 and at most $SESSION_MAX_CAPACITY", exception.message)
     }
 
     @Test
     fun `test session creation with capacity greater than max`() {
         val exception = assertFailsWith<IllegalArgumentException> {
-            Session(1, SESSION_MAX_CAPACITY + 1, "2023-03-01", newGameTest(), newPlayersTest())
+            Session(1u, SESSION_MAX_CAPACITY + 1u, "2030-03-01T15:00:00".toLocalDateTime(), newGameTest(), newPlayersTest())
         }
-        assertEquals("Session capacity must be less than or equal to $SESSION_MAX_CAPACITY", exception.message)
+        assertEquals("Session capacity must be at least 1 and at most $SESSION_MAX_CAPACITY", exception.message)
     }
 
     companion object {
         fun newGameTest() = Game(
-            1,
-            "Test Game 1",
-            "Test Developer",
-            setOf("Genre1", "Genre2")
+            1u,
+            "Test Game 1".toName(),
+            "Test Developer".toName(),
+            setOf("Adventure".toGenre(), "RPG".toGenre())
         )
 
+        val uuid = UUID.randomUUID()
+
         fun newPlayersTest() = setOf(
-            Player(1, "player1", "player1@example.com"),
-            Player(2, "player2", "player2@example.com"),
-            Player(3, "player3", "player3@example.com"),
-            Player(4, "player4", "player4@example.com"),
-            Player(5, "player5", "player5@example.com"),
-            Player(6, "player6", "player6@example.com"),
+            Player(1u, "player1".toName(), "player1@example.com".toEmail(), uuid),
+            Player(2u, "player2".toName(), "player2@example.com".toEmail(), uuid),
+            Player(3u, "player3".toName(), "player3@example.com".toEmail(), uuid),
+            Player(4u, "player4".toName(), "player4@example.com".toEmail(), uuid),
+            Player(5u, "player5".toName(), "player5@example.com".toEmail(), uuid),
+            Player(6u, "player6".toName(), "player6@example.com".toEmail(), uuid)
         )
     }
-}*/
+}
