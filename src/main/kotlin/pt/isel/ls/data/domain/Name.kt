@@ -5,6 +5,11 @@ data class Name(val name: String){
         require(name.isNotBlank()) { "The name must not be empty" }
         require(name.length in 3..40) { "The name must be between 3 and 40 characters" }
     }
+
+    override fun toString(): String {
+        return name
+    }
+    
 }
 
 fun String.toName(): Name = Name(this)

@@ -15,10 +15,10 @@ import org.http4k.routing.path
 import pt.isel.ls.data.domain.Email
 import pt.isel.ls.data.domain.Genre
 import pt.isel.ls.data.domain.Name
-import pt.isel.ls.data.domain.session.State
+import pt.isel.ls.data.domain.session.toState
 import pt.isel.ls.data.mapper.*
 import pt.isel.ls.dto.*
-import pt.isel.ls.exceptions.api.*
+import pt.isel.ls.exceptions.*
 import pt.isel.ls.exceptions.services.*
 import pt.isel.ls.pt.isel.ls.logger
 import pt.isel.ls.services.GameService
@@ -128,7 +128,7 @@ class SessionsApi(
 
         val session = parseJsonBody<SessionCreationInputModel>(request)
 
-        when (val res = sessionServices.createSession(session.capacity, session.id, session.date.toLocalDateTime())) {
+        when (val res = sessionServices.createSession(session.capacity, session.gid, session.date.toLocalDateTime())) {
             is Success -> Response(CREATED)
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(res.value.toSessionCreationDTO()))
@@ -143,8 +143,8 @@ class SessionsApi(
 
     fun addPlayerToSession(request: Request) = authHandler(request) {
         val sid = request.path("sid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Session Identifier")
-        val pid = request.path("pid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Player Identifier")
-        when (val res = sessionServices.addPlayer(sid, pid)) {
+        val player = parseJsonBody<SessionAddPlayerInputModel>(request)
+        when (val res = sessionServices.addPlayer(sid, player.pid)) {
             is Success -> Response(OK)
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(res.value.toSessionAddPlayerDTO()))
@@ -179,7 +179,7 @@ class SessionsApi(
         val res = sessionServices.listSessions(
             sessionSearch.gid,
             sessionSearch.date?.toLocalDateTime(),
-            sessionSearch.state?.let { State.valueOf(it) },
+            sessionSearch.state?.toState(),
             sessionSearch.pid,
             limit,
             skip
@@ -206,7 +206,7 @@ class SessionsApi(
 
     private fun authHandler(request: Request, service: (Request) -> Response): Response {
         return if (verifyAuth(request)) {
-            service(request)
+            processRequest(request, service)
         } else {
             Response(UNAUTHORIZED).header("content-type", "application/json").body(Json.encodeToString(UnauthorizedException()))
         }
@@ -233,13 +233,15 @@ class SessionsApi(
 
         val res = try {
             service(request)
-        } catch (e: WebExceptions) {
+        } catch (e: SessionsExceptions) {
             Response(Status(e.status, e.description)).header("content-type", "application/json").body(Json.encodeToString(e))
         }
+
         catch (e: IllegalArgumentException) {
-            Response(BAD_REQUEST).header("content-type", "application/json").body(Json.encodeToString(BadRequestException(e.message)))
+            Response(BAD_REQUEST).header("content-type", "application/json").body(Json.encodeToString(SessionsExceptions(BAD_REQUEST.code, "Bad Request", e.message)))
         }
         catch (e: Exception) {
+            logger.error(e.message, e)
             Response(INTERNAL_SERVER_ERROR).header("content-type", "application/json").body(
                 Json.encodeToString(InternalServerErrorException())
             )

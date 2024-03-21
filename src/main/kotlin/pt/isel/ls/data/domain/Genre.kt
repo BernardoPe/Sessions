@@ -11,6 +11,10 @@ data class Genre(val genre: String) {
         require(genre in genresList) { "Genres must be one of the following: $genresList" }
     }
 
+    override fun toString(): String {
+        return genre
+    }
+
 }
 
 fun String.toGenre(): Genre = Genre(this)

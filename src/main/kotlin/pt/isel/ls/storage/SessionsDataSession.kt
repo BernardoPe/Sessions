@@ -5,7 +5,7 @@ import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
-import pt.isel.ls.exceptions.SessionNotFoundException
+import pt.isel.ls.exceptions.*
 
 /**
  *  Game Data management interface
@@ -53,6 +53,8 @@ interface SessionsDataSession {
          *  @param date The date
          *  @param state The state
          *  @param pid The player identifier
+         *  @param limit The maximum number of sessions to be returned
+         *  @param skip The number of sessions to be skipped
          *  @return A list with all the sessions in the database that match the given parameters
          */
         fun getSessionsSearch(gid: UInt, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): List<Session>
@@ -64,8 +66,9 @@ interface SessionsDataSession {
          * The function does not have a Session as parameter, but the fields that are needed to update a session
          *
          * @param sid The session identifier
-         * @param pid The player identifier
-         * @throws SessionNotFoundException If the session is not found
+         * @param player The player object
+         * @throws NotFoundException If the session is not found
+         * @throws BadRequestException If the session is full, the player is already in the session or the session is not open
          */
         fun update(sid: UInt, player: Player) : String
 
@@ -75,7 +78,7 @@ interface SessionsDataSession {
          * This function deletes the session object from the database mock with the given id
          *
          * @param id The session identifier
-         * @throws SessionNotFoundException If the session is not found
+         * @throws NotFoundException If the session is not found
          */
         fun delete(id: UInt)
 }

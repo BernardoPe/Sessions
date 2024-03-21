@@ -30,7 +30,7 @@ data class Session(
     val state : State
         get() = if (playersSession.size.toUInt() == capacity && date.isBefore(currentLocalTime())) State.CLOSE else State.OPEN
     init {
-        require(capacity in (2u..SESSION_MAX_CAPACITY)) { "Session capacity must be at least 2 and at most $SESSION_MAX_CAPACITY" }
+        require(capacity in (1u..SESSION_MAX_CAPACITY)) { "Session capacity must be at least 1 and at most $SESSION_MAX_CAPACITY" }
         require(playersSession.size.toUInt() <= capacity) { "Session players must be less than or equal to capacity" }
         require(date.isAfter(currentLocalTime())) { "Session date must be in the future" }
     }
@@ -57,4 +57,11 @@ enum class State {
 
 }
 
+fun String.toState(): State {
+    return when (this.uppercase(Locale.getDefault())) {
+        "OPEN" -> State.OPEN
+        "CLOSE" -> State.CLOSE
+        else -> throw IllegalArgumentException("Invalid state")
+    }
+}
 

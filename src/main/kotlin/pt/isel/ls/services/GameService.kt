@@ -37,9 +37,9 @@ class GameService(val storage: SessionsDataManager) {
 
             val storageGame = storage.game
 
-            return if (storageGame.isGenresStored(genres)) {
+            return if (!storageGame.isGenresStored(genres)) {
                 failure(GameSearchException.GenresNotFound)
-            } else if (storageGame.isDeveloperStored(developer)) {
+            } else if (!storageGame.isDeveloperStored(developer)) {
                 failure(GameSearchException.DeveloperNotFound)
             } else {
                 success(storageGame.getGamesSearch(genres, developer, limit, skip))

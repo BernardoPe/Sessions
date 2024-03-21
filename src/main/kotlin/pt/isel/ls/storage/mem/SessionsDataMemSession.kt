@@ -5,9 +5,9 @@ import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
-import pt.isel.ls.exceptions.SessionNotFoundException
+import pt.isel.ls.exceptions.BadRequestException
+import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.storage.SessionsDataSession
-import java.util.Date
 
 /**
  *  SessionsDataMemSession
@@ -114,9 +114,7 @@ class SessionsDataMemSession : SessionsDataSession {
             sessions = sessions.filter { it.playersSession.any { it.id == pid } }
         }
 
-        val endIndex = if (sessions.size < (skip + limit).toInt()) sessions.size else (skip + limit).toInt()
-
-        return sessions.subList(skip.toInt(), endIndex)
+        return sessions.drop(skip.toInt()).takeLast(limit.toInt())
 
     }
 
@@ -135,6 +133,16 @@ class SessionsDataMemSession : SessionsDataSession {
         db.forEach { session ->
             // search for the session with the given id
             if (session.id == sid) {
+
+                if (session.playersSession.contains(player))
+                     throw BadRequestException("Player already in session")
+
+                if (session.capacity == session.playersSession.size.toUInt())
+                    throw BadRequestException("Session is full")
+
+                if (session.state == State.CLOSE)
+                    throw BadRequestException("Session is closed")
+
                 // if found
                 // remove the session from the database mock
                 db.remove(session)
@@ -150,7 +158,7 @@ class SessionsDataMemSession : SessionsDataSession {
             }
         }
         // tell the caller that the update was not successful
-        throw SessionNotFoundException("Session not found")
+        throw NotFoundException("Session not found")
     }
 
     /**
@@ -173,6 +181,6 @@ class SessionsDataMemSession : SessionsDataSession {
             }
         }
         // tell the caller that the delete was not successful
-        throw SessionNotFoundException("Session not found")
+        throw NotFoundException("Session not found")
     }
 }

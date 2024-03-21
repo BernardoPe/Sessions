@@ -3,8 +3,8 @@ package pt.isel.ls.storage.mem
 import pt.isel.ls.data.domain.Genre
 import pt.isel.ls.data.domain.Name
 import pt.isel.ls.data.domain.game.Game
-import pt.isel.ls.exceptions.GameNameAlreadyExistsException
-import pt.isel.ls.exceptions.GameNotFoundException
+import pt.isel.ls.exceptions.BadRequestException
+import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.storage.SessionsDataGame
 
 /**
@@ -40,7 +40,7 @@ class SessionsDataMemGame : SessionsDataGame {
         // Add the game object to the database mock
         // Start by checking if the game name already exists
         db.any { it.name == name }.let {
-            if (it) throw GameNameAlreadyExistsException("Provided game name already exists.")
+            if (it) throw BadRequestException("Provided game name already exists.")
         }
         // Add the updated game object to the database mock
         db.add(
@@ -89,9 +89,9 @@ class SessionsDataMemGame : SessionsDataGame {
         val games = db.filter { it.genres.containsAll(genres) }
         // Then check the developer
         // Check if skip + limit is greater than the size of the list
-        val endIndex = if (skip + limit > games.size.toUInt()) games.size.toUInt() else skip + limit
+        val filteredGames = games.filter { it.developer == developer }
 
-        return games.filter { it.developer == developer }.subList(skip.toInt(), endIndex.toInt())
+        return filteredGames.drop(skip.toInt()).takeLast(limit.toInt())
     }
 
     override fun getAllGames(): List<Game> {
@@ -112,7 +112,7 @@ class SessionsDataMemGame : SessionsDataGame {
             }
         }
         // alert if the game was not found
-        throw GameNotFoundException("Game with the given id does not exist")
+        throw NotFoundException("Game with the given id does not exist")
     }
 
     override fun delete(id: UInt) {
@@ -127,6 +127,6 @@ class SessionsDataMemGame : SessionsDataGame {
             }
         }
         // alert if the game was not found
-        throw GameNotFoundException("Game with the given id does not exist")
+        throw NotFoundException("Game with the given id does not exist")
     }
 }

@@ -3,10 +3,9 @@ package pt.isel.ls.storage
 import pt.isel.ls.data.domain.Email
 import pt.isel.ls.data.domain.Name
 import pt.isel.ls.data.domain.player.Player
-import pt.isel.ls.exceptions.PlayerEmailAlreadyExistsException
-import pt.isel.ls.exceptions.PlayerNotFoundException
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import java.util.*
+import pt.isel.ls.exceptions.*
 
 /**
  *  Player Data management interface
@@ -28,7 +27,7 @@ interface SessionsDataPlayer {
      * @param name The player name to be created
      * @param email The player email to be created
      * @return A pair with the last identifier and a new UUID
-     * @throws PlayerEmailAlreadyExistsException If the player email already exists
+     * @throws BadRequestException If the player email already exists
      */
     fun create(name: Name, email: Email): Pair<UInt, UUID>
 
@@ -68,7 +67,7 @@ interface SessionsDataPlayer {
      *
      * @param id The player identifier
      * @param value The new player object
-     * @throws PlayerNotFoundException If the player does not exist
+     * @throws NotFoundException If the player does not exist
      */
     fun update(id: UInt, value: Player)
 
@@ -78,7 +77,7 @@ interface SessionsDataPlayer {
      * This function uses the [delete] function from the [SessionsDataMemPlayer] class
      *
      * @param id The player identifier
-     * @throws PlayerNotFoundException If the player does not exist
+     * @throws NotFoundException If the player does not exist
      */
     fun delete(id: UInt)
 

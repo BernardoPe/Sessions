@@ -2,10 +2,9 @@ package pt.isel.ls.storage
 
 import pt.isel.ls.data.domain.Genre
 import pt.isel.ls.data.domain.game.Game
-import pt.isel.ls.exceptions.GameNameAlreadyExistsException
-import pt.isel.ls.exceptions.GameNotFoundException
 import pt.isel.ls.storage.mem.SessionsDataMemGame
 import pt.isel.ls.data.domain.Name
+import pt.isel.ls.exceptions.*
 
 /**
  *  Game Data management interface
@@ -33,7 +32,7 @@ interface SessionsDataGame {
      * @param developer The name of the developer to be created for the game
      * @param genres The list of genres to be created for the game
      * @return The last identifier
-     * @throws GameNameAlreadyExistsException If the game name already exists
+     * @throws BadRequestException If the game name already exists
      */
     fun create(name: Name, developer: Name, genres: Set<Genre>): UInt
 
@@ -104,7 +103,7 @@ interface SessionsDataGame {
      *
      * @param id The game identifier
      * @param value The new game object
-     * @throws GameNotFoundException If the game with the given id does not exist
+     * @throws NotFoundException If the game with the given id does not exist
      */
     fun update(value: Game)
 
@@ -114,7 +113,7 @@ interface SessionsDataGame {
      * This function uses the [delete] function from the [SessionsDataMemGame] class
      *
      * @param id The game identifier
-     * @throws GameNotFoundException If the game with the given id does not exist
+     * @throws NotFoundException If the game with the given id does not exist
      */
     fun delete(id: UInt)
 }

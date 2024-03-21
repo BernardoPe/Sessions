@@ -3,6 +3,7 @@ package pt.isel.ls.services
 import kotlinx.datetime.LocalDateTime
 import pt.isel.ls.data.domain.session.SESSION_MAX_CAPACITY
 import pt.isel.ls.data.domain.session.State
+import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.services.*
 import pt.isel.ls.storage.SessionsDataManager
 import pt.isel.ls.utils.failure
@@ -51,7 +52,7 @@ class SessionsService(val storage: SessionsDataManager) {
 
             return if (storage.session.getById(gid) == null) {
                 failure(SessionSearchException.GameNotFound)
-            } else if (pid?.let { storage.player.getById(it) } == null) {
+            } else if (pid != null && storage.player.getById(pid) == null) {
                 failure(SessionSearchException.PLayerNotFound)
             } else {
                 success(storage.session.getSessionsSearch(gid, date, state, pid, limit, skip))

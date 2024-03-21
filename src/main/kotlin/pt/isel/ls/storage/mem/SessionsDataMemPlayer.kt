@@ -3,8 +3,8 @@ package pt.isel.ls.storage.mem
 import pt.isel.ls.data.domain.Email
 import pt.isel.ls.data.domain.Name
 import pt.isel.ls.data.domain.player.Player
-import pt.isel.ls.exceptions.PlayerEmailAlreadyExistsException
-import pt.isel.ls.exceptions.PlayerNotFoundException
+import pt.isel.ls.exceptions.BadRequestException
+import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.storage.SessionsDataPlayer
 import java.util.*
 
@@ -23,7 +23,9 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
      *
      * @property db The database.
      */
-    private var db: MutableList<Player> = mutableListOf()
+    private var db: MutableList<Player> = mutableListOf(
+        Player(0u, Name("John Doe"), Email("testemail@a.pt"), UUID.fromString("00000000-0000-0000-0000-000000000000")), // for tests
+    )
 
     /**
      * Last Identifier
@@ -33,7 +35,7 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
      *
      * @property lastId The last identifier.
      */
-    private var lastId = 0u
+    private var lastId = 1u
 
     override fun getByToken(token: UUID): Player? {
         return db.find { it.token == token }
@@ -43,7 +45,7 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
         // Add the player object to the database mock
         // Set by checking if the player email already exists
         if (isEmailStored(email)) {
-            throw PlayerEmailAlreadyExistsException("Given Player email already exists")
+            throw BadRequestException("Given Player email already exists")
         }
         // Add the updated player object to the database mock
 
@@ -98,7 +100,7 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
             }
         }
         // alert the user that the player does not exist
-        throw PlayerNotFoundException("Given Player does not exist")
+        throw NotFoundException("Given Player does not exist")
     }
 
     override fun delete(id: UInt) {
@@ -113,6 +115,6 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
             }
         }
         // alert the user that the player does not exist
-        throw PlayerNotFoundException("Given Player does not exist")
+        throw NotFoundException("Given Player does not exist")
     }
 }
