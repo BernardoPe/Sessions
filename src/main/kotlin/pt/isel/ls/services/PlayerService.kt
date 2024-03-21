@@ -4,6 +4,7 @@ import pt.isel.ls.data.domain.Email
 import pt.isel.ls.data.domain.Name
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.exceptions.BadRequestException
+import pt.isel.ls.exceptions.ConflictException
 import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.storage.SessionsDataManager
 import java.util.*
@@ -14,7 +15,7 @@ class PlayerService(val storage: SessionsDataManager) {
         val storagePlayer = storage.player
 
         if (storagePlayer.isEmailStored(email))
-            throw BadRequestException("Given Player email already exists")
+            throw ConflictException("Given Player email already exists")
 
         return storagePlayer.create(name, email)
 

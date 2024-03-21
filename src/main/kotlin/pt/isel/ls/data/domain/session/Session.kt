@@ -46,14 +46,6 @@ enum class State {
         }
     }
 
-    fun from(value: String): State {
-        return when (value.uppercase(Locale.getDefault())) {
-            "OPEN" -> OPEN
-            "CLOSE" -> CLOSE
-            else -> throw IllegalArgumentException("Invalid state")
-        }
-    }
-
 }
 
 fun String.toState(): State {

@@ -56,20 +56,6 @@ data class SessionInfoOutputModel(
     val playersSession: List<PlayerInfoOutputModel>
 )
 
-/**
- * The [SessionSearchInputModel] class is used to represent the request body of a session list search
- * @param gid The game identifier of the current session
- * @param date The date when the session was created
- * @param state The state of the session if it can add more players or not
- * @param pid The player identifier
- */
-@Serializable
-data class SessionSearchInputModel(
-    val gid: UInt,
-    val date: String? = null,
-    val state: String? = null,
-    val pid: UInt? = null
-)
 
 /**
  * The [SessionSearchOutputModel] class is used to represent the response body of a session list search

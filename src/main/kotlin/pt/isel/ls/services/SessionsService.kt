@@ -4,6 +4,7 @@ import kotlinx.datetime.LocalDateTime
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
 import pt.isel.ls.exceptions.BadRequestException
+import pt.isel.ls.exceptions.ConflictException
 import pt.isel.ls.exceptions.InternalServerErrorException
 import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.storage.SessionsDataManager
@@ -27,7 +28,7 @@ class SessionsService(val storage: SessionsDataManager) {
         val getPlayer = storage.player.getById(pid) ?: throw NotFoundException("Player not found")
 
         if (getSession.playersSession.contains(getPlayer))
-            throw BadRequestException("Player already in session")
+            throw ConflictException("Player already in session")
 
         if (getSession.capacity == getSession.playersSession.size.toUInt())
             throw BadRequestException("Session is full")
@@ -38,7 +39,7 @@ class SessionsService(val storage: SessionsDataManager) {
         return if (storage.session.update(sid, getPlayer))
             "Player successfully added to session"
         else throw InternalServerErrorException()
-        // If update fails after checks this means that a services check must have failed, so it's an internal server error
+        // If update fails after checks this means that something went wrong with the update, so we throw an internal server error
 
     }
 
