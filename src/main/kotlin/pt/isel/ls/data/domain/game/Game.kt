@@ -8,7 +8,7 @@ import pt.isel.ls.data.domain.Name
  *
  *  The [Game] Data Class is the representation of a Game in the system.
  *
- *  @param gid The game identifier
+ *  @param id The game identifier
  *  @param developer The game developer
  *  @param genres The game list of genres
  */
