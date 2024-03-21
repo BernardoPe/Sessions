@@ -49,3 +49,5 @@ class UnsupportedMediaTypeException : SessionsExceptions(Status.UNSUPPORTED_MEDI
  */
 @Serializable
 class UnauthorizedException : SessionsExceptions(Status.UNAUTHORIZED.code, "Unauthorized", "Invalid Auth")
+
+class ConflictException(cause : String?) : SessionsExceptions(Status.CONFLICT.code, "Conflict", cause)

@@ -1,9 +1,7 @@
 package pt.isel.ls.utils
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.*
+import java.sql.Timestamp
 
 fun String.toLocalDateTime(): LocalDateTime {
     return try {
@@ -13,6 +11,10 @@ fun String.toLocalDateTime(): LocalDateTime {
     }
 }
 
+fun LocalDateTime.toTimestamp(): Timestamp {
+    val instant = this.toInstant(TimeZone.currentSystemDefault())
+    return Timestamp.from(instant.toJavaInstant())
+}
 
 fun currentLocalTime() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 

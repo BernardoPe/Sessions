@@ -263,6 +263,30 @@
               }
             }
           },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 409
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Conflict"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Game with name already exists"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -325,34 +349,24 @@
               "type": "int",
               "default": 0
             }
-          }],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "developer": {
-                    "type": "string",
-                    "example": "Chess.com"
-                  },
-                  "genres": {
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "example": "Strategy"
-                    }
-                  }
-                },
-                "required": [
-                  "developer",
-                  "genres"
-                ]
-              }
+          },
+          {
+            "name": "genres",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
-          }
-        },
+          },
+            {
+                "name": "developer",
+                "in": "query",
+                "required": true,
+                "schema": {
+                "type": "string"
+                }
+            }
+        ],
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -638,41 +652,21 @@
             }
           }
         }
-      },
+      }
+    },
+  "/sessions/{gid}/list": {
       "get": {
         "summary": "Get list of sessions",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "gid": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "date": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "capacity": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "pid": {
-                    "type": "integer",
-                    "format": "int32"
-                  }
-                },
-                "required": [
-                  "gid"
-                ]
-              }
-            }
-          }
-        },
         "parameters": [
+            {
+                "name": "gid",
+                "in": "path",
+                "required": true,
+                "schema": {
+                "type": "integer",
+                "format": "int32"
+                }
+            },
           {
             "name": "limit",
             "in": "query",
@@ -689,6 +683,32 @@
             "schema": {
               "type": "int",
               "default": 0
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "enum": ["open", "closed"]
+          },
+          {
+            "name": "pid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -1030,6 +1050,30 @@
                     "errorCause": {
                       "type": "string",
                       "example": "Invalid body"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 409
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Conflict"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Player already in session"
                     }
                   }
                 }

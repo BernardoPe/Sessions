@@ -13,15 +13,16 @@ CREATE TABLE games (
 
 create table players (
     id serial primary key,
-    name varchar(40) unique not null,
-    email varchar(40) unique not null check (email like '%_@__%.__%'),
-    tokenHash bigint not null
+    name varchar(40) not null,
+    email varchar(40) unique not null check (email like '%_@_%.__%'),
+    token_hash int8 not null
 );
 
 
 CREATE TABLE sessions (
       id SERIAL PRIMARY KEY,
       game_id INT REFERENCES games(id) ON DELETE CASCADE NOT NULL, -- 1 to N relationship between games and sessions
+      capacity INT NOT NULL CHECK (capacity > 0 AND capacity < 101),
       date DATE NOT NULL CHECK (date > CURRENT_DATE)
 );
 
@@ -35,3 +36,8 @@ CREATE TABLE sessions_players (
      PRIMARY KEY (session_id, player_id)
 );
 
+--insert into players (name, email, token_hash) values ('John Doe', 'testemail@a.pt', 0);
+--select * from players;
+--select * from games;
+--select * from sessions;
+--select * from sessions_players;

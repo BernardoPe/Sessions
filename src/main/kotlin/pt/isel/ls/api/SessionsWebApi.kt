@@ -101,9 +101,15 @@ class SessionsApi(
     fun getGameList(request: Request) = processRequest(request) {
 
         val (limit, skip) = (request.query("limit")?.toUIntOrNull() ?: 5u) to (request.query("skip")?.toUIntOrNull() ?: 0u)
-        val gameSearch = parseJsonBody<GameSearchInputModel>(request)
 
-        val res = gameServices.searchGames(gameSearch.genres.map { Genre(it) }.toSet(), Name(gameSearch.developer), limit, skip)
+        val genres = request.query("genres")?.split(",") ?: throw BadRequestException("Invalid Genres in Query")
+        val developer = request.query("developer") ?: throw BadRequestException("Invalid Developer in Query")
+
+        val res = gameServices.searchGames(genres.map { Genre(it) }.toSet(),
+            Name(developer),
+            limit,
+            skip
+        )
 
         Response(OK)
             .header("content-type", "application/json")
@@ -145,13 +151,13 @@ class SessionsApi(
     fun getSessionList(request: Request) = processRequest(request) {
 
         val (limit, skip) = (request.query("limit")?.toUIntOrNull() ?: 5u) to (request.query("skip")?.toUIntOrNull() ?: 0u)
-        val sessionSearch = parseJsonBody<SessionSearchInputModel>(request)
+        val gid = request.path("gid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Game Identifier")
 
         val res = sessionServices.listSessions(
-            sessionSearch.gid,
-            sessionSearch.date?.toLocalDateTime(),
-            sessionSearch.state?.toState(),
-            sessionSearch.pid,
+            gid,
+            request.query("date")?.toLocalDateTime(),
+            request.query("state")?.toState(),
+            request.query("pid")?.toUIntOrNull(),
             limit,
             skip
         )
