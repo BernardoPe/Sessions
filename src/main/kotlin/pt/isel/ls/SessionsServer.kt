@@ -5,15 +5,17 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
+import org.postgresql.ds.PGSimpleDataSource
 import org.slf4j.LoggerFactory
 import pt.isel.ls.api.SessionsApi
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
 import pt.isel.ls.storage.SessionsDataManager
-import pt.isel.ls.storage.mem.SessionsDataMemGame
-import pt.isel.ls.storage.mem.SessionsDataMemPlayer
-import pt.isel.ls.storage.mem.SessionsDataMemSession
+import pt.isel.ls.storage.db.SessionsDataDBGame
+import pt.isel.ls.storage.db.SessionsDataDBPlayer
+import pt.isel.ls.storage.db.SessionsDataDBSession
+import java.util.*
 
 
 val logger = LoggerFactory.getLogger("pt.isel.ls.http.HTTPServer")
@@ -22,9 +24,10 @@ const val PLAYER_ROUTE = "/players"
 const val PLAYER_DETAILS_ROUTE = "/players/{pid}"
 const val GAME_ROUTE = "/games"
 const val GAME_DETAILS_ROUTE = "/games/{gid}"
-const val SESSION_ROUTE = "/sessions"
+const val SESSION_LIST_ROUTE = "/sessions/{gid}/list"
 const val SESSION_DETAILS_ROUTE = "/sessions/{sid}"
 const val SESSION_PLAYER_ROUTE = "/sessions/{sid}/players"
+const val SESSION_ROUTE = "/sessions"
 
 
 /**
@@ -58,7 +61,7 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
             SESSION_ROUTE bind POST to requestHandler::createSession,
             SESSION_PLAYER_ROUTE bind PUT to requestHandler::addPlayerToSession,
             SESSION_DETAILS_ROUTE bind GET to requestHandler::getSessionById,
-            SESSION_ROUTE bind GET to requestHandler::getSessionList
+            SESSION_LIST_ROUTE bind GET to requestHandler::getSessionList
         )
 
     val sessionsHandler =
@@ -90,21 +93,31 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
 
 fun main() {
 
-    val storage = SessionsDataManager(
-        SessionsDataMemGame(),
-        SessionsDataMemPlayer(),
-        SessionsDataMemSession()
-    )
+    val dataSource = PGSimpleDataSource()
+    dataSource.setURL(System.getenv("JDBC_DATABASE_URL"))
 
-    val server = SessionsServer(
-        SessionsApi(
-            PlayerService(storage),
-            GameService(storage),
-            SessionsService(storage)
+    val connection = dataSource.connection
+
+    connection.use {
+
+        val storage = SessionsDataManager(
+            SessionsDataDBGame(it),
+            SessionsDataDBPlayer(it),
+            SessionsDataDBSession(it)
         )
-    )
 
-    server.start()
-    readln()
-    server.stop()
+        val server = SessionsServer(
+            SessionsApi(
+                PlayerService(storage),
+                GameService(storage),
+                SessionsService(storage)
+            )
+        )
+
+        server.start()
+        readln()
+        server.stop()
+
+    }
+
 }

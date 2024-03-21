@@ -33,7 +33,7 @@ class SessionsDataMemGame : SessionsDataGame {
      *
      * @property lastId The last identifier.
      */
-    private var lastId = 0u
+    private var lastId = 1u
 
     override fun create(name: Name, developer: Name, genres: Set<Genre>): UInt {
         // Add the game object to the database mock
@@ -59,16 +59,6 @@ class SessionsDataMemGame : SessionsDataGame {
         return db.any { it.name == name }
     }
 
-    override fun isGenresStored(genres: Set<Genre>): Boolean {
-        // Check if the list of genres already exists in the database mock
-        return db.any { it.genres == genres }
-    }
-
-    override fun isDeveloperStored(developer: Name): Boolean {
-        // Check if the developer name already exists in the database mock
-        return db.any { it.developer == developer }
-    }
-
     override fun getById(id: UInt): Game? {
         // Read the game object from the database mock
         db.forEach {
@@ -90,7 +80,7 @@ class SessionsDataMemGame : SessionsDataGame {
         // Check if skip + limit is greater than the size of the list
         val filteredGames = games.filter { it.developer == developer }
 
-        return filteredGames.drop(skip.toInt()).takeLast(limit.toInt())
+        return filteredGames.sortedBy { it.id }.drop(skip.toInt()).take(limit.toInt())
     }
 
     override fun getAllGames(): List<Game> {

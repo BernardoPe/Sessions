@@ -43,28 +43,7 @@ interface SessionsDataGame {
      *
      * @param name The game name to be checked
      */
-    // This may or may not be a necessary method
     fun isGameNameStored(name: Name): Boolean
-
-    /**
-     * Checks a list of genres in the database mock
-     *
-     * This function uses the [isGenresStored] function from the [SessionsDataMemGame] class
-     *
-     * @param genres The game name to be checked
-     */
-    // This may or may not be a necessary method
-    fun isGenresStored(genres: Set<Genre>): Boolean
-
-    /**
-     * Checks for the name of the developer in the database mock
-     *
-     * This function uses the [isDeveloperStored] function from the [SessionsDataMemGame] class
-     *
-     * @param developer The name of the developer to be checked
-     */
-    // This may or may not be a necessary method
-    fun isDeveloperStored(developer: Name): Boolean
 
     /**
      * Read games from the database mock

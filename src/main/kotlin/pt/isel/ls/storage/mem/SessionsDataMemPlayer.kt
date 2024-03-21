@@ -23,7 +23,7 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
      * @property db The database.
      */
     private var db: MutableList<Player> = mutableListOf(
-        Player(0u, Name("John Doe"), Email("testemail@a.pt"), UUID.fromString("00000000-0000-0000-0000-000000000000")), // for tests
+        Player(1u, Name("John Doe"), Email("testemail@a.pt"), UUID.fromString("00000000-0000-0000-0000-000000000000").hash()), // for tests
     )
 
     /**
@@ -34,10 +34,14 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
      *
      * @property lastId The last identifier.
      */
-    private var lastId = 1u
+    private var lastId = 2u
+
+    private fun UUID.hash(): Long {
+        return mostSignificantBits xor leastSignificantBits
+    }
 
     override fun getByToken(token: UUID): Player? {
-        return db.find { it.token == token }
+        return db.find { it.token == token.hash() }
     }
 
     override fun create(name: Name, email: Email): Pair<UInt, UUID> {
@@ -55,7 +59,7 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
                 lastId,
                 name,
                 email,
-                playerToken
+                playerToken.hash()
             )
         )
         // Return the last identifier and a new UUID

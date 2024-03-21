@@ -34,7 +34,7 @@ class SessionsDataMemSession : SessionsDataSession {
      *
      * @property lastId The last identifier.
      */
-    private var lastId = 0u
+    private var lastId = 1u
 
     /**
      * Create a session in the database mock
@@ -60,7 +60,7 @@ class SessionsDataMemSession : SessionsDataSession {
                 session.capacity,
                 session.date,
                 session.gameSession,
-                setOf()
+                session.playersSession
             )
         )
         // Return the last identifier
@@ -109,7 +109,7 @@ class SessionsDataMemSession : SessionsDataSession {
             sessions = sessions.filter { it.playersSession.any { it.id == pid } }
         }
 
-        return sessions.drop(skip.toInt()).takeLast(limit.toInt())
+        return sessions.sortedBy { it.id }.drop(skip.toInt()).take(limit.toInt())
 
     }
 
