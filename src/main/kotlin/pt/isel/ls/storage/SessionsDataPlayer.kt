@@ -27,7 +27,6 @@ interface SessionsDataPlayer {
      * @param name The player name to be created
      * @param email The player email to be created
      * @return A pair with the last identifier and a new UUID
-     * @throws BadRequestException If the player email already exists
      */
     fun create(name: Name, email: Email): Pair<UInt, UUID>
 
@@ -67,9 +66,8 @@ interface SessionsDataPlayer {
      *
      * @param id The player identifier
      * @param value The new player object
-     * @throws NotFoundException If the player does not exist
      */
-    fun update(id: UInt, value: Player)
+    fun update(id: UInt, value: Player) : Boolean
 
     /**
      * Delete a player from the database mock
@@ -77,9 +75,8 @@ interface SessionsDataPlayer {
      * This function uses the [delete] function from the [SessionsDataMemPlayer] class
      *
      * @param id The player identifier
-     * @throws NotFoundException If the player does not exist
      */
-    fun delete(id: UInt)
+    fun delete(id: UInt) : Boolean
 
     /**
      * Checks the player's token on the database

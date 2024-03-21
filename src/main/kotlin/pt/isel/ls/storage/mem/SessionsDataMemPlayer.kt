@@ -86,7 +86,7 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
         return db
     }
 
-    override fun update(id: UInt, value: Player) {
+    override fun update(id: UInt, value: Player) : Boolean {
         // Update the player object in the database mock
         db.forEach {
             // search for the player with the given id
@@ -96,14 +96,13 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
                 db.remove(it)
                 // add the new player to the database mock
                 db.add(value)
-                return
+                return true
             }
         }
-        // alert the user that the player does not exist
-        throw NotFoundException("Given Player does not exist")
+        return false
     }
 
-    override fun delete(id: UInt) {
+    override fun delete(id: UInt) : Boolean {
         // Delete the player object from the database mock
         db.forEach {
             // search for the player with the given id
@@ -111,10 +110,9 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
                 // if found
                 // remove the player from the database mock
                 db.remove(it)
-                return
+                return true
             }
         }
-        // alert the user that the player does not exist
-        throw NotFoundException("Given Player does not exist")
+        return false
     }
 }

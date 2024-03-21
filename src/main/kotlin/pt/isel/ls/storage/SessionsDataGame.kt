@@ -103,9 +103,8 @@ interface SessionsDataGame {
      *
      * @param id The game identifier
      * @param value The new game object
-     * @throws NotFoundException If the game with the given id does not exist
      */
-    fun update(value: Game)
+    fun update(value: Game) : Boolean
 
     /**
      * Delete a game from the database mock
@@ -113,7 +112,6 @@ interface SessionsDataGame {
      * This function uses the [delete] function from the [SessionsDataMemGame] class
      *
      * @param id The game identifier
-     * @throws NotFoundException If the game with the given id does not exist
      */
-    fun delete(id: UInt)
+    fun delete(id: UInt) : Boolean
 }

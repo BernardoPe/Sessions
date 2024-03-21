@@ -32,7 +32,7 @@ interface SessionsDataSession {
          * @param date The date
          * @return The session identifier
          */
-        fun create(capacity: UInt, game: Game, date: LocalDateTime): UInt
+        fun create(session: Session): UInt
 
         /**
          * Read a session from the database mock
@@ -67,10 +67,8 @@ interface SessionsDataSession {
          *
          * @param sid The session identifier
          * @param player The player object
-         * @throws NotFoundException If the session is not found
-         * @throws BadRequestException If the session is full, the player is already in the session or the session is not open
          */
-        fun update(sid: UInt, player: Player) : String
+        fun update(sid: UInt, player: Player) : Boolean
 
         /**
          * Delete a session from the database mock
@@ -78,7 +76,6 @@ interface SessionsDataSession {
          * This function deletes the session object from the database mock with the given id
          *
          * @param id The session identifier
-         * @throws NotFoundException If the session is not found
          */
-        fun delete(id: UInt)
+        fun delete(id: UInt) : Boolean
 }

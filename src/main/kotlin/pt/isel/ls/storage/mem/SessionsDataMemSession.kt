@@ -6,7 +6,6 @@ import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
 import pt.isel.ls.exceptions.BadRequestException
-import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.storage.SessionsDataSession
 
 /**
@@ -51,7 +50,7 @@ class SessionsDataMemSession : SessionsDataSession {
      * @param date The date
      * @return The session identifier
      */
-    override fun create(capacity: UInt, game: Game, date: LocalDateTime): UInt {
+    override fun create(session: Session): UInt {
         // Add the session object to the database mock
         // Increment the last identifier
         // Add the updated session object to the database mock
@@ -62,10 +61,10 @@ class SessionsDataMemSession : SessionsDataSession {
             // - playersSession: An empty set. This is because the session is created with no players by default
             Session(
                 lastId,
-                capacity,
-                date,
-                game,
-                emptySet()
+                session.capacity,
+                session.date,
+                session.gameSession,
+                setOf()
             )
         )
         // Return the last identifier
@@ -128,21 +127,11 @@ class SessionsDataMemSession : SessionsDataSession {
      * @param pid The player identifier
      * @throws SessionNotFoundException If the session is not found
      */
-    override fun update(sid: UInt, player: Player) : String {
+    override fun update(sid: UInt, player: Player) : Boolean {
         // Update the session object in the database mock
         db.forEach { session ->
             // search for the session with the given id
             if (session.id == sid) {
-
-                if (session.playersSession.contains(player))
-                     throw BadRequestException("Player already in session")
-
-                if (session.capacity == session.playersSession.size.toUInt())
-                    throw BadRequestException("Session is full")
-
-                if (session.state == State.CLOSE)
-                    throw BadRequestException("Session is closed")
-
                 // if found
                 // remove the session from the database mock
                 db.remove(session)
@@ -154,11 +143,10 @@ class SessionsDataMemSession : SessionsDataSession {
                     session.gameSession,
                     session.playersSession.plus(player)
                 ))
-                return "Session successfully updated"
+                return true
             }
         }
-        // tell the caller that the update was not successful
-        throw NotFoundException("Session not found")
+        return false
     }
 
     /**
@@ -169,7 +157,7 @@ class SessionsDataMemSession : SessionsDataSession {
      * @param id The session identifier
      * @throws SessionNotFoundException If the session is not found
      */
-    override fun delete(id: UInt) {
+    override fun delete(id: UInt) : Boolean {
         // Delete the session object from the database mock
         db.forEach {
             // search for the session with the given id
@@ -177,10 +165,10 @@ class SessionsDataMemSession : SessionsDataSession {
                 // if found
                 // remove the session from the database mock
                 db.remove(it)
-                return
+                return true
             }
         }
         // tell the caller that the delete was not successful
-        throw NotFoundException("Session not found")
+        return false
     }
 }

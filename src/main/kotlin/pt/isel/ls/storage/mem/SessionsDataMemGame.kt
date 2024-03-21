@@ -98,7 +98,7 @@ class SessionsDataMemGame : SessionsDataGame {
         return db
     }
 
-    override fun update(value: Game) {
+    override fun update(value: Game) : Boolean {
         // Uses the SessionsDataMemGame class to manage the game object in the database mock
         db.forEach {
             // search for the game with the given id
@@ -108,14 +108,14 @@ class SessionsDataMemGame : SessionsDataGame {
                 db.remove(it)
                 // add the new game to the database mock
                 db.add(value)
-                return
+                return true
             }
         }
         // alert if the game was not found
-        throw NotFoundException("Game with the given id does not exist")
+        return false
     }
 
-    override fun delete(id: UInt) {
+    override fun delete(id: UInt) : Boolean {
         // Delete the game object from the database mock
         db.forEach {
             // search for the game with the given id
@@ -123,10 +123,9 @@ class SessionsDataMemGame : SessionsDataGame {
                 // if found
                 // remove the game from the database mock
                 db.remove(it)
-                return
+                return true
             }
         }
-        // alert if the game was not found
-        throw NotFoundException("Game with the given id does not exist")
+       return false
     }
 }
