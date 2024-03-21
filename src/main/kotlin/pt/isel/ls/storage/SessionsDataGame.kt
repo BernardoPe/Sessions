@@ -101,8 +101,7 @@ interface SessionsDataGame {
      *
      * This function uses the [update] function from the [SessionsDataMemGame] class
      *
-     * @param id The game identifier
-     * @param value The new game object
+     * @param value The game object
      */
     fun update(value: Game) : Boolean
 

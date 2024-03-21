@@ -28,14 +28,23 @@ import java.util.*
 
 
 /**
- * The [SessionsApi] class is responsible for processing HTTP requests and returning the responses.
+ * The [SessionsApi] class is responsible for processing HTTP requests and returning responses.
  *
- * Requests are handled using the processRequest method, which receives a request and an [Operation].
+ *
  *
  * @param playerServices The [PlayerService] instance
  * @param gameServices The [GameService] instance
  * @param sessionServices The [SessionsService] instance
- * @property processRequest The method that processes the request and returns the response
+ *
+ * @property createPlayer The method to create a player
+ * @property getPlayerDetails The method to get player details
+ * @property createGame The method to create a game
+ * @property getGameById The method to get a game by its identifier
+ * @property getGameList The method to get a list of games
+ * @property createSession The method to create a session
+ * @property addPlayerToSession The method to add a player to a session
+ * @property getSessionById The method to get a session by its identifier
+ * @property getSessionList The method to get a list of sessions
  *
  *
  */

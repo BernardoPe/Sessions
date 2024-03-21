@@ -16,7 +16,7 @@ fun Game.toGameInfoDTO() = GameInfoOutputModel(id, name.toString(), developer.to
 
 
 /**
- * Converts [GameSearchResult] to [GameSearchOutputModel]
+ * Converts [GameList] to [GameSearchOutputModel]
  * @return The game search DTO
  */
 

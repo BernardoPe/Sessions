@@ -1,11 +1,9 @@
 package pt.isel.ls.storage.mem
 
 import kotlinx.datetime.LocalDateTime
-import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
-import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.storage.SessionsDataSession
 
 /**
@@ -45,9 +43,7 @@ class SessionsDataMemSession : SessionsDataSession {
      * The function does not have a Session as parameter, but the fields that are needed to create a session
      * The playerSession is an empty set by default
      *
-     * @param capacity The session capacity
-     * @param game The game object
-     * @param date The date
+     * @param session The [Session] object
      * @return The session identifier
      */
     override fun create(session: Session): UInt {
@@ -124,8 +120,7 @@ class SessionsDataMemSession : SessionsDataSession {
      * The function does not have a Session as parameter, but the fields that are needed to update a session
      *
      * @param sid The session identifier
-     * @param pid The player identifier
-     * @throws SessionNotFoundException If the session is not found
+     * @param player The [Player] object
      */
     override fun update(sid: UInt, player: Player) : Boolean {
         // Update the session object in the database mock
@@ -155,7 +150,6 @@ class SessionsDataMemSession : SessionsDataSession {
      * This function deletes the session object from the database mock with the given id
      *
      * @param id The session identifier
-     * @throws SessionNotFoundException If the session is not found
      */
     override fun delete(id: UInt) : Boolean {
         // Delete the session object from the database mock

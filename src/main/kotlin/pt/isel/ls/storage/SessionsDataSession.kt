@@ -4,7 +4,6 @@ import kotlinx.datetime.LocalDateTime
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
-import pt.isel.ls.exceptions.*
 
 /**
  *  Game Data management interface
@@ -13,7 +12,6 @@ import pt.isel.ls.exceptions.*
  *
  *  @property create Create a session in the database
  *  @property getById Read a session from the database
- *  @property getAll Read all sessions from the database
  *  @property update Update a session in the database
  *  @property delete Delete a session from the database
  */
@@ -26,9 +24,7 @@ interface SessionsDataSession {
          * The function does not have a Session as parameter, but the fields that are needed to create a session
          * The playerSession is an empty set by default
          *
-         * @param capacity The session capacity
-         * @param game The game object
-         * @param date The date
+         * @param session The [Session] object
          * @return The session identifier
          */
         fun create(session: Session): UInt

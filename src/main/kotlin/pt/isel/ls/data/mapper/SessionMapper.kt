@@ -16,7 +16,7 @@ import pt.isel.ls.services.SessionList
 fun SessionIdentifier.toSessionCreationDTO() = SessionCreationOutputModel(this)
 
 /**
- * Converts a [SessionAddPlayerResult] to a [SessionAddPlayerOutputModel]
+ * Converts a [SessionAddPlayerMessage] to a [SessionAddPlayerOutputModel]
  * @return The session add player DTO
  */
 
@@ -29,7 +29,7 @@ fun SessionAddPlayerMessage.toSessionAddPlayerDTO() = SessionAddPlayerOutputMode
 fun Session.toSessionInfoDTO() = SessionInfoOutputModel(id, capacity, date.toString(), gameSession.toGameInfoDTO(), playersSession.map { it.toPlayerInfoDTO() })
 
 /**
- * Converts [SessionSearchResult] to [SessionSearchOutputModel]
+ * Converts [SessionList] to [SessionSearchOutputModel]
  * @return The session search DTO
  */
 fun SessionList.toSessionSearchDTO() = SessionSearchOutputModel(map { it.toSessionInfoDTO() })

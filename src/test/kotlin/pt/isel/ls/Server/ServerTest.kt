@@ -95,7 +95,6 @@ class ServerTest {
     fun `test get player details should give player details`() {
         // Arrange
         val request = Request(Method.GET, "/players/1")
-        val routedRequest = RoutedRequest(request, UriTemplate.from("/players/{pid}"))
         // Act
         val response = server.sessionsHandler(request)
         val playerDetailsJson = response.bodyString()
@@ -111,7 +110,6 @@ class ServerTest {
     fun `test get player details should give not found`() {
         // Arrange
         val request = Request(Method.GET, "/players/3")
-        val routedRequest = RoutedRequest(request, UriTemplate.from("/players/{pid}"))
         // Act
         val response = server.sessionsHandler(request)
         // Assert
@@ -577,7 +575,7 @@ class ServerTest {
         private val server = SessionsServer(api)
         @JvmStatic
         @BeforeAll
-        fun `create mocks and start server`(): Unit {
+        fun `create mocks and start server`() {
 
             storage.game.create( "TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
             storage.game.create( "TestName2".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre()))
