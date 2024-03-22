@@ -45,12 +45,6 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
     }
 
     override fun create(name: Name, email: Email): Pair<UInt, UUID> {
-        // Add the player object to the database mock
-        // Set by checking if the player email already exists
-        if (isEmailStored(email)) {
-            throw BadRequestException("Given Player email already exists")
-        }
-        // Add the updated player object to the database mock
 
         val playerToken = UUID.randomUUID()
 

@@ -36,12 +36,7 @@ class SessionsDataMemGame : SessionsDataGame {
     private var lastId = 1u
 
     override fun create(name: Name, developer: Name, genres: Set<Genre>): UInt {
-        // Add the game object to the database mock
-        // Start by checking if the game name already exists
-        db.any { it.name == name }.let {
-            if (it) throw BadRequestException("Provided game name already exists.")
-        }
-        // Add the updated game object to the database mock
+
         db.add(
             Game(
                 lastId,
