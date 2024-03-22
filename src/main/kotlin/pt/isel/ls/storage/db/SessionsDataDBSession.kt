@@ -14,7 +14,6 @@ import pt.isel.ls.utils.toTimestamp
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Statement
-import kotlin.math.truncate
 
 class SessionsDataDBSession(private val connection: Connection): SessionsDataSession {
 

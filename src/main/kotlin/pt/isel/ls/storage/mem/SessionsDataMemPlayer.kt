@@ -3,7 +3,6 @@ package pt.isel.ls.storage.mem
 import pt.isel.ls.data.domain.Email
 import pt.isel.ls.data.domain.Name
 import pt.isel.ls.data.domain.player.Player
-import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.storage.SessionsDataPlayer
 import java.util.*
 

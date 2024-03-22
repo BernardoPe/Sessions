@@ -30,7 +30,7 @@ data class GameCreationOutputModel(val gid: UInt)
  *
  * @param gid The game identifier
  * @param name The game name
- * @param email The developer name
+ * @param developer The developer name
  * @param genres The list of game genres
  *
  */
