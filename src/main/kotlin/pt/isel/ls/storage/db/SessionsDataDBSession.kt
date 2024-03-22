@@ -59,8 +59,8 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
         val query = StringBuilder(
             "SELECT sessions.id as sid, sessions.game_id as gid, date, capacity, games.name as gname, genres, developer, players.id as pid, players.name as pname,email, token_hash FROM sessions " +
                 "JOIN games ON sessions.game_id = games.id "+
-                "JOIN sessions_players ON sessions.id = sessions_players.session_id "+
-                "JOIN players ON sessions_players.player_id = players.id "+
+                "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id "+
+                "LEFT JOIN players ON sessions_players.player_id = players.id "+
                 "WHERE game_id = ? "
         )
         val queryParams = mutableListOf<Any>(gid.toInt())
