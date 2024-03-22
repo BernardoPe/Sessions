@@ -2,7 +2,12 @@
 
 ## Introduction
 
-This document contains the relevant design and implementation aspects of LS project's first phase.
+The first phase of the project consists of the development of an information system
+to manage multiplayer game sessions.  
+We implemented this first part of the project using `kotlin`,
+the `HTTP4K` library for the web server and the `kotlinx.serialization` library for JSON serialization.  
+We covered the implemented features with unit tests using the `JUnit` library.  
+The database is managed by `PostgreSQL` and the connection is made using the `JDBC` library.
 
 ## Modeling the database
 
@@ -36,7 +41,14 @@ We highlight the following aspects of this model:
 
 In our Open-API specification, we highlight the following aspects:
 
-(_include a list of relevant issues or details in your specification_)
+We have 3 groups of endpoints: games, players, and sessions.  
+The games group has 3 endpoints: one to create a game, search for games by name, developer and genre, and another to get games by id.
+The players group has 2 endpoints: one to create a player and another to get players by id.
+The sessions group has 4 endpoints: one to create a session, search for sessions by game id, player id, 
+another to get sessions by id and another to add a player to a session.
+We take advantage of the http error codes to inform the client of the errors that occurred.
+Some examples of these are: 400 for bad request, 404 for not found, among others.
+
 
 ### Request Details
 
