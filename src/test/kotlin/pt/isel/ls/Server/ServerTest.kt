@@ -214,19 +214,19 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         val gameListJson = response.bodyString()
-        val gameList = Json.decodeFromString<GameSearchOutputModel>(gameListJson)
+        val gameList = Json.decodeFromString<GameSearchResultOutputModel>(gameListJson)
         // Assert
         assertEquals(Status.OK, response.status)
         assertEquals("application/json", response.header("Content-Type"))
-        assertEquals(2, gameList.games.size)
-        assertEquals("TestName", gameList.games[0].name)
-        assertEquals("TestDeveloper", gameList.games[0].developer)
-        assertEquals(listOf("RPG", "Adventure"), gameList.games[0].genres)
-        assertEquals(1u, gameList.games[0].gid)
-        assertEquals("TestName2", gameList.games[1].name)
-        assertEquals("TestDeveloper", gameList.games[1].developer)
-        assertEquals(listOf("RPG"), gameList.games[1].genres)
-        assertEquals(2u, gameList.games[1].gid)
+        assertEquals(2, gameList.size)
+        assertEquals("TestName", gameList[0].name)
+        assertEquals("TestDeveloper", gameList[0].developer)
+        assertEquals(listOf("RPG", "Adventure"), gameList[0].genres)
+        assertEquals(1u, gameList[0].gid)
+        assertEquals("TestName2", gameList[1].name)
+        assertEquals("TestDeveloper", gameList[1].developer)
+        assertEquals(listOf("RPG"), gameList[1].genres)
+        assertEquals(2u, gameList[1].gid)
     }
 
     @Test
@@ -258,15 +258,15 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         val gameListJson = response.bodyString()
-        val gameList = Json.decodeFromString<GameSearchOutputModel>(gameListJson)
+        val gameList = Json.decodeFromString<GameSearchResultOutputModel>(gameListJson)
         // Assert
         assertEquals(Status.OK, response.status)
         assertEquals("application/json", response.header("Content-Type"))
-        assertEquals(1, gameList.games.size)
-        assertEquals("TestName2", gameList.games[0].name)
-        assertEquals("TestDeveloper", gameList.games[0].developer)
-        assertEquals(listOf("RPG"), gameList.games[0].genres)
-        assertEquals(2u, gameList.games[0].gid)
+        assertEquals(1, gameList.size)
+        assertEquals("TestName2", gameList[0].name)
+        assertEquals("TestDeveloper", gameList[0].developer)
+        assertEquals(listOf("RPG"), gameList[0].genres)
+        assertEquals(2u, gameList[0].gid)
     }
     @Test
     fun `test create session should create session`() {
@@ -495,19 +495,19 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         val sessionListJson = response.bodyString()
-        val sessionList = Json.decodeFromString<SessionSearchOutputModel>(sessionListJson)
+        val sessionList = Json.decodeFromString<SessionSearchResultOutputModel>(sessionListJson)
         //  Assert
         assertEquals(response.status,Status.OK)
         assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(sessionList.sessions.size,2)
-        assertEquals(sessionList.sessions[0].gameSession.gid,2u)
-        assertEquals(sessionList.sessions[0].capacity,100u)
-        assertEquals(sessionList.sessions[0].date,"2030-05-01T00:00:00".toLocalDateTime().toString())
-        assertEquals(sessionList.sessions[0].sid,1u)
-        assertEquals(sessionList.sessions[1].gameSession.gid,2u)
-        assertEquals(sessionList.sessions[1].capacity,100u)
-        assertEquals(sessionList.sessions[1].date,"2030-06-01T00:00:00".toLocalDateTime().toString())
-        assertEquals(sessionList.sessions[1].sid,2u)
+        assertEquals(sessionList.size,2)
+        assertEquals(sessionList[0].gameSession.gid,2u)
+        assertEquals(sessionList[0].capacity,100u)
+        assertEquals(sessionList[0].date,"2030-05-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList[0].sid,1u)
+        assertEquals(sessionList[1].gameSession.gid,2u)
+        assertEquals(sessionList[1].capacity,100u)
+        assertEquals(sessionList[1].date,"2030-06-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList[1].sid,2u)
     }
     @Test
     fun `test get session list invalid params should give bad request`() {
@@ -526,15 +526,15 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         val sessionListJson = response.bodyString()
-        val sessionList = Json.decodeFromString<SessionSearchOutputModel>(sessionListJson)
+        val sessionList = Json.decodeFromString<SessionSearchResultOutputModel>(sessionListJson)
         //  Assert
         assertEquals(response.status,Status.OK)
         assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(sessionList.sessions.size,1)
-        assertEquals(sessionList.sessions[0].gameSession.gid,2u)
-        assertEquals(sessionList.sessions[0].capacity,100u)
-        assertEquals(sessionList.sessions[0].date,"2030-06-01T00:00:00".toLocalDateTime().toString())
-        assertEquals(sessionList.sessions[0].sid,2u)
+        assertEquals(sessionList.size,1)
+        assertEquals(sessionList[0].gameSession.gid,2u)
+        assertEquals(sessionList[0].capacity,100u)
+        assertEquals(sessionList[0].date,"2030-06-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList[0].sid,2u)
     }
 
 

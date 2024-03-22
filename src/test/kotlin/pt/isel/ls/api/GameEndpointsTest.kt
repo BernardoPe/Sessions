@@ -10,7 +10,7 @@ import pt.isel.ls.data.domain.toEmail
 import pt.isel.ls.data.domain.toGenre
 import pt.isel.ls.data.domain.toName
 import pt.isel.ls.dto.GameInfoOutputModel
-import pt.isel.ls.dto.GameSearchOutputModel
+import pt.isel.ls.dto.GameSearchResultOutputModel
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
@@ -125,19 +125,19 @@ class GameEndpointsTest {
         // Act
         val response = api.getGameList(routedRequest)
         val gameListJson = response.bodyString()
-        val gameList = Json.decodeFromString<GameSearchOutputModel>(gameListJson)
+        val gameList = Json.decodeFromString<GameSearchResultOutputModel>(gameListJson)
         // Assert
         assertEquals(Status.OK, response.status)
         assertEquals("application/json", response.header("Content-Type"))
-        assertEquals(2, gameList.games.size)
-        assertEquals("TestName", gameList.games[0].name)
-        assertEquals("TestDeveloper", gameList.games[0].developer)
-        assertEquals(listOf("RPG", "Adventure"), gameList.games[0].genres)
-        assertEquals(1u, gameList.games[0].gid)
-        assertEquals("TestName2", gameList.games[1].name)
-        assertEquals("TestDeveloper", gameList.games[1].developer)
-        assertEquals(listOf("RPG"), gameList.games[1].genres)
-        assertEquals(2u, gameList.games[1].gid)
+        assertEquals(2, gameList.size)
+        assertEquals("TestName", gameList[0].name)
+        assertEquals("TestDeveloper", gameList[0].developer)
+        assertEquals(listOf("RPG", "Adventure"), gameList[0].genres)
+        assertEquals(1u, gameList[0].gid)
+        assertEquals("TestName2", gameList[1].name)
+        assertEquals("TestDeveloper", gameList[1].developer)
+        assertEquals(listOf("RPG"), gameList[1].genres)
+        assertEquals(2u, gameList[1].gid)
     }
 
     @Test
@@ -169,15 +169,15 @@ class GameEndpointsTest {
         // Act
         val response = api.getGameList(request)
         val gameListJson = response.bodyString()
-        val gameList = Json.decodeFromString<GameSearchOutputModel>(gameListJson)
+        val gameList = Json.decodeFromString<GameSearchResultOutputModel>(gameListJson)
         // Assert
         assertEquals(Status.OK, response.status)
         assertEquals("application/json", response.header("Content-Type"))
-        assertEquals(1, gameList.games.size)
-        assertEquals("TestName2", gameList.games[0].name)
-        assertEquals("TestDeveloper", gameList.games[0].developer)
-        assertEquals(listOf("RPG"), gameList.games[0].genres)
-        assertEquals(2u, gameList.games[0].gid)
+        assertEquals(1, gameList.size)
+        assertEquals("TestName2", gameList[0].name)
+        assertEquals("TestDeveloper", gameList[0].developer)
+        assertEquals(listOf("RPG"), gameList[0].genres)
+        assertEquals(2u, gameList[0].gid)
     }
 
     companion object {

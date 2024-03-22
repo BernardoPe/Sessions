@@ -40,11 +40,7 @@ data class GameInfoOutputModel(val gid: UInt, val name: String, val developer: S
 
 
 /**
- * The [GameSearchOutputModel] class is used to represent the response body of the game search
- *
- * @param games The list of game details
+ * The [GameSearchResultOutputModel] class is used to represent the response body of the game search result
  *
  */
-
-@Serializable
-data class GameSearchOutputModel(val games: List<GameInfoOutputModel>)
+typealias GameSearchResultOutputModel = List<GameInfoOutputModel>
