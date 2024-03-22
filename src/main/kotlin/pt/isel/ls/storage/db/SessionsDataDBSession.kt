@@ -71,7 +71,7 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
         }
 
         if (pid != null) {
-            query.append("AND id IN (SELECT session_id FROM sessions_players WHERE player_id = ?) ")
+            query.append("AND session_id IN (SELECT session_id FROM sessions_players WHERE player_id = ?) ")
             queryParams.add(pid.toInt())
         }
 
