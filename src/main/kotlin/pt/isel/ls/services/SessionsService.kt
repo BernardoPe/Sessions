@@ -44,7 +44,9 @@ class SessionsService(val storage: SessionsDataManager) {
     }
 
     fun listSessions(gid: UInt, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): SessionList {
-        return storage.session.getSessionsSearch(gid, date, state, pid, limit, skip)
+        val sessionsSearch = storage.session.getSessionsSearch(gid, date, state, pid, limit, skip)
+            .filter { it.gameSession.id == gid }
+        return sessionsSearch.ifEmpty { throw NotFoundException("Game not found") }
     }
 
 

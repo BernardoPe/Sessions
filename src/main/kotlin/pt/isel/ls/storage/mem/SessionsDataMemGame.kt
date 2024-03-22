@@ -3,7 +3,6 @@ package pt.isel.ls.storage.mem
 import pt.isel.ls.data.domain.Genre
 import pt.isel.ls.data.domain.Name
 import pt.isel.ls.data.domain.game.Game
-import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.storage.SessionsDataGame
 
 /**
@@ -37,11 +36,6 @@ class SessionsDataMemGame : SessionsDataGame {
 
     override fun create(name: Name, developer: Name, genres: Set<Genre>): UInt {
         // Add the game object to the database mock
-        // Start by checking if the game name already exists
-        db.any { it.name == name }.let {
-            if (it) throw BadRequestException("Provided game name already exists.")
-        }
-        // Add the updated game object to the database mock
         db.add(
             Game(
                 lastId,
