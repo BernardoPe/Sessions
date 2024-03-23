@@ -14,10 +14,7 @@ import java.util.*
 import kotlin.math.abs
 import kotlin.random.Random
 import kotlin.random.nextUInt
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotNull
+import kotlin.test.*
 
 class PlayerServiceTest {
     @Test
@@ -73,7 +70,7 @@ class PlayerServiceTest {
         val uuid = UUID.randomUUID()
         val authenticatedPlayer = servicePlayer.authenticatePlayer(uuid)
 
-        assertNotNull(authenticatedPlayer)
+        assertNull(authenticatedPlayer)
         //TODO
     }
 
