@@ -65,12 +65,15 @@ The Sessions group has 4 endpoints:
  - Add player to session : POST /sessions/{id}/players
 
 Response codes are:
-- 200 OK
-- 201 Created
-- 400 Bad Request
-- 404 Not Found
-- 409 Conflict
-- 500 Internal Server Error
+
+| Response Code           | Description           | Examples                           |
+|-------------------------|-----------------------|------------------------------------|
+| 200                     | OK                    | Got a Player                       |
+| 201                     | Created               | Create a Game                      |
+| 400                     | Bad Request           | Missing a parameter on the request |
+| 404                     | Not Found             | Player not found                   |
+| 409                     | Conflict              | The Player already exists          |
+| 500                     | Internal Server Error | An error in the server             |
 
 ### Request Details
 
