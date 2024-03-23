@@ -60,7 +60,10 @@ Some examples of these are: 400 for bad request, 404 for not found, among others
 
 ### Connection Management
 
-(_describe how connections are created, used and disposed_, namely its relation with transaction scopes).
+The project manages connections to a PostgreSQL database through a JDBC data source with `PGSimpleDataSource`.
+It initializes a PGSimpleDataSource, acquires connections from it within the `main()`
+function using a `connection.use { }` block for automatic closure, and encapsulates
+database interactions within a SessionsDataManager instance.
 
 ### Data Access
 
