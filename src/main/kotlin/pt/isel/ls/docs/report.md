@@ -19,11 +19,30 @@ The following diagram holds the Entity-Relationship model for the information ma
 
 We highlight the following aspects:
 
-* (_include a list of relevant design issues_)
+In this model, we have 3 entities: Game, Player, and Session.
+
+Each game has a unique identifier, a unique name, a developer and a set of genres.
+
+Each player has a unique identifier, a name, a unique e-mail and a token hash for authentication.
+
+Each session has a unique identifier, a capacity, and a date.
+
+The relationships between the entities are as follows:
+- A game can have multiple sessions. A session can only have one game associated (1 to N). A session has to have a game associated to it to exist.
+- A player can be associated with multiple sessions. A session can have multiple players associated (N to N). A player does not have to be associated with a session to exist.
+- A session does not have to have any players associated with it to exist.
 
 The conceptual model has the following restrictions:
+- Ids must be valid numbers.
+- Genres must be valid strings and belong to a set of predefined genres.
+- Names must be valid strings.
+- Emails must follow a valid email format.
+- Dates must follow a valid date format.
+- Sessions must have a capacity greater than 0 and at most 100.
+- Sessions must have a date in the future.
+- To add a player to a session, the player must not already be in the session, the session must not be full and not closed
+(current date must be before the session date).
 
-* (_include a list of relevant design issues_)
 
 ### Physical Model ###
 
@@ -32,7 +51,20 @@ The physical model of the database is available [here](../../../../../sql/create
 
 We highlight the following aspects of this model:
 
-* (_include a list of relevant design issues_)
+The database has 3 tables: Games, Players, and Sessions.
+
+In this model, a sessions_players table was created to represent the N to N relationship between players and sessions.
+This table holds the foreign keys to the Players and Sessions tables, holding a Session-Player association pair in each row.
+Additionally, the foreign key pair is defined as the primary key of the table, ensuring that a player can only be associated with a session once.
+
+IDs were defined as serial primary keys. The Sessions table holds a foreign key to the Games table, representing the 1 to N relationship between games and sessions.
+
+The genres defined as valid were 'Action', 'Adventure', 'RPG', 'Strategy', 'Turn-Based'.
+
+Data Integrity restrictions mentioned in the conceptual model are enforced by the database by defining the proper types and constraints for each column.
+
+The remaining restrictions mentioned in the conceptual model that are
+not present in the physical model are enforced by the application logic at the service layer.
 
 ## Software organization
 
@@ -150,9 +182,10 @@ No major defects were detected as of the time of writing this report, but some i
 - Increasing the test coverage of the application. This would help to ensure that the application is working as expected and that any changes made to the application do not break existing functionality. It
 would also help idenfify any defects that may be present in the application and were not yet detected.
 
-- Improving the way Data is managed in the application. Currently, the `SessionsDataManager` class is responsible for managing both memory and database storage with the same methods. 
+- Improving the way Data is managed in the application. Currently, the `SessionsDataManager` class is responsible for managing both memory and database storage with no differentiation. 
 This could be improved by adding some way to differentiate between memory and database storage, which could help separate concerns. 
 
 - Adding a separate enum class for genres. Currently, to validate a genre in the application we use a list of strings. This could be improved by adding a separate enum class for genres, which would help with validation and make the code more readable.
 
-
+- Possibly add an error handling class to simplify to handling errors at the API level. This would help to simplify the error handling process and make the code more readable as 
+more types of exceptions are added to the application.
