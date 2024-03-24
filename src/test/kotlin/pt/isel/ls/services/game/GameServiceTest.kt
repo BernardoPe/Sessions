@@ -1,5 +1,6 @@
 package pt.isel.ls.services.game
 
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import pt.isel.ls.data.domain.Genre
 import pt.isel.ls.data.domain.game.Game
@@ -18,6 +19,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 
 class GameServiceTest {
+
     @Test
     fun testCreateGame_Success() {
         val gameName = newTestGameName1().toName()
@@ -118,8 +120,13 @@ class GameServiceTest {
         }
 
         assertEquals("Not Found", exception.description)
-        assertEquals("Developer not found", exception.errorCause)
+        assertEquals("No games were found", exception.errorCause)
 
+    }
+    @BeforeEach
+    fun clearStorage() {
+        storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+        serviceGame = GameService(storage)
     }
 
     companion object {
@@ -134,9 +141,10 @@ class GameServiceTest {
 
         private fun newTestGenres() = setOf(Genre("RPG"), Genre("Adventure"))
 
-        private val storage =
+        private var storage =
             SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
 
-        private val serviceGame = GameService(storage)
+        private var serviceGame = GameService(storage)
+
     }
 }

@@ -265,7 +265,7 @@ class SessionServiceTest {
         }
 
         assertEquals("Not Found", exception.description)
-        assertEquals("Game not found", exception.errorCause)
+        assertEquals("No sessions were found", exception.errorCause)
     }
 
     @Test
