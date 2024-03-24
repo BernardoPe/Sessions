@@ -23,7 +23,7 @@ CREATE TABLE sessions (
       id SERIAL PRIMARY KEY,
       game_id INT REFERENCES games(id) ON DELETE CASCADE NOT NULL, -- 1 to N relationship between games and sessions
       capacity INT NOT NULL CHECK (capacity > 0 AND capacity < 101),
-      date DATE NOT NULL CHECK (date > CURRENT_DATE)
+      date TIMESTAMP NOT NULL CHECK (date > CURRENT_DATE)
 );
 
 

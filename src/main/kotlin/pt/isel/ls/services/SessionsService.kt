@@ -33,8 +33,8 @@ class SessionsService(val storage: SessionsDataManager) {
         if (getSession.capacity == getSession.playersSession.size.toUInt())
             throw BadRequestException("Session is full")
 
-//        if (getSession.state == State.CLOSE)
-//            throw BadRequestException("Session is closed")
+        if (getSession.state == State.CLOSE)
+            throw BadRequestException("Session is closed")
 
         return if (storage.session.update(sid, getPlayer))
             "Player successfully added to session"
@@ -45,7 +45,7 @@ class SessionsService(val storage: SessionsDataManager) {
 
     fun listSessions(gid: UInt, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): SessionList {
         val sessionsSearch = storage.session.getSessionsSearch(gid, date, state, pid, limit, skip)
-        return sessionsSearch.ifEmpty { throw NotFoundException("Game not found") }
+        return sessionsSearch.ifEmpty { throw NotFoundException("No sessions were found") }
     }
 
 

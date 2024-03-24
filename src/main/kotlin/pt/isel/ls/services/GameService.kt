@@ -26,8 +26,7 @@ class GameService(val storage: SessionsDataManager) {
 
     fun searchGames(genres: Set<Genre>, developer: Name, limit: UInt, skip: UInt): GameList {
         val gamesSearch = storage.game.getGamesSearch(genres, developer, limit, skip)
-            .filter { it.developer == developer }
-        return gamesSearch.ifEmpty { throw NotFoundException("Developer not found") }
+        return gamesSearch.ifEmpty { throw NotFoundException("No games were found") }
     }
 
 
