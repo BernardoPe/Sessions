@@ -26,9 +26,7 @@ interface SessionsDataGame {
      *
      * This function creates a new game object and adds it to the database mock
      *
-     * @param name The game name to be created for the game
-     * @param developer The name of the developer to be created for the game
-     * @param genres The list of genres to be created for the game
+     * @param game The [Game] object to be created
      * @return The last identifier
      * @throws BadRequestException If the game name already exists
      */

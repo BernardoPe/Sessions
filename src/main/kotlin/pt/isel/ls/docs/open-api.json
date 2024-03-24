@@ -225,7 +225,7 @@
                     "type": "array",
                     "items": {
                       "type": "string",
-                      "example": "Strategy"
+                      "example": "Turn-Based"
                     }
                   }
                 },
@@ -441,7 +441,7 @@
                         "type": "array",
                         "items": {
                           "type": "string",
-                          "example": "Strategy"
+                          "example": "Turn-Based"
                         }
                       }
                     }
@@ -828,7 +828,7 @@
                             "type": "array",
                             "items": {
                               "type": "string",
-                              "example": "Strategy"
+                              "example": "Turn-Based"
                             }
                           }
                         }
@@ -964,7 +964,7 @@
                           "type": "array",
                           "items": {
                             "type": "string",
-                            "example": "Strategy"
+                            "example": "Turn-Based"
                           }
                         }
                       }

@@ -1,7 +1,6 @@
 package pt.isel.ls.storage
 
 import pt.isel.ls.data.domain.Email
-import pt.isel.ls.data.domain.Name
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import java.util.*
@@ -23,8 +22,7 @@ interface SessionsDataPlayer {
      *
      * This function uses the [create] function from the [SessionsDataMemPlayer] class
      *
-     * @param name The player name to be created
-     * @param email The player email to be created
+     * @param player The [Player] object to be created
      * @return A pair with the last identifier and a new UUID
      */
     fun create(player: Player): Pair<UInt, UUID>
