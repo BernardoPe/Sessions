@@ -27,11 +27,11 @@ data class Session(
     val playersSession: Set<Player>
 ) {
     val state : State
-        get() = if (playersSession.size.toUInt() == capacity && date.isBefore(currentLocalTime())) State.CLOSE else State.OPEN
+        get() = if (playersSession.size.toUInt() == capacity || date.isBefore(currentLocalTime())) State.CLOSE else State.OPEN
     init {
         require(capacity in (1u..SESSION_MAX_CAPACITY)) { "Session capacity must be at least 1 and at most $SESSION_MAX_CAPACITY" }
         require(playersSession.size.toUInt() <= capacity) { "Session players must be less than or equal to capacity" }
-        require(date.isAfter(currentLocalTime())) { "Session date must be in the future" }
+        //require(date.isAfter(currentLocalTime())) { "Session date must be in the future" } makes it impossible to get closed sessions from the database, validate when creating session instead
     }
 
 }

@@ -1,6 +1,7 @@
 package pt.isel.ls.services.session
 
 import pt.isel.ls.data.domain.Genre
+import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
@@ -17,6 +18,9 @@ import pt.isel.ls.storage.SessionsDataManager
 import pt.isel.ls.storage.mem.SessionsDataMemGame
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import pt.isel.ls.storage.mem.SessionsDataMemSession
+import pt.isel.ls.utils.currentLocalTime
+import pt.isel.ls.utils.isBefore
+import pt.isel.ls.utils.plus
 import pt.isel.ls.utils.toLocalDateTime
 import java.util.*
 import kotlin.math.abs
@@ -26,6 +30,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class SessionServiceTest {
     @Test
@@ -196,31 +202,31 @@ class SessionServiceTest {
         assertEquals("Session is full", exception.errorCause)
     }
 
-//    @Test
-//    fun testAddPlayer_SessionIsClosed() {
-//        val capacity = 2u
-//        val game = newTestGame()
-//        val gid = serviceGame.createGame(game.name, game.developer, game.genres)
-//        val date = currentLocalTime() + 2.seconds
-//
-//        val createdSession = serviceSession.createSession(capacity, gid, date)
-//
-//        val playerName = newTestPlayerName().toName()
-//        val playerEmail = newTestEmail().toEmail()
-//
-//        val player = servicePlayer.createPlayer(playerName, playerEmail)
-//
-//        assertNotNull(player)
-//
-//        Thread.sleep(3000)
-//
-//        val exception = assertFailsWith<BadRequestException> {
-//            serviceSession.addPlayer(createdSession, player.first)
-//        }
-//
-//        assertEquals("Bad Request", exception.description)
-//        assertEquals("Session is closed", exception.errorCause)
-//    }
+    @Test
+    fun testAddPlayer_SessionIsClosed() {
+        val capacity = 2u
+        val game = Game(0u, "Game Name".toName(), "Developer".toName(), setOf(Genre("RPG")))
+        val gid = serviceGame.createGame(game.name, game.developer, game.genres)
+        val date = currentLocalTime() + 500.milliseconds
+
+        val createdSession = serviceSession.createSession(capacity, gid, date)
+
+        val playerName = newTestPlayerName().toName()
+        val playerEmail = newTestEmail().toEmail()
+
+        val player = servicePlayer.createPlayer(playerName, playerEmail)
+
+        assertNotNull(player)
+
+        while (currentLocalTime() <= date);
+
+        val exception = assertFailsWith<BadRequestException> {
+            serviceSession.addPlayer(createdSession, player.first)
+        }
+
+        assertEquals("Bad Request", exception.description)
+        assertEquals("Session is closed", exception.errorCause)
+    }
 
     @Test
     fun testSessionsSearch_Success() {

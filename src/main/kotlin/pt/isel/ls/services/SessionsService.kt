@@ -8,10 +8,15 @@ import pt.isel.ls.exceptions.ConflictException
 import pt.isel.ls.exceptions.InternalServerErrorException
 import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.storage.SessionsDataManager
+import pt.isel.ls.utils.currentLocalTime
+import pt.isel.ls.utils.isBefore
 
 class SessionsService(val storage: SessionsDataManager) {
 
     fun createSession(capacity: UInt, gid: UInt, date: LocalDateTime): UInt {
+
+        if (date.isBefore(currentLocalTime()))
+            throw BadRequestException("Session date must be in the future")
 
         val getGame = storage.game.getById(gid) ?: throw NotFoundException("Game not found")
 
