@@ -22,7 +22,7 @@ class GameServiceTest {
     fun testCreateGame_Success() {
         val gameName = newTestGameName1().toName()
         val developer = newTestDeveloper1().toName()
-        val genres = newTestGenres1()
+        val genres = newTestGenres()
 
         val createdGame = serviceGame.createGame(gameName, developer, genres)
 
@@ -37,7 +37,7 @@ class GameServiceTest {
     fun testCreateGame_GameNameAlreadyExists() {
         val gameName = newTestGameName1().toName()
         val developer = newTestDeveloper1().toName()
-        val genres = newTestGenres1()
+        val genres = newTestGenres()
 
         serviceGame.createGame(gameName, developer, genres)
 
@@ -53,7 +53,7 @@ class GameServiceTest {
     fun testGetGameDetails_Success() {
         val gameName = newTestGameName1().toName()
         val developer = newTestDeveloper1().toName()
-        val genres = newTestGenres1()
+        val genres = newTestGenres()
 
         val createdGame = serviceGame.createGame(gameName, developer, genres)
 
@@ -78,7 +78,7 @@ class GameServiceTest {
     fun testSearchGames_Success() {
         val gameName1 = newTestGameName1().toName()
         val developer = newTestDeveloper1().toName()
-        val genres = newTestGenres1()
+        val genres = newTestGenres()
         val gameName2 = newTestGameName2().toName()
         val limit = 5u
         val skip = 0u
@@ -102,7 +102,7 @@ class GameServiceTest {
         val gameName1 = newTestGameName1().toName()
         val developer1 = newTestDeveloper1().toName()
         val developer2 = newTestDeveloper2().toName()
-        val genres = newTestGenres1()
+        val genres = newTestGenres()
         val gameName2 = newTestGameName2().toName()
         val limit = 5u
         val skip = 0u
@@ -132,9 +132,7 @@ class GameServiceTest {
 
         private fun newTestDeveloper2() = "Game Freak"
 
-        private fun newTestGenres1() = setOf(Genre("RPG"), Genre("Adventure"))
-
-        private fun newTestGenres2() = setOf(Genre("Shooter"), Genre("Action"))
+        private fun newTestGenres() = setOf(Genre("RPG"), Genre("Adventure"))
 
         private val storage =
             SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
