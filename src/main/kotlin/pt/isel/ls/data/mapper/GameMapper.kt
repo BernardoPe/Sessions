@@ -3,9 +3,9 @@ package pt.isel.ls.data.mapper
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.dto.GameCreationOutputModel
 import pt.isel.ls.dto.GameInfoOutputModel
-import pt.isel.ls.dto.GameSearchOutputModel
 import pt.isel.ls.services.GameIdentifier
 import pt.isel.ls.services.GameList
+import pt.isel.ls.dto.GameSearchResultOutputModel
 
 
 /**
@@ -16,11 +16,11 @@ fun Game.toGameInfoDTO() = GameInfoOutputModel(id, name.toString(), developer.to
 
 
 /**
- * Converts [GameList] to [GameSearchOutputModel]
+ * Converts [GameList] to [GameSearchResultOutputModel]
  * @return The game search DTO
  */
 
-fun GameList.toGameSearchDTO() = GameSearchOutputModel(map { it.toGameInfoDTO() })
+fun GameList.toGameSearchDTO() = map { it.toGameInfoDTO() }
 
 
 /**

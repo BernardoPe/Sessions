@@ -24,6 +24,7 @@ import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
 import pt.isel.ls.utils.toLocalDateTime
+import pt.isel.ls.utils.toUInt
 import java.util.*
 
 
@@ -70,7 +71,7 @@ class SessionsApi(
 
     fun getPlayerDetails(request: Request) = processRequest(request) {
 
-        val pid = request.path("pid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Player Identifier")
+        val pid = request.path("pid")?.toUInt("Player Identifier") ?: throw BadRequestException("No Player Identifier provided")
         val res = playerServices.getPlayerDetails(pid)
 
         Response(OK)
@@ -90,7 +91,7 @@ class SessionsApi(
 
     fun getGameById(request: Request) = processRequest(request) {
 
-        val gid = request.path("gid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Game Identifier")
+        val gid = request.path("gid")?.toUInt("GameIdentifier") ?: throw BadRequestException("No Game Identifier provided")
         val res = gameServices.getGameById(gid)
 
         Response(OK)
@@ -100,10 +101,10 @@ class SessionsApi(
 
     fun getGameList(request: Request) = processRequest(request) {
 
-        val (limit, skip) = (request.query("limit")?.toUIntOrNull() ?: 5u) to (request.query("skip")?.toUIntOrNull() ?: 0u)
+        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip") ?: 0u)
 
         val genres = request.query("genres")?.split(",") ?: throw BadRequestException("Invalid Genres in Query")
-        val developer = request.query("developer") ?: throw BadRequestException("Invalid Developer in Query")
+        val developer = request.query("developer") ?: throw BadRequestException("No Developer provided")
 
         val res = gameServices.searchGames(genres.map { Genre(it) }.toSet(),
             Name(developer),
@@ -128,7 +129,7 @@ class SessionsApi(
 
     fun addPlayerToSession(request: Request) = authHandler(request) {
 
-        val sid = request.path("sid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Session Identifier")
+        val sid = request.path("sid")?.toUInt("Session Identifier") ?: throw BadRequestException("No Session Identifier provided")
         val player = parseJsonBody<SessionAddPlayerInputModel>(request)
         val res = sessionServices.addPlayer(sid, player.pid)
 
@@ -139,7 +140,7 @@ class SessionsApi(
 
     fun getSessionById(request: Request) = processRequest(request) {
 
-        val sid = request.path("sid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Session Identifier")
+        val sid = request.path("sid")?.toUInt("Session Identifier") ?: throw BadRequestException("No Session Identifier provided")
         val res = sessionServices.getSessionById(sid)
 
         Response(OK)
@@ -150,14 +151,14 @@ class SessionsApi(
 
     fun getSessionList(request: Request) = processRequest(request) {
 
-        val (limit, skip) = (request.query("limit")?.toUIntOrNull() ?: 5u) to (request.query("skip")?.toUIntOrNull() ?: 0u)
-        val gid = request.path("gid")?.toUIntOrNull() ?: throw BadRequestException("Invalid Game Identifier")
+        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip") ?: 0u)
+        val gid = request.path("gid")?.toUInt("Game Identifier") ?: throw BadRequestException("No Game Identifier provided")
 
         val res = sessionServices.listSessions(
             gid,
             request.query("date")?.toLocalDateTime(),
             request.query("state")?.toState(),
-            request.query("pid")?.toUIntOrNull(),
+            request.query("pid")?.toUInt("Player Identifier"),
             limit,
             skip
         )

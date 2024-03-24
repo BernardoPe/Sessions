@@ -1,5 +1,25 @@
 package pt.isel.ls.utils
 
+import pt.isel.ls.exceptions.BadRequestException
+
+
+/**
+ * Converts a string to an unsigned integer.
+ * @param what the name of the value to convert.
+ * @return the unsigned integer value.
+ * @throws BadRequestException if the string is not a valid unsigned integer.
+ */
+fun String.toUInt(what: String): UInt {
+    try {
+        return toUInt()
+    } catch (e: NumberFormatException) {
+        throw BadRequestException("Invalid $what value")
+    }
+}
+
+
+
+
 /**
  * Returns the maximum integer between two integer operands.
  * @param a the first operand.

@@ -56,18 +56,14 @@ data class SessionInfoOutputModel(
     val playersSession: List<PlayerInfoOutputModel>
 )
 
-
-/**
- * The [SessionSearchOutputModel] class is used to represent the response body of a session list search
- * @param sessions The list of sessions
- */
-
-@Serializable
-data class SessionSearchOutputModel(val sessions: List<SessionInfoOutputModel>)
-
 /**
  * The [SessionAddPlayerInputModel] class is used to represent the request body of adding a player to the session
  * @param pid The player identifier
  */
 @Serializable
 data class SessionAddPlayerInputModel(val pid: UInt)
+
+/**
+ * The [SessionSearchResultOutputModel] class is used to represent the response body of the session search
+ */
+typealias SessionSearchResultOutputModel = List<SessionInfoOutputModel>

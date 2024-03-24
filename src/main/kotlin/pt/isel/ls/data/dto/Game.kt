@@ -30,7 +30,7 @@ data class GameCreationOutputModel(val gid: UInt)
  *
  * @param gid The game identifier
  * @param name The game name
- * @param email The developer name
+ * @param developer The developer name
  * @param genres The list of game genres
  *
  */
@@ -40,11 +40,7 @@ data class GameInfoOutputModel(val gid: UInt, val name: String, val developer: S
 
 
 /**
- * The [GameSearchOutputModel] class is used to represent the response body of the game search
- *
- * @param games The list of game details
+ * The [GameSearchResultOutputModel] class is used to represent the response body of the game search result
  *
  */
-
-@Serializable
-data class GameSearchOutputModel(val games: List<GameInfoOutputModel>)
+typealias GameSearchResultOutputModel = List<GameInfoOutputModel>

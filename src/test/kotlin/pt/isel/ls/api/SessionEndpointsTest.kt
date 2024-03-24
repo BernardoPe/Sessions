@@ -11,7 +11,7 @@ import pt.isel.ls.data.domain.*
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.dto.SessionInfoOutputModel
-import pt.isel.ls.dto.SessionSearchOutputModel
+import pt.isel.ls.dto.SessionSearchResultOutputModel
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
@@ -267,19 +267,19 @@ class SessionEndpointsTest {
         // Act
         val response = api.getSessionList(routedRequest)
         val sessionListJson = response.bodyString()
-        val sessionList = Json.decodeFromString<SessionSearchOutputModel>(sessionListJson)
+        val sessionList = Json.decodeFromString<SessionSearchResultOutputModel>(sessionListJson)
         //  Assert
         assertEquals(response.status,Status.OK)
         assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(sessionList.sessions.size,2)
-        assertEquals(sessionList.sessions[0].gameSession.gid,2u)
-        assertEquals(sessionList.sessions[0].capacity,100u)
-        assertEquals(sessionList.sessions[0].date,"2030-05-01T00:00:00".toLocalDateTime().toString())
-        assertEquals(sessionList.sessions[0].sid,1u)
-        assertEquals(sessionList.sessions[1].gameSession.gid,2u)
-        assertEquals(sessionList.sessions[1].capacity,100u)
-        assertEquals(sessionList.sessions[1].date,"2030-06-01T00:00:00".toLocalDateTime().toString())
-        assertEquals(sessionList.sessions[1].sid,2u)
+        assertEquals(sessionList.size,2)
+        assertEquals(sessionList[0].gameSession.gid,2u)
+        assertEquals(sessionList[0].capacity,100u)
+        assertEquals(sessionList[0].date,"2030-05-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList[0].sid,1u)
+        assertEquals(sessionList[1].gameSession.gid,2u)
+        assertEquals(sessionList[1].capacity,100u)
+        assertEquals(sessionList[1].date,"2030-06-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList[1].sid,2u)
     }
     @Test
     fun `test get session list invalid params should give bad request`() {
@@ -300,15 +300,15 @@ class SessionEndpointsTest {
         // Act
         val response = api.getSessionList(routedRequest)
         val sessionListJson = response.bodyString()
-        val sessionList = Json.decodeFromString<SessionSearchOutputModel>(sessionListJson)
+        val sessionList = Json.decodeFromString<SessionSearchResultOutputModel>(sessionListJson)
         //  Assert
         assertEquals(response.status,Status.OK)
         assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(sessionList.sessions.size,1)
-        assertEquals(sessionList.sessions[0].gameSession.gid,2u)
-        assertEquals(sessionList.sessions[0].capacity,100u)
-        assertEquals(sessionList.sessions[0].date,"2030-06-01T00:00:00".toLocalDateTime().toString())
-        assertEquals(sessionList.sessions[0].sid,2u)
+        assertEquals(sessionList.size,1)
+        assertEquals(sessionList[0].gameSession.gid,2u)
+        assertEquals(sessionList[0].capacity,100u)
+        assertEquals(sessionList[0].date,"2030-06-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList[0].sid,2u)
     }
 
 
