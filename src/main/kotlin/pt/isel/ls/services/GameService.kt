@@ -17,7 +17,9 @@ class GameService(val storage: SessionsDataManager) {
             throw ConflictException("Game name already exists")
         }
 
-        return storageGame.create(name, developer, genres)
+        val game = Game(0u, name, developer, genres)
+
+        return storageGame.create(game)
 
     }
     fun getGameById(id: UInt): Game {

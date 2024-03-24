@@ -34,14 +34,14 @@ class SessionsDataMemGame : SessionsDataGame {
      */
     private var lastId = 1u
 
-    override fun create(name: Name, developer: Name, genres: Set<Genre>): UInt {
+    override fun create(game : Game): UInt {
         // Add the game object to the database mock
         db.add(
             Game(
                 lastId,
-                name,
-                developer,
-                genres
+                game.name,
+                game.developer,
+                game.genres
             )
         )
         // Return the last identifier

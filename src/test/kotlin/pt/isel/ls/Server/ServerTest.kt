@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import pt.isel.ls.api.SessionsApi
 import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.toEmail
 import pt.isel.ls.data.domain.toGenre
@@ -560,11 +561,11 @@ class ServerTest {
         @BeforeAll
         fun `create mocks and start server`() {
 
-            storage.game.create("TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
-            storage.game.create("TestName2".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre()))
+            storage.game.create(Game(0u,"TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())))
+            storage.game.create(Game(0u,"TestName2".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre())))
 
-            storage.player.create("TestName".toName(), "TestEmail@test.pt".toEmail())
-            storage.player.create("TestName2".toName(), "TestEmail2@test.pt".toEmail())
+            storage.player.create(Player(0u,"TestName".toName(), "TestEmail@test.pt".toEmail(), 0L))
+            storage.player.create(Player(0u,"TestName2".toName(), "TestEmail2@test.pt".toEmail(), 0L))
 
             val mockGame = Game(2u, "TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre()))
             storage.session.create(Session(1u,100u, "2030-05-01T00:00:00".toLocalDateTime(), mockGame, setOf()))

@@ -9,6 +9,7 @@ import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeAll
 import pt.isel.ls.data.domain.*
 import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.dto.SessionInfoOutputModel
 import pt.isel.ls.dto.SessionSearchResultOutputModel
@@ -322,11 +323,11 @@ class SessionEndpointsTest {
         @BeforeAll
         fun setup() {
             val mockGame = Game(2u, "TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre()))
-            storage.game.create("TestName123".toName(), "TestDeveloper123".toName(), setOf("RPG".toGenre()))
-            storage.game.create("TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre()))
+            storage.game.create(Game(0u,"TestName123".toName(), "TestDeveloper123".toName(), setOf("RPG".toGenre())))
+            storage.game.create(Game(0u,"TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre())))
             storage.session.create(Session(1u,100u, "2030-05-01T00:00:00".toLocalDateTime(), mockGame, setOf()))
             storage.session.create(Session(2u,100u, "2030-06-01T00:00:00".toLocalDateTime(), mockGame, setOf()))
-            storage.player.create("TestName".toName(), "testemail@test.pt".toEmail())
+            storage.player.create(Player(0u,"TestName".toName(), "testemail@test.pt".toEmail(),0L))
             val req = Request(Method.PUT, "/sessions/1")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")

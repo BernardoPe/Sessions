@@ -16,7 +16,9 @@ class PlayerService(val storage: SessionsDataManager) {
         if (storagePlayer.isEmailStored(email))
             throw ConflictException("Given Player email already exists")
 
-        return storagePlayer.create(name, email)
+        val player = Player(0u, name, email, 0L)
+
+        return storagePlayer.create(player)
 
     }
 

@@ -14,16 +14,16 @@ class SessionsDataDBGame(private val connection: Connection) : SessionsDataGame 
     init {
         connection.autoCommit = false
     }
-    override fun create(name: Name, developer: Name, genres: Set<Genre>): UInt {
+    override fun create(game: Game): UInt {
 
         val statement = connection.prepareStatement(
             "INSERT INTO games (name, developer, genres) VALUES (?, ?, ?)",
             Statement.RETURN_GENERATED_KEYS
         )
 
-        statement.setString(1, name.toString())
-        statement.setString(2, developer.toString())
-        statement.setArray(3, connection.createArrayOf("VARCHAR", genres.map { it.toString() }.toTypedArray()))
+        statement.setString(1, game.name.toString())
+        statement.setString(2, game.developer.toString())
+        statement.setArray(3, connection.createArrayOf("VARCHAR", game.genres.map { it.toString() }.toTypedArray()))
         statement.executeUpdate()
         connection.commit()
 

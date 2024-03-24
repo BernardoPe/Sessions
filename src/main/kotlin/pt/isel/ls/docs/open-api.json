@@ -570,7 +570,8 @@
                   },
                   "date": {
                     "type": "string",
-                    "format": "date-time"
+                    "format": "date-time",
+                    "example": "2030-12-31T23:59:59"
                   },
                   "gid": {
                     "type": "integer",
@@ -644,7 +645,7 @@
                     },
                     "errorCause": {
                       "type": "string",
-                      "example": "Invalid body"
+                      "example": "Date must be in the future"
                     }
                   }
                 }
@@ -715,7 +716,8 @@
             "required": false,
             "schema": {
               "type": "string",
-              "format": "date-time"
+              "format": "date-time",
+              "example": "2030-12-31T23:59:59"
             }
           },
           {
@@ -804,7 +806,8 @@
                       },
                       "date": {
                         "type": "string",
-                        "format": "date-time"
+                        "format": "date-time",
+                        "example": "2030-12-31T23:59:59"
                       },
                       "gameSession": {
                         "type": "object",
@@ -939,7 +942,8 @@
                     },
                     "date": {
                       "type": "string",
-                      "format": "date-time"
+                      "format": "date-time",
+                      "example": "2030-12-31T23:59:59"
                     },
                     "gameSession": {
                       "type": "object",

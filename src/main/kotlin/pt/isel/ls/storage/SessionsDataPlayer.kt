@@ -27,7 +27,7 @@ interface SessionsDataPlayer {
      * @param email The player email to be created
      * @return A pair with the last identifier and a new UUID
      */
-    fun create(name: Name, email: Email): Pair<UInt, UUID>
+    fun create(player: Player): Pair<UInt, UUID>
 
     /**
      * Read a player from the database mock

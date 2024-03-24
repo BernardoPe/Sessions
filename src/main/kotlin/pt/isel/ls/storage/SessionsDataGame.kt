@@ -32,7 +32,7 @@ interface SessionsDataGame {
      * @return The last identifier
      * @throws BadRequestException If the game name already exists
      */
-    fun create(name: Name, developer: Name, genres: Set<Genre>): UInt
+    fun create(game: Game): UInt
 
     /**
      * Checks for the name of a game in the database mock

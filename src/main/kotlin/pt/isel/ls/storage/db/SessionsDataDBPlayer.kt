@@ -15,21 +15,23 @@ class SessionsDataDBPlayer(private val connection : Connection) : SessionsDataPl
         connection.autoCommit = false
     }
 
-    override fun create(name: Name, email: Email): Pair<UInt, UUID> {
+    override fun create(player : Player): Pair<UInt, UUID> {
         val statement = connection.prepareStatement(
             "INSERT INTO players (name, email,token_hash) VALUES (?, ?, ?)",
                 Statement.RETURN_GENERATED_KEYS
         )
 
-        statement.setString(1, name.toString())
-        statement.setString(2, email.toString())
-        statement.setLong(3, UUID.randomUUID().hash())
+        val token = UUID.randomUUID()
+
+        statement.setString(1, player.name.toString())
+        statement.setString(2, player.email.toString())
+        statement.setLong(3, token.hash())
         statement.executeUpdate()
         connection.commit()
 
         val generatedKeys = statement.generatedKeys
         generatedKeys.next()
-        return Pair(generatedKeys.getInt(1).toUInt(), UUID.randomUUID())
+        return Pair(generatedKeys.getInt(1).toUInt(),token)
     }
 
     override fun getById(id: UInt): Player? {

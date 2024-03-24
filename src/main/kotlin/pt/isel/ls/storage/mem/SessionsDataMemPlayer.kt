@@ -43,7 +43,7 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
         return db.find { it.token == token.hash() }
     }
 
-    override fun create(name: Name, email: Email): Pair<UInt, UUID> {
+    override fun create(player: Player): Pair<UInt, UUID> {
         // Add the player object to the database mock
 
         val playerToken = UUID.randomUUID()
@@ -51,8 +51,8 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
         db.add(
             Player(
                 lastId,
-                name,
-                email,
+                player.name,
+                player.email,
                 playerToken.hash()
             )
         )

@@ -7,7 +7,11 @@ import org.http4k.core.Status
 import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeAll
+import pt.isel.ls.Server.ServerTest
+import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.toEmail
+import pt.isel.ls.data.domain.toGenre
 import pt.isel.ls.data.domain.toName
 import pt.isel.ls.dto.PlayerInfoOutputModel
 import pt.isel.ls.services.GameService
@@ -120,8 +124,8 @@ class PlayerEndpointsTest {
         @JvmStatic
         @BeforeAll
         fun setup() {
-            storage.player.create("TestName".toName(), "TestEmail@test.pt".toEmail())
-            storage.player.create("TestName2".toName(), "TestEmail2@test.pt".toEmail())
+            storage.player.create(Player(0u,"TestName".toName(), "TestEmail@test.pt".toEmail(), 0L))
+            storage.player.create(Player(0u,"TestName2".toName(), "TestEmail2@test.pt".toEmail(), 0L))
         }
     }
 

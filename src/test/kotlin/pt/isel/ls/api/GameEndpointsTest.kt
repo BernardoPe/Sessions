@@ -5,7 +5,10 @@ import org.http4k.core.Status
 import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeAll
+import pt.isel.ls.Server.ServerTest
 import pt.isel.ls.api.SessionsApi
+import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.toEmail
 import pt.isel.ls.data.domain.toGenre
 import pt.isel.ls.data.domain.toName
@@ -189,10 +192,10 @@ class GameEndpointsTest {
         @JvmStatic
         @BeforeAll
         fun setup() {
-            storage.game.create( "TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
-            storage.game.create( "TestName2".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre()))
-            storage.player.create("TestName".toName(), "TestEmail@test.pt".toEmail())
-            storage.player.create("TestName2".toName(), "TestEmail2@test.pt".toEmail())
+            storage.game.create(Game(0u,"TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())))
+            storage.game.create(Game(0u,"TestName2".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre())))
+            storage.player.create(Player(0u,"TestName".toName(), "TestEmail@test.pt".toEmail(), 0L))
+            storage.player.create(Player(0u,"TestName2".toName(), "TestEmail2@test.pt".toEmail(), 0L))
         }
 
     }

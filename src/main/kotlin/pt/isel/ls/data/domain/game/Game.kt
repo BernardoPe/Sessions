@@ -16,5 +16,9 @@ data class Game (
         val id: UInt,
         val name: Name,
         val developer: Name,
-        val genres: Set<Genre>
-)
+        val genres: Set<Genre>,
+) {
+        init {
+                require(genres.isNotEmpty()) { "Game must have at least one genre" }
+        }
+}

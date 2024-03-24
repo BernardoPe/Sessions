@@ -103,7 +103,7 @@ class SessionsApi(
 
         val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip") ?: 0u)
 
-        val genres = request.query("genres")?.split(",") ?: throw BadRequestException("Invalid Genres in Query")
+        val genres = request.query("genres")?.split(",") ?: throw BadRequestException("No Genres provided")
         val developer = request.query("developer") ?: throw BadRequestException("No Developer provided")
 
         val res = gameServices.searchGames(genres.map { Genre(it) }.toSet(),
@@ -194,7 +194,6 @@ class SessionsApi(
      * @return The response
      */
     private fun processRequest(request: Request, service: (Request) -> Response): Response {
-
         logRequest(request)
 
         if (request.bodyString().isNotBlank() && request.header("content-type") != "application/json")
