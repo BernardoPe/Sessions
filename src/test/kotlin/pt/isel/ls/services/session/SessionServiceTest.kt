@@ -7,7 +7,6 @@ import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
 import pt.isel.ls.data.domain.toEmail
 import pt.isel.ls.data.domain.toName
-import pt.isel.ls.domain.session.SessionTest
 import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.ConflictException
 import pt.isel.ls.exceptions.NotFoundException
@@ -19,7 +18,6 @@ import pt.isel.ls.storage.mem.SessionsDataMemGame
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import pt.isel.ls.storage.mem.SessionsDataMemSession
 import pt.isel.ls.utils.currentLocalTime
-import pt.isel.ls.utils.isBefore
 import pt.isel.ls.utils.plus
 import pt.isel.ls.utils.toLocalDateTime
 import java.util.*
@@ -31,7 +29,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 
 class SessionServiceTest {
     @Test
@@ -326,15 +323,6 @@ class SessionServiceTest {
         private fun newTestDateTime() = "2024-05-05T12:00:00".toLocalDateTime()
 
         private fun UUID.testTokenHash() = mostSignificantBits xor leastSignificantBits
-
-        private fun newPlayersTest() = setOf(
-            Player(1u, "player1".toName(), "player1@example.com".toEmail(), SessionTest.uuid),
-            Player(2u, "player2".toName(), "player2@example.com".toEmail(), SessionTest.uuid),
-            Player(3u, "player3".toName(), "player3@example.com".toEmail(), SessionTest.uuid),
-            Player(4u, "player4".toName(), "player4@example.com".toEmail(), SessionTest.uuid),
-            Player(5u, "player5".toName(), "player5@example.com".toEmail(), SessionTest.uuid),
-            Player(6u, "player6".toName(), "player6@example.com".toEmail(), SessionTest.uuid)
-        )
 
         private val storage =
             SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())

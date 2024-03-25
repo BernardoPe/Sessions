@@ -4,7 +4,6 @@ import kotlinx.datetime.LocalDateTime
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.utils.currentLocalTime
-import pt.isel.ls.utils.isAfter
 import pt.isel.ls.utils.isBefore
 import java.util.*
 
@@ -33,7 +32,6 @@ data class Session(
         require(playersSession.size.toUInt() <= capacity) { "Session players must be less than or equal to capacity" }
         //require(date.isAfter(currentLocalTime())) { "Session date must be in the future" } makes it impossible to get closed sessions from the database, validate when creating session instead
     }
-
 }
 
 enum class State {
@@ -45,7 +43,6 @@ enum class State {
             CLOSE -> "CLOSE"
         }
     }
-
 }
 
 fun String.toState(): State {

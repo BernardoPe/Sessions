@@ -15,7 +15,7 @@ The database is managed by `PostgreSQL` and the connections are made using the `
 
 The following diagram holds the Entity-Relationship model for the information managed by the system.
 
-[ER Diagram](er_diagram.png)
+[ER Diagram](ae_model_diagram.png)
 
 We highlight the following aspects:
 
