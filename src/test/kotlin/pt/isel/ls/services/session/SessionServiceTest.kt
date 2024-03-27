@@ -226,6 +226,136 @@ class SessionServiceTest {
     }
 
     @Test
+fun testRemovePlayer_Success() {
+        val capacity = newTestCapacity()
+        val gameName = newTestGameName().toName()
+        val developer = newTestDeveloper().toName()
+        val genres = newTestGenres()
+        val gid = serviceGame.createGame(gameName, developer, genres)
+        val date = newTestDateTime()
+
+        val createdSession = serviceSession.createSession(capacity, gid, date)
+
+        val playerName = newTestPlayerName().toName()
+        val playerEmail = newTestEmail().toEmail()
+
+        val player = servicePlayer.createPlayer(playerName, playerEmail)
+
+        assertNotNull(player)
+
+        serviceSession.addPlayer(createdSession, player.first)
+
+        val removedPlayer = serviceSession.removePlayer(createdSession, player.first)
+
+        val getSession = serviceSession.getSessionById(createdSession)
+
+        assertEquals(emptySet(), getSession.playersSession)
+
+        assertEquals("Player successfully removed from session", removedPlayer)
+    }
+
+    @Test
+    fun testRemovePlayer_SessionNotFound() {
+        val playerName = newTestPlayerName().toName()
+        val playerEmail = newTestEmail().toEmail()
+
+        val player = servicePlayer.createPlayer(playerName, playerEmail)
+
+        val exception = assertFailsWith<NotFoundException> {
+            serviceSession.removePlayer(Random.nextUInt(), player.first)
+        }
+
+        assertEquals("Not Found", exception.description)
+        assertEquals("Session not found", exception.errorCause)
+    }
+
+    @Test
+    fun testRemovePlayer_PlayerNotFound() {
+        val capacity = newTestCapacity()
+        val gameName = newTestGameName().toName()
+        val developer = newTestDeveloper().toName()
+        val genres = newTestGenres()
+        val gid = serviceGame.createGame(gameName, developer, genres)
+        val date = newTestDateTime()
+
+        val createdSession = serviceSession.createSession(capacity, gid, date)
+
+        val exception = assertFailsWith<NotFoundException> {
+            serviceSession.removePlayer(createdSession, Random.nextUInt())
+        }
+
+        assertEquals("Not Found", exception.description)
+        assertEquals("Player not found", exception.errorCause)
+    }
+
+    @Test
+    fun testRemovePlayer_PlayerNotInSession() {
+        val capacity = newTestCapacity()
+        val gameName = newTestGameName().toName()
+        val developer = newTestDeveloper().toName()
+        val genres = newTestGenres()
+        val gid = serviceGame.createGame(gameName, developer, genres)
+        val date = newTestDateTime()
+
+        val createdSession = serviceSession.createSession(capacity, gid, date)
+
+        val playerName = newTestPlayerName().toName()
+        val playerEmail = newTestEmail().toEmail()
+
+        val player = servicePlayer.createPlayer(playerName, playerEmail)
+
+        assertNotNull(player)
+
+        val exception = assertFailsWith<NotFoundException> {
+            serviceSession.removePlayer(createdSession, player.first)
+        }
+
+        assertEquals("Not Found", exception.description)
+        assertEquals("Player not in session", exception.errorCause)
+    }
+
+    @Test
+    fun testUpdateSession_Success() {
+        val capacity = newTestCapacity()
+        val gameName = newTestGameName().toName()
+        val developer = newTestDeveloper().toName()
+        val genres = newTestGenres()
+        val gid = serviceGame.createGame(gameName, developer, genres)
+        val date = newTestDateTime()
+
+        val createdSession = serviceSession.createSession(capacity, gid, date)
+
+        val newCapacity = newTestCapacity()
+        val newDate = newTestDateTime()
+
+        val updatedSession = serviceSession.updateSession(createdSession, newCapacity, newDate)
+
+        val getSession = serviceSession.getSessionById(createdSession)
+
+        val getGame = serviceGame.getGameById(gid)
+
+        assertEquals(
+            Session(createdSession, newCapacity, newDate, getGame, emptySet()),
+            getSession
+        )
+
+        assertEquals("Session successfully updated", updatedSession)
+    }
+
+    @Test
+    fun testUpdateSession_SessionNotFound() {
+        val newCapacity = newTestCapacity()
+        val newDate = newTestDateTime()
+
+        val exception = assertFailsWith<NotFoundException> {
+            serviceSession.updateSession(Random.nextUInt(), newCapacity, newDate)
+        }
+
+        assertEquals("Not Found", exception.description)
+        assertEquals("Session not found", exception.errorCause)
+    }
+
+    @Test
     fun testSessionsSearch_Success() {
         val capacity = newTestCapacity()
         val gameName = newTestGameName().toName()

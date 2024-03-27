@@ -227,6 +227,210 @@ class SessionEndpointsTest {
     }
 
     @Test
+    fun `remove player from session should remove player from session`() {
+        // Arrange
+        val request = Request(Method.DELETE, "/sessions/1/players/2")
+            .header("Content-Type", "application/json")
+            .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
+
+        val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{sid}/players/{pid}"))
+        // Act
+        val response = api.removePlayerFromSession(routedRequest)
+        //  Assert
+        assertEquals(response.status,Status.OK)
+    }
+
+    @Test
+    fun `remove player from session no auth should give unauthorized`() {
+        // Arrange
+        val request = Request(Method.DELETE, "/sessions/1/players/2")
+            .header("Content-Type", "application/json")
+
+        val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{sid}/players/{pid}"))
+        // Act
+        val response = api.removePlayerFromSession(routedRequest)
+        //  Assert
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.UNAUTHORIZED)
+    }
+
+    @Test
+    fun `remove player from session player not found`() {
+        // Arrange
+        val request = Request(Method.DELETE, "/sessions/1/players/10")
+            .header("Content-Type", "application/json")
+            .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
+
+        val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{sid}/players/{pid}"))
+        // Act
+        val response = api.removePlayerFromSession(routedRequest)
+        //  Assert
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.NOT_FOUND)
+    }
+
+    @Test
+    fun `remove player from session session not found`() {
+        // Arrange
+        val request = Request(Method.DELETE, "/sessions/10/players/2")
+            .header("Content-Type", "application/json")
+            .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
+
+        val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{sid}/players/{pid}"))
+        // Act
+        val response = api.removePlayerFromSession(routedRequest)
+        //  Assert
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.NOT_FOUND)
+    }
+
+//    @Test
+//    fun `remove player from session empty fields should give bad request`() {
+//        // Arrange
+//        val request = Request(Method.DELETE, "/sessions/1/players/")
+//            .header("Content-Type", "application/json")
+//            .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
+//
+//        val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{sid}/players/{pid}"))
+//        // Act
+//        val response = api.removePlayerFromSession(routedRequest)
+//        //  Assert
+//        assertEquals(response.header("Content-Type"),"application/json")
+//        assertEquals(response.status,Status.BAD_REQUEST)
+//    }
+
+    @Test
+    fun `remove player from session invalid body should give bad request`() {
+        // Arrange
+        val request = Request(Method.DELETE, "/sessions/1/players/2")
+            .header("Content-Type", "application/json")
+            .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
+
+        val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{sid}"))
+        // Act
+        val response = api.removePlayerFromSession(routedRequest)
+        //  Assert
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.BAD_REQUEST)
+    }
+
+//    @Test
+//    fun `remove player from session player not in session`() {
+//        // Arrange
+//        val request = Request(Method.DELETE, "/sessions/1/players/1")
+//            .header("Content-Type", "application/json")
+//            .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
+//
+//        val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{sid}/players/{pid}"))
+//        // Act
+//        val response = api.removePlayerFromSession(routedRequest)
+//        //  Assert
+//        assertEquals(response.status,Status.CONFLICT)
+//    }
+//
+//    @Test
+//    fun `remove player from session player not in session should give conflict`() {
+//        // Arrange
+//        val request = Request(Method.DELETE, "/sessions/1/players/1")
+//            .header("Content-Type", "application/json")
+//            .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
+//
+//        val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{sid}/players/{pid}"))
+//        // Act
+//        val response = api.removePlayerFromSession(routedRequest)
+//        //  Assert
+//        assertEquals(response.status,Status.CONFLICT)
+//    }
+
+    @Test
+    fun `update session should update session`() {
+        // Arrange
+        val request = Request(Method.PUT, "/sessions/1")
+            .header("Content-Type", "application/json")
+            .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
+            .body("""{"capacity":"200","date":"2030-05-01T00:00:00"}""")
+        val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{sid}"))
+        // Act
+        val response = api.updateSession(routedRequest)
+        //  Assert
+        assertEquals(response.status,Status.OK)
+    }
+
+    @Test
+    fun `update session no auth should give unauthorized`() {
+        // Arrange
+        val request = Request(Method.PUT, "/sessions/1")
+            .header("Content-Type", "application/json")
+            .body("""{"capacity":"200","date":"2030-05-01T00:00:00"}""")
+        val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{sid}"))
+        // Act
+        val response = api.updateSession(routedRequest)
+        //  Assert
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.UNAUTHORIZED)
+    }
+
+    @Test
+    fun `update session session not found`() {
+        // Arrange
+        val request = Request(Method.PUT, "/sessions/10")
+            .header("Content-Type", "application/json")
+            .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
+            .body("""{"capacity":"200","date":"2030-05-01T00:00:00"}""")
+        val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{sid}"))
+        // Act
+        val response = api.updateSession(routedRequest)
+        //  Assert
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.NOT_FOUND)
+    }
+
+    @Test
+    fun `update session empty fields should give success`() {
+        // Arrange
+        val request = Request(Method.PUT, "/sessions/1")
+            .header("Content-Type", "application/json")
+            .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
+            .body("""{"capacity":"","date":""}""")
+        val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{sid}"))
+        // Act
+        val response = api.updateSession(routedRequest)
+        //  Assert
+        assertEquals(response.header("Content-Type"),"application/json")
+        assertEquals(response.status,Status.OK)
+    }
+//
+//    @Test
+//    fun `update session invalid body should give bad request`() {
+//        // Arrange
+//        val request = Request(Method.PUT, "/sessions/1")
+//            .header("Content-Type", "application/json")
+//            .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
+//            .body("""{"capacity":"200","date":"2030-05-01T00:00:00""")
+//        val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{sid}"))
+//        // Act
+//        val response = api.updateSession(routedRequest)
+//        //  Assert
+//        assertEquals(response.header("Content-Type"),"application/json")
+//        assertEquals(response.status,Status.BAD_REQUEST)
+//    }
+//
+//    @Test
+//    fun `update session exceeding max capacity supported should give bad request`() {
+//        // Arrange
+//        val request = Request(Method.PUT, "/sessions/1")
+//            .header("Content-Type", "application/json")
+//            .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
+//            .body("""{"capacity":"1000","date":"2030-05-01T00:00:00"}""")
+//        val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{sid}"))
+//        // Act
+//        val response = api.updateSession(routedRequest)
+//        //  Assert
+//        assertEquals(response.header("Content-Type"),"application/json")
+//        assertEquals(response.status,Status.BAD_REQUEST)
+//    }
+
+    @Test
     fun `get session details should give session details`() {
         // Arrange
         val request = Request(Method.GET, "/sessions/1")
