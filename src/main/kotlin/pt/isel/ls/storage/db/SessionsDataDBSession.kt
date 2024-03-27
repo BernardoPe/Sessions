@@ -99,16 +99,80 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
 
     }
 
-    override fun update(sid: UInt, player: Player): Boolean {
+    override fun addPlayer(sid: UInt, player: Player): Boolean {
+        // Set the statement to insert a new player in the session
         val statement = connection.prepareStatement(
             "INSERT INTO sessions_players (session_id, player_id) VALUES (?, ?)"
         )
 
+        // Set the parameters
         statement.setInt(1, sid.toInt())
         statement.setInt(2, player.id.toInt())
+        // Execute the statement and get the result
         val res = statement.executeUpdate()
         connection.commit()
 
+        // Return the result of the operation
+        // It returns true if the player was added to the session
+        return res > 0 .also { statement.close() }
+    }
+
+    override fun removePlayer(sid: UInt, pid: UInt): Boolean {
+        // Set the statement to remove a player from the session
+        val statement = connection.prepareStatement(
+            "DELETE FROM sessions_players WHERE session_id = ? AND player_id = ?"
+        )
+
+        // Set the parameters
+        statement.setInt(1, sid.toInt())
+        statement.setInt(2, pid.toInt())
+        // Execute the statement and get the result
+        val res = statement.executeUpdate()
+        connection.commit()
+
+        // Return the result of the operation
+        // It returns true if the player was removed from the session
+        return res > 0 .also { statement.close() }
+    }
+
+    override fun update(sid: UInt, capacity: UInt?, date: LocalDateTime?): Boolean {
+        // Set the statement to update the session
+        val query = StringBuilder("UPDATE sessions SET ")
+        // Create a list to store the parameters
+        val queryParams = mutableListOf<Any>()
+
+        // Check each parameter for its nullability
+        // Then add the parameter to the query and the list
+        // if it is not null
+        if (capacity != null) {
+            query.append("capacity = ?, ")
+            queryParams.add(capacity.toInt())
+        }
+
+        if (date != null) {
+            query.append("date = ?, ")
+            queryParams.add(date.toTimestamp())
+        }
+
+        // Remove the last comma and space from the query
+        query.delete(query.length - 2, query.length)
+        // Add the session id to the query
+        query.append(" WHERE id = ?")
+        queryParams.add(sid.toInt())
+
+        // Prepare the statement
+        val statement = connection.prepareStatement(query.toString())
+
+        // Set the parameters
+        for ((index, param) in queryParams.withIndex()) {
+            statement.setObject(index + 1, param)
+        }
+
+        // Execute the statement and get the result
+        val res = statement.executeUpdate()
+        connection.commit()
+
+        // Return the result of the operation
         return res > 0 .also { statement.close() }
     }
 

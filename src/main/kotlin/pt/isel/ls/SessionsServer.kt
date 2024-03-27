@@ -1,8 +1,10 @@
 package pt.isel.ls.pt.isel.ls
 
 import org.http4k.core.Method.*
+import org.http4k.routing.ResourceLoader
 import org.http4k.routing.bind
 import org.http4k.routing.routes
+import org.http4k.routing.singlePageApp
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
 import org.postgresql.ds.PGSimpleDataSource
@@ -59,7 +61,9 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
     private val sessionRoutes =
         routes(
             SESSION_ROUTE bind POST to requestHandler::createSession,
+            SESSION_ROUTE bind PUT to requestHandler::updateSession,
             SESSION_PLAYER_ROUTE bind PUT to requestHandler::addPlayerToSession,
+            SESSION_PLAYER_ROUTE bind DELETE to requestHandler::removePlayerFromSession,
             SESSION_DETAILS_ROUTE bind GET to requestHandler::getSessionById,
             SESSION_LIST_ROUTE bind GET to requestHandler::getSessionList
         )
@@ -68,7 +72,8 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
         routes(
             playerRoutes,
             gameRoutes,
-            sessionRoutes
+            sessionRoutes,
+            //singlePageApp(ResourceLoader.Directory("static-content")),
         )
 
     private val jettyServer = sessionsHandler.asServer(Jetty(port))

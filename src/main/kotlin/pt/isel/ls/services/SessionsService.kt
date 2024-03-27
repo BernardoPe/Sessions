@@ -41,8 +41,40 @@ class SessionsService(val storage: SessionsDataManager) {
         if (getSession.state == State.CLOSE)
             throw BadRequestException("Session is closed")
 
-        return if (storage.session.update(sid, getPlayer))
+        return if (storage.session.addPlayer(sid, getPlayer))
             "Player successfully added to session"
+        else throw InternalServerErrorException()
+        // If update fails after checks this means that something went wrong with the update, so we throw an internal server error
+
+    }
+
+    fun removePlayer(sid: UInt, pid: UInt): SessionAddPlayerMessage {
+
+        val getSession = storage.session.getById(sid) ?: throw NotFoundException("Session not found")
+
+        val getPlayer = storage.player.getById(pid) ?: throw NotFoundException("Player not found")
+
+        if (!getSession.playersSession.contains(getPlayer))
+            throw NotFoundException("Player not in session")
+
+        return if (storage.session.removePlayer(sid, getPlayer.id))
+            "Player successfully removed from session"
+        else throw InternalServerErrorException()
+        // If update fails after checks this means that something went wrong with the update, so we throw an internal server error
+
+    }
+
+    fun updateSession(sid: UInt, capacity: UInt?, date: LocalDateTime?): SessionAddPlayerMessage {
+
+        if (date != null) {
+            if (date.isBefore(currentLocalTime()))
+                throw BadRequestException("Session date must be in the future")
+        }
+
+        val getSession = storage.session.getById(sid) ?: throw NotFoundException("Session not found")
+
+        return if (storage.session.update(sid, capacity, date))
+            "Session successfully updated"
         else throw InternalServerErrorException()
         // If update fails after checks this means that something went wrong with the update, so we throw an internal server error
 

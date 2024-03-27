@@ -138,6 +138,29 @@ class SessionsApi(
             .body(Json.encodeToString(res.toSessionAddPlayerDTO()))
     }
 
+    fun removePlayerFromSession(request: Request) = authHandler(request) {
+
+        val sid = request.path("sid")?.toUInt("Session Identifier") ?: throw BadRequestException("No Session Identifier provided")
+        val pid = request.path("pid")?.toUInt("Player Identifier") ?: throw BadRequestException("No Player Identifier provided")
+        val res = sessionServices.removePlayer(sid, pid)
+
+        Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(res)) // TODO: Change to DTO
+    }
+
+    fun updateSession(request: Request) = authHandler(request) {
+
+        val sid = request.path("sid")?.toUInt("Session Identifier") ?: throw BadRequestException("No Session Identifier provided")
+        val capacity = request.query("capacity")?.toUInt("Capacity")
+        val date = request.query("date")?.toLocalDateTime()
+        val res = sessionServices.updateSession(sid, capacity, date)
+
+        Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(res)) // TODO: Change to DTO
+    }
+
     fun getSessionById(request: Request) = processRequest(request) {
 
         val sid = request.path("sid")?.toUInt("Session Identifier") ?: throw BadRequestException("No Session Identifier provided")

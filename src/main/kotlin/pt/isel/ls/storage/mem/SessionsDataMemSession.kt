@@ -11,7 +11,7 @@ import pt.isel.ls.storage.SessionsDataSession
  *
  *  Session Data management class
  *
- *  Uses the [SessionsDataMemSession] class to manage the session data
+ *  Uses the [SessionsDataSession] class to manage the session data
  *
  */
 
@@ -36,16 +36,6 @@ class SessionsDataMemSession : SessionsDataSession {
      */
     private var lastId = 1u
 
-    /**
-     * Create a session in the database mock
-     *
-     * This function creates a session object and adds it to the database mock
-     * The function does not have a Session as parameter, but the fields that are needed to create a session
-     * The playerSession is an empty set by default
-     *
-     * @param session The [Session] object
-     * @return The session identifier
-     */
     override fun create(session: Session): UInt {
         // Add the session object to the database mock
         // Increment the last identifier
@@ -67,30 +57,11 @@ class SessionsDataMemSession : SessionsDataSession {
         return lastId++
     }
 
-    /**
-     * Read a session from the database mock
-     *
-     * This function gets the session object from the database mock with the given id
-     *
-     * @param id The session identifier
-     * @return The session object with the given id or null if it does not exist
-     */
     override fun getById(id: UInt): Session? {
         // Read the session object from the database mock with the given id
         return db.find { it.id == id }
     }
 
-    /**
-     *  Read sessions from the database mock that match the given parameters
-     *
-     *  The [getSessionsSearch] function searches the database mock for sessions that match the given parameters
-     *
-     *  @param gid The game identifier
-     *  @param date The date
-     *  @param state The state
-     *  @param pid The player identifier
-     *  @return A list with all the sessions in the database that match the given parameters
-     */
     override fun getSessionsSearch(gid: UInt, date: LocalDateTime?, state: State?, pid: UInt?, limit : UInt, skip: UInt): List<Session> {
         // Get all the session objects from the database mock that match the given parameters
         // Start by checking the game identifier
@@ -113,16 +84,7 @@ class SessionsDataMemSession : SessionsDataSession {
 
     }
 
-    /**
-     * Update a session in the database mock
-     *
-     * This function updates the session object in the database mock with the given id
-     * The function does not have a Session as parameter, but the fields that are needed to update a session
-     *
-     * @param sid The session identifier
-     * @param player The [Player] object
-     */
-    override fun update(sid: UInt, player: Player) : Boolean {
+    override fun addPlayer(sid: UInt, player: Player) : Boolean {
         // Update the session object in the database mock
         db.forEach { session ->
             // search for the session with the given id
@@ -144,13 +106,52 @@ class SessionsDataMemSession : SessionsDataSession {
         return false
     }
 
-    /**
-     * Delete a session from the database mock
-     *
-     * This function deletes the session object from the database mock with the given id
-     *
-     * @param id The session identifier
-     */
+    override fun removePlayer(sid: UInt, pid: UInt): Boolean {
+        // Remove the player from the session object in the database mock
+        db.forEach { session ->
+            // search for the session with the given id
+            if (session.id == sid) {
+                // if found
+                // remove the session from the database mock
+                db.remove(session)
+                // add the new session to the database mock
+                // the new session has the same fields as the old session,
+                // except for the playersSession field, which has the player removed
+                db.add(Session(
+                    session.id,
+                    session.capacity,
+                    session.date,
+                    session.gameSession,
+                    session.playersSession.filter { it.id != pid }.toSet()
+                ))
+                return true
+            }
+        }
+        return false
+    }
+
+    override fun update(sid: UInt, capacity: UInt?, date: LocalDateTime?): Boolean {
+        // Update the session object in the database mock
+        db.forEach { session ->
+            // search for the session with the given id
+            if (session.id == sid) {
+                // if found
+                // remove the session from the database mock
+                db.remove(session)
+                // add the new session to the database mock
+                db.add(Session(
+                    session.id,
+                    capacity ?: session.capacity,
+                    date ?: session.date,
+                    session.gameSession,
+                    session.playersSession
+                ))
+                return true
+            }
+        }
+        return false
+    }
+
     override fun delete(id: UInt) : Boolean {
         // Delete the session object from the database mock
         db.forEach {
