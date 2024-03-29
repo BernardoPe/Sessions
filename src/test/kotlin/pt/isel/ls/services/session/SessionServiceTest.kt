@@ -3,6 +3,7 @@ package pt.isel.ls.services.session
 import pt.isel.ls.data.domain.Genre
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.domain.session.SESSION_MAX_CAPACITY
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
 import pt.isel.ls.data.domain.toEmail
@@ -24,10 +25,7 @@ import java.util.*
 import kotlin.math.abs
 import kotlin.random.Random
 import kotlin.random.nextUInt
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotNull
+import kotlin.test.*
 import kotlin.time.Duration.Companion.milliseconds
 
 class SessionServiceTest {
@@ -226,7 +224,7 @@ class SessionServiceTest {
     }
 
     @Test
-fun testRemovePlayer_Success() {
+    fun testRemovePlayer_Success() {
         val capacity = newTestCapacity()
         val gameName = newTestGameName().toName()
         val developer = newTestDeveloper().toName()
@@ -340,6 +338,104 @@ fun testRemovePlayer_Success() {
         )
 
         assertEquals("Session successfully updated", updatedSession)
+    }
+
+    @Test
+    fun `test update new session capacity smaller than players in session`() {
+        val capacity = newTestCapacity()
+        val gameName = newTestGameName().toName()
+        val developer = newTestDeveloper().toName()
+        val genres = newTestGenres()
+        val gid = serviceGame.createGame(gameName, developer, genres)
+        val date = newTestDateTime()
+
+        val createdSession = serviceSession.createSession(capacity, gid, date)
+
+        serviceSession.addPlayer(createdSession, servicePlayer.createPlayer(newTestPlayerName().toName(), newTestEmail().toEmail()).first)
+        serviceSession.addPlayer(createdSession, servicePlayer.createPlayer(newTestPlayerName().toName(), newTestEmail().toEmail()).first)
+
+        val newCapacity = 1u
+        val newDate = newTestDateTime()
+
+        val updatedSession = assertFailsWith<BadRequestException> {
+            serviceSession.updateSession(createdSession, newCapacity, newDate)
+        }
+
+        assertEquals("Bad Request", updatedSession.description)
+        assertEquals("New session capacity must be greater or equal to the number of players in the session", updatedSession.errorCause)
+    }
+
+    @Test
+    fun `test update new session date in the past`() {
+        val capacity = newTestCapacity()
+        val gameName = newTestGameName().toName()
+        val developer = newTestDeveloper().toName()
+        val genres = newTestGenres()
+        val gid = serviceGame.createGame(gameName, developer, genres)
+        val date = newTestDateTime()
+
+        val createdSession = serviceSession.createSession(capacity, gid, date)
+
+        val newCapacity = newTestCapacity()
+        val newDate = currentLocalTime()
+
+        Thread.sleep(100)
+
+        val updatedSession = assertFailsWith<BadRequestException> {
+            serviceSession.updateSession(createdSession, newCapacity, newDate)
+        }
+
+        assertEquals("Bad Request", updatedSession.description)
+        assertEquals("Session date must be in the future", updatedSession.errorCause)
+    }
+
+    @Test
+    fun `test update session invalid capacity`() {
+        val capacity = newTestCapacity()
+        val gameName = newTestGameName().toName()
+        val developer = newTestDeveloper().toName()
+        val genres = newTestGenres()
+        val gid = serviceGame.createGame(gameName, developer, genres)
+        val date = newTestDateTime()
+
+        val createdSession = serviceSession.createSession(capacity, gid, date)
+
+        val newCapacity = 0u
+        val newDate = newTestDateTime()
+
+        val updatedSession = assertFailsWith<BadRequestException> {
+            serviceSession.updateSession(createdSession, newCapacity, newDate)
+        }
+
+        assertEquals("Bad Request", updatedSession.description)
+        assertEquals("Session capacity must at least 1 and at most $SESSION_MAX_CAPACITY", updatedSession.errorCause)
+    }
+
+    @Test
+    fun `test delete session, session not found`() {
+        val exception = assertFailsWith<NotFoundException> {
+            serviceSession.deleteSession(Random.nextUInt())
+        }
+        assertEquals("Not Found", exception.description)
+        assertEquals("Session not found", exception.errorCause)
+    }
+
+    @Test
+    fun `test delete session, session deleted`() {
+        val capacity = newTestCapacity()
+        val gameName = newTestGameName().toName()
+        val developer = newTestDeveloper().toName()
+        val genres = newTestGenres()
+        val gid = serviceGame.createGame(gameName, developer, genres)
+        val date = newTestDateTime()
+
+        val createdSession = serviceSession.createSession(capacity, gid, date)
+
+        val deletedSession = serviceSession.deleteSession(createdSession)
+
+        assertNull(storage.session.getById(createdSession))
+
+        assertEquals("Session successfully deleted", deletedSession)
     }
 
     @Test

@@ -51,9 +51,9 @@ import java.util.*
  */
 
 class SessionsApi(
-    val playerServices: PlayerService,
-    val gameServices: GameService,
-    val sessionServices: SessionsService
+    private val playerServices: PlayerService,
+    private val gameServices: GameService,
+    private val sessionServices: SessionsService
 ) {
 
 
@@ -135,7 +135,7 @@ class SessionsApi(
 
         Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(res.toSessionAddPlayerDTO()))
+            .body(Json.encodeToString(res.toSessionOperationMessage()))
     }
 
     fun removePlayerFromSession(request: Request) = authHandler(request) {
@@ -146,19 +146,28 @@ class SessionsApi(
 
         Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(res)) // TODO: Change to DTO
+            .body(Json.encodeToString(res.toSessionOperationMessage()))
     }
 
     fun updateSession(request: Request) = authHandler(request) {
 
-        val sid = request.path("sid")?.toUInt("Session Identifier") ?: throw BadRequestException("No Session Identifier provided")
-        val capacity = request.query("capacity")?.toUInt("Capacity")
-        val date = request.query("date")?.toLocalDateTime()
-        val res = sessionServices.updateSession(sid, capacity, date)
+        val session = parseJsonBody<SessionUpdateInputModel>(request)
+        val sessionId = request.path("sid")?.toUInt("Session Identifier") ?: throw BadRequestException("No Session Identifier provided")
+        val res = sessionServices.updateSession(sessionId, session.capacity, session.date.toLocalDateTime())
 
         Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(res)) // TODO: Change to DTO
+            .body(Json.encodeToString(res.toSessionOperationMessage()))
+    }
+
+    fun deleteSession(request: Request): Response = authHandler(request) {
+
+        val sid = request.path("sid")?.toUInt("Session Identifier") ?: throw BadRequestException("No Session Identifier provided")
+        val res = sessionServices.deleteSession(sid)
+
+        Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(res.toSessionOperationMessage()))
     }
 
     fun getSessionById(request: Request) = processRequest(request) {
@@ -201,6 +210,7 @@ class SessionsApi(
     private fun authHandler(request: Request, service: (Request) -> Response): Response {
         logger.info("Authenticating request")
         return if (verifyAuth(request)) {
+            logger.info("Authorized request")
             processRequest(request, service)
         } else {
             logger.info("Unauthorized request")
@@ -286,6 +296,5 @@ class SessionsApi(
             response.header("content-type"),
         )
     }
-
 
 }

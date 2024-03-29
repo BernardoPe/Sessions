@@ -85,7 +85,7 @@ interface SessionsDataSession {
          * @param date The new date
          * @return boolean indicating if the update was successful
          */
-        fun update(sid: UInt, capacity: UInt?, date: LocalDateTime?) : Boolean
+        fun update(sid: UInt, capacity: UInt, date: LocalDateTime) : Boolean
 
         /**
          * Delete a session from the database 

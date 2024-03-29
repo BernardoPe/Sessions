@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 
 /**
- * The [SessionAddPlayerOutputModel] class is used to represent the response body of an added player to the session
+ * The [SessionOperationOutputModel] class is used to represent the response body of an added player to the session
  * The request to add the player to the session is going to need:
  * an session id URI path variable and another URI path variable id of the added player
  * e.g. /api/session/{sid}/{pid}
@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
  *
  */
 @Serializable
-data class SessionAddPlayerOutputModel(val message: String)
+data class SessionOperationOutputModel(val message: String)
 
 /**
  * The [SessionCreationInputModel] class is used to represent the request body of a created session
@@ -35,6 +35,12 @@ data class SessionCreationOutputModel(
     val sid: UInt
     /** or UUID */
 )
+
+/**
+ * The [SessionUpdateInputModel] class is used to represent the request body of the session update
+ */
+@Serializable
+data class SessionUpdateInputModel(val capacity: UInt, val date: String)
 
 /**
  * The [SessionInfoOutputModel] class is used to represent the response body of the player details

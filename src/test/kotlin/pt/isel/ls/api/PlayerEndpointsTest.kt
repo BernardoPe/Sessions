@@ -7,6 +7,7 @@ import org.http4k.core.Status
 import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.toEmail
 import pt.isel.ls.data.domain.toName
@@ -112,14 +113,19 @@ class PlayerEndpointsTest {
         assertEquals(response.status , Status.NOT_FOUND)
     }
 
+    @BeforeEach
+    fun clear() {
+        storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+        api = SessionsApi(PlayerService(storage), GameService(storage), SessionsService(storage))
+        setup()
+    }
+
     companion object {
 
-        private val storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+        private var storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
 
-        private val api = SessionsApi(PlayerService(storage), GameService(storage), SessionsService(storage))
+        private var api = SessionsApi(PlayerService(storage), GameService(storage), SessionsService(storage))
 
-        @JvmStatic
-        @BeforeAll
         fun setup() {
             storage.player.create(Player(0u,"TestName".toName(), "TestEmail@test.pt".toEmail(), 0L))
             storage.player.create(Player(0u,"TestName2".toName(), "TestEmail2@test.pt".toEmail(), 0L))

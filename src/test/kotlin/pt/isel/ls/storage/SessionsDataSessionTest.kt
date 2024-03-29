@@ -191,42 +191,6 @@ class SessionsDataSessionTest {
     }
 
     @Test
-    fun updateWithNoCapacityTest() {
-        // Create a session storage
-        val storage = SessionsDataMemSession()
-        // Add a session to the storage
-        val sessionMock = Session(1u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(1u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
-        storage.create(sessionMock) // Add a player to the session
-        // Update the session with the same capacity and date
-        storage.update(1u, null, "2030-05-05T12:00:00".toLocalDateTime())
-        // Get the session from the storage
-        val session = storage.getById(1u)
-        // Check if the session was updated
-        // Check the capacity
-        assertEquals(2u, session?.capacity)
-        // Check the date
-        assertEquals("2030-05-05T12:00:00".toLocalDateTime(), session?.date)
-    }
-
-    @Test
-    fun updateWithNoDateTest() {
-        // Create a session storage
-        val storage = SessionsDataMemSession()
-        // Add a session to the storage
-        val sessionMock = Session(1u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(1u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
-        storage.create(sessionMock) // Add a player to the session
-        // Update the session with the same capacity and date
-        storage.update(1u, 3u, null)
-        // Get the session from the storage
-        val session = storage.getById(1u)
-        // Check if the session was updated
-        // Check the capacity
-        assertEquals(3u, session?.capacity)
-        // Check the date
-        assertEquals("2030-05-05T12:00:00".toLocalDateTime(), session?.date)
-    }
-
-    @Test
     fun deleteTest() {
         // Create a session storage
         val storage = SessionsDataMemSession()

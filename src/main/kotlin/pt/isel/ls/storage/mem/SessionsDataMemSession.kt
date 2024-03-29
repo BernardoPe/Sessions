@@ -130,7 +130,7 @@ class SessionsDataMemSession : SessionsDataSession {
         return false
     }
 
-    override fun update(sid: UInt, capacity: UInt?, date: LocalDateTime?): Boolean {
+    override fun update(sid: UInt, capacity: UInt, date: LocalDateTime): Boolean {
         // Update the session object in the database mock
         db.forEach { session ->
             // search for the session with the given id
@@ -141,8 +141,8 @@ class SessionsDataMemSession : SessionsDataSession {
                 // add the new session to the database mock
                 db.add(Session(
                     session.id,
-                    capacity ?: session.capacity,
-                    date ?: session.date,
+                    capacity,
+                    date,
                     session.gameSession,
                     session.playersSession
                 ))

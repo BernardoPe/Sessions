@@ -1,10 +1,10 @@
 package pt.isel.ls.data.mapper
 
 import pt.isel.ls.data.domain.session.Session
-import pt.isel.ls.dto.SessionAddPlayerOutputModel
+import pt.isel.ls.dto.SessionOperationOutputModel
 import pt.isel.ls.dto.SessionCreationOutputModel
 import pt.isel.ls.dto.SessionInfoOutputModel
-import pt.isel.ls.services.SessionAddPlayerMessage
+import pt.isel.ls.services.SessionOperationMessage
 import pt.isel.ls.services.SessionIdentifier
 import pt.isel.ls.services.SessionList
 import pt.isel.ls.dto.SessionSearchResultOutputModel
@@ -16,11 +16,11 @@ import pt.isel.ls.dto.SessionSearchResultOutputModel
 fun SessionIdentifier.toSessionCreationDTO() = SessionCreationOutputModel(this)
 
 /**
- * Converts a [SessionAddPlayerMessage] to a [SessionAddPlayerOutputModel]
+ * Converts a [SessionOperationMessage] to a [SessionOperationOutputModel]
  * @return The session add player DTO
  */
 
-fun SessionAddPlayerMessage.toSessionAddPlayerDTO() = SessionAddPlayerOutputModel(this)
+fun SessionOperationMessage.toSessionOperationMessage() = SessionOperationOutputModel(this)
 
 /**
  * Converts a [Session] to [SessionInfoOutputModel]

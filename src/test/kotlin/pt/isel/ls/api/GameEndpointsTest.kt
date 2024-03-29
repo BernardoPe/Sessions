@@ -5,6 +5,7 @@ import org.http4k.core.Status
 import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.api.SessionsApi
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
@@ -182,19 +183,28 @@ class GameEndpointsTest {
         assertEquals(2u, gameList[0].gid)
     }
 
+    @BeforeEach
+    fun clear() {
+        storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+        api = SessionsApi(PlayerService(storage), GameService(storage), SessionsService(storage))
+        setup()
+    }
+
     companion object {
 
-        private val storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+        private var storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
 
-        private val api = SessionsApi(PlayerService(storage), GameService(storage), SessionsService(storage))
+        private var api = SessionsApi(PlayerService(storage), GameService(storage), SessionsService(storage))
 
-        @JvmStatic
-        @BeforeAll
         fun setup() {
-            storage.game.create(Game(0u,"TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())))
-            storage.game.create(Game(0u,"TestName2".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre())))
-            storage.player.create(Player(0u,"TestName".toName(), "TestEmail@test.pt".toEmail(), 0L))
-            storage.player.create(Player(0u,"TestName2".toName(), "TestEmail2@test.pt".toEmail(), 0L))
+            val mockGame = Game(1u, "TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
+            val mockGame2 = Game(2u, "TestName2".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre()))
+            val mockPlayer = Player(1u, "TestName".toName(), "TestEmail@test.pt".toEmail(), 0L)
+            val mockPlayer2 = Player(2u, "TestName2".toName(), "TestEmail2@test.pt".toEmail(), 0L)
+            storage.game.create(mockGame)
+            storage.game.create(mockGame2)
+            storage.player.create(mockPlayer)
+            storage.player.create(mockPlayer2)
         }
 
     }

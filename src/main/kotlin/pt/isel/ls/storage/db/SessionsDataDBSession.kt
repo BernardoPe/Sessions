@@ -135,38 +135,17 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
         return res > 0 .also { statement.close() }
     }
 
-    override fun update(sid: UInt, capacity: UInt?, date: LocalDateTime?): Boolean {
+    override fun update(sid: UInt, capacity: UInt, date: LocalDateTime): Boolean {
         // Set the statement to update the session
-        val query = StringBuilder("UPDATE sessions SET ")
+        val query = StringBuilder("UPDATE sessions SET capacity = ?, date = ? WHERE id = ?")
         // Create a list to store the parameters
-        val queryParams = mutableListOf<Any>()
-
-        // Check each parameter for its nullability
-        // Then add the parameter to the query and the list
-        // if it is not null
-        if (capacity != null) {
-            query.append("capacity = ?, ")
-            queryParams.add(capacity.toInt())
-        }
-
-        if (date != null) {
-            query.append("date = ?, ")
-            queryParams.add(date.toTimestamp())
-        }
-
-        // Remove the last comma and space from the query
-        query.delete(query.length - 2, query.length)
-        // Add the session id to the query
-        query.append(" WHERE id = ?")
-        queryParams.add(sid.toInt())
-
         // Prepare the statement
         val statement = connection.prepareStatement(query.toString())
 
         // Set the parameters
-        for ((index, param) in queryParams.withIndex()) {
-            statement.setObject(index + 1, param)
-        }
+        statement.setInt(1, capacity.toInt())
+        statement.setTimestamp(2, date.toTimestamp())
+        statement.setInt(3, sid.toInt())
 
         // Execute the statement and get the result
         val res = statement.executeUpdate()
