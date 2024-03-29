@@ -43,7 +43,7 @@
             "description": "Player created successfully",
             "content": {
               "application/json": {
-                "schema":  {
+                "schema": {
                   "type": "object",
                   "properties": {
                     "id": {
@@ -51,7 +51,7 @@
                     },
                     "token": {
                       "type": "string",
-                      "format" : "uuid"
+                      "format": "uuid"
                     }
                   }
                 }
@@ -358,14 +358,14 @@
               "type": "string"
             }
           },
-            {
-                "name": "developer",
-                "in": "query",
-                "required": true,
-                "schema": {
-                "type": "string"
-                }
+          {
+            "name": "developer",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
+          }
         ],
         "responses": {
           "400": {
@@ -679,19 +679,19 @@
         }
       }
     },
-  "/sessions/{gid}/list": {
+    "/sessions/{gid}/list": {
       "get": {
         "summary": "Get list of sessions",
         "parameters": [
-            {
-                "name": "gid",
-                "in": "path",
-                "required": true,
-                "schema": {
-                "type": "integer",
-                "format": "int32"
-                }
-            },
+          {
+            "name": "gid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
           {
             "name": "limit",
             "in": "query",
@@ -727,7 +727,10 @@
             "schema": {
               "type": "string"
             },
-            "enum": ["open", "closed"]
+            "enum": [
+              "open",
+              "closed"
+            ]
           },
           {
             "name": "pid",
@@ -995,6 +998,205 @@
             }
           }
         }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Update session",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "capacity": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2030-12-31T23:59:59"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "sid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 401
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Invalid token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Not Found"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Session not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Bad Request"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Invalid body"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Delete session",
+        "parameters": [
+          {
+            "name": "sid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 401
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Invalid token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Not Found"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Session not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Session deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Session deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/sessions/{sid}/players": {
@@ -1142,6 +1344,102 @@
                     "message": {
                       "type": "string",
                       "example": "Player added to session successfully"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/{sid}/players/{pid}": {
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Remove player from session",
+        "parameters": [
+          {
+            "name": "sid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 401
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Invalid token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Not Found"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Player not found in session"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Player removed from session successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Player removed from session successfully"
                     }
                   }
                 }
