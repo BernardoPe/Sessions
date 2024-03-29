@@ -1,12 +1,12 @@
-//package pt.isel.ls.utils
+// package pt.isel.ls.utils
 //
 //
-//import org.junit.jupiter.api.AfterAll
-//import org.junit.jupiter.api.BeforeAll
-//import org.postgresql.ds.PGSimpleDataSource
-//import kotlin.test.Test
+// import org.junit.jupiter.api.AfterAll
+// import org.junit.jupiter.api.BeforeAll
+// import org.postgresql.ds.PGSimpleDataSource
+// import kotlin.test.Test
 //
-//class DBTests {
+// class DBTests {
 //
 //
 //    @Test
@@ -82,4 +82,4 @@
 //    }
 //
 //
-//}
+// }

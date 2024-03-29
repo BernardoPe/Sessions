@@ -23,7 +23,7 @@ data class PlayerCreationInputModel(val name: String, val email: String)
 @Serializable
 data class PlayerCreationOutputModel(
     val pid: UInt,
-    val token: String
+    val token: String,
 )
 
 /**
@@ -37,4 +37,3 @@ data class PlayerCreationOutputModel(
 
 @Serializable
 data class PlayerInfoOutputModel(val pid: UInt, val name: String, val email: String)
-

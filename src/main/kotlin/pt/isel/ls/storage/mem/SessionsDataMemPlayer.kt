@@ -53,8 +53,8 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
                 lastId,
                 player.name,
                 player.email,
-                playerToken.hash()
-            )
+                playerToken.hash(),
+            ),
         )
         // Return the last identifier and a new UUID
         return Pair(lastId++, playerToken)
@@ -62,7 +62,7 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
 
     override fun isEmailStored(email: Email): Boolean {
         // Check if the player email exists in the database mock
-        return db.any{it.email == email}
+        return db.any { it.email == email }
     }
 
     override fun getById(id: UInt): Player? {
@@ -83,7 +83,7 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
         return db
     }
 
-    override fun update(id: UInt, value: Player) : Boolean {
+    override fun update(id: UInt, value: Player): Boolean {
         // Update the player object in the database mock
         db.forEach {
             // search for the player with the given id
@@ -99,7 +99,7 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
         return false
     }
 
-    override fun delete(id: UInt) : Boolean {
+    override fun delete(id: UInt): Boolean {
         // Delete the player object from the database mock
         db.forEach {
             // search for the player with the given id

@@ -16,5 +16,4 @@ class ExampleTest {
         // assert | then
         assertEquals(3, result)
     }
-    
 }

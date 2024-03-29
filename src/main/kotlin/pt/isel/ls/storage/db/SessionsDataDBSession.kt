@@ -15,7 +15,7 @@ import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Statement
 
-class SessionsDataDBSession(private val connection: Connection): SessionsDataSession {
+class SessionsDataDBSession(private val connection: Connection) : SessionsDataSession {
 
     init {
         connection.autoCommit = false
@@ -24,7 +24,7 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
     override fun create(session: Session): UInt {
         val statement = connection.prepareStatement(
             "INSERT INTO sessions (game_id, capacity, date) VALUES (?, ?, ?)",
-            Statement.RETURN_GENERATED_KEYS
+            Statement.RETURN_GENERATED_KEYS,
         )
 
         statement.setInt(1, session.gameSession.id.toInt())
@@ -41,10 +41,10 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
     override fun getById(id: UInt): Session? {
         val statement = connection.prepareStatement(
             "SELECT sessions.id as sid, sessions.game_id as gid, date, capacity, games.name as gname, genres, developer, players.id as pid, players.name as pname, email, token_hash FROM sessions " +
-                "JOIN games ON sessions.game_id = games.id "+
-                "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id "+
-                "LEFT JOIN players ON sessions_players.player_id = players.id "+
-                "WHERE sessions.id = ?"
+                "JOIN games ON sessions.game_id = games.id " +
+                "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
+                "LEFT JOIN players ON sessions_players.player_id = players.id " +
+                "WHERE sessions.id = ?",
         )
 
         statement.setInt(1, id.toInt())
@@ -55,13 +55,12 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
     }
 
     override fun getSessionsSearch(gid: UInt, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): List<Session> {
-
         val query = StringBuilder(
             "SELECT sessions.id as sid, sessions.game_id as gid, date, capacity, games.name as gname, genres, developer, players.id as pid, players.name as pname,email, token_hash FROM sessions " +
-                "JOIN games ON sessions.game_id = games.id "+
-                "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id "+
-                "LEFT JOIN players ON sessions_players.player_id = players.id "+
-                "WHERE game_id = ? "
+                "JOIN games ON sessions.game_id = games.id " +
+                "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
+                "LEFT JOIN players ON sessions_players.player_id = players.id " +
+                "WHERE game_id = ? ",
         )
         val queryParams = mutableListOf<Any>(gid.toInt())
 
@@ -75,10 +74,9 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
             queryParams.add(pid.toInt())
         }
 
-        query.append( "ORDER BY sessions.id " + "LIMIT ? OFFSET ? ")
+        query.append("ORDER BY sessions.id " + "LIMIT ? OFFSET ? ")
 
         val statement = connection.prepareStatement(query.toString())
-
 
         for ((index, param) in queryParams.withIndex()) {
             statement.setObject(index + 1, param)
@@ -96,13 +94,12 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
         } else {
             resultSet.getSessions().also { statement.close() }
         }
-
     }
 
     override fun addPlayer(sid: UInt, player: Player): Boolean {
         // Set the statement to insert a new player in the session
         val statement = connection.prepareStatement(
-            "INSERT INTO sessions_players (session_id, player_id) VALUES (?, ?)"
+            "INSERT INTO sessions_players (session_id, player_id) VALUES (?, ?)",
         )
 
         // Set the parameters
@@ -114,13 +111,13 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
 
         // Return the result of the operation
         // It returns true if the player was added to the session
-        return res > 0 .also { statement.close() }
+        return res > 0.also { statement.close() }
     }
 
     override fun removePlayer(sid: UInt, pid: UInt): Boolean {
         // Set the statement to remove a player from the session
         val statement = connection.prepareStatement(
-            "DELETE FROM sessions_players WHERE session_id = ? AND player_id = ?"
+            "DELETE FROM sessions_players WHERE session_id = ? AND player_id = ?",
         )
 
         // Set the parameters
@@ -132,7 +129,7 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
 
         // Return the result of the operation
         // It returns true if the player was removed from the session
-        return res > 0 .also { statement.close() }
+        return res > 0.also { statement.close() }
     }
 
     override fun update(sid: UInt, capacity: UInt, date: LocalDateTime): Boolean {
@@ -152,49 +149,45 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
         connection.commit()
 
         // Return the result of the operation
-        return res > 0 .also { statement.close() }
+        return res > 0.also { statement.close() }
     }
 
     override fun delete(id: UInt): Boolean {
         val statement = connection.prepareStatement(
-            "DELETE FROM sessions WHERE id = ?"
+            "DELETE FROM sessions WHERE id = ?",
         )
 
         statement.setInt(1, id.toInt())
         val res = statement.executeUpdate()
         connection.commit()
 
-        return res > 0 .also { statement.close() }
+        return res > 0.also { statement.close() }
     }
 
     private fun ResultSet.getSessions(): List<Session> {
+        if (!next()) return emptyList()
 
-            if (!next()) return emptyList()
+        var currSession = this.getSession()
 
-            var currSession = this.getSession()
+        var sessions = listOf<Session>()
 
-            var sessions = listOf<Session>()
-
-            while (next()) {
-
-                if (getInt("sid") != currSession.id.toInt()) {
-                    sessions = sessions + currSession
-                    currSession = getSession()
-                }
-
-                if (getObject("pid") != null)
-                    currSession = currSession.copy(playersSession = currSession.playersSession + this.getPlayer())
-
+        while (next()) {
+            if (getInt("sid") != currSession.id.toInt()) {
+                sessions = sessions + currSession
+                currSession = getSession()
             }
 
-            sessions = sessions + currSession
+            if (getObject("pid") != null) {
+                currSession = currSession.copy(playersSession = currSession.playersSession + this.getPlayer())
+            }
+        }
 
-            return sessions
+        sessions = sessions + currSession
 
+        return sessions
     }
 
     private fun ResultSet.getSession(): Session {
-
         val player = if (getObject("pid") != null) setOf(this.getPlayer()) else emptySet()
 
         return Session(
@@ -202,9 +195,8 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
             this.getInt("capacity").toUInt(),
             this.getTimestamp("date").toLocalDateTime().toKotlinLocalDateTime(),
             this.getGameSession(),
-            player
+            player,
         )
-
     }
 
     private fun ResultSet.getPlayer(): Player {
@@ -212,12 +204,11 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
             this.getInt("pid").toUInt(),
             this.getString("pname").toName(),
             this.getString("email").toEmail(),
-            this.getLong("token_hash")
+            this.getLong("token_hash"),
         )
     }
 
     private fun ResultSet.getGameSession(): Game {
-
         var genres = emptySet<Genre>()
         val genreArr = this.getArray("genres").resultSet
 
@@ -229,9 +220,7 @@ class SessionsDataDBSession(private val connection: Connection): SessionsDataSes
             this.getInt("gid").toUInt(),
             this.getString("gname").toName(),
             this.getString("developer").toName(),
-            genres
+            genres,
         )
-
     }
-
 }

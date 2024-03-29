@@ -6,7 +6,6 @@ import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.toEmail
@@ -22,7 +21,6 @@ import pt.isel.ls.storage.mem.SessionsDataMemSession
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-
 class PlayerEndpointsTest {
 
     @Test
@@ -34,7 +32,7 @@ class PlayerEndpointsTest {
         // Act
         val response = api.createPlayer(request)
         // Assert
-        assertEquals(response.status , Status.CREATED)
+        assertEquals(response.status, Status.CREATED)
     }
 
     @Test
@@ -46,7 +44,7 @@ class PlayerEndpointsTest {
         // Act
         val response = api.createPlayer(request)
         // Assert
-        assertEquals(response.status , Status.BAD_REQUEST)
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
 
     @Test
@@ -58,7 +56,7 @@ class PlayerEndpointsTest {
         // Act
         val response = api.createPlayer(request)
         // Assert
-        assertEquals(response.status , Status.CONFLICT)
+        assertEquals(response.status, Status.CONFLICT)
     }
 
     @Test
@@ -70,7 +68,7 @@ class PlayerEndpointsTest {
         // Act
         val response = api.createPlayer(request)
         // Assert
-        assertEquals(response.status , Status.BAD_REQUEST)
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
 
     @Test
@@ -82,9 +80,10 @@ class PlayerEndpointsTest {
         // Act
         val response = api.createPlayer(request)
         // Assert
-        assertEquals(response.header("Content-Type") , "application/json")
-        assertEquals(response.status , Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
+
     @Test
     fun `test get player details should give player details`() {
         // Arrange
@@ -95,12 +94,13 @@ class PlayerEndpointsTest {
         val playerDetailsJson = response.bodyString()
         val playerDetails = Json.decodeFromString<PlayerInfoOutputModel>(playerDetailsJson)
         // Assert
-        assertEquals(response.status , Status.OK)
-        assertEquals(response.header("Content-Type") , "application/json")
-        assertEquals(playerDetails.name , "TestName")
-        assertEquals(playerDetails.email , "TestEmail@test.pt")
-        assertEquals(playerDetails.pid , 2u)
+        assertEquals(response.status, Status.OK)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(playerDetails.name, "TestName")
+        assertEquals(playerDetails.email, "TestEmail@test.pt")
+        assertEquals(playerDetails.pid, 2u)
     }
+
     @Test
     fun `test get player details should give not found`() {
         // Arrange
@@ -109,8 +109,8 @@ class PlayerEndpointsTest {
         // Act
         val response = api.getPlayerDetails(routedRequest)
         // Assert
-        assertEquals(response.header("Content-Type") , "application/json")
-        assertEquals(response.status , Status.NOT_FOUND)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.NOT_FOUND)
     }
 
     @BeforeEach
@@ -127,9 +127,8 @@ class PlayerEndpointsTest {
         private var api = SessionsApi(PlayerService(storage), GameService(storage), SessionsService(storage))
 
         fun setup() {
-            storage.player.create(Player(0u,"TestName".toName(), "TestEmail@test.pt".toEmail(), 0L))
-            storage.player.create(Player(0u,"TestName2".toName(), "TestEmail2@test.pt".toEmail(), 0L))
+            storage.player.create(Player(0u, "TestName".toName(), "TestEmail@test.pt".toEmail(), 0L))
+            storage.player.create(Player(0u, "TestName2".toName(), "TestEmail2@test.pt".toEmail(), 0L))
         }
     }
-
 }

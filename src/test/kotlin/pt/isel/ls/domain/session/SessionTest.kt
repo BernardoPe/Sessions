@@ -12,7 +12,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-
 class SessionTest {
 
     @Test
@@ -29,10 +28,10 @@ class SessionTest {
                 Player(3u, "player3".toName(), "player3@example.com".toEmail(), uuid),
                 Player(4u, "player4".toName(), "player4@example.com".toEmail(), uuid),
                 Player(5u, "player5".toName(), "player5@example.com".toEmail(), uuid),
-                Player(6u, "player6".toName(), "player6@example.com".toEmail(), uuid)
-            ), session.playersSession
+                Player(6u, "player6".toName(), "player6@example.com".toEmail(), uuid),
+            ),
+            session.playersSession,
         )
-
     }
 
     @Test
@@ -56,7 +55,7 @@ class SessionTest {
             1u,
             "Test Game 1".toName(),
             "Test Developer".toName(),
-            setOf("Adventure".toGenre(), "RPG".toGenre())
+            setOf("Adventure".toGenre(), "RPG".toGenre()),
         )
 
         val uuid = 0L
@@ -67,7 +66,7 @@ class SessionTest {
             Player(3u, "player3".toName(), "player3@example.com".toEmail(), uuid),
             Player(4u, "player4".toName(), "player4@example.com".toEmail(), uuid),
             Player(5u, "player5".toName(), "player5@example.com".toEmail(), uuid),
-            Player(6u, "player6".toName(), "player6@example.com".toEmail(), uuid)
+            Player(6u, "player6".toName(), "player6@example.com".toEmail(), uuid),
         )
     }
 }

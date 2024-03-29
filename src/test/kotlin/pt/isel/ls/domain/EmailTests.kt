@@ -30,6 +30,4 @@ class EmailTests {
             Email("testmail@gmoal")
         }
     }
-
-
 }

@@ -95,7 +95,7 @@ class GameServiceTest {
 
         assertEquals(
             listOf(Game(createdGame1, gameName1, developer, genres), Game(createdGame2, gameName2, developer, genres)),
-            gameSearched
+            gameSearched,
         )
     }
 
@@ -121,8 +121,8 @@ class GameServiceTest {
 
         assertEquals("Not Found", exception.description)
         assertEquals("No games were found", exception.errorCause)
-
     }
+
     @BeforeEach
     fun clearStorage() {
         storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
@@ -145,6 +145,5 @@ class GameServiceTest {
             SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
 
         private var serviceGame = GameService(storage)
-
     }
 }

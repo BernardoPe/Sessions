@@ -6,7 +6,6 @@ import pt.isel.ls.data.domain.toName
 import pt.isel.ls.storage.mem.SessionsDataMemGame
 import kotlin.test.*
 
-
 class SessionsDataGameTest {
 
     @Test
@@ -14,7 +13,7 @@ class SessionsDataGameTest {
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // Create the game (add it to the storage)
-        val game = Game(0u,"game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
+        val game = Game(0u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
         gameStorage.create(game)
         // Check if the game was created
         // Start by reading the game from the storage
@@ -35,7 +34,7 @@ class SessionsDataGameTest {
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // add a game to the storage
-        val game = Game(0u,"game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
+        val game = Game(0u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
         gameStorage.create(game)
         // read the game from the storage
         val gameData = gameStorage.getGamesSearch(setOf("RPG".toGenre()), "developer".toName(), 2u, 0u)
@@ -57,7 +56,7 @@ class SessionsDataGameTest {
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // Create the game (add it to the storage)
-        val game = Game(0u,"game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
+        val game = Game(0u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
         gameStorage.create(game)
         // Update the game
         // Start by creating a new game object
@@ -82,7 +81,7 @@ class SessionsDataGameTest {
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // Create the game (add it to the storage)
-        val game = Game(0u,"game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
+        val game = Game(0u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
         gameStorage.create(game)
         // Delete the game
         gameStorage.delete(1u)
@@ -120,7 +119,7 @@ class SessionsDataGameTest {
         // Update the game
         // Start by creating a new game object
         val newGame = Game(1u, "newGame".toName(), "newDeveloper".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
-        assertFalse  { gameStorage.update( newGame) }
+        assertFalse { gameStorage.update(newGame) }
     }
 
     @Test
@@ -128,7 +127,7 @@ class SessionsDataGameTest {
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // Delete the game
-        assertFalse  { gameStorage.delete(0u) }
+        assertFalse { gameStorage.delete(0u) }
     }
 
     @Test
@@ -136,11 +135,9 @@ class SessionsDataGameTest {
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // Create the game (add it to the storage)
-        val game = Game(0u,"game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
+        val game = Game(0u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
         gameStorage.create(game)
         // Check if the game name is stored
         assertTrue(gameStorage.isGameNameStored("game".toName()))
     }
-
-
 }

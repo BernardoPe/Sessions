@@ -7,10 +7,8 @@ import pt.isel.ls.exceptions.ConflictException
 import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.storage.SessionsDataManager
 
-
 class GameService(val storage: SessionsDataManager) {
     fun createGame(name: Name, developer: Name, genres: Set<Genre>): GameIdentifier {
-
         val storageGame = storage.game
 
         if (storageGame.isGameNameStored(name)) {
@@ -20,7 +18,6 @@ class GameService(val storage: SessionsDataManager) {
         val game = Game(0u, name, developer, genres)
 
         return storageGame.create(game)
-
     }
     fun getGameById(id: UInt): Game {
         return storage.game.getById(id) ?: throw NotFoundException("Game not found")
@@ -30,8 +27,6 @@ class GameService(val storage: SessionsDataManager) {
         val gamesSearch = storage.game.getGamesSearch(genres, developer, limit, skip)
         return gamesSearch.ifEmpty { throw NotFoundException("No games were found") }
     }
-
-
 }
 
 typealias GameIdentifier = UInt

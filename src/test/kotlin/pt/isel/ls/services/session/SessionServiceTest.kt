@@ -48,7 +48,7 @@ class SessionServiceTest {
 
         assertEquals(
             Session(createdSession, capacity, date, getGame, emptySet()),
-            getSession
+            getSession,
         )
     }
 
@@ -90,7 +90,7 @@ class SessionServiceTest {
 
         assertEquals(
             Player(player.first, playerName, playerEmail, player.second.testTokenHash()),
-            getSession.playersSession.first()
+            getSession.playersSession.first(),
         )
 
         assertEquals("Player successfully added to session", addedPlayer)
@@ -109,7 +109,6 @@ class SessionServiceTest {
 
         assertEquals("Not Found", exception.description)
         assertEquals("Session not found", exception.errorCause)
-
     }
 
     @Test
@@ -334,7 +333,7 @@ class SessionServiceTest {
 
         assertEquals(
             Session(createdSession, newCapacity, newDate, getGame, emptySet()),
-            getSession
+            getSession,
         )
 
         assertEquals("Session successfully updated", updatedSession)
@@ -475,9 +474,9 @@ class SessionServiceTest {
         assertEquals(
             listOf(
                 Session(createdSession1, capacity, date, getGame, emptySet()),
-                Session(createdSession2, capacity, date, getGame, emptySet())
+                Session(createdSession2, capacity, date, getGame, emptySet()),
             ),
-            sessionSearched
+            sessionSearched,
         )
     }
 
@@ -517,7 +516,7 @@ class SessionServiceTest {
 
         assertEquals(
             Session(createdSession, capacity, date, getGame, emptySet()),
-            getSession
+            getSession,
         )
     }
 
@@ -558,7 +557,5 @@ class SessionServiceTest {
         private val serviceGame = GameService(storage)
 
         private val servicePlayer = PlayerService(storage)
-
     }
-
 }

@@ -34,15 +34,15 @@ class SessionsDataMemGame : SessionsDataGame {
      */
     private var lastId = 1u
 
-    override fun create(game : Game): UInt {
+    override fun create(game: Game): UInt {
         // Add the game object to the database mock
         db.add(
             Game(
                 lastId,
                 game.name,
                 game.developer,
-                game.genres
-            )
+                game.genres,
+            ),
         )
         // Return the last identifier
         return lastId++
@@ -81,7 +81,7 @@ class SessionsDataMemGame : SessionsDataGame {
         return db
     }
 
-    override fun update(value: Game) : Boolean {
+    override fun update(value: Game): Boolean {
         // Uses the SessionsDataMemGame class to manage the game object in the database mock
         db.forEach {
             // search for the game with the given id
@@ -98,7 +98,7 @@ class SessionsDataMemGame : SessionsDataGame {
         return false
     }
 
-    override fun delete(id: UInt) : Boolean {
+    override fun delete(id: UInt): Boolean {
         // Delete the game object from the database mock
         db.forEach {
             // search for the game with the given id
@@ -109,6 +109,6 @@ class SessionsDataMemGame : SessionsDataGame {
                 return true
             }
         }
-       return false
+        return false
     }
 }

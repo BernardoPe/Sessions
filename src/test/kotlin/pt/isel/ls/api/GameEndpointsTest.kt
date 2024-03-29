@@ -4,7 +4,6 @@ import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.api.SessionsApi
 import pt.isel.ls.data.domain.game.Game
@@ -206,7 +205,5 @@ class GameEndpointsTest {
             storage.player.create(mockPlayer)
             storage.player.create(mockPlayer2)
         }
-
     }
-
 }

@@ -3,7 +3,6 @@ package pt.isel.ls.storage
 import pt.isel.ls.data.domain.Genre
 import pt.isel.ls.data.domain.Name
 import pt.isel.ls.data.domain.game.Game
-import pt.isel.ls.exceptions.*
 import pt.isel.ls.storage.mem.SessionsDataMemGame
 
 /**
@@ -28,7 +27,6 @@ interface SessionsDataGame {
      *
      * @param game The [Game] object to be created
      * @return The last identifier
-     * @throws BadRequestException If the game name already exists
      */
     fun create(game: Game): UInt
 
@@ -78,7 +76,7 @@ interface SessionsDataGame {
      *
      * @param value The game object
      */
-    fun update(value: Game) : Boolean
+    fun update(value: Game): Boolean
 
     /**
      * Delete a game from the database mock
@@ -87,5 +85,5 @@ interface SessionsDataGame {
      *
      * @param id The game identifier
      */
-    fun delete(id: UInt) : Boolean
+    fun delete(id: UInt): Boolean
 }

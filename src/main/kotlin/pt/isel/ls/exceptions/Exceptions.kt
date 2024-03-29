@@ -12,7 +12,6 @@ import org.http4k.core.Status.Companion.NOT_IMPLEMENTED
 @Serializable
 open class SessionsExceptions(val status: Int, val description: String, val errorCause: String?) : Exception()
 
-
 /**
  * The [BadRequestException] class is an exception that is thrown when the request is invalid.
  * @property cause The cause of the exception
@@ -30,7 +29,6 @@ class NotFoundException(item: String?) : SessionsExceptions(NOT_FOUND.code, "Not
  */
 @Serializable
 class NotImplementedException : SessionsExceptions(NOT_IMPLEMENTED.code, "Not Implemented", null)
-
 
 /**
  * The [InternalServerErrorException] class is an exception that is thrown when the server has an internal error.
@@ -50,4 +48,4 @@ class UnsupportedMediaTypeException : SessionsExceptions(Status.UNSUPPORTED_MEDI
 @Serializable
 class UnauthorizedException : SessionsExceptions(Status.UNAUTHORIZED.code, "Unauthorized", "Invalid Auth")
 
-class ConflictException(cause : String?) : SessionsExceptions(Status.CONFLICT.code, "Conflict", cause)
+class ConflictException(cause: String?) : SessionsExceptions(Status.CONFLICT.code, "Conflict", cause)

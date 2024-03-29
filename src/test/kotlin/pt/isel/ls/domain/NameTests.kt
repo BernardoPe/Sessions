@@ -38,5 +38,4 @@ class NameTests {
             Name("".plus("a".repeat(256)))
         }
     }
-
 }

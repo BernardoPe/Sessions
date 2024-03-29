@@ -2,7 +2,6 @@ package pt.isel.ls.utils
 
 import pt.isel.ls.exceptions.BadRequestException
 
-
 /**
  * Converts a string to an unsigned integer.
  * @param what the name of the value to convert.
@@ -16,9 +15,6 @@ fun String.toUInt(what: String): UInt {
         throw BadRequestException("Invalid $what value")
     }
 }
-
-
-
 
 /**
  * Returns the maximum integer between two integer operands.

@@ -12,13 +12,13 @@ import pt.isel.ls.data.domain.Name
  *  @param developer The game developer
  *  @param genres The game list of genres
  */
-data class Game (
-        val id: UInt,
-        val name: Name,
-        val developer: Name,
-        val genres: Set<Genre>,
+data class Game(
+    val id: UInt,
+    val name: Name,
+    val developer: Name,
+    val genres: Set<Genre>,
 ) {
-        init {
-                require(genres.isNotEmpty()) { "Game must have at least one genre" }
-        }
+    init {
+        require(genres.isNotEmpty()) { "Game must have at least one genre" }
+    }
 }

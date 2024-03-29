@@ -37,7 +37,7 @@ class PlayerServiceTest {
 
         assertEquals(
             Player(createdPlayer.first, playerName, playerEmail, createdPlayer.second.testTokenHash()),
-            getPlayer
+            getPlayer,
         )
     }
 
@@ -47,7 +47,6 @@ class PlayerServiceTest {
         val playerEmail1 = newTestEmail().toEmail()
 
         val playerName2 = newTestPlayerName().toName()
-
 
         servicePlayer.createPlayer(playerName1, playerEmail1)
 
@@ -65,7 +64,7 @@ class PlayerServiceTest {
         val authenticatedPlayer = servicePlayer.authenticatePlayer(uuid)
 
         assertNotNull(authenticatedPlayer)
-        //TODO
+        // TODO
     }
 
 //    @Test
@@ -88,7 +87,7 @@ class PlayerServiceTest {
 
         assertEquals(
             Player(createdPlayer.first, playerName, playerEmail, createdPlayer.second.testTokenHash()),
-            getPlayer
+            getPlayer,
         )
     }
 
@@ -115,6 +114,5 @@ class PlayerServiceTest {
         private val servicePlayer = PlayerService(storage)
 
         private fun UUID.testTokenHash() = mostSignificantBits xor leastSignificantBits
-
     }
 }

@@ -11,7 +11,6 @@ import pt.isel.ls.storage.mem.SessionsDataMemSession
 import pt.isel.ls.utils.toLocalDateTime
 import kotlin.test.Test
 
-
 class SessionsDataSessionTest {
 
     @Test
@@ -69,7 +68,7 @@ class SessionsDataSessionTest {
         val storage = SessionsDataMemSession()
         // Add a session to the storage
         val session = Session(1u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(1u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
-        storage.create(session)        // Get the sessions from the storage
+        storage.create(session) // Get the sessions from the storage
         val sessions = storage.getSessionsSearch(1u, "2030-05-05T12:00:00".toLocalDateTime(), null, null, 10u, 0u)
         // Check if the session was added
         // Check the number of sessions
@@ -96,7 +95,7 @@ class SessionsDataSessionTest {
         val storage = SessionsDataMemSession()
         // Add a session to the storage
         val session = Session(1u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(1u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
-        storage.create(session)        // Add a player to the session
+        storage.create(session) // Add a player to the session
         storage.addPlayer(1u, Player(1u, "player".toName(), "testemail@test.com".toEmail(), 0L))
         // Get the sessions from the storage
         val sessions = storage.getSessionsSearch(1u, null, null, null, 10u, 0u)
@@ -210,7 +209,7 @@ class SessionsDataSessionTest {
         val storage = SessionsDataMemSession()
         // Add a session to the storage
         val session = Session(1u, 2u, "2030-05-05T12:00:00".toLocalDateTime(), Game(1u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre())), emptySet())
-        storage.create(session)        // Get the sessions from the storage
+        storage.create(session) // Get the sessions from the storage
         val sessions = storage.getSessionsSearch(1u, null, null, null, 10u, 0u)
         // Check if the session was added
         // Check the number of sessions

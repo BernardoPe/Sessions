@@ -50,8 +50,8 @@ class SessionsDataMemSession : SessionsDataSession {
                 session.capacity,
                 session.date,
                 session.gameSession,
-                session.playersSession
-            )
+                session.playersSession,
+            ),
         )
         // Return the last identifier
         return lastId++
@@ -62,7 +62,7 @@ class SessionsDataMemSession : SessionsDataSession {
         return db.find { it.id == id }
     }
 
-    override fun getSessionsSearch(gid: UInt, date: LocalDateTime?, state: State?, pid: UInt?, limit : UInt, skip: UInt): List<Session> {
+    override fun getSessionsSearch(gid: UInt, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): List<Session> {
         // Get all the session objects from the database mock that match the given parameters
         // Start by checking the game identifier
         var sessions = db.filter { it.gameSession.id == gid }
@@ -81,10 +81,9 @@ class SessionsDataMemSession : SessionsDataSession {
         }
 
         return sessions.sortedBy { it.id }.drop(skip.toInt()).take(limit.toInt())
-
     }
 
-    override fun addPlayer(sid: UInt, player: Player) : Boolean {
+    override fun addPlayer(sid: UInt, player: Player): Boolean {
         // Update the session object in the database mock
         db.forEach { session ->
             // search for the session with the given id
@@ -93,13 +92,15 @@ class SessionsDataMemSession : SessionsDataSession {
                 // remove the session from the database mock
                 db.remove(session)
                 // add the new session to the database mock
-                db.add(Session(
-                    session.id,
-                    session.capacity,
-                    session.date,
-                    session.gameSession,
-                    session.playersSession.plus(player)
-                ))
+                db.add(
+                    Session(
+                        session.id,
+                        session.capacity,
+                        session.date,
+                        session.gameSession,
+                        session.playersSession.plus(player),
+                    ),
+                )
                 return true
             }
         }
@@ -117,13 +118,15 @@ class SessionsDataMemSession : SessionsDataSession {
                 // add the new session to the database mock
                 // the new session has the same fields as the old session,
                 // except for the playersSession field, which has the player removed
-                db.add(Session(
-                    session.id,
-                    session.capacity,
-                    session.date,
-                    session.gameSession,
-                    session.playersSession.filter { it.id != pid }.toSet()
-                ))
+                db.add(
+                    Session(
+                        session.id,
+                        session.capacity,
+                        session.date,
+                        session.gameSession,
+                        session.playersSession.filter { it.id != pid }.toSet(),
+                    ),
+                )
                 return true
             }
         }
@@ -139,20 +142,22 @@ class SessionsDataMemSession : SessionsDataSession {
                 // remove the session from the database mock
                 db.remove(session)
                 // add the new session to the database mock
-                db.add(Session(
-                    session.id,
-                    capacity,
-                    date,
-                    session.gameSession,
-                    session.playersSession
-                ))
+                db.add(
+                    Session(
+                        session.id,
+                        capacity,
+                        date,
+                        session.gameSession,
+                        session.playersSession,
+                    ),
+                )
                 return true
             }
         }
         return false
     }
 
-    override fun delete(id: UInt) : Boolean {
+    override fun delete(id: UInt): Boolean {
         // Delete the session object from the database mock
         db.forEach {
             // search for the session with the given id

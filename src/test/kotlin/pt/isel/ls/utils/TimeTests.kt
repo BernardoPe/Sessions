@@ -28,5 +28,4 @@ class TimeTests {
         val localDateTime2 = date2.toLocalDateTime()
         assert(localDateTime1.isBefore(localDateTime2))
     }
-
 }

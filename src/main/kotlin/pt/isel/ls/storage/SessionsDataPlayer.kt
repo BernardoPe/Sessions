@@ -64,7 +64,7 @@ interface SessionsDataPlayer {
      * @param id The player identifier
      * @param value The new player object
      */
-    fun update(id: UInt, value: Player) : Boolean
+    fun update(id: UInt, value: Player): Boolean
 
     /**
      * Delete a player from the database mock
@@ -73,7 +73,7 @@ interface SessionsDataPlayer {
      *
      * @param id The player identifier
      */
-    fun delete(id: UInt) : Boolean
+    fun delete(id: UInt): Boolean
 
     /**
      * Checks the player's token on the database
@@ -82,5 +82,4 @@ interface SessionsDataPlayer {
      * @return A boolean indicating if the player token exists in the database mock
      */
     fun getByToken(token: UUID): Player?
-
 }

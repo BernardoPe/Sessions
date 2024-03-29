@@ -9,7 +9,6 @@ data class Email(val email: String) {
     override fun toString(): String {
         return email
     }
-
 }
 
 fun String.toEmail(): Email = Email(this)

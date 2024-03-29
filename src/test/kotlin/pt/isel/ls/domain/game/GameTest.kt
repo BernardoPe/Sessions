@@ -7,7 +7,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-
 class GameTest {
 
     @Test
@@ -18,6 +17,7 @@ class GameTest {
         assertEquals("Test Developer".toName(), game.developer)
         assertEquals(setOf("RPG".toGenre(), "Adventure".toGenre()), game.genres)
     }
+
     @Test
     fun `test game creation with empty name`() {
         val exception = assertFailsWith<IllegalArgumentException> {

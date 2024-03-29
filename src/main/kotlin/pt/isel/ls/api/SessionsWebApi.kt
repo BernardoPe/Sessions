@@ -27,7 +27,6 @@ import pt.isel.ls.utils.toLocalDateTime
 import pt.isel.ls.utils.toUInt
 import java.util.*
 
-
 /**
  * The [SessionsApi] class is responsible for processing HTTP requests and returning responses.
  *
@@ -53,24 +52,19 @@ import java.util.*
 class SessionsApi(
     private val playerServices: PlayerService,
     private val gameServices: GameService,
-    private val sessionServices: SessionsService
+    private val sessionServices: SessionsService,
 ) {
 
-
     fun createPlayer(request: Request): Response = processRequest(request) {
-
         val player = parseJsonBody<PlayerCreationInputModel>(request)
         val res = playerServices.createPlayer(Name(player.name), Email(player.email))
 
         Response(CREATED)
             .header("content-type", "application/json")
             .body(Json.encodeToString(res.toPlayerCreationDTO()))
-
     }
 
-
     fun getPlayerDetails(request: Request) = processRequest(request) {
-
         val pid = request.path("pid")?.toUInt("Player Identifier") ?: throw BadRequestException("No Player Identifier provided")
         val res = playerServices.getPlayerDetails(pid)
 
@@ -80,7 +74,6 @@ class SessionsApi(
     }
 
     fun createGame(request: Request) = authHandler(request) {
-
         val game = parseJsonBody<GameCreationInputModel>(request)
         val res = gameServices.createGame(Name(game.name), Name(game.developer), game.genres.map { Genre(it) }.toSet())
 
@@ -90,7 +83,6 @@ class SessionsApi(
     }
 
     fun getGameById(request: Request) = processRequest(request) {
-
         val gid = request.path("gid")?.toUInt("GameIdentifier") ?: throw BadRequestException("No Game Identifier provided")
         val res = gameServices.getGameById(gid)
 
@@ -100,16 +92,16 @@ class SessionsApi(
     }
 
     fun getGameList(request: Request) = processRequest(request) {
-
         val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip") ?: 0u)
 
         val genres = request.query("genres")?.split(",") ?: throw BadRequestException("No Genres provided")
         val developer = request.query("developer") ?: throw BadRequestException("No Developer provided")
 
-        val res = gameServices.searchGames(genres.map { Genre(it) }.toSet(),
+        val res = gameServices.searchGames(
+            genres.map { Genre(it) }.toSet(),
             Name(developer),
             limit,
-            skip
+            skip,
         )
 
         Response(OK)
@@ -118,7 +110,6 @@ class SessionsApi(
     }
 
     fun createSession(request: Request) = authHandler(request) {
-
         val session = parseJsonBody<SessionCreationInputModel>(request)
         val res = sessionServices.createSession(session.capacity, session.gid, session.date.toLocalDateTime())
 
@@ -128,7 +119,6 @@ class SessionsApi(
     }
 
     fun addPlayerToSession(request: Request) = authHandler(request) {
-
         val sid = request.path("sid")?.toUInt("Session Identifier") ?: throw BadRequestException("No Session Identifier provided")
         val player = parseJsonBody<SessionAddPlayerInputModel>(request)
         val res = sessionServices.addPlayer(sid, player.pid)
@@ -139,7 +129,6 @@ class SessionsApi(
     }
 
     fun removePlayerFromSession(request: Request) = authHandler(request) {
-
         val sid = request.path("sid")?.toUInt("Session Identifier") ?: throw BadRequestException("No Session Identifier provided")
         val pid = request.path("pid")?.toUInt("Player Identifier") ?: throw BadRequestException("No Player Identifier provided")
         val res = sessionServices.removePlayer(sid, pid)
@@ -150,7 +139,6 @@ class SessionsApi(
     }
 
     fun updateSession(request: Request) = authHandler(request) {
-
         val session = parseJsonBody<SessionUpdateInputModel>(request)
         val sessionId = request.path("sid")?.toUInt("Session Identifier") ?: throw BadRequestException("No Session Identifier provided")
         val res = sessionServices.updateSession(sessionId, session.capacity, session.date.toLocalDateTime())
@@ -161,7 +149,6 @@ class SessionsApi(
     }
 
     fun deleteSession(request: Request): Response = authHandler(request) {
-
         val sid = request.path("sid")?.toUInt("Session Identifier") ?: throw BadRequestException("No Session Identifier provided")
         val res = sessionServices.deleteSession(sid)
 
@@ -171,7 +158,6 @@ class SessionsApi(
     }
 
     fun getSessionById(request: Request) = processRequest(request) {
-
         val sid = request.path("sid")?.toUInt("Session Identifier") ?: throw BadRequestException("No Session Identifier provided")
         val res = sessionServices.getSessionById(sid)
 
@@ -180,9 +166,7 @@ class SessionsApi(
             .body(Json.encodeToString(res.toSessionInfoDTO()))
     }
 
-
     fun getSessionList(request: Request) = processRequest(request) {
-
         val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip") ?: 0u)
         val gid = request.path("gid")?.toUInt("Game Identifier") ?: throw BadRequestException("No Game Identifier provided")
 
@@ -192,14 +176,13 @@ class SessionsApi(
             request.query("state")?.toState(),
             request.query("pid")?.toUInt("Player Identifier"),
             limit,
-            skip
+            skip,
         )
 
         Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(res.toSessionSearchDTO()))
     }
-
 
     /**
      * Handles the authentication and processes the request
@@ -214,7 +197,11 @@ class SessionsApi(
             processRequest(request, service)
         } else {
             logger.info("Unauthorized request")
-            Response(UNAUTHORIZED).header("content-type", "application/json").body(Json.encodeToString(UnauthorizedException()))
+            Response(UNAUTHORIZED).header("content-type", "application/json").body(
+                Json.encodeToString(
+                    UnauthorizedException(),
+                ),
+            )
         }
     }
 
@@ -229,31 +216,28 @@ class SessionsApi(
     private fun processRequest(request: Request, service: (Request) -> Response): Response {
         logRequest(request)
 
-        if (request.bodyString().isNotBlank() && request.header("content-type") != "application/json")
+        if (request.bodyString().isNotBlank() && request.header("content-type") != "application/json") {
             return Response(BAD_REQUEST).header("content-type", "application/json").body(
                 Json.encodeToString(
-                    UnsupportedMediaTypeException()
-                )
+                    UnsupportedMediaTypeException(),
+                ),
             )
+        }
 
         val res = try {
             service(request)
         } catch (e: SessionsExceptions) {
             Response(Status(e.status, e.description)).header("content-type", "application/json").body(Json.encodeToString(e))
-        }
-        catch (e: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException) {
             Response(BAD_REQUEST).header("content-type", "application/json").body(Json.encodeToString(SessionsExceptions(BAD_REQUEST.code, "Bad Request", e.message)))
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             logger.error(e.message, e)
             Response(INTERNAL_SERVER_ERROR).header("content-type", "application/json").body(
-                Json.encodeToString(InternalServerErrorException())
+                Json.encodeToString(InternalServerErrorException()),
             )
         }
 
         return res.also { logResponse(it) }
-
-
     }
 
     private inline fun <reified T> parseJsonBody(request: Request): T {
@@ -262,16 +246,15 @@ class SessionsApi(
             Json.decodeFromString<T>(body)
         } catch (e: SerializationException) {
             throw BadRequestException("Invalid Body")
-        }
-        catch (e: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException) {
             throw BadRequestException(e.message)
         }
     }
 
-    private fun verifyAuth(request: Request) : Boolean {
+    private fun verifyAuth(request: Request): Boolean {
         return try {
             val token = UUID.fromString(
-                request.header("Authorization")?.split(" ")?.get(1) ?: return false
+                request.header("Authorization")?.split(" ")?.get(1) ?: return false,
             )
             playerServices.authenticatePlayer(token)
         } catch (e: Exception) {
@@ -296,5 +279,4 @@ class SessionsApi(
             response.header("content-type"),
         )
     }
-
 }

@@ -2,7 +2,6 @@ package pt.isel.ls.dto
 
 import kotlinx.serialization.Serializable
 
-
 /**
  * The [SessionOperationOutputModel] class is used to represent the response body of an added player to the session
  * The request to add the player to the session is going to need:
@@ -32,7 +31,7 @@ data class SessionCreationInputModel(val capacity: UInt, val date: String, val g
 
 @Serializable
 data class SessionCreationOutputModel(
-    val sid: UInt
+    val sid: UInt,
     /** or UUID */
 )
 
@@ -59,7 +58,7 @@ data class SessionInfoOutputModel(
     val capacity: UInt,
     val date: String,
     val gameSession: GameInfoOutputModel,
-    val playersSession: List<PlayerInfoOutputModel>
+    val playersSession: List<PlayerInfoOutputModel>,
 )
 
 /**

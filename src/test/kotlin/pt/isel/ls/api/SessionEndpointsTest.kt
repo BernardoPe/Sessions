@@ -6,7 +6,6 @@ import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.data.domain.*
 import pt.isel.ls.data.domain.game.Game
@@ -25,7 +24,6 @@ import pt.isel.ls.utils.toLocalDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-
 class SessionEndpointsTest {
 
     @Test
@@ -38,7 +36,7 @@ class SessionEndpointsTest {
         // Act
         val response = api.createSession(request)
         // Assert
-        assertEquals(response.status,Status.CREATED)
+        assertEquals(response.status, Status.CREATED)
     }
 
     @Test
@@ -51,8 +49,8 @@ class SessionEndpointsTest {
         // Act
         val response = api.createSession(request)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
 
     @Test
@@ -65,8 +63,8 @@ class SessionEndpointsTest {
         // Act
         val response = api.createSession(request)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
 
     @Test
@@ -78,8 +76,8 @@ class SessionEndpointsTest {
         // Act
         val response = api.createSession(request)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.UNAUTHORIZED)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.UNAUTHORIZED)
     }
 
     @Test
@@ -92,8 +90,8 @@ class SessionEndpointsTest {
         // Act
         val response = api.createSession(request)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.NOT_FOUND)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.NOT_FOUND)
     }
 
     @Test
@@ -106,8 +104,8 @@ class SessionEndpointsTest {
         // Act
         val response = api.createSession(request)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
 
     @Test
@@ -120,8 +118,8 @@ class SessionEndpointsTest {
         // Act
         val response = api.createSession(request)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
 
     @Test
@@ -135,7 +133,7 @@ class SessionEndpointsTest {
         // Act
         val response = api.addPlayerToSession(routedRequest)
         //  Assert
-        assertEquals(response.status,Status.OK)
+        assertEquals(response.status, Status.OK)
     }
 
     @Test
@@ -148,9 +146,10 @@ class SessionEndpointsTest {
         // Act
         val response = api.addPlayerToSession(routedRequest)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.UNAUTHORIZED)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.UNAUTHORIZED)
     }
+
     @Test
     fun `add player to session, session not found`() {
         // Arrange
@@ -162,8 +161,8 @@ class SessionEndpointsTest {
         // Act
         val response = api.addPlayerToSession(routedRequest)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.NOT_FOUND)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.NOT_FOUND)
     }
 
     @Test
@@ -177,8 +176,8 @@ class SessionEndpointsTest {
         // Act
         val response = api.addPlayerToSession(routedRequest)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.NOT_FOUND)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.NOT_FOUND)
     }
 
     @Test
@@ -192,8 +191,8 @@ class SessionEndpointsTest {
         // Act
         val response = api.addPlayerToSession(routedRequest)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
 
     @Test
@@ -208,8 +207,8 @@ class SessionEndpointsTest {
         // Act
         val response = api.addPlayerToSession(routedRequest)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
 
     @Test
@@ -238,7 +237,7 @@ class SessionEndpointsTest {
         // Act
         val response = api.removePlayerFromSession(routedRequest)
         //  Assert
-        assertEquals(response.status,Status.OK)
+        assertEquals(response.status, Status.OK)
     }
 
     @Test
@@ -251,8 +250,8 @@ class SessionEndpointsTest {
         // Act
         val response = api.removePlayerFromSession(routedRequest)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.UNAUTHORIZED)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.UNAUTHORIZED)
     }
 
     @Test
@@ -266,8 +265,8 @@ class SessionEndpointsTest {
         // Act
         val response = api.removePlayerFromSession(routedRequest)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.NOT_FOUND)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.NOT_FOUND)
     }
 
     @Test
@@ -281,8 +280,8 @@ class SessionEndpointsTest {
         // Act
         val response = api.removePlayerFromSession(routedRequest)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.NOT_FOUND)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.NOT_FOUND)
     }
 
     @Test
@@ -324,7 +323,7 @@ class SessionEndpointsTest {
         // Act
         val response = api.updateSession(routedRequest)
         //  Assert
-        assertEquals(response.status,Status.OK)
+        assertEquals(response.status, Status.OK)
     }
 
     @Test
@@ -337,8 +336,8 @@ class SessionEndpointsTest {
         // Act
         val response = api.updateSession(routedRequest)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.UNAUTHORIZED)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.UNAUTHORIZED)
     }
 
     @Test
@@ -352,8 +351,8 @@ class SessionEndpointsTest {
         // Act
         val response = api.updateSession(routedRequest)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.NOT_FOUND)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.NOT_FOUND)
     }
 
     @Test
@@ -367,7 +366,7 @@ class SessionEndpointsTest {
         // Act
         val response = api.updateSession(routedRequest)
         //  Assert
-        assertEquals(response.status,Status.BAD_REQUEST)
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
 
     @Test
@@ -381,8 +380,8 @@ class SessionEndpointsTest {
         // Act
         val response = api.updateSession(routedRequest)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
 
     @Test
@@ -396,8 +395,8 @@ class SessionEndpointsTest {
         // Act
         val response = api.updateSession(routedRequest)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
 
     @Test
@@ -411,50 +410,50 @@ class SessionEndpointsTest {
         // Act
         val response = api.updateSession(routedRequest)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
 
     @Test
     fun `delete session, no auth`() {
-        //Arrange
+        // Arrange
         val request = Request(Method.DELETE, "/sessions/1")
             .header("Content-Type", "application/json")
         val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{sid}"))
-        //Act
+        // Act
         val response = api.deleteSession(routedRequest)
-        //Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.UNAUTHORIZED)
+        // Assert
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.UNAUTHORIZED)
     }
 
     @Test
     fun `delete session, not found`() {
-        //Arrange
+        // Arrange
         val request = Request(Method.DELETE, "/sessions/10")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
 
         val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{sid}"))
-        //Act
+        // Act
         val response = api.deleteSession(routedRequest)
-        //Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.NOT_FOUND)
+        // Assert
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.NOT_FOUND)
     }
 
     @Test
     fun `delete session, should delete session`() {
-        //Arrange
+        // Arrange
         val request = Request(Method.DELETE, "/sessions/1")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
 
         val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{sid}"))
-        //Act
+        // Act
         val response = api.deleteSession(routedRequest)
-        //Assert
-        assertEquals(response.header("Content-Type"),"application/json")
+        // Assert
+        assertEquals(response.header("Content-Type"), "application/json")
         assertEquals(response.status, Status.OK)
     }
 
@@ -470,12 +469,12 @@ class SessionEndpointsTest {
         val sessionBodyString = response.bodyString()
         val session = Json.decodeFromString<SessionInfoOutputModel>(sessionBodyString)
         //  Assert
-        assertEquals(response.status,Status.OK)
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(session.gameSession.gid,2u)
-        assertEquals(session.capacity,100u)
-        assertEquals(session.date,"2030-05-01T00:00:00".toLocalDateTime().toString())
-        assertEquals(session.sid,1u)
+        assertEquals(response.status, Status.OK)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(session.gameSession.gid, 2u)
+        assertEquals(session.capacity, 100u)
+        assertEquals(session.date, "2030-05-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(session.sid, 1u)
     }
 
     @Test
@@ -488,8 +487,8 @@ class SessionEndpointsTest {
         // Act
         val response = api.getSessionById(routedRequest)
         //  Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.NOT_FOUND)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.NOT_FOUND)
     }
 
     @Test
@@ -502,18 +501,19 @@ class SessionEndpointsTest {
         val sessionListJson = response.bodyString()
         val sessionList = Json.decodeFromString<SessionSearchResultOutputModel>(sessionListJson)
         //  Assert
-        assertEquals(response.status,Status.OK)
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(sessionList.size,2)
-        assertEquals(sessionList[0].gameSession.gid,2u)
-        assertEquals(sessionList[0].capacity,100u)
-        assertEquals(sessionList[0].date,"2030-05-01T00:00:00".toLocalDateTime().toString())
-        assertEquals(sessionList[0].sid,1u)
-        assertEquals(sessionList[1].gameSession.gid,2u)
-        assertEquals(sessionList[1].capacity,100u)
-        assertEquals(sessionList[1].date,"2030-06-01T00:00:00".toLocalDateTime().toString())
-        assertEquals(sessionList[1].sid,2u)
+        assertEquals(response.status, Status.OK)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(sessionList.size, 2)
+        assertEquals(sessionList[0].gameSession.gid, 2u)
+        assertEquals(sessionList[0].capacity, 100u)
+        assertEquals(sessionList[0].date, "2030-05-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList[0].sid, 1u)
+        assertEquals(sessionList[1].gameSession.gid, 2u)
+        assertEquals(sessionList[1].capacity, 100u)
+        assertEquals(sessionList[1].date, "2030-06-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList[1].sid, 2u)
     }
+
     @Test
     fun `test get session list invalid params should give bad request`() {
         // Arrange
@@ -522,9 +522,10 @@ class SessionEndpointsTest {
         // Act
         val response = api.getSessionList(routedRequest)
         // Assert
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(response.status,Status.BAD_REQUEST)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
+
     @Test
     fun `test get session list limit and skip should give session list`() {
         // Arrange
@@ -535,15 +536,14 @@ class SessionEndpointsTest {
         val sessionListJson = response.bodyString()
         val sessionList = Json.decodeFromString<SessionSearchResultOutputModel>(sessionListJson)
         //  Assert
-        assertEquals(response.status,Status.OK)
-        assertEquals(response.header("Content-Type"),"application/json")
-        assertEquals(sessionList.size,1)
-        assertEquals(sessionList[0].gameSession.gid,2u)
-        assertEquals(sessionList[0].capacity,100u)
-        assertEquals(sessionList[0].date,"2030-06-01T00:00:00".toLocalDateTime().toString())
-        assertEquals(sessionList[0].sid,2u)
+        assertEquals(response.status, Status.OK)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(sessionList.size, 1)
+        assertEquals(sessionList[0].gameSession.gid, 2u)
+        assertEquals(sessionList[0].capacity, 100u)
+        assertEquals(sessionList[0].date, "2030-06-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList[0].sid, 2u)
     }
-
 
     @BeforeEach
     fun clear() {
@@ -559,15 +559,14 @@ class SessionEndpointsTest {
         private var api = SessionsApi(PlayerService(storage), GameService(storage), SessionsService(storage))
 
         fun setup() {
-
             val mockGame = Game(1u, "TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre()))
             val mockGame2 = Game(2u, "TestName123".toName(), "TestDeveloper123".toName(), setOf("RPG".toGenre()))
 
-            val mockSession = Session(1u,100u, "2030-05-01T00:00:00".toLocalDateTime(), mockGame2, setOf())
-            val mockSession2 = Session(2u,100u, "2030-06-01T00:00:00".toLocalDateTime(), mockGame2, setOf())
+            val mockSession = Session(1u, 100u, "2030-05-01T00:00:00".toLocalDateTime(), mockGame2, setOf())
+            val mockSession2 = Session(2u, 100u, "2030-06-01T00:00:00".toLocalDateTime(), mockGame2, setOf())
 
-            val mockPlayer = Player(2u,"TestName".toName(), "testemail@test.pt".toEmail(),0L)
-            val mockPlayer2 = Player(3u,"TestName".toName(), "testemail2@test.pt".toEmail(),0L)
+            val mockPlayer = Player(2u, "TestName".toName(), "testemail@test.pt".toEmail(), 0L)
+            val mockPlayer2 = Player(3u, "TestName".toName(), "testemail2@test.pt".toEmail(), 0L)
 
             storage.game.create(mockGame)
             storage.game.create(mockGame2)
@@ -579,6 +578,5 @@ class SessionEndpointsTest {
             storage.session.addPlayer(mockSession.id, mockPlayer)
             storage.session.addPlayer(mockSession.id, mockPlayer2)
         }
-
     }
 }

@@ -1,6 +1,5 @@
 package pt.isel.ls.storage.db
 
-
 import pt.isel.ls.data.domain.Genre
 import pt.isel.ls.data.domain.Name
 import pt.isel.ls.data.domain.game.Game
@@ -15,10 +14,9 @@ class SessionsDataDBGame(private val connection: Connection) : SessionsDataGame 
         connection.autoCommit = false
     }
     override fun create(game: Game): UInt {
-
         val statement = connection.prepareStatement(
             "INSERT INTO games (name, developer, genres) VALUES (?, ?, ?)",
-            Statement.RETURN_GENERATED_KEYS
+            Statement.RETURN_GENERATED_KEYS,
         )
 
         statement.setString(1, game.name.toString())
@@ -33,9 +31,8 @@ class SessionsDataDBGame(private val connection: Connection) : SessionsDataGame 
     }
 
     override fun isGameNameStored(name: Name): Boolean {
-
         val statement = connection.prepareStatement(
-            "SELECT * FROM games WHERE name = ?"
+            "SELECT * FROM games WHERE name = ?",
         )
 
         statement.setString(1, name.toString())
@@ -46,9 +43,8 @@ class SessionsDataDBGame(private val connection: Connection) : SessionsDataGame 
     }
 
     override fun getGamesSearch(genres: Set<Genre>, developer: Name, limit: UInt, skip: UInt): List<Game> {
-
         val statement = connection.prepareStatement(
-            "SELECT * FROM games WHERE genres @> ? AND developer = ? LIMIT ? OFFSET ?"
+            "SELECT * FROM games WHERE genres @> ? AND developer = ? LIMIT ? OFFSET ?",
         )
 
         statement.setArray(1, connection.createArrayOf("VARCHAR", genres.map { it.toString() }.toTypedArray()))
@@ -59,26 +55,22 @@ class SessionsDataDBGame(private val connection: Connection) : SessionsDataGame 
         connection.commit()
 
         return resultSet.getGames().also { statement.close() }
-
     }
 
     override fun getAllGames(): List<Game> {
-
         val statement = connection.prepareStatement(
-            "SELECT * FROM games"
+            "SELECT * FROM games",
         )
 
         val resultSet = statement.executeQuery()
         connection.commit()
 
         return resultSet.getGames().also { statement.close() }
-
     }
 
     override fun getById(id: UInt): Game? {
-
         val statement = connection.prepareStatement(
-            "SELECT * FROM games WHERE id = ?"
+            "SELECT * FROM games WHERE id = ?",
         )
 
         statement.setInt(1, id.toInt())
@@ -86,12 +78,11 @@ class SessionsDataDBGame(private val connection: Connection) : SessionsDataGame 
         connection.commit()
 
         return resultSet.getGames().firstOrNull().also { statement.close() }
-
     }
 
     override fun update(value: Game): Boolean {
         val statement = connection.prepareStatement(
-            "UPDATE games SET name = ?, developer = ?, genres = ? WHERE id = ?"
+            "UPDATE games SET name = ?, developer = ?, genres = ? WHERE id = ?",
         )
 
         statement.setString(1, value.name.toString())
@@ -101,26 +92,24 @@ class SessionsDataDBGame(private val connection: Connection) : SessionsDataGame 
         val updated = statement.executeUpdate()
         connection.commit()
 
-        return updated > 0 .also { statement.close() }
+        return updated > 0.also { statement.close() }
     }
 
     override fun delete(id: UInt): Boolean {
         val statement = connection.prepareStatement(
-            "DELETE FROM games WHERE id = ?"
+            "DELETE FROM games WHERE id = ?",
         )
 
         statement.setInt(1, id.toInt())
         val deleted = statement.executeUpdate()
         connection.commit()
 
-        return deleted > 0 .also { statement.close() }
+        return deleted > 0.also { statement.close() }
     }
-
 
     private fun ResultSet.getGames(): List<Game> {
         var games = listOf<Game>()
         while (this.next()) {
-
             var genres = emptySet<Genre>()
             val genreArr = this.getArray("genres").resultSet
 
@@ -132,10 +121,9 @@ class SessionsDataDBGame(private val connection: Connection) : SessionsDataGame 
                 this.getInt("id").toUInt(),
                 Name(this.getString("name")),
                 Name(this.getString("developer")),
-                genres
+                genres,
             )
         }
         return games
     }
-
 }

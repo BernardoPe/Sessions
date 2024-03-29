@@ -1,24 +1,24 @@
 package pt.isel.ls.storage.db
 
-import java.sql.Connection
 import pt.isel.ls.data.domain.Email
 import pt.isel.ls.data.domain.Name
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.storage.SessionsDataPlayer
+import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Statement
 import java.util.*
 
-class SessionsDataDBPlayer(private val connection : Connection) : SessionsDataPlayer {
+class SessionsDataDBPlayer(private val connection: Connection) : SessionsDataPlayer {
 
     init {
         connection.autoCommit = false
     }
 
-    override fun create(player : Player): Pair<UInt, UUID> {
+    override fun create(player: Player): Pair<UInt, UUID> {
         val statement = connection.prepareStatement(
             "INSERT INTO players (name, email,token_hash) VALUES (?, ?, ?)",
-                Statement.RETURN_GENERATED_KEYS
+            Statement.RETURN_GENERATED_KEYS,
         )
 
         val token = UUID.randomUUID()
@@ -31,12 +31,12 @@ class SessionsDataDBPlayer(private val connection : Connection) : SessionsDataPl
 
         val generatedKeys = statement.generatedKeys
         generatedKeys.next()
-        return Pair(generatedKeys.getInt(1).toUInt(),token)
+        return Pair(generatedKeys.getInt(1).toUInt(), token)
     }
 
     override fun getById(id: UInt): Player? {
         val statement = connection.prepareStatement(
-            "SELECT * FROM players WHERE id = ?"
+            "SELECT * FROM players WHERE id = ?",
         )
 
         statement.setInt(1, id.toInt())
@@ -48,7 +48,7 @@ class SessionsDataDBPlayer(private val connection : Connection) : SessionsDataPl
 
     override fun isEmailStored(email: Email): Boolean {
         val statement = connection.prepareStatement(
-            "SELECT * FROM players WHERE email = ?"
+            "SELECT * FROM players WHERE email = ?",
         )
 
         statement.setString(1, email.toString())
@@ -60,7 +60,7 @@ class SessionsDataDBPlayer(private val connection : Connection) : SessionsDataPl
 
     override fun getAll(): List<Player> {
         val statement = connection.prepareStatement(
-            "SELECT * FROM players"
+            "SELECT * FROM players",
         )
 
         val resultSet = statement.executeQuery()
@@ -71,7 +71,7 @@ class SessionsDataDBPlayer(private val connection : Connection) : SessionsDataPl
 
     override fun update(id: UInt, value: Player): Boolean {
         val statement = connection.prepareStatement(
-            "UPDATE players SET name = ?, email = ? WHERE id = ?"
+            "UPDATE players SET name = ?, email = ? WHERE id = ?",
         )
 
         statement.setString(1, value.name.toString())
@@ -85,7 +85,7 @@ class SessionsDataDBPlayer(private val connection : Connection) : SessionsDataPl
 
     override fun delete(id: UInt): Boolean {
         val statement = connection.prepareStatement(
-            "DELETE FROM players WHERE id = ?"
+            "DELETE FROM players WHERE id = ?",
         )
 
         statement.setInt(1, id.toInt())
@@ -97,7 +97,7 @@ class SessionsDataDBPlayer(private val connection : Connection) : SessionsDataPl
 
     override fun getByToken(token: UUID): Player? {
         val statement = connection.prepareStatement(
-            "SELECT * FROM players WHERE token_hash = ?"
+            "SELECT * FROM players WHERE token_hash = ?",
         )
 
         statement.setLong(1, token.hash())
@@ -107,23 +107,20 @@ class SessionsDataDBPlayer(private val connection : Connection) : SessionsDataPl
         return resultSet.getPlayers().firstOrNull().also { statement.close() }
     }
 
-    private fun UUID.hash() : Long {
+    private fun UUID.hash(): Long {
         return leastSignificantBits xor mostSignificantBits
     }
 
-
     private fun ResultSet.getPlayers(): List<Player> {
-
-         var players = listOf<Player>()
-         while (this.next()) {
+        var players = listOf<Player>()
+        while (this.next()) {
             players += Player(
                 this.getInt("id").toUInt(),
                 Name(this.getString("name")),
                 Email(this.getString("email")),
-                this.getString("token_hash").toLong()
+                this.getString("token_hash").toLong(),
             )
         }
         return players
     }
-
 }
