@@ -91,7 +91,11 @@ function button(props, ...children) {
     return createElement('button', props, ...children);
 }
 
-export { body, div, ul, li, a, button, input, p, h1, h2, br, img, span, h3, h4, h5, h6 };
+function ol(props, ...children) {
+    return createElement('ol', props, ...children);
+}
+
+export { body, div, ul, li, a, button, input, p, h1, h2, br, img, span, h3, h4, h5, h6, ol};
 
 // Test
 function _test() {

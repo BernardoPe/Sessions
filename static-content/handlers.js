@@ -14,7 +14,7 @@ Note: You have to use the DOM Api, but not directly
 */
 
 const API_URL = 'http://localhost:8080/';
-import { body, div, ul, li, a, button, input, h1, h2, h3, h4, h5, h6, p, span, img, br, ol, _test } from './WebDSL/web_dsl.js';
+import { body, div, ul, li, a, button, input, h1, h2, h3, h4, h5, h6, p, span, img, br, ol } from './WebDSL/web_dsl.js';
 function getHome(mainContent, req) {
     const h2 = document.createElement("h2")
     const selectionText = document.createTextNode("Select the following options: ")
