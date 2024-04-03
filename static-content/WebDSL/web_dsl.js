@@ -1,67 +1,70 @@
 // A dsl to create html elements
 
-function createElement(tagName, ...children) {
-    if (typeof tagName !== 'string') throw new Error('tagName must be a string');
-    const element= document.createElement(tagName);
-    children.forEach(child => {
+function createElement(tagName, props, ...children) {
+    const element = document.createElement(tagName);
+
+    // Set the properties
+    if (props !== null && props !== undefined) {
+        for (const key in props) {
+            element[key] = props[key];
+        }
+    }
+
+    // Append the children
+    for (const child of children) {
         if (typeof child === 'string') {
             element.appendChild(document.createTextNode(child));
         } else {
             element.appendChild(child);
         }
-    });
+    }
+
     return element;
 }
 
 // For now using free functions. In the future, we can create a class to represent the elements
 
-function body(...children) {
-    return createElement('body', ...children);
+function body(props, ...children) {
+    return createElement('body', props, ...children);
 }
 
-function head(...children) {
-    return createElement('head', ...children);
+function div(props, ...children) {
+    return createElement('div', props, ...children);
 }
 
-function div(...children) {
-    return createElement('div', ...children);
+function ul(props, ...children) {
+    return createElement('ul', props, ...children);
 }
 
-function ul(...children) {
-    return createElement('ul', ...children);
+function li(props, ...children) {
+    return createElement('li', props, ...children);
 }
 
-function li(...children) {
-    return createElement('li', ...children);
+function a(href, props, ...children) {
+    return createElement('a', { href, ...props }, ...children);
 }
 
-function a(href: String, ...children) {
-    const element = createElement('a', ...children);
-    if (href !== undefined) element.href = href;
-    return element;
+function button(props, ...children) {
+    return createElement('button', props, ...children);
 }
 
-function button(...children) {
-    return createElement('button', ...children);
-}
-
-function input(type: String, ...children) {
-    const element = createElement('input', ...children);
-    if (type !== undefined) element.type = type;
-    return element;
+function input(props, ...children) {
+    return createElement('input', props, ...children);
 }
 
 // Test
 function _test() {
-    const element = div(
-        ul(
-            li(a('https://www.google.com', 'Google')),
-            li(a('https://www.bing.com', 'Bing'))
-        ),
-        button('Click me'),
-        input('text')
+    const element = body(null,
+        div({ id: 'container' },
+            ul(null,
+                li(null, a('https://www.google.com', null, 'Google')),
+                li(null, a('https://www.facebook.com', null, 'Facebook')),
+                li(null, a('https://www.twitter.com', null, 'Twitter'))
+            ),
+            button({ onclick: () => alert('Hello') }, 'Click me'),
+            input({ type: 'text', placeholder: 'Enter your name' })
+        )
     );
 
-    // print the element
-    console.log(element.outerHTML);
+    document.body.appendChild(element);
 }
