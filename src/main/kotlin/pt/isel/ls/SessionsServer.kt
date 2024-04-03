@@ -4,8 +4,10 @@ import org.http4k.core.Method.DELETE
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
 import org.http4k.core.Method.PUT
+import org.http4k.routing.ResourceLoader
 import org.http4k.routing.bind
 import org.http4k.routing.routes
+import org.http4k.routing.singlePageApp
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
 import org.postgresql.ds.PGSimpleDataSource
@@ -73,7 +75,7 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
             playerRoutes,
             gameRoutes,
             sessionRoutes,
-            // singlePageApp(ResourceLoader.Directory("static-content")),
+            singlePageApp(ResourceLoader.Directory("static-content")),
         )
 
     private val jettyServer = sessionsHandler.asServer(Jetty(port))
