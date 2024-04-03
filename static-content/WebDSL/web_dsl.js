@@ -24,32 +24,72 @@ function createElement(tagName, props, ...children) {
 
 // For now using free functions. In the future, we can create a class to represent the elements
 
-function body(props, ...children) {
+function body(props=null, ...children) {
     return createElement('body', props, ...children);
 }
 
-function div(props, ...children) {
+function div(props=null, ...children) {
     return createElement('div', props, ...children);
 }
 
-function ul(props, ...children) {
+function ul(props=null, ...children) {
     return createElement('ul', props, ...children);
 }
 
-function li(props, ...children) {
+function li(props=null, ...children) {
     return createElement('li', props, ...children);
 }
 
-function a(href, props, ...children) {
+function a(href, props=null, ...children) {
     return createElement('a', { href, ...props }, ...children);
 }
 
-function button(props, ...children) {
+function button(props=null, ...children) {
     return createElement('button', props, ...children);
 }
 
-function input(props, ...children) {
+function input(props=null, ...children) {
     return createElement('input', props, ...children);
+}
+
+function h1(props=null, ...children) {
+    return createElement('h1', props, ...children);
+}
+
+function h2(props=null, ...children) {
+    return createElement('h2', props, ...children);
+}
+
+function h3(props=null, ...children) {
+    return createElement('h3', props, ...children);
+}
+
+function h4(props=null, ...children) {
+    return createElement('h4', props, ...children);
+}
+
+function h5(props=null, ...children) {
+    return createElement('h5', props, ...children);
+}
+
+function h6(props=null, ...children) {
+    return createElement('h6', props, ...children);
+}
+
+function p(props=null, ...children) {
+    return createElement('p', props, ...children);
+}
+
+function span(props=null, ...children) {
+    return createElement('span', props, ...children);
+}
+
+function img(src, props=null, ...children) {
+    return createElement('img', { src, ...props }, ...children);
+}
+
+function br(...children) {
+    return createElement('br', null, ...children);
 }
 
 // Test
