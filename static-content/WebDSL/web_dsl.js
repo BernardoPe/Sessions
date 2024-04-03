@@ -1,6 +1,7 @@
 // A dsl to create html elements
 
 function createElement(tagName, ...children) {
+    if (typeof tagName !== 'string') throw new Error('tagName must be a string');
     const element= document.createElement(tagName);
     children.forEach(child => {
         if (typeof child === 'string') {
@@ -26,9 +27,9 @@ function li(...children) {
     return createElement('li', ...children);
 }
 
-function a(href, ...children) {
+function a(href: String, ...children) {
     const element = createElement('a', ...children);
-    element.href = href;
+    if (href !== undefined) element.href = href;
     return element;
 }
 
@@ -36,9 +37,9 @@ function button(...children) {
     return createElement('button', ...children);
 }
 
-function input(type, ...children) {
+function input(type: String, ...children) {
     const element = createElement('input', ...children);
-    element.type = type;
+    if (type !== undefined) element.type = type;
     return element;
 }
 
