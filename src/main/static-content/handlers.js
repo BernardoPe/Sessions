@@ -16,11 +16,34 @@ Note: You have to use the DOM Api, but not directly
 const API_URL = 'http://localhost:8080/';
 
 function getHome(mainContent, req) {
-    // TODO
+    const h1 = document.createElement("h1")
+    const text = document.createTextNode("Home")
+    h1.appendChild(text)
+    mainContent.replaceChildren(h1)
 }
 
 function getGameSearch(mainContent, req) {
-    // TODO
+    fetch(API_BASE_URL + "games/search")
+        .then(res => res.json())
+        .then(games => {
+            const div = document.createElement("div")
+
+            const h1 = document.createElement("h1")
+            const text = document.createTextNode("Game Search")
+            h1.appendChild(text)
+            div.appendChild(h1)
+
+            games.forEach(s => {
+                const p = document.createElement("p")
+                const a = document.createElement("a")
+                const aText = document.createTextNode("Link Example to games/" + s.number);
+                a.appendChild(aText)
+                a.href = "#games/search/" + s.number
+                p.appendChild(a)
+                div.appendChild(p)
+            })
+            mainContent.replaceChildren(div)
+        })
 }
 
 function getSessionSearch(mainContent, req) {
