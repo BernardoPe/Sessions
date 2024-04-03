@@ -14,7 +14,7 @@ Note: You have to use the DOM Api, but not directly
 */
 
 const API_URL = 'http://localhost:8080/';
-
+import { body, div, ul, li, a, button, input, h1, h2, h3, h4, h5, h6, p, span, img, br, ol, _test } from './WebDSL/web_dsl.js';
 function getHome(mainContent, req) {
     const h2 = document.createElement("h2")
     const selectionText = document.createTextNode("Select the following options: ")
@@ -86,11 +86,57 @@ function getGameDetails(mainContent, req) {
 }
 
 function getSessionDetails(mainContent, req) {
-    // TODO
+    const sessionId = req.params.sid
+    fetch(API_URL + `sessions/${sessionId}`)
+        .then(res => {
+            if (!res.ok) {
+                mainContent.replaceChildren(p(null,"Session not found"))
+            }
+            else {
+                return res.json()
+            }
+        })
+        .then(session => {
+            const h2Session = h2(null,"Session details")
+            const list = ul(null,
+                li(null, p(null, "Date : " + session.date)),
+                li(null,
+                    p(null, "Game : ",
+                        a(`#games/${session.gameSession.gid}`, null, session.gameSession.name))
+                ),
+                li( null,p(null, "Capacity :" + session.capacity)),
+                li(null,
+                    p(null, "Players : "),
+                    ul(null,
+                        ...session.playersSession.map(player => li(null, a(`#players/${player.pid}`, null, player.name)))
+                    )
+                )
+            )
+            mainContent.replaceChildren(h2Session, list)
+        })
 }
 
 function getPlayerDetails(mainContent, req) {
-    // TODO
+    const playerId = req.params.pid
+    fetch(API_URL + `players/${playerId}`)
+        .then(res => {
+            if (!res.ok) {
+                mainContent.replaceChildren(p(null,"Player not found"))
+            }
+            else {
+                return res.json()
+            }
+        })
+        .then(player => {
+            const h2Player = h2("Player details")
+            const list = ul(null,
+                li(null,"Name : " + player.name),
+                li(null,"Number : " + player.pid),
+                li(null,"Email : " + player.email)
+            )
+            const anchor = a(`#sessions/searchResults?pid=${player.pid}`, null,"Sessions with this player")
+            mainContent.replaceChildren(h2Player, list, anchor)
+        })
 }
 
 export default {

@@ -151,8 +151,7 @@ database interactions within a SessionsDataManager instance.
 
 For data access, we implemented the `SessionsDataManager` class, which is responsible for managing storage, be it in memory or in a database.
 
-We also implemented the `SessionsDataGame`, `SessionsDataPlayer`, and `SessionsDataSession` interfaces, which are responsible for managing the data of the respective entities.
-and support different types of implementations, such as in-memory storage or database storage.
+We also implemented the `SessionsDataGame`, `SessionsDataPlayer`, and `SessionsDataSession` interfaces, which are responsible for managing the data of the respective entities and support different types of implementations, such as in-memory storage or database storage.
 
 For the storage interface implementation, we created the `SessionsDataGameDB`, `SessionsDataPlayerDB`, and `SessionsDataSessionDB` classes for database storage,
 and the `SessionsDataGameMem`, `SessionsDataPlayerMem`, and `SessionsDataSessionMem` classes for in-memory storage.
@@ -164,7 +163,7 @@ As said in the Request Details section, the application processes the request at
 In case of incorrect request parametrization, the application catches the exception and returns a 400 Bad Request response. This is because the API layer is responsible for validating the request parameters and checking for any errors.
 
 In case of a database error, the application catches the exception and returns a 500 Internal Server Error response. This is
-because the service layer is responsible for handling the business logic of the application and so the database methods should not be expected.
+because the service layer is responsible for handling the business logic of the application and so the database methods should not be expected
 to throw exceptions.
 
 To help with error handling for different types of errors, we created the `SessionsException` class, which is responsible for holding the status code, description, and cause of the error. This class is a throwable class

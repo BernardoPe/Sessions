@@ -1,7 +1,7 @@
 
 // import jest
 const { test, expect, describe } = require('@jest/globals');
-const { createElement, div, ul, li, a, button, input } = require('../web_dsl.js');
+import { body, div, ul, li, a, button, input, h1, h2, h3, h4, h5, h6, p, span, img, br, ol, _test } from '../webdsl.js';
 
 describe('WebDSL', () => {
     test('createElement creates an element with correct tag and children', () => {

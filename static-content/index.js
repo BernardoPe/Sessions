@@ -22,13 +22,13 @@ function loadHandler(){
     // page with search results, with search query parameters in the URL query string
     router.addRouteHandler("games/searchResults", handlers.getGameSearchResults)
     // page with search results, with search query parameters in the URL query string
-    router.addRouteHandler("sessions/:gid/searchResults", handlers.getSessionSearchResults)
+    router.addRouteHandler("sessions/searchResults", handlers.getSessionSearchResults)
     // page with game details
     router.addRouteHandler("games/:gid", handlers.getGameDetails)
     // page with session details
     router.addRouteHandler("sessions/:sid", handlers.getSessionDetails)
     // page with player details
-    router.addRouteHandler("players/:pid", handlers.getPlayerDetails())
+    router.addRouteHandler("players/:pid", handlers.getPlayerDetails)
 
     router.addDefaultNotFoundRouteHandler(() => window.location.hash = "home")
 

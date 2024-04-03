@@ -44,10 +44,6 @@ function a(href, props=null, ...children) {
     return createElement('a', { href, ...props }, ...children);
 }
 
-function button(props=null, ...children) {
-    return createElement('button', props, ...children);
-}
-
 function input(props=null, ...children) {
     return createElement('input', props, ...children);
 }
@@ -91,6 +87,11 @@ function img(src, props=null, ...children) {
 function br(...children) {
     return createElement('br', null, ...children);
 }
+function button(props, ...children) {
+    return createElement('button', props, ...children);
+}
+
+export { body, div, ul, li, a, button, input, p, h1, h2, br, img, span, h3, h4, h5, h6 };
 
 // Test
 function _test() {
