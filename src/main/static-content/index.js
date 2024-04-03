@@ -28,7 +28,7 @@ function loadHandler(){
     // page with session details
     router.addRouteHandler("sessions/:sid", handlers.getSessionDetails)
     // page with player details
-    router.addRouteHandler("players/:pid", handlers.getCreateSession)
+    router.addRouteHandler("players/:pid", handlers.getPlayerDetails())
 
     router.addDefaultNotFoundRouteHandler(() => window.location.hash = "home")
 

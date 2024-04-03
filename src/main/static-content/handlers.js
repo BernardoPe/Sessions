@@ -43,7 +43,7 @@ function getSessionDetails(mainContent, req) {
     // TODO
 }
 
-function getCreateSession(mainContent, req) {
+function getPlayerDetails(mainContent, req) {
     // TODO
 }
 
@@ -55,5 +55,5 @@ export default {
     getSessionSearchResults,
     getGameDetails,
     getSessionDetails,
-    getCreateSession
+    getPlayerDetails
 }
