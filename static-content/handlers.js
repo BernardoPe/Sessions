@@ -16,14 +16,37 @@ Note: You have to use the DOM Api, but not directly
 const API_URL = 'http://localhost:8080/';
 
 function getHome(mainContent, req) {
-    const h1 = document.createElement("h1")
-    const text = document.createTextNode("Home")
-    h1.appendChild(text)
-    mainContent.replaceChildren(h1)
+    const h2 = document.createElement("h2")
+    const selectionText = document.createTextNode("Select the following options: ")
+    const gameSearchText = document.createTextNode("Game Search")
+    const sessionSearchText = document.createTextNode("Session Search")
+    const playerText = document.createTextNode("Player Details")
+    const ol = document.createElement("OL")
+    const liGames = document.createElement("LI")
+    const liSessions = document.createElement("LI")
+    const liPlayer = document.createElement("LI")
+    const aGames = document.createElement("a")
+    const aSessions = document.createElement("a")
+    const aPlayer = document.createElement("a")
+    h2.appendChild(selectionText)
+    liGames.appendChild(aGames)
+    liSessions.appendChild(aSessions)
+    liPlayer.appendChild(aPlayer)
+    aGames.appendChild(gameSearchText)
+    liSessions.appendChild(sessionSearchText)
+    liPlayer.appendChild(playerText)
+    aGames.href = "#games/search"
+    aSessions.href = "#sessions/search"
+    aPlayer.href = "#players/:pid"
+    ol.appendChild(liGames)
+    ol.appendChild(liSessions)
+    ol.appendChild(liPlayer)
+    mainContent.replaceChildren(h2)
+    mainContent.replaceChildren(ol)
 }
 
 function getGameSearch(mainContent, req) {
-    fetch(API_BASE_URL + "games/search")
+    fetch(API_BASE_URL + "games/search", {body: JSON.stringify(req)})
         .then(res => res.json())
         .then(games => {
             const div = document.createElement("div")
