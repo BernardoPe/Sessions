@@ -62,11 +62,16 @@ class SessionsDataMemSession : SessionsDataSession {
         return db.find { it.id == id }
     }
 
-    override fun getSessionsSearch(gid: UInt, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): List<Session> {
+    override fun getSessionsSearch(gid: UInt?, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): List<Session> {
         // Get all the session objects from the database mock that match the given parameters
         // Start by checking the game identifier
-        var sessions = db.filter { it.gameSession.id == gid }
+        var sessions = db.toList()
+
+        gid?.let {
+            sessions = sessions.filter { it.gameSession.id == gid }
+        }
         // Then check the date
+
         date?.let {
             sessions = sessions.filter { it.date == date }
         }

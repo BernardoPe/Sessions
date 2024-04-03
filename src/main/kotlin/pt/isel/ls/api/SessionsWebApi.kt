@@ -168,10 +168,9 @@ class SessionsApi(
 
     fun getSessionList(request: Request) = processRequest(request) {
         val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip") ?: 0u)
-        val gid = request.path("gid")?.toUInt("Game Identifier") ?: throw BadRequestException("No Game Identifier provided")
 
         val res = sessionServices.listSessions(
-            gid,
+            request.query("gid")?.toUInt("Game Identifier"),
             request.query("date")?.toLocalDateTime(),
             request.query("state")?.toState(),
             request.query("pid")?.toUInt("Player Identifier"),

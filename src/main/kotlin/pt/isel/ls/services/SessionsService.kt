@@ -91,7 +91,7 @@ class SessionsService(val storage: SessionsDataManager) {
         // If update fails after checks this means that something went wrong with the update, so we throw an internal server error
     }
 
-    fun listSessions(gid: UInt, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): SessionList {
+    fun listSessions(gid: UInt?, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): SessionList {
         val sessionsSearch = storage.session.getSessionsSearch(gid, date, state, pid, limit, skip)
         return sessionsSearch.ifEmpty { throw NotFoundException("No sessions were found") }
     }
