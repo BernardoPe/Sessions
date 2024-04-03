@@ -56,7 +56,6 @@ function getRequestParamsAndQuery(path) {
             query[key] = value
         })
     }
-
     return {params, query}
 }
 
