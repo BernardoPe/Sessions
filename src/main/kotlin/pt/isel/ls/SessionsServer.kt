@@ -27,7 +27,6 @@ const val PLAYER_ROUTE = "/players"
 const val PLAYER_DETAILS_ROUTE = "/players/{pid}"
 const val GAME_ROUTE = "/games"
 const val GAME_DETAILS_ROUTE = "/games/{gid}"
-const val SESSION_LIST_ROUTE = "/sessions/{gid}/list"
 const val SESSION_DETAILS_ROUTE = "/sessions/{sid}"
 const val SESSION_PLAYER_ROUTE = "/sessions/{sid}/players"
 const val SESSION_PLAYER_DETAILS_ROUTE = "/sessions/{sid}/players/{pid}"
@@ -67,7 +66,7 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
             SESSION_DETAILS_ROUTE bind GET to requestHandler::getSessionById,
             SESSION_DETAILS_ROUTE bind DELETE to requestHandler::deleteSession,
             SESSION_DETAILS_ROUTE bind PUT to requestHandler::updateSession,
-            SESSION_LIST_ROUTE bind GET to requestHandler::getSessionList,
+            SESSION_ROUTE bind GET to requestHandler::getSessionList,
         )
 
     val sessionsHandler =

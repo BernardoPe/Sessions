@@ -54,27 +54,37 @@ class SessionsDataDBSession(private val connection: Connection) : SessionsDataSe
         return resultSet.getSessions().firstOrNull().also { statement.close() }
     }
 
-    override fun getSessionsSearch(gid: UInt, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): List<Session> {
+    override fun getSessionsSearch(gid: UInt?, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): List<Session> {
         val query = StringBuilder(
             "SELECT sessions.id as sid, sessions.game_id as gid, date, capacity, games.name as gname, genres, developer, players.id as pid, players.name as pname,email, token_hash FROM sessions " +
-                "JOIN games ON sessions.game_id = games.id " +
-                "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
-                "LEFT JOIN players ON sessions_players.player_id = players.id " +
-                "WHERE game_id = ? ",
+                    "JOIN games ON sessions.game_id = games.id " +
+                    "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
+                    "LEFT JOIN players ON sessions_players.player_id = players.id "
         )
-        val queryParams = mutableListOf<Any>(gid.toInt())
+        val queryParams = mutableListOf<Any>()
+
+        var firstCondition = true
+
+        if (gid != null) {
+            query.append("WHERE game_id = ? ")
+            queryParams.add(gid.toInt())
+            firstCondition = false
+        }
 
         if (date != null) {
-            query.append("AND date = ? ")
+            query.append(if (firstCondition) "WHERE " else "AND ")
+            query.append("date = ? ")
             queryParams.add(date.toTimestamp())
+            firstCondition = false
         }
 
         if (pid != null) {
-            query.append("AND session_id IN (SELECT session_id FROM sessions_players WHERE player_id = ?) ")
+            query.append(if (firstCondition) "WHERE " else "AND ")
+            query.append("session_id IN (SELECT session_id FROM sessions_players WHERE player_id = ?) ")
             queryParams.add(pid.toInt())
         }
 
-        query.append("ORDER BY sessions.id " + "LIMIT ? OFFSET ? ")
+        query.append("ORDER BY sessions.id LIMIT ? OFFSET ? ")
 
         val statement = connection.prepareStatement(query.toString())
 

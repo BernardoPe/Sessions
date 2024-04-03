@@ -52,7 +52,7 @@ interface SessionsDataSession {
      *  @param skip The number of sessions to be skipped
      *  @return A list with all the sessions in the database that match the given parameters
      */
-    fun getSessionsSearch(gid: UInt, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): List<Session>
+    fun getSessionsSearch(gid: UInt?, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): List<Session>
 
     /**
      * Add a player to a session in the database

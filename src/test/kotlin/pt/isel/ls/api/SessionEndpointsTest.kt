@@ -494,10 +494,9 @@ class SessionEndpointsTest {
     @Test
     fun `test get session list should return sessions`() {
         // Arrange
-        val request = Request(Method.GET, "/sessions/2/list?state=open")
-        val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{gid}/list"))
+        val request = Request(Method.GET, "/sessions?state=open")
         // Act
-        val response = api.getSessionList(routedRequest)
+        val response = api.getSessionList(request)
         val sessionListJson = response.bodyString()
         val sessionList = Json.decodeFromString<SessionSearchResultOutputModel>(sessionListJson)
         //  Assert
@@ -513,26 +512,12 @@ class SessionEndpointsTest {
         assertEquals(sessionList[1].date, "2030-06-01T00:00:00".toLocalDateTime().toString())
         assertEquals(sessionList[1].sid, 2u)
     }
-
-    @Test
-    fun `test get session list invalid params should give bad request`() {
-        // Arrange
-        val request = Request(Method.GET, "/sessions/asd/list")
-        val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{gid}/list"))
-        // Act
-        val response = api.getSessionList(routedRequest)
-        // Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.BAD_REQUEST)
-    }
-
     @Test
     fun `test get session list limit and skip should give session list`() {
         // Arrange
-        val request = Request(Method.GET, "/sessions/2/list?limit=1&skip=1")
-        val routedRequest = RoutedRequest(request, UriTemplate.from("/sessions/{gid}/list"))
+        val request = Request(Method.GET, "/sessions?limit=1&skip=1")
         // Act
-        val response = api.getSessionList(routedRequest)
+        val response = api.getSessionList(request)
         val sessionListJson = response.bodyString()
         val sessionList = Json.decodeFromString<SessionSearchResultOutputModel>(sessionListJson)
         //  Assert

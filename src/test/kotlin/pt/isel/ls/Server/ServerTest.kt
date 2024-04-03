@@ -700,7 +700,7 @@ class ServerTest {
     @Test
     fun `test get session list should return sessions`() {
         // Arrange
-        val request = Request(Method.GET, "/sessions/2/list?state=open")
+        val request = Request(Method.GET, "/sessions?state=open&gid=2")
         // Act
         val response = server.sessionsHandler(request)
         val sessionListJson = response.bodyString()
@@ -720,20 +720,9 @@ class ServerTest {
     }
 
     @Test
-    fun `test get session list invalid params should give bad request`() {
-        // Arrange
-        val request = Request(Method.GET, "/sessions/asd/list")
-        // Act
-        val response = server.sessionsHandler(request)
-        // Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.BAD_REQUEST)
-    }
-
-    @Test
     fun `test get session list limit and skip should give session list`() {
         // Arrange
-        val request = Request(Method.GET, "/sessions/2/list?limit=1&skip=1")
+        val request = Request(Method.GET, "/sessions?limit=1&skip=1&gid=2")
         // Act
         val response = server.sessionsHandler(request)
         val sessionListJson = response.bodyString()
