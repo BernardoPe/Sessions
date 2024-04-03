@@ -42,8 +42,7 @@ function getRequestParamsAndQuery(path) {
     for (let i = 0; i < routeParts.length; i++) {
         if (routeParts[i].startsWith(":")) {
             const key = routeParts[i].substring(1)
-            const value = pathParts[i]
-            params[key] = value
+            params[key] = pathParts[i]
         }
     }
 
