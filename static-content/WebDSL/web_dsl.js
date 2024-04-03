@@ -15,6 +15,14 @@ function createElement(tagName, ...children) {
 
 // For now using free functions. In the future, we can create a class to represent the elements
 
+function body(...children) {
+    return createElement('body', ...children);
+}
+
+function head(...children) {
+    return createElement('head', ...children);
+}
+
 function div(...children) {
     return createElement('div', ...children);
 }
