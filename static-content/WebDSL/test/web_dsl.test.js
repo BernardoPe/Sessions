@@ -1,7 +1,8 @@
-
+/** Must use mocha tests */
 // import jest
 const { test, expect, describe } = require('@jest/globals');
-import { body, div, ul, li, a, button, input, h1, h2, h3, h4, h5, h6, p, span, img, br, ol, _test } from '../webdsl.js';
+
+import {a, button, div, input, li, ul} from '../webdsl.js';
 
 describe('WebDSL', () => {
     test('createElement creates an element with correct tag and children', () => {

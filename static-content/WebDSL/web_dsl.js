@@ -84,14 +84,36 @@ function img(src, props=null, ...children) {
     return createElement('img', { src, ...props }, ...children);
 }
 
-function br(...children) {
+function br(props = null, ...children) {
     return createElement('br', null, ...children);
 }
 function button(props, ...children) {
     return createElement('button', props, ...children);
 }
 
-export { body, div, ul, li, a, button, input, p, h1, h2, br, img, span, h3, h4, h5, h6 };
+function ol(props = null, ...children) {
+    return createElement('ol', null, ...children);
+}
+
+function label(forProp, props = null, ...children) {
+    return createElement('label', {for: forProp, ...props}, ...children);
+}
+
+function form(props = null, ...children) {
+    return createElement('form', props, ...children);
+}
+
+function textarea(props = null, ...children) {
+    return createElement('textarea', props, ...children);
+}
+
+function fieldset(props = null, ...children) {
+    return createElement('fieldset', props, ...children);
+}
+
+function legend(props = null, ...children) {
+    return createElement('legend', props, ...children);
+}
 
 // Test
 function _test() {
@@ -106,6 +128,32 @@ function _test() {
             input({ type: 'text', placeholder: 'Enter your name' })
         )
     );
-
     document.body.appendChild(element);
 }
+
+export {
+    body,
+    div,
+    ul,
+    li,
+    a,
+    button,
+    input,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    span,
+    img,
+    br,
+    ol,
+    label,
+    form,
+    textarea,
+    fieldset,
+    legend,
+    _test
+};

@@ -14,59 +14,72 @@ Note: You have to use the DOM Api, but not directly
 */
 
 const API_URL = 'http://localhost:8080/';
-import { body, div, ul, li, a, button, input, h1, h2, h3, h4, h5, h6, p, span, img, br, ol, _test } from './WebDSL/web_dsl.js';
+import {a, br, button, div, fieldset, form, h1, h2, input, label, legend, li, ol, p, ul} from './WebDSL/web_dsl.js';
+
 function getHome(mainContent, req) {
-    const h2 = document.createElement("h2")
-    const selectionText = document.createTextNode("Select the following options: ")
-    const gameSearchText = document.createTextNode("Game Search")
-    const sessionSearchText = document.createTextNode("Session Search")
-    const playerText = document.createTextNode("Player Details")
-    const ol = document.createElement("OL")
-    const liGames = document.createElement("LI")
-    const liSessions = document.createElement("LI")
-    const liPlayer = document.createElement("LI")
-    const aGames = document.createElement("a")
-    const aSessions = document.createElement("a")
-    const aPlayer = document.createElement("a")
-    h2.appendChild(selectionText)
-    liGames.appendChild(aGames)
-    liSessions.appendChild(aSessions)
-    liPlayer.appendChild(aPlayer)
-    aGames.appendChild(gameSearchText)
-    liSessions.appendChild(sessionSearchText)
-    liPlayer.appendChild(playerText)
-    aGames.href = "#games/search"
-    aSessions.href = "#sessions/search"
-    aPlayer.href = "#players/:pid"
-    ol.appendChild(liGames)
-    ol.appendChild(liSessions)
-    ol.appendChild(liPlayer)
-    mainContent.replaceChildren(h2)
-    mainContent.replaceChildren(ol)
+    const h2Element =
+        h2(null, "Select the following options: ");
+    const olElement =
+        ol(null,
+            li(null, a("#games/search", null, "Game Search")),
+            li(null, a("#sessions/search", null, "Session Search")),
+            li(null, a("#players/:pid", null, "Player Details"))
+        );
+    mainContent.replaceChildren(h2Element, olElement);
 }
 
 function getGameSearch(mainContent, req) {
-    fetch(API_BASE_URL + "games/search", {body: JSON.stringify(req)})
-        .then(res => res.json())
-        .then(games => {
-            const div = document.createElement("div")
+    const forms =
+        div(null,
+            form({id: "gameSearchForm", method: "GET"},
+                label("developer", null, "Name of the developer"),
+                input({id: "developer", type: "search", placeholder: "Enter the name of developer", name: "developer"}),
+                fieldset(null,
+                    legend(null, "Select Values:"),
+                    label(null, input({type: "checkbox", name: "genre", value: "RPG"}), "RPG"),
+                    br(null),
+                    label(null, input({type: "checkbox", name: "genre", value: "Adventure"}), "Adventure"),
+                    br(null),
+                    label(null, input({type: "checkbox", name: "genre", value: "Shooter"}), "Shooter"),
+                    br(null),
+                    label(null, input({type: "checkbox", name: "genre", value: "Turn-Based"}), "Turn-Based"),
+                    br(null),
+                    label(null, input({type: "checkbox", name: "genre", value: "Action"}), "Action"),
+                    br(null),
+                ),
+                label("limit", null, "Limit"),
+                input({type: "number", id: "limit", step: "1", value: "5"}, "Limit"),
+                label("skip", null, "Skip"),
+                input({type: "number", id: "skip", step: "1", value: "0"}, "Skip"),
+                button({type: "submit"}, "Search")
+            )
+        )
 
-            const h1 = document.createElement("h1")
-            const text = document.createTextNode("Game Search")
-            h1.appendChild(text)
-            div.appendChild(h1)
+    mainContent.replaceChildren(forms);
 
-            games.forEach(s => {
-                const p = document.createElement("p")
-                const a = document.createElement("a")
-                const aText = document.createTextNode("Link Example to games/" + s.number);
-                a.appendChild(aText)
-                a.href = "#games/search/" + s.number
-                p.appendChild(a)
-                div.appendChild(p)
+    document.getElementById('gameSearchForm').addEventListener('submit', (event) => {
+        const url = submitFormGameSearch(event);
+        fetch(url)
+            .then(res => {
+                if (!res.ok) {
+                    mainContent.replaceChildren(p(null, "Games not found"))
+                } else {
+                    return res.json()
+                }
             })
-            mainContent.replaceChildren(div)
-        })
+            .then(games => {
+                const divElement = div(null,
+                    h1(null, "Game Search"),
+                    ...games.map(g =>
+                        p(null,
+                            a("#games/search/" + g.number, null, "Link Example to games/" + g.number)
+                        )
+                    )
+                );
+                mainContent.appendChild(divElement); // Append the results below the form
+            })
+        event.target.reset();
+    });
 }
 
 function getSessionSearch(mainContent, req) {
@@ -137,6 +150,16 @@ function getPlayerDetails(mainContent, req) {
             const anchor = a(`#sessions/searchResults?pid=${player.pid}`, null,"Sessions with this player")
             mainContent.replaceChildren(h2Player, list, anchor)
         })
+}
+
+function submitFormGameSearch(event) {
+    event.preventDefault();
+    const developer = document.getElementById('developer').value;
+    const checkedCheckboxes = document.querySelectorAll('input[name="genre"]:checked');
+    const genres = Array.from(checkedCheckboxes).map(checkbox => checkbox.value).join(',');
+    const limit = document.getElementById('limit').value;
+    const skip = document.getElementById('skip').value;
+    return `http://localhost:8080/games?developer=${developer}&genres=${genres}&limit=${limit}&skip=${skip}`
 }
 
 export default {
