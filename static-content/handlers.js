@@ -14,6 +14,7 @@ Note: You have to use the DOM Api, but not directly
 */
 
 const API_URL = 'http://localhost:8080/';
+
 import {a, br, button, div, fieldset, form, h1, h2, input, label, legend, li, ol, p, ul} from './WebDSL/web_dsl.js';
 
 function getHome(mainContent, req) {
