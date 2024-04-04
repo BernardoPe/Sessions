@@ -170,6 +170,9 @@ gradle-app.setting
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij,kotlin,gradle
 
+# Node
+node_modules/
+
 # Local configurations
 myStuff/**
 myStuff/
