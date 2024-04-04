@@ -143,6 +143,24 @@ class GameEndpointsTest {
     }
 
     @Test
+    fun `test get game list with multiple genres should return game list`() {
+        // Arrange
+        val request = Request(Method.GET, "/games?developer=TestDeveloper&genres=RPG,Adventure")
+        // Act
+        val response = api.getGameList(request)
+        val gameListJson = response.bodyString()
+        val gameList = Json.decodeFromString<GameSearchResultOutputModel>(gameListJson)
+        // Assert
+        assertEquals(Status.OK, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(1, gameList.size)
+        assertEquals("TestName", gameList[0].name)
+        assertEquals("TestDeveloper", gameList[0].developer)
+        assertEquals(listOf("RPG", "Adventure"), gameList[0].genres)
+        assertEquals(1u, gameList[0].gid)
+    }
+
+    @Test
     fun `test get game list empty fields should give bad request`() {
         // Arrange
         val request = Request(Method.GET, "/games?developer=&genres=")
