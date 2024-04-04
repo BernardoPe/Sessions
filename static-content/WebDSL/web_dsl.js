@@ -41,7 +41,8 @@ function li(props=null, ...children) {
 }
 
 function a(href, props=null, ...children) {
-    return createElement('a', { href, ...props }, ...children);
+    props = href ? { href, ...props } : props;
+    return createElement('a', props, ...children);
 }
 
 function input(props=null, ...children) {
@@ -81,10 +82,11 @@ function span(props=null, ...children) {
 }
 
 function img(src, props=null, ...children) {
-    return createElement('img', { src, ...props }, ...children);
+    props = src ? { src, ...props } : props;
+    return createElement('img', props, ...children);
 }
 
-function br(props = null, ...children) {
+function br(...children) {
     return createElement('br', null, ...children);
 }
 function button(props, ...children) {
@@ -92,11 +94,12 @@ function button(props, ...children) {
 }
 
 function ol(props = null, ...children) {
-    return createElement('ol', null, ...children);
+    return createElement('ol', props, ...children);
 }
 
 function label(forProp, props = null, ...children) {
-    return createElement('label', {for: forProp, ...props}, ...children);
+    props = forProp ? { for: forProp, ...props } : props;
+    return createElement('label', props, ...children);
 }
 
 function form(props = null, ...children) {
@@ -117,43 +120,27 @@ function legend(props = null, ...children) {
 
 // Test
 function _test() {
-    const element = body(null,
-        div({ id: 'container' },
-            ul(null,
-                li(null, a('https://www.google.com', null, 'Google')),
-                li(null, a('https://www.facebook.com', null, 'Facebook')),
-                li(null, a('https://www.twitter.com', null, 'Twitter'))
-            ),
-            button({ onclick: () => alert('Hello') }, 'Click me'),
-            input({ type: 'text', placeholder: 'Enter your name' })
-        )
+    const element = div({ id: 'test' },
+        h1(null, 'Hello World'),
+        p(null, 'This is a test'),
+        ul(null,
+            li(null, 'Item 1'),
+            li(null, 'Item 2'),
+            li(null, 'Item 3'),
+        ),
+        a('https://www.google.com', null, 'Google'),
+        img('https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png'),
+        br(),
+        button({ onclick: 'alert("Hello")' }, 'Click me'),
+        input({ type: 'text', value: 'Hello' }),
+        ol(null,
+            li(null, 'Item 1'),
+            li(null, 'Item 2'),
+            li(null, 'Item 3'),
+        ),
     );
+
     document.body.appendChild(element);
 }
 
-export {
-    body,
-    div,
-    ul,
-    li,
-    a,
-    button,
-    input,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    p,
-    span,
-    img,
-    br,
-    ol,
-    label,
-    form,
-    textarea,
-    fieldset,
-    legend,
-    _test
-};
+module.exports = { body, div, ul, li, a, input, h1, h2, h3, h4, h5, h6, p, span, img, br, button, ol, label, form, textarea, fieldset, legend };
