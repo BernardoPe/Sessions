@@ -6,7 +6,7 @@ function createElement(tagName, props, ...children) {
     // Set the properties
     if (props !== null && props !== undefined) {
         for (const key in props) {
-            element[key] = props[key];
+            element.setAttribute(key, props[key])
         }
     }
 
