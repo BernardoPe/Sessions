@@ -86,7 +86,7 @@ function img(src, props=null, ...children) {
     return createElement('img', props, ...children);
 }
 
-function br(...children) {
+function br(props = null, ...children) {
     return createElement('br', null, ...children);
 }
 function button(props, ...children) {
@@ -143,4 +143,28 @@ function _test() {
     document.body.appendChild(element);
 }
 
-module.exports = { body, div, ul, li, a, input, h1, h2, h3, h4, h5, h6, p, span, img, br, button, ol, label, form, textarea, fieldset, legend };
+export {
+    body,
+    div,
+    ul,
+    li,
+    a,
+    input,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    span,
+    img,
+    br,
+    button,
+    ol,
+    label,
+    form,
+    textarea,
+    fieldset,
+    legend
+};

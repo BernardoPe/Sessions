@@ -34,18 +34,23 @@ function getGameSearch(mainContent, req) {
         div(null,
             form({id: "gameSearchForm", method: "GET"},
                 label("developer", null, "Name of the developer"),
-                input({id: "developer", type: "search", placeholder: "Enter the name of developer", name: "developer"}),
+                input({id: "developer", type: "text", placeholder: "Enter the name of developer", name: "developer"}),
                 fieldset(null,
                     legend(null, "Select Values:"),
-                    label(null, input({type: "checkbox", name: "genre", value: "RPG"}), "RPG"),
+                    input({id: "RPG", type: "checkbox", name: "genre", value: "RPG"}),
+                    label("RPG", null, "RPG"),
                     br(null),
-                    label(null, input({type: "checkbox", name: "genre", value: "Adventure"}), "Adventure"),
+                    input({id: "Adventure", type: "checkbox", name: "genre", value: "Adventure"}),
+                    label("Adventure", null, "Adventure"),
                     br(null),
-                    label(null, input({type: "checkbox", name: "genre", value: "Shooter"}), "Shooter"),
+                    input({id: "Shooter", type: "checkbox", name: "genre", value: "Shooter"}),
+                    label("Shooter", null, "Shooter"),
                     br(null),
-                    label(null, input({type: "checkbox", name: "genre", value: "Turn-Based"}), "Turn-Based"),
+                    input({id: "TurnBased", type: "checkbox", name: "genre", value: "Turn-Based"}),
+                    label("TurnBased", null, "TurnBased"),
                     br(null),
-                    label(null, input({type: "checkbox", name: "genre", value: "Action"}), "Action"),
+                    input({id: "Action", type: "checkbox", name: "genre", value: "Action"}),
+                    label("Action", null, "Action"),
                     br(null),
                 ),
                 label("limit", null, "Limit"),
@@ -54,40 +59,39 @@ function getGameSearch(mainContent, req) {
                 input({type: "number", id: "skip", step: "1", value: "0"}, "Skip"),
                 button({type: "submit"}, "Search")
             )
-        )
-
+        );
     mainContent.replaceChildren(forms);
 
-    document.getElementById('gameSearchForm').addEventListener('submit', (event) => {
-        const url = submitFormGameSearch(event);
-        fetch(url)
-            .then(res => {
-                if (!res.ok) {
-                    mainContent.replaceChildren(p(null, "Games not found"))
-                } else {
-                    return res.json()
-                }
-            })
-            .then(games => {
-                const divElement = div(null,
-                    h1(null, "Game Search"),
-                    ...games.map(g =>
-                        p(null,
-                            a("#games/search/" + g.number, null, "Link Example to games/" + g.number)
-                        )
-                    )
-                );
-                mainContent.appendChild(divElement); // Append the results below the form
-            })
-        event.target.reset();
-    });
-}
-
-function getSessionSearch(mainContent, req) {
-    // TODO
+    document.getElementById('gameSearchForm').addEventListener('submit', submitFormGameSearch);
 }
 
 function getGameSearchResults(mainContent, req) {
+    const developer = req.query.developer;
+    const genres = req.query.genres;
+    // const limit = req.query.limit;
+    // const skip = req.query.skip;
+    fetch(API_URL + 'games?developer=' + developer + '&genres=' + genres)
+        .then(res => {
+            if (!res.ok) {
+                mainContent.replaceChildren(p(null, "Games not found"))
+            } else {
+                return res.json()
+            }
+        })
+        .then(games => {
+            const divElement = div(null,
+                h1(null, "Game Search"),
+                ...games.map(g =>
+                    p(null,
+                        a("#games/" + g.number, null, "Link Example to games/" + g.number)
+                    )
+                )
+            );
+            mainContent.replaceChildren(divElement); // Append the results below the form
+        })
+}
+
+function getSessionSearch(mainContent, req) {
     // TODO
 }
 
@@ -160,7 +164,7 @@ function submitFormGameSearch(event) {
     const genres = Array.from(checkedCheckboxes).map(checkbox => checkbox.value).join(',');
     const limit = document.getElementById('limit').value;
     const skip = document.getElementById('skip').value;
-    return `http://localhost:8080/games?developer=${developer}&genres=${genres}&limit=${limit}&skip=${skip}`
+    window.location.href = `#games/searchResults?developer=${developer}&genres=${genres}&limit=${limit}&skip=${skip}`;
 }
 
 export default {
