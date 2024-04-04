@@ -53,7 +53,11 @@ function getRequestParamsAndQuery(path) {
         const queryParts = queryString.split("&")
         queryParts.forEach(part => {
             const [key, value] = part.split("=")
-            query[key] = value
+            if (value.includes(',')) {
+                query[key] = value.split(',')
+            } else {
+                query[key] = value
+            }
         })
     }
     return {params, query}
