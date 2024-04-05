@@ -92,15 +92,111 @@ function getGameSearchResults(mainContent, req) {
 }
 
 function getSessionSearch(mainContent, req) {
-    // TODO
+    const forms =
+        div(null,
+            form({id: "sessionSearchForm", method: "GET"},
+                label("game", null, "Game identifier"),
+                input({id: "game", type: "number", step: "1", name: "game ID"}),
+                label("player", null, "PLayer identifier"),
+                input({id: "player", type: "number", step: "1", name: "player ID"}),
+                fieldset(null,
+                    legend(null, "Select the state of the session:"),
+                    input({type: "radio", id: "state1", name: "state", value: "OPEN"}),
+                    label("state1", null, "Opened Sessions"),
+                    br(null),
+                    input({type: "radio", id: "state2", name: "state", value: "CLOSE"}),
+                    label("state2", null, "Closed Sessions"),
+                    br(null),
+                ),
+                label("date", null, "Date"),
+                input({id: "date", type: "text", placeholder: "yyyy-mm-dd", name: "date", value: ""}),
+                label("time", null, "Time"),
+                input({id: "time", type: "text", placeholder: "hh:mm", name: "time", value: ""}),
+                label("limit", null, "Limit"),
+                input({type: "number", id: "limit", step: "1", value: "5"}, "Limit"),
+                label("skip", null, "Skip"),
+                input({type: "number", id: "skip", step: "1", value: "0"}, "Skip"),
+                button({type: "submit"}, "Search")
+            )
+        );
+    mainContent.replaceChildren(forms);
+
+    document.getElementById('sessionSearchForm').addEventListener('submit', submitFormSessionSearch);
 }
 
 function getSessionSearchResults(mainContent, req) {
-    // TODO
+    const gameId = req.query.gid;
+    const playerId = req.query.pid;
+    const state = req.query.state;
+    const date = req.query.date;
+    // const limit = req.query.limit;
+    // const skip = req.query.skip;
+    const queries = new URLSearchParams();
+
+    if (gameId) {
+        queries.append('gid', gameId);
+    }
+
+    if (playerId) {
+        queries.append('pid', playerId);
+    }
+
+    if (state) {
+        queries.append('state', state);
+    }
+
+    if (date) {
+        queries.append('date', date);
+    }
+
+    //const url = `${API_URL}sessions?${queries.toString()}`;
+    fetch(API_URL + `sessions?${queries}`)
+        .then(res => {
+            if (!res.ok) {
+                mainContent.replaceChildren(p(null, "Sessions not found"))
+            } else {
+                return res.json()
+            }
+        })
+        .then(sessions => {
+            const divElement = div(null,
+                h1(null, "Session Search"),
+                ...sessions.map(s =>
+                    p(null,
+                        a("#sessions/" + s.sid, null, "Link Example to sessions/" + s.sid)
+                    )
+                )
+            );
+            mainContent.replaceChildren(divElement); // Append the results below the form
+        })
 }
 
 function getGameDetails(mainContent, req) {
-    // TODO
+    const gameId = req.params.gid
+    fetch(API_URL + `games/${gameId}`)
+        .then(res => {
+            if (!res.ok) {
+                mainContent.replaceChildren(p(null, "Game not found"))
+            } else {
+                return res.json()
+            }
+        })
+        .then(game => {
+            const h2Game = h2(null, "Game details")
+            const list = ul(null,
+                li(null, "ID : " + game.gid),
+                li(null, "Name : " + game.name),
+                li(null, "Developer : " + game.developer),
+                li(null,
+                    p(null, "Genres : "),
+                    ul(null,
+                        ...game.genres.map(genre => li(null, genre))
+                    )
+                )
+            )
+            const anchor = a(`#sessions/searchResults?gid=${game.gid}`, null, "Sessions with this Game")
+            mainContent.replaceChildren(h2Game, list, anchor)
+        })
 }
 
 function getSessionDetails(mainContent, req) {
@@ -165,6 +261,42 @@ function submitFormGameSearch(event) {
     const limit = document.getElementById('limit').value;
     const skip = document.getElementById('skip').value;
     window.location.href = `#games/searchResults?developer=${developer}&genres=${genres}&limit=${limit}&skip=${skip}`;
+}
+
+function submitFormSessionSearch(event) {
+    event.preventDefault();
+    const gameId = document.getElementById('game').value;
+    const playerId = document.getElementById('player').value;
+    const stateElement = document.querySelector('input[name="state"]:checked');
+    const state = stateElement ? stateElement.value : null;
+    const date = document.getElementById('date').value;
+    const time = document.getElementById('time').value;
+    const limit = document.getElementById('limit').value;
+    const skip = document.getElementById('skip').value;
+
+    const queries = new URLSearchParams();
+
+    if (gameId) {
+        queries.append('gid', gameId);
+    }
+
+    if (playerId) {
+        queries.append('pid', playerId);
+    }
+
+    if (state) {
+        queries.append('state', state);
+    }
+
+    if (date && time) {
+        const concatenatedDate = date + 'T' + time;
+        queries.append('date', concatenatedDate);
+    }
+
+    queries.append('limit', limit);
+    queries.append('skip', skip);
+
+    window.location.href = `#sessions/searchResults?${queries}`;
 }
 
 export default {
