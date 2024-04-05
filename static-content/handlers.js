@@ -15,6 +15,8 @@ Note: You have to use the DOM Api, but not directly
 
 const API_URL = 'http://localhost:8080/';
 
+const RESULTS_PER_PAGE = 2;
+
 import {a, br, button, div, fieldset, form, h1, h2, input, label, legend, li, ol, p, ul} from './WebDSL/web_dsl.js';
 
 function getHome(mainContent, req) {
@@ -24,7 +26,7 @@ function getHome(mainContent, req) {
         ol(null,
             li(null, a("#games/search", null, "Game Search")),
             li(null, a("#sessions/search", null, "Session Search")),
-            li(null, a("#players/:pid", null, "Player Details"))
+            li(null, a("#players/1", null, "Player Details")) // hardcoded player id
         );
     mainContent.replaceChildren(h2Element, olElement);
 }
@@ -53,24 +55,19 @@ function getGameSearch(mainContent, req) {
                     label("Action", null, "Action"),
                     br(null),
                 ),
-                label("limit", null, "Limit"),
-                input({type: "number", id: "limit", step: "1", value: "5"}, "Limit"),
-                label("skip", null, "Skip"),
-                input({type: "number", id: "skip", step: "1", value: "0"}, "Skip"),
                 button({type: "submit"}, "Search")
             )
         );
     mainContent.replaceChildren(forms);
-
     document.getElementById('gameSearchForm').addEventListener('submit', submitFormGameSearch);
 }
 
 function getGameSearchResults(mainContent, req) {
     const developer = req.query.developer;
     const genres = req.query.genres;
-    // const limit = req.query.limit;
-    // const skip = req.query.skip;
-    fetch(API_URL + 'games?developer=' + developer + '&genres=' + genres)
+    const limit = req.query.limit ? req.query.limit : RESULTS_PER_PAGE
+    const skip = req.query.skip ? req.query.skip : 0;
+    fetch(API_URL + 'games?developer=' + developer + '&genres=' + genres + '&limit=' + limit + '&skip=' + skip)
         .then(res => {
             if (!res.ok) {
                 mainContent.replaceChildren(p(null, "Games not found"))
@@ -82,10 +79,14 @@ function getGameSearchResults(mainContent, req) {
             const divElement = div(null,
                 h1(null, "Game Search"),
                 ...games.map(g =>
-                    p(null,
-                        a("#games/" + g.gid, null, "Link Example to games/" + g.gid)
+                    div(null,
+                        p(null, "Name: " + g.name),
+                        p(null, "Developer: " + g.developer),
+                        a("#games/" + g.gid, null, "Get more details"),
+                        br(null)
                     )
-                )
+                ),
+                handleGamePagination(developer, genres, limit, skip)
             );
             mainContent.replaceChildren(divElement); // Append the results below the form
         })
@@ -112,45 +113,33 @@ function getSessionSearch(mainContent, req) {
                 input({id: "date", type: "text", placeholder: "yyyy-mm-dd", name: "date", value: ""}),
                 label("time", null, "Time"),
                 input({id: "time", type: "text", placeholder: "hh:mm", name: "time", value: ""}),
-                label("limit", null, "Limit"),
-                input({type: "number", id: "limit", step: "1", value: "5"}, "Limit"),
-                label("skip", null, "Skip"),
-                input({type: "number", id: "skip", step: "1", value: "0"}, "Skip"),
                 button({type: "submit"}, "Search")
             )
         );
     mainContent.replaceChildren(forms);
-
     document.getElementById('sessionSearchForm').addEventListener('submit', submitFormSessionSearch);
 }
 
 function getSessionSearchResults(mainContent, req) {
-    const gameId = req.query.gid;
-    const playerId = req.query.pid;
-    const state = req.query.state;
-    const date = req.query.date;
-    // const limit = req.query.limit;
-    // const skip = req.query.skip;
+
     const queries = new URLSearchParams();
 
-    if (gameId) {
-        queries.append('gid', gameId);
+    const gameId = req.query.gid ? queries.append('gid', req.query.gid) : null;
+    const playerId = req.query.pid ? queries.append('pid', req.query.pid) : null;
+    const state = req.query.state ? queries.append('state', req.query.state) : null;
+    const date = req.query.date ? queries.append('date', req.query.date) : null;
+    const limit = req.query.limit ? req.query.limit : RESULTS_PER_PAGE;
+    const skip = req.query.skip ? req.query.skip : 0;
+
+    let queryStr = queries.toString();
+
+    if (queryStr.length === 0) {
+        queryStr = `limit=${limit}&skip=${skip}`;
+    } else {
+        queryStr += `&limit=${limit}&skip=${skip}`;
     }
 
-    if (playerId) {
-        queries.append('pid', playerId);
-    }
-
-    if (state) {
-        queries.append('state', state);
-    }
-
-    if (date) {
-        queries.append('date', date);
-    }
-
-    //const url = `${API_URL}sessions?${queries.toString()}`;
-    fetch(API_URL + `sessions?${queries}`)
+    fetch(API_URL + `sessions?${queryStr} `)
         .then(res => {
             if (!res.ok) {
                 mainContent.replaceChildren(p(null, "Sessions not found"))
@@ -163,9 +152,12 @@ function getSessionSearchResults(mainContent, req) {
                 h1(null, "Session Search"),
                 ...sessions.map(s =>
                     p(null,
-                        a("#sessions/" + s.sid, null, "Link Example to sessions/" + s.sid)
+                        p(null, "Date: " + s.date),
+                        p(null, "Game: " + s.gameSession.name),
+                        a("#sessions/" + s.sid, null, "Get more details")
                     )
-                )
+                ),
+                handleSessionPagination(queries, limit, skip)
             );
             mainContent.replaceChildren(divElement); // Append the results below the form
         })
@@ -242,7 +234,7 @@ function getPlayerDetails(mainContent, req) {
             }
         })
         .then(player => {
-            const h2Player = h2("Player details")
+            const h2Player = h2(null, "Player details")
             const list = ul(null,
                 li(null,"Name : " + player.name),
                 li(null,"Number : " + player.pid),
@@ -258,9 +250,7 @@ function submitFormGameSearch(event) {
     const developer = document.getElementById('developer').value;
     const checkedCheckboxes = document.querySelectorAll('input[name="genre"]:checked');
     const genres = Array.from(checkedCheckboxes).map(checkbox => checkbox.value).join(',');
-    const limit = document.getElementById('limit').value;
-    const skip = document.getElementById('skip').value;
-    window.location.href = `#games/searchResults?developer=${developer}&genres=${genres}&limit=${limit}&skip=${skip}`;
+    window.location.href = `#games/searchResults?developer=${developer}&genres=${genres}`;
 }
 
 function submitFormSessionSearch(event) {
@@ -271,8 +261,6 @@ function submitFormSessionSearch(event) {
     const state = stateElement ? stateElement.value : null;
     const date = document.getElementById('date').value;
     const time = document.getElementById('time').value;
-    const limit = document.getElementById('limit').value;
-    const skip = document.getElementById('skip').value;
 
     const queries = new URLSearchParams();
 
@@ -292,11 +280,62 @@ function submitFormSessionSearch(event) {
         const concatenatedDate = date + 'T' + time;
         queries.append('date', concatenatedDate);
     }
+    if (queries.toString().length > 0)
+        window.location.href = `#sessions/searchResults?${queries}`;
+    else
+        window.location.href = `#sessions/searchResults`;
+}
 
-    queries.append('limit', limit);
-    queries.append('skip', skip);
+function handleGamePagination(developer, genres, limit, skip) {
+    return handlePagination(API_URL + `games?developer=${developer}&genres=${genres}`, limit, skip, (limit, skip) => {
+        return `#games/searchResults?developer=${developer}&genres=${genres}&limit=${limit}&skip=${skip}`;
+    });
+}
 
-    window.location.href = `#sessions/searchResults?${queries}`;
+function handleSessionPagination(queries, limit, skip) {
+    return handlePagination(API_URL + `sessions?${queries}`, limit, skip, (limit, skip) => {
+        if (queries.toString().length > 0) {
+            return `#sessions/searchResults?${queries}&limit=${limit}&skip=${skip}`;
+        } else {
+            return `#sessions/searchResults?limit=${limit}&skip=${skip}`;
+        }
+    });
+}
+
+function handlePagination(url, limit, skip, generateUrl) {
+
+    const divElement = div(null);
+
+    if (skip >= limit) {
+        const previousButton = button({type: "button"}, "Previous");
+        previousButton.addEventListener('click', () => {
+            window.location.href = generateUrl(limit, parseInt(skip) - limit);
+        });
+        divElement.appendChild(previousButton);
+    }
+
+    let queryStr = '';
+    const urlParts = url.split('?');
+
+    if (urlParts.length > 1 && urlParts[1].trim() !== '') {
+        queryStr = url + `&limit=${limit}&skip=${parseInt(skip) + limit}`;
+    } else {
+        queryStr = url + `limit=${limit}&skip=${parseInt(skip) + limit}`;
+    }
+
+    fetch(queryStr)
+        .then(res => {
+            if (res.ok) {
+                const nextButton = button({type: "button"}, "Next");
+                nextButton.addEventListener('click', () => {
+                    window.location.href = generateUrl(limit, parseInt(skip) + limit);
+                });
+                divElement.appendChild(nextButton);
+            }
+        })
+
+    return divElement;
+
 }
 
 export default {
