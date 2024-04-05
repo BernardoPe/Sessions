@@ -83,7 +83,7 @@ function getGameSearchResults(mainContent, req) {
                 h1(null, "Game Search"),
                 ...games.map(g =>
                     p(null,
-                        a("#games/" + g.number, null, "Link Example to games/" + g.number)
+                        a("#games/" + g.gid, null, "Link Example to games/" + g.gid)
                     )
                 )
             );
