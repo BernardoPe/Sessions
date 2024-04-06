@@ -5,17 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Application Title</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="/index.js" type="module"></script>
+    <script src="index.js" type="module"></script>
 </head>
 <body>
-<header>
-    <h1 class="main-title">Sessions</h1>
-</header>
-<nav>
-    <ul>
-        <li class="link"><a href="#home">Home</a></li>
-    </ul>
-</nav>
-<div id="mainContent"></div>
+
+<div class="wrapper">
+
+    <div id="content">
+        <div class="nav-column" id="left-column">
+            <nav>
+                <p class="nav-item"><a href="#home">Home</a></p>
+            </nav>
+        </div>
+        <div id="mainContent"></div>
+        <div class="side-column" id="right-column"></div>
+    </div>
+
+</div>
 </body>
 </html>

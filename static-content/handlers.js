@@ -15,13 +15,13 @@ Note: You have to use the DOM Api, but not directly
 
 const API_URL = 'http://localhost:8080/';
 
-const RESULTS_PER_PAGE = 2;
+const RESULTS_PER_PAGE = 5;
 
 import {a, br, button, div, fieldset, form, h1, h2, input, label, legend, li, ol, p, ul} from './WebDSL/web_dsl.js';
 
 function getHome(mainContent, req) {
     const h2Element =
-        h2(null, "Select the following options: ");
+        h2({class:'title'}, "Welcome to Sessions ");
     const olElement =
         ol(null,
             li(null, a("#games/search", null, "Game Search")),
@@ -33,12 +33,14 @@ function getHome(mainContent, req) {
 
 function getGameSearch(mainContent, req) {
     const forms =
-        div(null,
+        div({class: "form__group"},
             form({id: "gameSearchForm", method: "GET"},
-                label("developer", null, "Name of the developer"),
-                input({id: "developer", type: "text", placeholder: "Enter the name of developer", name: "developer"}),
+                div({class: "form__input"},
+                    input({id: "developer",class:"form__field", type: "text", placeholder: "Enter the name of developer", name: "developer"}),
+                    label("developer", {class:"form__label", required:true}, "Developer name"),
+                ),
                 fieldset(null,
-                    legend(null, "Select Values:"),
+                    legend(null, "Select Genres:"),
                     input({id: "RPG", type: "checkbox", name: "genre", value: "RPG"}),
                     label("RPG", null, "RPG"),
                     br(null),
@@ -67,53 +69,52 @@ function getGameSearchResults(mainContent, req) {
     const genres = req.query.genres;
     const limit = req.query.limit ? req.query.limit : RESULTS_PER_PAGE
     const skip = req.query.skip ? req.query.skip : 0;
-    fetch(API_URL + 'games?developer=' + developer + '&genres=' + genres + '&limit=' + limit + '&skip=' + skip)
-        .then(res => {
-            if (!res.ok) {
-                mainContent.replaceChildren(p(null, "Games not found"))
-            } else {
-                return res.json()
-            }
-        })
-        .then(games => {
-            const divElement = div(null,
-                h1(null, "Game Search"),
-                ...games.map(g =>
-                    div(null,
-                        p(null, "Name: " + g.name),
-                        p(null, "Developer: " + g.developer),
-                        a("#games/" + g.gid, null, "Get more details"),
-                        br(null)
-                    )
-                ),
-                handleGamePagination(developer, genres, limit, skip)
-            );
-            mainContent.replaceChildren(divElement); // Append the results below the form
-        })
+    fetchWithHandling(API_URL + 'games?developer=' + developer + '&genres=' + genres + '&limit=' + limit + '&skip=' + skip, mainContent, (games) => {
+        const divElement = div({class: "search-results-container"},
+            ...games.map(g =>
+                div({class: "game-container"},
+                    p({class: "game__title"},
+                        a(`#games/${g.gid}`, null, g.name)
+                    ),
+                    p({class: "game__developer"}, g.developer),
+                    br(null)
+                )
+            ),
+            handleGamePagination(developer, genres, limit, skip)
+        );
+        mainContent.replaceChildren(divElement);
+    })
 }
 
 function getSessionSearch(mainContent, req) {
     const forms =
-        div(null,
+        div({class: "form__group"},
             form({id: "sessionSearchForm", method: "GET"},
-                label("game", null, "Game identifier"),
-                input({id: "game", type: "number", step: "1", name: "game ID"}),
-                label("player", null, "PLayer identifier"),
-                input({id: "player", type: "number", step: "1", name: "player ID"}),
+
+                div({class: "form__input"},
+                    input({id: "game", class:"form__field", type: "number", placeholder: "Enter game id"}),
+                    label("game", {class:"form__label", required:true}, "Game identifier"),
+                ),
+
+                div({class: "form__input"},
+                    input({id: "player", class:"form__field", type: "number", placeholder: "Enter player id"}),
+                    label("player", {class:"form__label", required:true}, "Player identifier"),
+                ),
+
                 fieldset(null,
-                    legend(null, "Select the state of the session:"),
+                    legend(null, "Session state:"),
                     input({type: "radio", id: "state1", name: "state", value: "OPEN"}),
-                    label("state1", null, "Opened Sessions"),
+                    label("state1", null, "Open"),
                     br(null),
                     input({type: "radio", id: "state2", name: "state", value: "CLOSE"}),
-                    label("state2", null, "Closed Sessions"),
+                    label("state2", null, "Closed"),
                     br(null),
                 ),
-                label("date", null, "Date"),
-                input({id: "date", type: "text", placeholder: "yyyy-mm-dd", name: "date", value: ""}),
-                label("time", null, "Time"),
-                input({id: "time", type: "text", placeholder: "hh:mm", name: "time", value: ""}),
-                button({type: "submit"}, "Search")
+                div({class: "form__input"},
+                    input({id: "date", type: "datetime-local", class:"form__field datepicker", placeholder: "yyyy-mm-dd", name: "date", value: ""}),
+                    label("date", {class:"form__label"}, "Date"),
+                ),
+                button({type: "submit"}, "Search"),
             )
         );
     mainContent.replaceChildren(forms);
@@ -139,111 +140,74 @@ function getSessionSearchResults(mainContent, req) {
         queryStr += `&limit=${limit}&skip=${skip}`;
     }
 
-    fetch(API_URL + `sessions?${queryStr} `)
-        .then(res => {
-            if (!res.ok) {
-                mainContent.replaceChildren(p(null, "Sessions not found"))
-            } else {
-                return res.json()
-            }
-        })
-        .then(sessions => {
-            const divElement = div(null,
-                h1(null, "Session Search"),
-                ...sessions.map(s =>
-                    p(null,
-                        p(null, "Date: " + s.date),
-                        p(null, "Game: " + s.gameSession.name),
-                        a("#sessions/" + s.sid, null, "Get more details")
-                    )
-                ),
-                handleSessionPagination(queries, limit, skip)
-            );
-            mainContent.replaceChildren(divElement); // Append the results below the form
-        })
+    fetchWithHandling(API_URL + `sessions?${queryStr}`, mainContent, (sessions) => {
+        const divElement = div({class: "search-results-container"},
+            ...sessions.map(s =>
+                div({class: "session-container"},
+                    p({class: "session__game"},
+                        a(`#games/${s.gameSession.gid}`, null, s.gameSession.name)
+                    ),
+                    p({class: "session__date"}, s.date),
+                    a(`#sessions/${s.sid}`, {class: "session__reference"}, "Get more details"),
+                    br(null)
+                )
+            ),
+            handleSessionPagination(queries, limit, skip)
+        );
+        mainContent.replaceChildren(divElement);
+    })
 }
 
 function getGameDetails(mainContent, req) {
     const gameId = req.params.gid
-    fetch(API_URL + `games/${gameId}`)
-        .then(res => {
-            if (!res.ok) {
-                mainContent.replaceChildren(p(null, "Game not found"))
-            } else {
-                return res.json()
-            }
-        })
-        .then(game => {
-            const h2Game = h2(null, "Game details")
-            const list = ul(null,
-                li(null, "ID : " + game.gid),
-                li(null, "Name : " + game.name),
-                li(null, "Developer : " + game.developer),
-                li(null,
-                    p(null, "Genres : "),
-                    ul(null,
-                        ...game.genres.map(genre => li(null, genre))
-                    )
-                )
-            )
-            const anchor = a(`#sessions/searchResults?gid=${game.gid}`, null, "Sessions with this Game")
-            mainContent.replaceChildren(h2Game, list, anchor)
-        })
+    fetchWithHandling(API_URL + `games/${gameId}`, mainContent, (game) => {
+        const gameView = div({class:"game-container"},
+            h1({class:"game__title"}, game.name),
+            p({class:"game__developer"}, "By " + game.developer),
+            p({class:"game__genres"}, "Genres: " + game.genres.join(', ')),
+            p({class:"game__identifier"}, "Game ID: " + game.gid)
+        )
+        const anchor = a(`#sessions/searchResults?gid=${game.gid}`, {class:"search-ref"}, "Sessions with this game")
+        mainContent.replaceChildren(gameView, anchor)
+    })
 }
 
 function getSessionDetails(mainContent, req) {
     const sessionId = req.params.sid
-    fetch(API_URL + `sessions/${sessionId}`)
-        .then(res => {
-            if (!res.ok) {
-                mainContent.replaceChildren(p(null,"Session not found"))
-            }
-            else {
-                return res.json()
-            }
-        })
-        .then(session => {
-            const h2Session = h2(null,"Session details")
-            const list = ul(null,
-                li(null, p(null, "Date : " + session.date)),
-                li(null,
-                    p(null, "Game : ",
-                        a(`#games/${session.gameSession.gid}`, null, session.gameSession.name))
-                ),
-                li( null,p(null, "Capacity :" + session.capacity)),
-                li(null,
-                    p(null, "Players : "),
-                    ul(null,
-                        ...session.playersSession.map(player => li(null, a(`#players/${player.pid}`, null, player.name)))
-                    )
+    fetchWithHandling(API_URL + `sessions/${sessionId}`, mainContent, (session) => {
+        const sessionView = div({class:"session-container"},
+            p({class:"session__game"},
+                a(`#games/${session.gameSession.gid}`, null, session.gameSession.name)
+            ),
+            p({class:"session__date"}, session.date),
+            p({class:"session__identifier"}, `Session ID: ${session.sid}`),
+            fieldset({class:"session__players"},
+                legend(null, "Players " + session.playersSession.length + "/" + session.capacity),
+                ...session.playersSession.map(
+                    player =>
+                        p({class:"session__player"},
+                            a(`#players/${player.pid}`, null, player.name)
+                        )
                 )
-            )
-            mainContent.replaceChildren(h2Session, list)
-        })
+            ),
+        )
+        mainContent.replaceChildren(sessionView)
+    })
 }
 
 function getPlayerDetails(mainContent, req) {
     const playerId = req.params.pid
-    fetch(API_URL + `players/${playerId}`)
-        .then(res => {
-            if (!res.ok) {
-                mainContent.replaceChildren(p(null,"Player not found"))
-            }
-            else {
-                return res.json()
-            }
-        })
-        .then(player => {
-            const h2Player = h2(null, "Player details")
-            const list = ul(null,
-                li(null,"Name : " + player.name),
-                li(null,"Number : " + player.pid),
-                li(null,"Email : " + player.email)
-            )
-            const anchor = a(`#sessions/searchResults?pid=${player.pid}`, null,"Sessions with this player")
-            mainContent.replaceChildren(h2Player, list, anchor)
-        })
+    fetchWithHandling(API_URL + `players/${playerId}`, mainContent, (player) => {
+        const playerView = div({class: "player-container"},
+            p({class: "player__name"}, player.name),
+            p({class: "player__identifier"}, "Player ID : " + player.pid),
+            p({class: "player__email"}, "Contact info: " + player.email)
+        )
+        const anchor = a(`#sessions/searchResults?pid=${player.pid}`, {class: "search-ref"}, "Sessions with this player")
+        mainContent.replaceChildren(playerView, anchor)
+    })
 }
+
 
 function submitFormGameSearch(event) {
     event.preventDefault();
@@ -260,7 +224,6 @@ function submitFormSessionSearch(event) {
     const stateElement = document.querySelector('input[name="state"]:checked');
     const state = stateElement ? stateElement.value : null;
     const date = document.getElementById('date').value;
-    const time = document.getElementById('time').value;
 
     const queries = new URLSearchParams();
 
@@ -276,10 +239,10 @@ function submitFormSessionSearch(event) {
         queries.append('state', state);
     }
 
-    if (date && time) {
-        const concatenatedDate = date + 'T' + time;
-        queries.append('date', concatenatedDate);
+    if (date) {
+        queries.append('date', date);
     }
+
     if (queries.toString().length > 0)
         window.location.href = `#sessions/searchResults?${queries}`;
     else
@@ -304,38 +267,66 @@ function handleSessionPagination(queries, limit, skip) {
 
 function handlePagination(url, limit, skip, generateUrl) {
 
-    const divElement = div(null);
+    const divElement = div({class: "pagination"});
 
     if (skip >= limit) {
-        const previousButton = button({type: "button"}, "Previous");
-        previousButton.addEventListener('click', () => {
-            window.location.href = generateUrl(limit, parseInt(skip) - limit);
-        });
-        divElement.appendChild(previousButton);
+        divElement.appendChild(
+            createPaginationButton("Previous", limit, parseInt(skip) - parseInt(limit), generateUrl)
+        )
     }
 
     let queryStr = '';
     const urlParts = url.split('?');
 
     if (urlParts.length > 1 && urlParts[1].trim() !== '') {
-        queryStr = url + `&limit=${limit}&skip=${parseInt(skip) + limit}`;
+        queryStr = url + `&limit=${limit}&skip=${parseInt(skip) + parseInt(limit)}`;
     } else {
-        queryStr = url + `limit=${limit}&skip=${parseInt(skip) + limit}`;
+        queryStr = url + `limit=${limit}&skip=${parseInt(skip) + parseInt(limit)}`;
     }
 
     fetch(queryStr)
         .then(res => {
             if (res.ok) {
-                const nextButton = button({type: "button"}, "Next");
-                nextButton.addEventListener('click', () => {
-                    window.location.href = generateUrl(limit, parseInt(skip) + limit);
-                });
-                divElement.appendChild(nextButton);
+                divElement.appendChild(
+                    createPaginationButton("Next", limit, parseInt(skip) + parseInt(limit), generateUrl)
+                )
             }
         })
 
     return divElement;
 
+}
+
+function createPaginationButton(text, limit, skip, generateUrl) {
+    const buttonElement = button({type: "button", class:"pagination-button"}, text);
+    buttonElement.addEventListener('click', () => {
+        window.location.href = generateUrl(limit, skip);
+    });
+    return buttonElement;
+}
+
+function fetchWithHandling(url, mainContent, onSuccess) {
+    fetch(url)
+        .then(res => {
+            res.ok ? res.json().then(res => onSuccess(res)) : handleErrors(res, mainContent)
+        })
+}
+
+function handleErrors(res, mainContent) {
+    if (res.status === 404) {
+        const returnButton = button({type: "button"}, "Return");
+        returnButton.addEventListener('click', () => {
+            history.back()
+        });
+        mainContent.replaceChildren(
+            div({class:"error-container"},
+                p({class:"not-found-message"},"No results were found"),
+                returnButton
+            )
+        )
+    } else {
+        mainContent.replaceChildren(h1(null, "An error occurred"))
+    }
 }
 
 export default {
