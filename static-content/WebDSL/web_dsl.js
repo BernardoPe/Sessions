@@ -118,31 +118,6 @@ function legend(props = null, ...children) {
     return createElement('legend', props, ...children);
 }
 
-// Test
-function _test() {
-    const element = div({ id: 'test' },
-        h1(null, 'Hello World'),
-        p(null, 'This is a test'),
-        ul(null,
-            li(null, 'Item 1'),
-            li(null, 'Item 2'),
-            li(null, 'Item 3'),
-        ),
-        a('https://www.google.com', null, 'Google'),
-        img('https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png'),
-        br(),
-        button({ onclick: 'alert("Hello")' }, 'Click me'),
-        input({ type: 'text', value: 'Hello' }),
-        ol(null,
-            li(null, 'Item 1'),
-            li(null, 'Item 2'),
-            li(null, 'Item 3'),
-        ),
-    );
-
-    document.body.appendChild(element);
-}
-
 export {
     body,
     div,

@@ -5,13 +5,10 @@
   "main": "index.js",
   "type": "module",
   "dependencies": {
-    "@jest/globals": "^29.7.0",
+    "mocha": "^10.4.0",
     "jsdom": "^24.0.0"
   },
   "scripts": {
-    "test": "jest"
-  },
-  "devDependencies": {
-    "jest": "^29.7.0"
+    "test": "mocha"
   }
 }
