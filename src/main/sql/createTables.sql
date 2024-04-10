@@ -15,7 +15,7 @@ create table players (
     id serial primary key,
     name varchar(40) not null,
     email varchar(40) unique not null check (email like '%_@_%.__%'),
-    token_hash int8 not null
+    token_hash int8 unique not null
 );
 
 
