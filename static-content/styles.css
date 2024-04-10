@@ -14,6 +14,11 @@ body {
         display: inline-block;
     }
 
+    .Error_message_genre {
+        display: none;
+
+    }
+
     .wrapper {
         width: 100%;
         height: 100vh;

@@ -17,7 +17,7 @@ const API_URL = 'http://localhost:8080/';
 
 const RESULTS_PER_PAGE = 5;
 
-import {a, br, button, div, fieldset, form, h1, h2, input, label, legend, li, ol, p, ul} from './WebDSL/web_dsl.js';
+import {a, br, button, div, fieldset, form, h1, h2, input, label, legend, li, ol, p} from './WebDSL/web_dsl.js';
 
 function getHome(mainContent, req) {
     const h2Element =
@@ -36,9 +36,17 @@ function getGameSearch(mainContent, req) {
         div({class: "form__group"},
             form({id: "gameSearchForm", method: "GET"},
                 div({class: "form__input"},
-                    input({id: "developer",class:"form__field", type: "text", placeholder: "Enter the name of developer", name: "developer"}),
+                    input({
+                        id: "developer",
+                        class: "form__field",
+                        type: "text",
+                        placeholder: "Enter the name of developer",
+                        name: "developer",
+                        required: "true"
+                    }),
                     label("developer", {class:"form__label", required:true}, "Developer name"),
                 ),
+
                 fieldset(null,
                     legend(null, "Select Genres:"),
                     input({id: "RPG", type: "checkbox", name: "genre", value: "RPG"}),
@@ -56,6 +64,9 @@ function getGameSearch(mainContent, req) {
                     input({id: "Action", type: "checkbox", name: "genre", value: "Action"}),
                     label("Action", null, "Action"),
                     br(null),
+                ),
+                div({class: "Error_message"},
+                    p({id: "genreError", class: "Error_message_genre"}, "Please select at least one genre")
                 ),
                 button({type: "submit"}, "Search")
             )
@@ -213,6 +224,11 @@ function submitFormGameSearch(event) {
     event.preventDefault();
     const developer = document.getElementById('developer').value;
     const checkedCheckboxes = document.querySelectorAll('input[name="genre"]:checked');
+    if (checkedCheckboxes.length === 0) {
+        const errorMessageGenre = document.getElementById('genreError');
+        errorMessageGenre.style.display = "flex"
+        return
+    }
     const genres = Array.from(checkedCheckboxes).map(checkbox => checkbox.value).join(',');
     window.location.href = `#games/searchResults?developer=${developer}&genres=${genres}`;
 }
