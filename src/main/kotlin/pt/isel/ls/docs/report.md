@@ -96,11 +96,15 @@ The Players group has 2 endpoints:
  - Player Creation : POST /players
  - Player Search by id : GET /players/{id}
 
-The Sessions group has 4 endpoints: 
- - Session Creation : POST /sessions
+The Sessions group has 7 endpoints: 
+ - Create Session : POST /sessions
+ - Update session : PUT /sessions/{id}
+ - Delete session : DELETE /sessions/{id}
  - Session Search : GET /sessions/{gid}/list
  - Session Search by id : GET /sessions/{id}
  - Add player to session : POST /sessions/{id}/players
+ - Remove player from session : DELETE /sessions/{id}/players/{pid}
+
 
 Response codes are:
 
@@ -191,7 +195,7 @@ For the storage interface implementation, we created the `SessionsDataGameDB`, `
 and the `SessionsDataGameMem`, `SessionsDataPlayerMem`, and `SessionsDataSessionMem` classes for in-memory storage.
 
 ### Error Handling/Processing
-
+   #### Back-End 
 As said in the Request Details section, the application processes the request at the API level, which is responsible for catching any errors and returning the appropriate response.
 
 In case of incorrect request parametrization, the application catches the exception and returns a 400 Bad Request response. This is because the API layer is responsible for validating the request parameters and checking for any errors.
@@ -204,6 +208,14 @@ To help with error handling for different types of errors, we created the `Sessi
 that can be extended by other classes in order to create custom exceptions and errors. These custom exceptions are then caught by the API layer and returned as an HTTP response.
 
 These errors don't interrupt the application execution, as the application catches the exception and returns the appropriate HTTP response to the client.
+   #### Front-End
+The SPA application prevents the user from committing errors by using DOM and CSS to sanitize user input and validate the input fields before sending the request to the server.
+
+If a Back-End error is relevant to the user, the application displays an error message to the user, informing them of the error.
+
+An example would be if no results are found for a given search, the application informs the user that no results were found and that they should try again with different parameters.
+
+For pagination, the SPA tries to fetch the next page of results, but if no results are found, the application doesn't show the button to fetch the next page.
 
 ## Critical Evaluation
 

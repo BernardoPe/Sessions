@@ -677,9 +677,7 @@
             }
           }
         }
-      }
-    },
-    "/sessions/{gid}/list": {
+      },
       "get": {
         "summary": "Get list of sessions",
         "parameters": [
