@@ -35,8 +35,8 @@ function getRequestParamsAndQuery(path) {
     const route = matchPathScheme(path)
     if (!route) return {params: {}, query: {}}
 
-    const routeParts = route.path.split("/")
-    const pathParts = path.split("/")
+    const routeParts = route.path.split("/");
+    const pathParts = path.split('?')[0].split("/");
 
     const params = {}
     for (let i = 0; i < routeParts.length; i++) {
