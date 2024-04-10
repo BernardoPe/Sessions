@@ -39,10 +39,10 @@ function getSessionSearch(mainContent, req) {
 function getSessionSearchResults(mainContent, req) {
 
     const queries = new URLSearchParams();
-    const gameId = req.query.gid ? queries.append('gid', req.query.gid) : null;
-    const playerId = req.query.pid ? queries.append('pid', req.query.pid) : null;
-    const state = req.query.state ? queries.append('state', req.query.state) : null;
-    const date = req.query.date ? queries.append('date', req.query.date) : null;
+    req.query.gid ? queries.append('gid', req.query.gid) : null;
+    req.query.pid ? queries.append('pid', req.query.pid) : null;
+    req.query.state ? queries.append('state', req.query.state) : null;
+    req.query.date ? queries.append('date', req.query.date) : null;
     const limit = req.query.limit ? req.query.limit : RESULTS_PER_PAGE;
     const skip = req.query.skip ? req.query.skip : 0;
 
