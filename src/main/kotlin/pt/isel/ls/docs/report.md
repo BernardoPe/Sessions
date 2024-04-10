@@ -186,17 +186,7 @@ For pagination, the SPA tries to fetch the next page of results, but if no resul
 ## Critical Evaluation
 
 As of the moment this report was written, the application is able to create, search, and add players to games and sessions.
-All functionality for the first phase was implemented and tested.
 
-No major defects were detected as of the time of writing this report, but some improvements can be made in the future:
+No major defects were detected as of the time of writing this report.
 
-- Increasing the test coverage of the application. This would help to ensure that the application is working as expected and that any changes made to the application do not break existing functionality. It
-would also help idenfify any defects that may be present in the application and were not yet detected.
-
-- Improving the way Data is managed in the application. Currently, the `SessionsDataManager` class is responsible for managing both memory and database storage with no differentiation. 
-This could be improved by adding some way to differentiate between memory and database storage, which could help separate concerns. 
-
-- Adding a separate enum class for genres. Currently, to validate a genre in the application we use a list of strings. This could be improved by adding a separate enum class for genres, which would help with validation and make the code more readable.
-
-- Possibly add an error handling class to simplify to handling errors at the API level. This would help to simplify the error handling process and make the code more readable as 
-more types of exceptions are added to the application.
+The only currently planned change is to increase the API test coverage with more edge cases.
