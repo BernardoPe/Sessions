@@ -1,5 +1,5 @@
-import router from "./router.js";
-import handlers from "./handlers.js";
+import router from "./SPA/router.js";
+import handlers from "./SPA/handlers.js";
 
 window.addEventListener('load', loadHandler)
 window.addEventListener('hashchange', hashChangeHandler)
