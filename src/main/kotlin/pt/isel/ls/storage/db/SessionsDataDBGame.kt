@@ -42,15 +42,35 @@ class SessionsDataDBGame(private val connection: Connection) : SessionsDataGame 
         return resultSet.next().also { statement.close() }
     }
 
-    override fun getGamesSearch(genres: Set<Genre>, developer: Name, limit: UInt, skip: UInt): List<Game> {
-        val statement = connection.prepareStatement(
-            "SELECT * FROM games WHERE genres @> ? AND developer = ? LIMIT ? OFFSET ?",
-        )
+    override fun getGamesSearch(genres: Set<Genre>?, developer: Name?, limit: UInt, skip: UInt): List<Game> {
+        var query = "SELECT * FROM games "
+        val params = mutableListOf<Any>()
 
-        statement.setArray(1, connection.createArrayOf("VARCHAR", genres.map { it.toString() }.toTypedArray()))
-        statement.setString(2, developer.toString())
-        statement.setInt(3, limit.toInt())
-        statement.setInt(4, skip.toInt())
+        if (genres != null || developer != null) {
+            query += "WHERE "
+            if (genres != null) {
+                query += "genres @> ? "
+                params.add(connection.createArrayOf("VARCHAR", genres.map { it.toString() }.toTypedArray()))
+            }
+            if (developer != null) {
+                if (genres != null) {
+                    query += "AND "
+                }
+                query += "developer = ? "
+                params.add(developer.toString())
+            }
+        }
+
+        query += "ORDER BY id LIMIT ? OFFSET ?"
+        params.add(limit.toInt())
+        params.add(skip.toInt())
+
+        val statement = connection.prepareStatement(query)
+
+        params.forEachIndexed { index, param ->
+            statement.setObject(index + 1, param)
+        }
+
         val resultSet = statement.executeQuery()
         connection.commit()
 

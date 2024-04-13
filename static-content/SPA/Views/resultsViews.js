@@ -2,6 +2,7 @@ import {a, br, div, p} from "../WebDSL/web_dsl.js";
 
 function sessionSearchResultsView(sessions) {
 	return div({class: "search-results-container"},
+		a("#sessions/search", {class: "session__reference"}, "Search for more sessions"),
 		...sessions.map(s =>
 			div({class: "session-container"},
 				p({class: "session__game"},

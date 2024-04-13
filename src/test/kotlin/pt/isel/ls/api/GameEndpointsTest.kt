@@ -172,17 +172,6 @@ class GameEndpointsTest {
     }
 
     @Test
-    fun `test get game list invalid params should give bad request`() {
-        // Arrange
-        val request = Request(Method.GET, "/games?developer=asd&genres=asd")
-        // Act
-        val response = api.getGameList(request)
-        // Assert
-        assertEquals("application/json", response.header("Content-Type"))
-        assertEquals(Status.BAD_REQUEST, response.status)
-    }
-
-    @Test
     fun `test get game list limit and skip should return game list`() {
         // Arrange
         val request = Request(Method.GET, "/games?limit=1&skip=1&developer=TestDeveloper&genres=RPG")

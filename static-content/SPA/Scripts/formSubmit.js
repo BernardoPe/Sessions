@@ -2,15 +2,26 @@ function submitFormGameSearch(event) {
 	event.preventDefault();
 	const developer = document.getElementById('developer').value;
 	const checkedCheckboxes = document.querySelectorAll('input[name="genre"]:checked');
-	if (checkedCheckboxes.length === 0) {
-		const genreFieldSet = document.querySelector('fieldset');
-		const errorMessageGenre = document.getElementById('err_message');
-		errorMessageGenre.style.display = "flex"
-		genreFieldSet.style.borderColor = "yellow"
-		return
-	}
 	const genres = Array.from(checkedCheckboxes).map(checkbox => checkbox.value).join(',');
-	window.location.href = `#games/searchResults?developer=${developer}&genres=${genres}`;
+
+	let queries = '';
+
+	if (developer) {
+		queries += `developer=${developer}&`;
+	}
+
+	if (genres) {
+		queries += `genres=${genres}&`;
+	}
+
+	if (queries.length > 0)
+		queries = queries.slice(0, queries.length - 1); // remove trailing '&'
+
+	if (queries.toString().length > 0)
+		window.location.href = `#games/searchResults?${queries}`;
+	else
+		window.location.href = `#games/searchResults`;
+
 }
 
 function submitFormSessionSearch(event) {
@@ -39,7 +50,8 @@ function submitFormSessionSearch(event) {
 		queries += `date=${date}&`;
 	}
 
-	queries = queries.slice(0, queries.length - 1); // remove trailing '&'
+	if (queries.length > 0)
+		queries = queries.slice(0, queries.length - 1); // remove trailing '&'
 
 	if (queries.toString().length > 0)
 		window.location.href = `#sessions/searchResults?${queries}`;

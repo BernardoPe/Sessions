@@ -72,7 +72,6 @@ class SessionsDataDBSession(private val connection: Connection) : SessionsDataSe
         if (date != null) {
             query.append(if (firstCondition) "WHERE date = ? " else "AND date = ? ")
             queryParams.add(date.toTimestamp())
-            firstCondition = false
         }
 
         query.append("ORDER BY id LIMIT ? OFFSET ?) as sessions ")
