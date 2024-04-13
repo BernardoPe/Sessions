@@ -8,6 +8,12 @@ We implemented the backend of the project with `kotlin`,
 We covered the implemented features with unit tests using the `JUnit` library.  
 The database is managed by `PostgreSQL` and the connections are made using the `JDBC` library.
 
+On the frontend side, we used javascript modules to manage the user interface of the website.
+An technique, has been used on the web application to make the user interface load only a single web page document,
+and then updates the body content of that single document via JavaScript APIs such as Fetch when different content is to
+be shown.
+This technique is called Single Page Application (SPA).
+
 ## Modeling the database
 
 ### Conceptual model ###
@@ -112,6 +118,7 @@ Response codes are:
 
 ### Request Details
 
+#### Server Request Flow
 
 At the Server level, the request is routed to the appropriate handler based on the path and method of the request.
 
@@ -141,6 +148,34 @@ any errors that may occur at the application level.
 - API methods: These methods are responsible for processing the request at the API level. They are called by the `processRequest` method in callback and are responsible for validating the request parameters and checking for any errors.
 - Service methods: These methods are responsible for processing the request at the service level. They are called by the API methods and are responsible for handling the business logic of the application.
 - Data Access methods: These methods are responsible for interacting with the database. They are called by the service methods and are responsible for sanitizing the input with prepared statements to prevent SQL injection attacks and returning the query result to the service layer.
+
+#### Client Request Flow
+
+The requests of the frontend of the application uses the Single Page Application (SPA) technique.
+This technique allows the user interface to load only a single web page document and then updates the body content
+of that single document using DOM elements without making any additional HTTP requests made by the client.
+When a client request needs information from the server API it is used the javascript Fetch API to make the request.
+
+The redirection of the user interface is done by replacing the body content of the document with the content of the
+requested page.
+The requested page URL is changed with a hash mark (#) on its path, which is then used to determine which content to
+show on the page.
+
+In the file `index.html`, the body content is replaced by the content of the requested page using the event listener of
+type `load`
+and verify if it's hash mark has changed on the redirected URL by the event listener of type `hashchange`.
+
+The function `loadHandler` is responsible for loading the content of the requested page and replacing the body content
+with it, by adding route handlers, that contains the path, and it's the content to be replaced in DOM.
+
+The function `hashChangeHandler` is responsible for verifying if the hash mark of the URL has changed and if it has, it
+calls the `loadHandler` function to load the content of the requested page.
+
+The `router` module handles the URL path and it's params and queries to be processed by the `loadHandler`
+and `hashChangeHandler`.
+
+The `handlers` module contains the functions that are called by the `router` module to load the content of the requested
+page which contains DOM elements to be displayed.
 
 
 ### Connection Management
