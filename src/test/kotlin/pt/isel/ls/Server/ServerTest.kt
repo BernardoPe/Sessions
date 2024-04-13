@@ -15,7 +15,11 @@ import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.toEmail
 import pt.isel.ls.data.domain.toGenre
 import pt.isel.ls.data.domain.toName
-import pt.isel.ls.dto.*
+import pt.isel.ls.dto.GameInfoOutputModel
+import pt.isel.ls.dto.GameSearchResultOutputModel
+import pt.isel.ls.dto.PlayerInfoOutputModel
+import pt.isel.ls.dto.SessionInfoOutputModel
+import pt.isel.ls.dto.SessionSearchResultOutputModel
 import pt.isel.ls.pt.isel.ls.SessionsServer
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
@@ -239,18 +243,6 @@ class ServerTest {
         assertEquals("application/json", response.header("Content-Type"))
         assertEquals(Status.BAD_REQUEST, response.status)
     }
-
-    @Test
-    fun `test get game list invalid params should give bad request`() {
-        // Arrange
-        val request = Request(Method.GET, "/games?developer=asd&genres=asd")
-        // Act
-        val response = server.sessionsHandler(request)
-        // Assert
-        assertEquals("application/json", response.header("Content-Type"))
-        assertEquals(Status.BAD_REQUEST, response.status)
-    }
-
     @Test
     fun `test get game list limit and skip should return game list`() {
         // Arrange

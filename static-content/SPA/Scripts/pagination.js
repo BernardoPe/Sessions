@@ -1,9 +1,13 @@
 import {button, div} from "../WebDSL/web_dsl.js";
 
 import {API_URL} from "../handlers.js";
-function handleGamePagination(developer, genres, limit, skip) {
-	return handlePagination(API_URL + `games?developer=${developer}&genres=${genres}`, limit, skip, (limit, skip) => {
-		return `#games/searchResults?developer=${developer}&genres=${genres}&limit=${limit}&skip=${skip}`;
+function handleGamePagination(queries, limit, skip) {
+	return handlePagination(API_URL + `games?${queries}`, limit, skip, (limit, skip) => {
+		if (queries.toString().length > 0) {
+			return `#games/searchResults?${queries}&limit=${limit}&skip=${skip}`;
+		} else {
+			return `#games/searchResults?limit=${limit}&skip=${skip}`;
+		}
 	});
 }
 
@@ -21,9 +25,13 @@ function handlePagination(url, limit, skip, generateUrl) {
 
 	const divElement = div({class: "pagination"});
 
-	if (skip >= limit) {
+	if (parseInt(skip) > 0) {
+		let resSkip = parseInt(skip) - parseInt(limit);
+		if (resSkip < 0) {
+			resSkip = 0;
+		}
 		divElement.appendChild(
-			createPaginationButton("Previous", limit, parseInt(skip) - parseInt(limit), generateUrl)
+			createPaginationButton("Previous", limit, resSkip, generateUrl)
 		)
 	}
 

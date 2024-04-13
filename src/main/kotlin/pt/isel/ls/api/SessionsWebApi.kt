@@ -16,9 +16,25 @@ import pt.isel.ls.data.domain.Email
 import pt.isel.ls.data.domain.Genre
 import pt.isel.ls.data.domain.Name
 import pt.isel.ls.data.domain.session.toState
-import pt.isel.ls.data.mapper.*
-import pt.isel.ls.dto.*
-import pt.isel.ls.exceptions.*
+import pt.isel.ls.data.mapper.toGameCreationDTO
+import pt.isel.ls.data.mapper.toGameInfoDTO
+import pt.isel.ls.data.mapper.toGameSearchDTO
+import pt.isel.ls.data.mapper.toPlayerCreationDTO
+import pt.isel.ls.data.mapper.toPlayerInfoDTO
+import pt.isel.ls.data.mapper.toSessionCreationDTO
+import pt.isel.ls.data.mapper.toSessionInfoDTO
+import pt.isel.ls.data.mapper.toSessionOperationMessage
+import pt.isel.ls.data.mapper.toSessionSearchDTO
+import pt.isel.ls.dto.GameCreationInputModel
+import pt.isel.ls.dto.PlayerCreationInputModel
+import pt.isel.ls.dto.SessionAddPlayerInputModel
+import pt.isel.ls.dto.SessionCreationInputModel
+import pt.isel.ls.dto.SessionUpdateInputModel
+import pt.isel.ls.exceptions.BadRequestException
+import pt.isel.ls.exceptions.InternalServerErrorException
+import pt.isel.ls.exceptions.SessionsExceptions
+import pt.isel.ls.exceptions.UnauthorizedException
+import pt.isel.ls.exceptions.UnsupportedMediaTypeException
 import pt.isel.ls.pt.isel.ls.logger
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
@@ -94,12 +110,12 @@ class SessionsApi(
     fun getGameList(request: Request) = processRequest(request) {
         val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip") ?: 0u)
 
-        val genres = request.query("genres")?.split(",") ?: throw BadRequestException("No Genres provided")
-        val developer = request.query("developer") ?: throw BadRequestException("No Developer provided")
+        val genres = request.query("genres")?.split(",")
+        val developer = request.query("developer")
 
         val res = gameServices.searchGames(
-            genres.map { Genre(it) }.toSet(),
-            Name(developer),
+            genres?.map { Genre(it) }?.toSet(),
+            developer?.let { Name(it) },
             limit,
             skip,
         )

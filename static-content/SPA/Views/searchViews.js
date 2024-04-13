@@ -10,9 +10,8 @@ function gameSearchView() {
 					type: "text",
 					placeholder: "Enter the name of developer",
 					name: "developer",
-					required: "true"
 				}),
-				label("developer", {class:"form__label", required:true}, "Developer name"),
+				label("developer", {class:"form__label"}, "Developer name"),
 			),
 
 			fieldset(null,

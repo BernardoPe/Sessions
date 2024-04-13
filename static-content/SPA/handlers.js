@@ -20,16 +20,32 @@ function getGameSearch(mainContent, req) {
 }
 
 function getGameSearchResults(mainContent, req) {
-    const developer = req.query.developer;
-    const genres = req.query.genres;
-    const limit = req.query.limit ? req.query.limit : RESULTS_PER_PAGE
+    const queries = new URLSearchParams();
+    req.query.developer ? queries.append('developer', req.query.developer) : null;
+    req.query.genres ? queries.append('genres', req.query.genres) : null;
+    const limit = req.query.limit ? req.query.limit : RESULTS_PER_PAGE;
     const skip = req.query.skip ? req.query.skip : 0;
-    fetchWithHandling(API_URL + 'games?developer=' + developer + '&genres=' + genres + '&limit=' + limit + '&skip=' + skip, mainContent, (games) => {
+    let queryStr = buildPaginationQuery(queries, limit, skip)
+    fetchWithHandling(API_URL + `games?${queryStr}`, mainContent, (games) => {
         const gameResultsView = gameSearchResultsView(games);
-        gameResultsView.appendChild(handleGamePagination(developer, genres, limit, skip));
+        gameResultsView.appendChild(handleGamePagination(queries, limit, skip));
         mainContent.replaceChildren(gameResultsView);
     })
 }
+
+
+function buildPaginationQuery(queries, limit, skip) {
+    let queryStr = queries.toString();
+
+    if (queryStr.length === 0) {
+        queryStr = `limit=${limit}&skip=${skip}`;
+    } else {
+        queryStr += `&limit=${limit}&skip=${skip}`;
+    }
+
+    return queryStr;
+}
+
 
 function getSessionSearch(mainContent, req) {
     mainContent.replaceChildren(sessionSearchView());
@@ -45,14 +61,7 @@ function getSessionSearchResults(mainContent, req) {
     req.query.date ? queries.append('date', req.query.date) : null;
     const limit = req.query.limit ? req.query.limit : RESULTS_PER_PAGE;
     const skip = req.query.skip ? req.query.skip : 0;
-
-    let queryStr = queries.toString();
-
-    if (queryStr.length === 0) {
-        queryStr = `limit=${limit}&skip=${skip}`;
-    } else {
-        queryStr += `&limit=${limit}&skip=${skip}`;
-    }
+    let queryStr = buildPaginationQuery(queries, limit, skip)
 
     fetchWithHandling(API_URL + `sessions?${queryStr}`, mainContent, (sessions) => {
         const searchResultsView = sessionSearchResultsView(sessions);

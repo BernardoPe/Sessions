@@ -169,7 +169,6 @@ body {
 
                     .form__field:focus {
                         padding-bottom: 6px;
-                        font-weight: 700;
                         border-width: 3px;
                         border-image-slice: 1;
                     }

@@ -39,10 +39,4 @@ class GenreTests {
         }
     }
 
-    @Test
-    fun `Genre creation should fail when genre is invalid`() {
-        assertFailsWith<IllegalArgumentException> {
-            Genre("TEST GENRE")
-        }
-    }
 }

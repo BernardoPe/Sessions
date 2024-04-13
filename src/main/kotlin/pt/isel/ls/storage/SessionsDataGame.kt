@@ -48,7 +48,7 @@ interface SessionsDataGame {
      * @param developer The game developer
      * @return The list of game objects that match the given genres and developer
      */
-    fun getGamesSearch(genres: Set<Genre>, developer: Name, limit: UInt, skip: UInt): List<Game>
+    fun getGamesSearch(genres: Set<Genre>?, developer: Name?, limit: UInt, skip: UInt): List<Game>
 
     /**
      * Read all games from the database mock
