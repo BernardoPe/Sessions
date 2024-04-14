@@ -10,7 +10,6 @@ import org.http4k.routing.routes
 import org.http4k.routing.singlePageApp
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
-import org.postgresql.ds.PGSimpleDataSource
 import org.slf4j.LoggerFactory
 import pt.isel.ls.api.SessionsApi
 import pt.isel.ls.services.GameService
@@ -97,18 +96,14 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
 }
 
 fun main() {
-    val dataSource = PGSimpleDataSource()
-    dataSource.setURL(System.getenv("JDBC_DATABASE_URL"))
 
-    val connection = dataSource.connection
+    val storage = SessionsDataManager(
+        SessionsDataDBGame(),
+        SessionsDataDBPlayer(),
+        SessionsDataDBSession(),
+    )
 
-    connection.use {
-        val storage = SessionsDataManager(
-            SessionsDataDBGame(it),
-            SessionsDataDBPlayer(it),
-            SessionsDataDBSession(it),
-        )
-
+    storage.use {
         val server = SessionsServer(
             SessionsApi(
                 PlayerService(storage),
@@ -116,9 +111,9 @@ fun main() {
                 SessionsService(storage),
             ),
         )
-
         server.start()
         readln()
         server.stop()
     }
+
 }

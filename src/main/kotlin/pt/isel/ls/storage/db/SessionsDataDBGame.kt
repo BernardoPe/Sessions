@@ -8,26 +8,28 @@ import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Statement
 
-class SessionsDataDBGame(private val connection: Connection) : SessionsDataGame {
+class SessionsDataDBGame : SessionsDataGame {
 
-    init {
-        connection.autoCommit = false
-    }
+    private val connManager: DBConnectionManager = DBConnectionManager()
+    private val connection: Connection get() = connManager.connection
+
     override fun create(game: Game): UInt {
+
         val statement = connection.prepareStatement(
             "INSERT INTO games (name, developer, genres) VALUES (?, ?, ?)",
             Statement.RETURN_GENERATED_KEYS,
         )
-
+        connection.autoCommit = false
         statement.setString(1, game.name.toString())
         statement.setString(2, game.developer.toString())
         statement.setArray(3, connection.createArrayOf("VARCHAR", game.genres.map { it.toString() }.toTypedArray()))
         statement.executeUpdate()
         connection.commit()
+        connection.autoCommit = true
 
         val generatedKeys = statement.generatedKeys
         generatedKeys.next()
-        return generatedKeys.getInt(1).toUInt().also { statement.close() }
+        return generatedKeys.getInt(1).toUInt().also { statement.close(); connection.close() }
     }
 
     override fun isGameNameStored(name: Name): Boolean {
@@ -35,14 +37,17 @@ class SessionsDataDBGame(private val connection: Connection) : SessionsDataGame 
             "SELECT * FROM games WHERE name = ?",
         )
 
+        connection.autoCommit = false
         statement.setString(1, name.toString())
         val resultSet = statement.executeQuery()
         connection.commit()
+        connection.autoCommit = true
 
         return resultSet.next().also { statement.close() }
     }
 
     override fun getGamesSearch(genres: Set<Genre>?, developer: Name?, limit: UInt, skip: UInt): List<Game> {
+
         var query = "SELECT * FROM games "
         val params = mutableListOf<Any>()
 
@@ -71,8 +76,10 @@ class SessionsDataDBGame(private val connection: Connection) : SessionsDataGame 
             statement.setObject(index + 1, param)
         }
 
+        connection.autoCommit = false
         val resultSet = statement.executeQuery()
         connection.commit()
+        connection.autoCommit = true
 
         return resultSet.getGames().also { statement.close() }
     }
@@ -81,9 +88,10 @@ class SessionsDataDBGame(private val connection: Connection) : SessionsDataGame 
         val statement = connection.prepareStatement(
             "SELECT * FROM games",
         )
-
+        connection.autoCommit = false
         val resultSet = statement.executeQuery()
         connection.commit()
+        connection.autoCommit = true
 
         return resultSet.getGames().also { statement.close() }
     }
@@ -93,9 +101,11 @@ class SessionsDataDBGame(private val connection: Connection) : SessionsDataGame 
             "SELECT * FROM games WHERE id = ?",
         )
 
+        connection.autoCommit = false
         statement.setInt(1, id.toInt())
         val resultSet = statement.executeQuery()
         connection.commit()
+        connection.autoCommit = true
 
         return resultSet.getGames().firstOrNull().also { statement.close() }
     }
@@ -105,12 +115,14 @@ class SessionsDataDBGame(private val connection: Connection) : SessionsDataGame 
             "UPDATE games SET name = ?, developer = ?, genres = ? WHERE id = ?",
         )
 
+        connection.autoCommit = false
         statement.setString(1, value.name.toString())
         statement.setString(2, value.developer.toString())
         statement.setArray(3, connection.createArrayOf("VARCHAR(40)", value.genres.map { it.toString() }.toTypedArray()))
         statement.setInt(4, value.id.toInt())
         val updated = statement.executeUpdate()
         connection.commit()
+        connection.autoCommit = true
 
         return updated > 0.also { statement.close() }
     }
@@ -120,9 +132,11 @@ class SessionsDataDBGame(private val connection: Connection) : SessionsDataGame 
             "DELETE FROM games WHERE id = ?",
         )
 
+        connection.autoCommit = false
         statement.setInt(1, id.toInt())
         val deleted = statement.executeUpdate()
         connection.commit()
+        connection.autoCommit = true
 
         return deleted > 0.also { statement.close() }
     }
@@ -146,4 +160,5 @@ class SessionsDataDBGame(private val connection: Connection) : SessionsDataGame 
         }
         return games
     }
+
 }

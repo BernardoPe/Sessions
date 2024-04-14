@@ -15,11 +15,10 @@ import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Statement
 
-class SessionsDataDBSession(private val connection: Connection) : SessionsDataSession {
+class SessionsDataDBSession : SessionsDataSession {
 
-    init {
-        connection.autoCommit = false
-    }
+    private val connectionManager = DBConnectionManager()
+    private val connection: Connection get() = connectionManager.connection
 
     override fun create(session: Session): UInt {
         val statement = connection.prepareStatement(
@@ -27,11 +26,13 @@ class SessionsDataDBSession(private val connection: Connection) : SessionsDataSe
             Statement.RETURN_GENERATED_KEYS,
         )
 
+        connection.autoCommit = false
         statement.setInt(1, session.gameSession.id.toInt())
         statement.setInt(2, session.capacity.toInt())
         statement.setTimestamp(3, session.date.toTimestamp())
         statement.executeUpdate()
         connection.commit()
+        connection.autoCommit = true
 
         val generatedKeys = statement.generatedKeys
         generatedKeys.next()
@@ -47,9 +48,11 @@ class SessionsDataDBSession(private val connection: Connection) : SessionsDataSe
                 "WHERE sessions.id = ?",
         )
 
+        connection.autoCommit = false
         statement.setInt(1, id.toInt())
         val resultSet = statement.executeQuery()
         connection.commit()
+        connection.autoCommit = true
 
         return resultSet.getSessions().firstOrNull().also { statement.close() }
     }
@@ -96,9 +99,10 @@ class SessionsDataDBSession(private val connection: Connection) : SessionsDataSe
             statement.setObject(index + 1, param)
         }
 
+        connection.autoCommit = false
         val resultSet = statement.executeQuery()
-
         connection.commit()
+        connection.autoCommit = true
 
         return if (state != null) {
             resultSet.getSessions().filter { it.state == state }.also { statement.close() }
@@ -114,11 +118,13 @@ class SessionsDataDBSession(private val connection: Connection) : SessionsDataSe
         )
 
         // Set the parameters
+        connection.autoCommit = false
         statement.setInt(1, sid.toInt())
         statement.setInt(2, player.id.toInt())
         // Execute the statement and get the result
         val res = statement.executeUpdate()
         connection.commit()
+        connection.autoCommit = true
 
         // Return the result of the operation
         // It returns true if the player was added to the session
@@ -131,12 +137,14 @@ class SessionsDataDBSession(private val connection: Connection) : SessionsDataSe
             "DELETE FROM sessions_players WHERE session_id = ? AND player_id = ?",
         )
 
+        connection.autoCommit = false
         // Set the parameters
         statement.setInt(1, sid.toInt())
         statement.setInt(2, pid.toInt())
         // Execute the statement and get the result
         val res = statement.executeUpdate()
         connection.commit()
+        connection.autoCommit = true
 
         // Return the result of the operation
         // It returns true if the player was removed from the session
@@ -150,6 +158,7 @@ class SessionsDataDBSession(private val connection: Connection) : SessionsDataSe
         // Prepare the statement
         val statement = connection.prepareStatement(query.toString())
 
+        connection.autoCommit = false
         // Set the parameters
         statement.setInt(1, capacity.toInt())
         statement.setTimestamp(2, date.toTimestamp())
@@ -158,6 +167,7 @@ class SessionsDataDBSession(private val connection: Connection) : SessionsDataSe
         // Execute the statement and get the result
         val res = statement.executeUpdate()
         connection.commit()
+        connection.autoCommit = true
 
         // Return the result of the operation
         return res > 0.also { statement.close() }
@@ -168,9 +178,11 @@ class SessionsDataDBSession(private val connection: Connection) : SessionsDataSe
             "DELETE FROM sessions WHERE id = ?",
         )
 
+        connection.autoCommit = false
         statement.setInt(1, id.toInt())
         val res = statement.executeUpdate()
         connection.commit()
+        connection.autoCommit = true
 
         return res > 0.also { statement.close() }
     }
@@ -234,4 +246,5 @@ class SessionsDataDBSession(private val connection: Connection) : SessionsDataSe
             genres,
         )
     }
+
 }

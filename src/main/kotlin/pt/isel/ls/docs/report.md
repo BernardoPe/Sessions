@@ -180,14 +180,21 @@ page which contains DOM elements to be displayed.
 
 ### Connection Management
 
-The project manages connections to a PostgreSQL database through a JDBC data source with `PGSimpleDataSource`.
-It initializes a PGSimpleDataSource, acquires connections from it within the `main()`
-function using a `connection.use { }` block for automatic closure, and encapsulates
-database interactions within a SessionsDataManager instance.
+The project manages connections to a PostgreSQL database through a class named DBConnectionManager.
+This class is responsible for giving out connections to the database for each thread, and closing them when they are no longer needed.
+For each new connection, the class creates a new instance of a PGSimpleDataSource, and sets its connection parameters.
+The connections are closed using the close method of the class.
+
+In the overall application, at the `main` function, the application creates a new instance of the `SessionsDataManager` class. This 
+class internally uses the `DBConnectionManager` class to allow the user to shut down the connections when the application is finished.
+
+When the `storage.use {}` block is finished, the `SessionsDataManager` internally calls the close method of the `DBConnectionManager` to close the connections.
 
 ### Data Access
 
 For data access, we implemented the `SessionsDataManager` class, which is responsible for managing storage, be it in memory or in a database.
+
+This class uses the `DBConnectionManager` class to allow the user to shut down the connections when the application is finished.
 
 We also implemented the `SessionsDataGame`, `SessionsDataPlayer`, and `SessionsDataSession` interfaces, which are responsible for managing the data of the respective entities and support different types of implementations, such as in-memory storage or database storage.
 
@@ -226,4 +233,5 @@ No major defects were detected as of the time of writing this report, but some i
 
 No major defects were detected as of the time of writing this report.
 
-The only currently planned change is to increase the API test coverage with more edge cases.
+The currently planned changes are to increase the API test coverage with more edge cases, and improve the project documentation at the 
+code level.

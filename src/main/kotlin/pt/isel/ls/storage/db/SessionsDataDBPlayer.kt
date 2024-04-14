@@ -9,12 +9,10 @@ import java.sql.ResultSet
 import java.sql.Statement
 import java.util.*
 
-class SessionsDataDBPlayer(private val connection: Connection) : SessionsDataPlayer {
+class SessionsDataDBPlayer : SessionsDataPlayer {
 
-    init {
-        connection.autoCommit = false
-    }
-
+    private val connManager: DBConnectionManager = DBConnectionManager()
+    private val connection: Connection get() = connManager.connection
     override fun create(player: Player): Pair<UInt, UUID> {
         val statement = connection.prepareStatement(
             "INSERT INTO players (name, email,token_hash) VALUES (?, ?, ?)",
@@ -22,12 +20,13 @@ class SessionsDataDBPlayer(private val connection: Connection) : SessionsDataPla
         )
 
         val token = UUID.randomUUID()
-
+        connection.autoCommit = false
         statement.setString(1, player.name.toString())
         statement.setString(2, player.email.toString())
         statement.setLong(3, token.hash())
         statement.executeUpdate()
         connection.commit()
+        connection.autoCommit = true
 
         val generatedKeys = statement.generatedKeys
         generatedKeys.next()
@@ -38,10 +37,11 @@ class SessionsDataDBPlayer(private val connection: Connection) : SessionsDataPla
         val statement = connection.prepareStatement(
             "SELECT * FROM players WHERE id = ?",
         )
-
+        connection.autoCommit = false
         statement.setInt(1, id.toInt())
         val resultSet = statement.executeQuery()
         connection.commit()
+        connection.autoCommit = true
 
         return resultSet.getPlayers().firstOrNull().also { statement.close() }
     }
@@ -50,10 +50,11 @@ class SessionsDataDBPlayer(private val connection: Connection) : SessionsDataPla
         val statement = connection.prepareStatement(
             "SELECT * FROM players WHERE email = ?",
         )
-
+        connection.autoCommit = false
         statement.setString(1, email.toString())
         val resultSet = statement.executeQuery()
         connection.commit()
+        connection.autoCommit = true
 
         return resultSet.next().also { statement.close() }
     }
@@ -63,8 +64,10 @@ class SessionsDataDBPlayer(private val connection: Connection) : SessionsDataPla
             "SELECT * FROM players",
         )
 
+        connection.autoCommit = false
         val resultSet = statement.executeQuery()
         connection.commit()
+        connection.autoCommit = true
 
         return resultSet.getPlayers().also { statement.close() }
     }
@@ -74,16 +77,20 @@ class SessionsDataDBPlayer(private val connection: Connection) : SessionsDataPla
             "UPDATE players SET name = ?, email = ? WHERE id = ?",
         )
 
+        connection.autoCommit = false
         statement.setString(1, value.name.toString())
         statement.setString(2, value.email.toString())
         statement.setInt(3, id.toInt())
         val updated = statement.executeUpdate()
         connection.commit()
+        connection.autoCommit = true
 
         return updated > 0
     }
 
     override fun delete(id: UInt): Boolean {
+
+        connection.autoCommit = false
         val statement = connection.prepareStatement(
             "DELETE FROM players WHERE id = ?",
         )
@@ -91,6 +98,7 @@ class SessionsDataDBPlayer(private val connection: Connection) : SessionsDataPla
         statement.setInt(1, id.toInt())
         val deleted = statement.executeUpdate()
         connection.commit()
+        connection.autoCommit = true
 
         return deleted > 0
     }
@@ -100,9 +108,11 @@ class SessionsDataDBPlayer(private val connection: Connection) : SessionsDataPla
             "SELECT * FROM players WHERE token_hash = ?",
         )
 
+        connection.autoCommit = false
         statement.setLong(1, token.hash())
         val resultSet = statement.executeQuery()
         connection.commit()
+        connection.autoCommit = true
 
         return resultSet.getPlayers().firstOrNull().also { statement.close() }
     }
@@ -123,4 +133,5 @@ class SessionsDataDBPlayer(private val connection: Connection) : SessionsDataPla
         }
         return players
     }
+
 }
