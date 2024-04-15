@@ -8,7 +8,7 @@ class GenreTests {
 
     @Test
     fun `Genre creation should succeed`() {
-        val genre = Genre("RPG")
+        Genre("RPG")
     }
 
     @Test

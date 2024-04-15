@@ -8,7 +8,7 @@ class NameTests {
 
     @Test
     fun `Name creation should succeed`() {
-        val name = Name("Test Name")
+        Name("Test Name")
     }
 
     @Test
