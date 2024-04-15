@@ -8,8 +8,8 @@ import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.data.domain.player.Player
-import pt.isel.ls.data.domain.toEmail
-import pt.isel.ls.data.domain.toName
+import pt.isel.ls.data.mapper.toEmail
+import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.dto.PlayerInfoOutputModel
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService

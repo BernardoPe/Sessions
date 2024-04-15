@@ -11,6 +11,9 @@ import pt.isel.ls.data.domain.*
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
+import pt.isel.ls.data.mapper.toEmail
+import pt.isel.ls.data.mapper.toGenre
+import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.dto.SessionInfoOutputModel
 import pt.isel.ls.dto.SessionSearchResultOutputModel
 import pt.isel.ls.services.GameService

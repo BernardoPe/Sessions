@@ -1,6 +1,6 @@
 package pt.isel.ls.domain
 
-import pt.isel.ls.data.domain.Genre
+import pt.isel.ls.data.domain.util.Genre
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 

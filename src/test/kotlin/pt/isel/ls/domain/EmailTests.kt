@@ -1,7 +1,7 @@
 package pt.isel.ls.domain
 
-import pt.isel.ls.data.domain.Email
-import pt.isel.ls.data.domain.toEmail
+import pt.isel.ls.data.domain.util.Email
+import pt.isel.ls.data.mapper.toEmail
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 

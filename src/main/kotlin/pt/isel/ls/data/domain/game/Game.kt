@@ -1,7 +1,7 @@
 package pt.isel.ls.data.domain.game
 
-import pt.isel.ls.data.domain.Genre
-import pt.isel.ls.data.domain.Name
+import pt.isel.ls.data.domain.util.Genre
+import pt.isel.ls.data.domain.util.Name
 
 /**
  *  Game

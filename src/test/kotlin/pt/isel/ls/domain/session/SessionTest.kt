@@ -6,9 +6,9 @@ import pt.isel.ls.data.domain.session.SESSION_MAX_CAPACITY
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
 import pt.isel.ls.data.domain.session.toState
-import pt.isel.ls.data.domain.toEmail
-import pt.isel.ls.data.domain.toGenre
-import pt.isel.ls.data.domain.toName
+import pt.isel.ls.data.mapper.toEmail
+import pt.isel.ls.data.mapper.toGenre
+import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.utils.toLocalDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -1,8 +1,8 @@
 package pt.isel.ls.domain.player
 
 import pt.isel.ls.data.domain.player.Player
-import pt.isel.ls.data.domain.toEmail
-import pt.isel.ls.data.domain.toName
+import pt.isel.ls.data.mapper.toEmail
+import pt.isel.ls.data.mapper.toName
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

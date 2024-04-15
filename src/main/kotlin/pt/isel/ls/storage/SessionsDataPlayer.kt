@@ -1,6 +1,6 @@
 package pt.isel.ls.storage
 
-import pt.isel.ls.data.domain.Email
+import pt.isel.ls.data.domain.util.Email
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import java.util.*

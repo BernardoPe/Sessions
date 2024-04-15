@@ -1,13 +1,13 @@
 package pt.isel.ls.services.session
 
-import pt.isel.ls.data.domain.Genre
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.SESSION_MAX_CAPACITY
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
-import pt.isel.ls.data.domain.toEmail
-import pt.isel.ls.data.domain.toName
+import pt.isel.ls.data.domain.util.Genre
+import pt.isel.ls.data.mapper.toEmail
+import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.ConflictException
 import pt.isel.ls.exceptions.NotFoundException
@@ -25,7 +25,11 @@ import java.util.*
 import kotlin.math.abs
 import kotlin.random.Random
 import kotlin.random.nextUInt
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.milliseconds
 
 class SessionServiceTest {

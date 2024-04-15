@@ -1,3 +1,4 @@
+
 import kotlinx.serialization.json.Json
 import org.http4k.core.Method
 import org.http4k.core.Request
@@ -8,9 +9,9 @@ import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.api.SessionsApi
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
-import pt.isel.ls.data.domain.toEmail
-import pt.isel.ls.data.domain.toGenre
-import pt.isel.ls.data.domain.toName
+import pt.isel.ls.data.mapper.toEmail
+import pt.isel.ls.data.mapper.toGenre
+import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.dto.GameInfoOutputModel
 import pt.isel.ls.dto.GameSearchResultOutputModel
 import pt.isel.ls.services.GameService

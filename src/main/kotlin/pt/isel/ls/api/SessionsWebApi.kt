@@ -12,9 +12,9 @@ import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Status.Companion.UNAUTHORIZED
 import org.http4k.routing.path
-import pt.isel.ls.data.domain.Email
-import pt.isel.ls.data.domain.Genre
-import pt.isel.ls.data.domain.Name
+import pt.isel.ls.data.domain.util.Email
+import pt.isel.ls.data.domain.util.Genre
+import pt.isel.ls.data.domain.util.Name
 import pt.isel.ls.data.domain.session.toState
 import pt.isel.ls.data.mapper.toGameCreationDTO
 import pt.isel.ls.data.mapper.toGameInfoDTO

@@ -1,4 +1,4 @@
-package pt.isel.ls.data.domain
+package pt.isel.ls.data.domain.util
 
 data class Name(val name: String) {
     init {
@@ -11,4 +11,3 @@ data class Name(val name: String) {
     }
 }
 
-fun String.toName(): Name = Name(this)

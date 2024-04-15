@@ -1,8 +1,8 @@
 package pt.isel.ls.domain.game
 
 import pt.isel.ls.data.domain.game.Game
-import pt.isel.ls.data.domain.toGenre
-import pt.isel.ls.data.domain.toName
+import pt.isel.ls.data.mapper.toGenre
+import pt.isel.ls.data.mapper.toName
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

@@ -2,13 +2,14 @@ package pt.isel.ls.storage.db
 
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toKotlinLocalDateTime
-import pt.isel.ls.data.domain.Genre
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
-import pt.isel.ls.data.domain.toEmail
-import pt.isel.ls.data.domain.toName
+import pt.isel.ls.data.domain.util.Genre
+import pt.isel.ls.data.mapper.toEmail
+import pt.isel.ls.data.mapper.toGenre
+import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.storage.SessionsDataSession
 import pt.isel.ls.utils.toTimestamp
 import java.sql.Connection

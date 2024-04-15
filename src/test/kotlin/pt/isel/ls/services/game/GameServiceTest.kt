@@ -2,9 +2,9 @@ package pt.isel.ls.services.game
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import pt.isel.ls.data.domain.Genre
+import pt.isel.ls.data.domain.util.Genre
 import pt.isel.ls.data.domain.game.Game
-import pt.isel.ls.data.domain.toName
+import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.exceptions.ConflictException
 import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.services.GameService

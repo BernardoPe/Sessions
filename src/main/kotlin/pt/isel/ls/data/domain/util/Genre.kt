@@ -1,4 +1,4 @@
-package pt.isel.ls.data.domain
+package pt.isel.ls.data.domain.util
 
 data class Genre(val genre: String) {
 
@@ -8,6 +8,7 @@ data class Genre(val genre: String) {
     init {
         require(genre.isNotBlank()) { "Genres must not be blank" }
         require(genre.length in 3..40) { "Genres must be between 3 and 40 characters" }
+        require(genre in genresList) { "Genre must be one of the following $genresList" }
     }
 
     override fun toString(): String {
@@ -15,4 +16,3 @@ data class Genre(val genre: String) {
     }
 }
 
-fun String.toGenre(): Genre = Genre(this)

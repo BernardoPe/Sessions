@@ -15,7 +15,7 @@ repositories {
 }
 
 tasks {
-    val buildJar = register<Jar>("fatJar") {
+    val buildJar = register<Jar>("buildJar") {
         dependsOn.addAll(listOf("compileJava", "compileKotlin", "processResources"))
         archiveClassifier.set("standalone")
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE

@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
-import pt.isel.ls.data.domain.toEmail
-import pt.isel.ls.data.domain.toGenre
-import pt.isel.ls.data.domain.toName
+import pt.isel.ls.data.mapper.toEmail
+import pt.isel.ls.data.mapper.toGenre
+import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.storage.mem.SessionsDataMemSession
 import pt.isel.ls.utils.toLocalDateTime
 import kotlin.test.Test

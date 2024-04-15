@@ -1,6 +1,6 @@
 package pt.isel.ls.domain
 
-import pt.isel.ls.data.domain.Name
+import pt.isel.ls.data.domain.util.Name
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 

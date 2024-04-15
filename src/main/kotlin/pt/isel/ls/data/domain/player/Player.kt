@@ -1,7 +1,7 @@
 package pt.isel.ls.data.domain.player
 
-import pt.isel.ls.data.domain.Email
-import pt.isel.ls.data.domain.Name
+import pt.isel.ls.data.domain.util.Email
+import pt.isel.ls.data.domain.util.Name
 
 /**
  *  Player

@@ -1,4 +1,4 @@
-package pt.isel.ls.data.domain
+package pt.isel.ls.data.domain.util
 
 data class Email(val email: String) {
     init {
@@ -11,4 +11,3 @@ data class Email(val email: String) {
     }
 }
 
-fun String.toEmail(): Email = Email(this)

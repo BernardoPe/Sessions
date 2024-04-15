@@ -1,8 +1,8 @@
 package pt.isel.ls.services.player
 
 import pt.isel.ls.data.domain.player.Player
-import pt.isel.ls.data.domain.toEmail
-import pt.isel.ls.data.domain.toName
+import pt.isel.ls.data.mapper.toEmail
+import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.exceptions.ConflictException
 import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.services.PlayerService
