@@ -1,4 +1,4 @@
-package pt.isel.ls.pt.isel.ls
+package pt.isel.ls
 
 import org.http4k.core.Method.DELETE
 import org.http4k.core.Method.GET

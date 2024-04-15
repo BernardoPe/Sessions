@@ -14,7 +14,7 @@ import java.sql.Connection
  *
  * The [closeThreadConnection] method is used to close the connection for the current thread.
  *
- * @property connection the connection to the database for the current thread
+ * @property getConnection gets the connection for the current thread
 
  */
 class DBConnectionManager {

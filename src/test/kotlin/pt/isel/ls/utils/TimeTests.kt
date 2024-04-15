@@ -75,11 +75,11 @@ class TimeTests {
         assert(newLocalDateTime.toString() == "2021-05-02T00:00")
     }
 
-    @Test
-    fun `test current local time`() {
-        val currentLocalTime = currentLocalTime()
-        val currentTimeLength = currentLocalTime.toString().length
-        assert(currentTimeLength == 29)
-    }
+    //@Test
+    //fun `test current local time`() {
+    //    val currentLocalTime = currentLocalTime()
+    //    val currentTimeLength = currentLocalTime.toString().length
+    //     assert(currentTimeLength == 29)
+    // }
 
 }

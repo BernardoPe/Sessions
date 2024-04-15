@@ -8,7 +8,7 @@ import {genericErrorView, notFoundView} from "./Views/errorViews.js";
 
 const API_URL = 'http://localhost:8080/';
 
-const RESULTS_PER_PAGE = 5;
+const RESULTS_PER_PAGE = 2;
 
 function getHome(mainContent, req) {
     mainContent.replaceChildren(homeView());

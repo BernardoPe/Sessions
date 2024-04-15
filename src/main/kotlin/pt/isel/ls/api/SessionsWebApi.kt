@@ -35,7 +35,7 @@ import pt.isel.ls.exceptions.InternalServerErrorException
 import pt.isel.ls.exceptions.SessionsExceptions
 import pt.isel.ls.exceptions.UnauthorizedException
 import pt.isel.ls.exceptions.UnsupportedMediaTypeException
-import pt.isel.ls.pt.isel.ls.logger
+import pt.isel.ls.logger
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService

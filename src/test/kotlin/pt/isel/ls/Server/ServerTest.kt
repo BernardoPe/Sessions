@@ -20,7 +20,7 @@ import pt.isel.ls.dto.GameSearchResultOutputModel
 import pt.isel.ls.dto.PlayerInfoOutputModel
 import pt.isel.ls.dto.SessionInfoOutputModel
 import pt.isel.ls.dto.SessionSearchResultOutputModel
-import pt.isel.ls.pt.isel.ls.SessionsServer
+import pt.isel.ls.SessionsServer
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
