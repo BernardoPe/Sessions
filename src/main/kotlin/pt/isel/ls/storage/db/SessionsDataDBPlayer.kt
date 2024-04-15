@@ -12,7 +12,7 @@ import java.util.*
 class SessionsDataDBPlayer : SessionsDataPlayer {
 
     private val connManager: DBConnectionManager = DBConnectionManager()
-    private val connection: Connection get() = connManager.connection
+    private val connection: Connection get() = connManager.getConnection()
     override fun create(player: Player): Pair<UInt, UUID> {
         val statement = connection.prepareStatement(
             "INSERT INTO players (name, email,token_hash) VALUES (?, ?, ?)",

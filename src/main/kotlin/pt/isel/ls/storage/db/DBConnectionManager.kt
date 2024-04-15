@@ -27,7 +27,13 @@ class DBConnectionManager {
     /**
      * Current thread DB connection
      */
-    val connection get() = connections.getOrPut(Thread.currentThread().id) { getNewConnection() }
+    fun getConnection(): Connection {
+        val connection = connections.getOrPut(Thread.currentThread().id) { getNewConnection() }
+        if (connection.isClosed) {
+            connections[Thread.currentThread().id] = getNewConnection()
+        }
+        return connections[Thread.currentThread().id]!!
+    }
     companion object {
         private val connections = mutableMapOf<Long, Connection>()
     }

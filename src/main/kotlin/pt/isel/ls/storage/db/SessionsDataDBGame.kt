@@ -11,7 +11,7 @@ import java.sql.Statement
 class SessionsDataDBGame : SessionsDataGame {
 
     private val connManager: DBConnectionManager = DBConnectionManager()
-    private val connection: Connection get() = connManager.connection
+    private val connection: Connection get() = connManager.getConnection()
 
     override fun create(game: Game): UInt {
 

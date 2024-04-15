@@ -18,7 +18,7 @@ import java.sql.Statement
 class SessionsDataDBSession : SessionsDataSession {
 
     private val connectionManager = DBConnectionManager()
-    private val connection: Connection get() = connectionManager.connection
+    private val connection: Connection get() = connectionManager.getConnection()
 
     override fun create(session: Session): UInt {
         val statement = connection.prepareStatement(
