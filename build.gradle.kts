@@ -14,22 +14,6 @@ repositories {
     mavenCentral()
 }
 
-tasks {
-    val buildJar = register<Jar>("buildJar") {
-        dependsOn.addAll(listOf("compileJava", "compileKotlin", "processResources"))
-        archiveClassifier.set("standalone")
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        manifest { attributes(mapOf("Main-Class" to application.mainClass)) }
-        val sourcesMain = sourceSets.main.get()
-        val contents = configurations.runtimeClasspath.get()
-            .map { if (it.isDirectory) it else zipTree(it) } +
-                sourcesMain.output
-        from(contents)
-    }
-    build {
-        dependsOn(buildJar)
-    }
-}
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0-RC")
@@ -42,12 +26,31 @@ dependencies {
     implementation("org.postgresql:postgresql:42.+")
 }
 
+
 tasks.test {
     useJUnitPlatform()
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
+}
+
+tasks {
+    build {
+        dependsOn("buildJar")
+    }
+}
+
+tasks.register<Jar>("buildJar") {
+    dependsOn.addAll(listOf("compileJava", "compileKotlin", "processResources"))
+    archiveClassifier.set("standalone")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest { attributes(mapOf("Main-Class" to application.mainClass)) }
+    val sourcesMain = sourceSets.main.get()
+    val contents = configurations.runtimeClasspath.get()
+        .map { if (it.isDirectory) it else zipTree(it) } +
+            sourcesMain.output
+    from(contents)
 }
 
 tasks.register<Copy>("copyRuntimeDependencies") {
