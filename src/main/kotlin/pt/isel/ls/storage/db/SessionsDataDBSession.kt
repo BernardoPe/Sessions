@@ -68,7 +68,7 @@ class SessionsDataDBSession : SessionsDataSession {
         var firstCondition = true
 
         if (gid != null) {
-            query.append("WHERE game_id = ?")
+            query.append("WHERE game_id = ? ")
             queryParams.add(gid.toInt())
             firstCondition = false
         }
