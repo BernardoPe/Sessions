@@ -35,6 +35,11 @@ tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
 }
 
+tasks.withType(JavaCompile::class) {
+    sourceCompatibility = JavaVersion.VERSION_17.toString()
+    targetCompatibility = JavaVersion.VERSION_17.toString()
+}
+
 tasks {
     build {
         dependsOn("buildJar")
@@ -51,6 +56,10 @@ tasks.register<Jar>("buildJar") {
         .map { if (it.isDirectory) it else zipTree(it) } +
             sourcesMain.output
     from(contents)
+}
+
+tasks.jar {
+    enabled = false
 }
 
 tasks.register<Copy>("copyRuntimeDependencies") {
