@@ -135,7 +135,7 @@ class SessionEndpointsTest {
         // Act
         val response = api.addPlayerToSession(routedRequest)
         //  Assert
-        assertEquals(response.status, Status.OK)
+        assertEquals(response.status, Status.CREATED)
     }
 
     @Test

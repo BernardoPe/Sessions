@@ -146,8 +146,9 @@ class SessionsApi(
         val player = parseJsonBody<SessionAddPlayerInputModel>(request)
         val res = sessionServices.addPlayer(sid, player.pid)
 
-        Response(OK)
+        Response(CREATED)
             .header("content-type", "application/json")
+            .header("location", "/sessions/$sid/players/${player.pid}")
             .body(Json.encodeToString(res.toSessionOperationMessage()))
     }
 
