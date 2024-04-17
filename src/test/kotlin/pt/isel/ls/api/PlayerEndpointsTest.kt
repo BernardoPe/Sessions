@@ -56,7 +56,7 @@ class PlayerEndpointsTest {
         // Act
         val response = api.createPlayer(request)
         // Assert
-        assertEquals(response.status, Status.CONFLICT)
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
 
     @Test

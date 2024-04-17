@@ -7,7 +7,6 @@ import org.http4k.core.Status
 import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeEach
-import pt.isel.ls.data.domain.*
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
@@ -226,7 +225,7 @@ class SessionEndpointsTest {
         // Act
         val response = api.addPlayerToSession(routedRequest)
         //  Assert
-        assertEquals(response.status, Status.CONFLICT)
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
 
     @Test
@@ -505,15 +504,16 @@ class SessionEndpointsTest {
         //  Assert
         assertEquals(response.status, Status.OK)
         assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(sessionList.size, 2)
-        assertEquals(sessionList[0].gameSession.gid, 2u)
-        assertEquals(sessionList[0].capacity, 100u)
-        assertEquals(sessionList[0].date, "2030-05-01T00:00:00".toLocalDateTime().toString())
-        assertEquals(sessionList[0].sid, 1u)
-        assertEquals(sessionList[1].gameSession.gid, 2u)
-        assertEquals(sessionList[1].capacity, 100u)
-        assertEquals(sessionList[1].date, "2030-06-01T00:00:00".toLocalDateTime().toString())
-        assertEquals(sessionList[1].sid, 2u)
+        assertEquals(sessionList.sessions.size, 2)
+        assertEquals(sessionList.sessions[0].gameSession.gid, 2u)
+        assertEquals(sessionList.sessions[0].capacity, 100u)
+        assertEquals(sessionList.sessions[0].date, "2030-05-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList.sessions[0].sid, 1u)
+        assertEquals(sessionList.sessions[1].gameSession.gid, 2u)
+        assertEquals(sessionList.sessions[1].capacity, 100u)
+        assertEquals(sessionList.sessions[1].date, "2030-06-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList.sessions[1].sid, 2u)
+        assertEquals(sessionList.total, 2)
     }
     @Test
     fun `test get session list limit and skip should give session list`() {
@@ -526,11 +526,12 @@ class SessionEndpointsTest {
         //  Assert
         assertEquals(response.status, Status.OK)
         assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(sessionList.size, 1)
-        assertEquals(sessionList[0].gameSession.gid, 2u)
-        assertEquals(sessionList[0].capacity, 100u)
-        assertEquals(sessionList[0].date, "2030-06-01T00:00:00".toLocalDateTime().toString())
-        assertEquals(sessionList[0].sid, 2u)
+        assertEquals(sessionList.sessions.size, 1)
+        assertEquals(sessionList.sessions[0].gameSession.gid, 2u)
+        assertEquals(sessionList.sessions[0].capacity, 100u)
+        assertEquals(sessionList.sessions[0].date, "2030-06-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList.sessions[0].sid, 2u)
+        assertEquals(sessionList.total, 1)
     }
 
     @BeforeEach

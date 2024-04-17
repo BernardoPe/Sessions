@@ -1,8 +1,8 @@
 package pt.isel.ls.storage.mem
 
+import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.util.Genre
 import pt.isel.ls.data.domain.util.Name
-import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.storage.SessionsDataGame
 
 /**
@@ -66,7 +66,7 @@ class SessionsDataMemGame : SessionsDataGame {
         return null
     }
 
-    override fun getGamesSearch(genres: Set<Genre>?, developer: Name?, limit: UInt, skip: UInt): List<Game> {
+    override fun getGamesSearch(genres: Set<Genre>?, developer: Name?, limit: UInt, skip: UInt): Pair<List<Game>, Int> {
         // Read all the game objects from the database mock that match the given genres and developer
         // Start by checking the genres
         var games = db.filter { game ->
@@ -79,7 +79,9 @@ class SessionsDataMemGame : SessionsDataGame {
             developer?.let { game.developer == it } ?: true
         }
 
-        return games.sortedBy { it.id }.drop(skip.toInt()).take(limit.toInt())
+        games = games.sortedBy { it.id }.drop(skip.toInt()).take(limit.toInt())
+
+        return Pair(games, games.size)
 
     }
 

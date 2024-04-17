@@ -62,7 +62,7 @@ class SessionsDataMemSession : SessionsDataSession {
         return db.find { it.id == id }
     }
 
-    override fun getSessionsSearch(gid: UInt?, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): List<Session> {
+    override fun getSessionsSearch(gid: UInt?, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): Pair<List<Session>, Int> {
         // Get all the session objects from the database mock that match the given parameters
         // Start by checking the game identifier
         var sessions = db.toList()
@@ -85,7 +85,10 @@ class SessionsDataMemSession : SessionsDataSession {
             sessions = sessions.filter { it.playersSession.any { it.id == pid } }
         }
 
-        return sessions.sortedBy { it.id }.drop(skip.toInt()).take(limit.toInt())
+        sessions = sessions.sortedBy { it.id }.drop(skip.toInt()).take(limit.toInt())
+
+        return Pair(sessions, sessions.size)
+
     }
 
     override fun addPlayer(sid: UInt, player: Player): Boolean {

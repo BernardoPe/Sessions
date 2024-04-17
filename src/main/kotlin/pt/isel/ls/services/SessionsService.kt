@@ -5,7 +5,6 @@ import pt.isel.ls.data.domain.session.SESSION_MAX_CAPACITY
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
 import pt.isel.ls.exceptions.BadRequestException
-import pt.isel.ls.exceptions.ConflictException
 import pt.isel.ls.exceptions.InternalServerErrorException
 import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.storage.SessionsDataManager
@@ -32,7 +31,7 @@ class SessionsService(val storage: SessionsDataManager) {
         val getPlayer = storage.player.getById(pid) ?: throw NotFoundException("Player not found")
 
         if (getSession.playersSession.any { it.id == getPlayer.id }) {
-            throw ConflictException("Player already in session")
+            throw BadRequestException("Player already in session")
         }
 
         if (getSession.capacity == getSession.playersSession.size.toUInt()) {
@@ -91,9 +90,9 @@ class SessionsService(val storage: SessionsDataManager) {
         // If update fails after checks this means that something went wrong with the update, so we throw an internal server error
     }
 
-    fun listSessions(gid: UInt?, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): SessionList {
+    fun listSessions(gid: UInt?, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): Pair<SessionList, Int> {
         val sessionsSearch = storage.session.getSessionsSearch(gid, date, state, pid, limit, skip)
-        return sessionsSearch.ifEmpty { throw NotFoundException("No sessions were found") }
+        return sessionsSearch.first to sessionsSearch.second
     }
 
     fun getSessionById(sid: UInt): Session {

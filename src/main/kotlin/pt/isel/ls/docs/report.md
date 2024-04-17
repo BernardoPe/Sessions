@@ -8,10 +8,11 @@ We implemented the backend of the project with `kotlin`,
 We covered the implemented features with unit tests using the `JUnit` library.  
 The database is managed by `PostgreSQL` and the connections are made using the `JDBC` library.
 
-On the frontend side, we used javascript modules to manage the user interface of the website.
-An technique, has been used on the web application to make the user interface load only a single web page document,
-and then updates the body content of that single document via JavaScript APIs such as Fetch when different content is to
-be shown.
+On the frontend side, we used Javascript modules to manage the user interface of the website.
+The web application loads only a single web page document,
+and then updates the body content of that single document via JavaScript making by HTTP requests to the server and 
+replacing the body content with the response content.
+
 This technique is called Single Page Application (SPA).
 
 ## Modeling the database
@@ -84,6 +85,7 @@ We have 3 groups of endpoints: Games, Players, and Sessions.
 The types of request methods the api supports are :
     - GET
     - POST
+    - DELETE
     - PUT
 
 The Games group has 3 endpoints: 
@@ -111,9 +113,9 @@ Response codes are:
 |-------------------------|-----------------------|------------------------------------|
 | 200                     | OK                    | Got a Player                       |
 | 201                     | Created               | Create a Game                      |
+| 204                     | No Content            | No results found for search        |
 | 400                     | Bad Request           | Missing a parameter on the request |
 | 404                     | Not Found             | Player not found                   |
-| 409                     | Conflict              | The Player already exists          |
 | 500                     | Internal Server Error | An error in the server             |
 
 ### Request Details
@@ -222,8 +224,7 @@ If a Back-End error is relevant to the user, the application displays an error m
 
 An example would be if no results are found for a given search, the application informs the user that no results were found and that they should try again with different parameters.
 
-For pagination, the SPA tries to fetch the next page of results, but if no results are found, the application doesn't show the button to fetch the next page.
-
+For pagination, the SPA uses the `total` property of search results to calculate the number of pages and display the correct pagination buttons to the user.
 ## Critical Evaluation
 
 As of the moment this report was written, the application is able to create, search, and add players to games and sessions.

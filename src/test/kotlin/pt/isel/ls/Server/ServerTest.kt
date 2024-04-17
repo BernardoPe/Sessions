@@ -65,7 +65,7 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assertEquals(response.status, Status.CONFLICT)
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
 
     @Test
@@ -222,15 +222,16 @@ class ServerTest {
         // Assert
         assertEquals(Status.OK, response.status)
         assertEquals("application/json", response.header("Content-Type"))
-        assertEquals(2, gameList.size)
-        assertEquals("TestName", gameList[0].name)
-        assertEquals("TestDeveloper", gameList[0].developer)
-        assertEquals(listOf("RPG"), gameList[0].genres)
-        assertEquals(1u, gameList[0].gid)
-        assertEquals("TestName123", gameList[1].name)
-        assertEquals("TestDeveloper", gameList[1].developer)
-        assertEquals(listOf("RPG", "Adventure"), gameList[1].genres)
-        assertEquals(2u, gameList[1].gid)
+        assertEquals(2, gameList.games.size)
+        assertEquals("TestName", gameList.games[0].name)
+        assertEquals("TestDeveloper", gameList.games[0].developer)
+        assertEquals(listOf("RPG"), gameList.games[0].genres)
+        assertEquals(1u, gameList.games[0].gid)
+        assertEquals("TestName123", gameList.games[1].name)
+        assertEquals("TestDeveloper", gameList.games[1].developer)
+        assertEquals(listOf("RPG", "Adventure"), gameList.games[1].genres)
+        assertEquals(2u, gameList.games[1].gid)
+        assertEquals(2, gameList.total)
     }
 
     @Test
@@ -254,11 +255,12 @@ class ServerTest {
         // Assert
         assertEquals(Status.OK, response.status)
         assertEquals("application/json", response.header("Content-Type"))
-        assertEquals(1, gameList.size)
-        assertEquals("TestName123", gameList[0].name)
-        assertEquals("TestDeveloper", gameList[0].developer)
-        assertEquals(listOf("RPG", "Adventure"), gameList[0].genres)
-        assertEquals(2u, gameList[0].gid)
+        assertEquals(1, gameList.games.size)
+        assertEquals("TestName123", gameList.games[0].name)
+        assertEquals("TestDeveloper", gameList.games[0].developer)
+        assertEquals(listOf("RPG", "Adventure"), gameList.games[0].genres)
+        assertEquals(2u, gameList.games[0].gid)
+        assertEquals(1, gameList.total)
     }
 
     @Test
@@ -373,7 +375,7 @@ class ServerTest {
     @Test
     fun `add player to session no auth should give unauthorized`() {
         // Arrange
-        val request = Request(Method.PUT, "/sessions/1/players")
+        val request = Request(Method.POST, "/sessions/1/players")
             .header("Content-Type", "application/json")
             .body("""{"pid":1}""")
         // Act
@@ -386,7 +388,7 @@ class ServerTest {
     @Test
     fun `add player to session, session not found`() {
         // Arrange
-        val request = Request(Method.PUT, "/sessions/10/players")
+        val request = Request(Method.POST, "/sessions/10/players")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
             .body("""{"pid":1}""")
@@ -400,7 +402,7 @@ class ServerTest {
     @Test
     fun `add player to session, player not found`() {
         // Arrange
-        val request = Request(Method.PUT, "/sessions/1/players")
+        val request = Request(Method.POST, "/sessions/1/players")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
             .body("""{"pid":10}""")
@@ -414,7 +416,7 @@ class ServerTest {
     @Test
     fun `add player to session, empty fields should give bad request`() {
         // Arrange
-        val request = Request(Method.PUT, "/sessions/1/players")
+        val request = Request(Method.POST, "/sessions/1/players")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
             .body("""{"pid":""}""")
@@ -635,7 +637,7 @@ class ServerTest {
     @Test
     fun `add player to session, invalid body should give bad request`() {
         // Arrange
-        val request = Request(Method.PUT, "/sessions/1/players")
+        val request = Request(Method.POST, "/sessions/1/players")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
             .body("""{"pid":1""")
@@ -649,14 +651,14 @@ class ServerTest {
     @Test
     fun `add player to session player already in session`() {
         // Arrange
-        val request = Request(Method.PUT, "/sessions/1/players")
+        val request = Request(Method.POST, "/sessions/1/players")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
             .body("""{"pid":2}""")
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.status, Status.CONFLICT)
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
 
     @Test
@@ -700,15 +702,16 @@ class ServerTest {
         //  Assert
         assertEquals(response.status, Status.OK)
         assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(sessionList.size, 2)
-        assertEquals(sessionList[0].gameSession.gid, 2u)
-        assertEquals(sessionList[0].capacity, 100u)
-        assertEquals(sessionList[0].date, "2030-05-01T00:00:00".toLocalDateTime().toString())
-        assertEquals(sessionList[0].sid, 1u)
-        assertEquals(sessionList[1].gameSession.gid, 2u)
-        assertEquals(sessionList[1].capacity, 100u)
-        assertEquals(sessionList[1].date, "2030-06-01T00:00:00".toLocalDateTime().toString())
-        assertEquals(sessionList[1].sid, 2u)
+        assertEquals(sessionList.sessions.size, 2)
+        assertEquals(sessionList.sessions[0].gameSession.gid, 2u)
+        assertEquals(sessionList.sessions[0].capacity, 100u)
+        assertEquals(sessionList.sessions[0].date, "2030-05-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList.sessions[0].sid, 1u)
+        assertEquals(sessionList.sessions[1].gameSession.gid, 2u)
+        assertEquals(sessionList.sessions[1].capacity, 100u)
+        assertEquals(sessionList.sessions[1].date, "2030-06-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList.sessions[1].sid, 2u)
+        assertEquals(sessionList.total, 2)
     }
 
     @Test
@@ -722,11 +725,12 @@ class ServerTest {
         //  Assert
         assertEquals(response.status, Status.OK)
         assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(sessionList.size, 1)
-        assertEquals(sessionList[0].gameSession.gid, 2u)
-        assertEquals(sessionList[0].capacity, 100u)
-        assertEquals(sessionList[0].date, "2030-06-01T00:00:00".toLocalDateTime().toString())
-        assertEquals(sessionList[0].sid, 2u)
+        assertEquals(sessionList.sessions.size, 1)
+        assertEquals(sessionList.sessions[0].gameSession.gid, 2u)
+        assertEquals(sessionList.sessions[0].capacity, 100u)
+        assertEquals(sessionList.sessions[0].date, "2030-06-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList.sessions[0].sid, 2u)
+        assertEquals(sessionList.total, 1)
     }
 
     @BeforeEach

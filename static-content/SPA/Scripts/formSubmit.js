@@ -30,7 +30,7 @@ function submitFormSessionSearch(event) {
 	const playerId = document.getElementById('player').value;
 	const stateElement = document.querySelector('input[name="state"]:checked');
 	const state = stateElement ? stateElement.value : null;
-	const date = document.getElementById('date').value;
+	const date = document.getElementById('date').value.replace(':', '_');
 
 	let queries = '';
 

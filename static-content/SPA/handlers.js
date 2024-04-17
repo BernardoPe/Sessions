@@ -8,7 +8,7 @@ import {genericErrorView, notFoundView} from "./Views/errorViews.js";
 
 const API_URL = 'http://localhost:8080/';
 
-const RESULTS_PER_PAGE = 2;
+const RESULTS_PER_PAGE = 5;
 
 function getHome(mainContent, req) {
     mainContent.replaceChildren(homeView());
@@ -26,9 +26,9 @@ function getGameSearchResults(mainContent, req) {
     const limit = req.query.limit ? req.query.limit : RESULTS_PER_PAGE;
     const skip = req.query.skip ? req.query.skip : 0;
     let queryStr = buildPaginationQuery(queries, limit, skip)
-    fetchWithHandling(API_URL + `games?${queryStr}`, mainContent, (games) => {
-        const gameResultsView = gameSearchResultsView(games);
-        gameResultsView.appendChild(handleGamePagination(queries, limit, skip));
+    fetchWithHandling(API_URL + `games?${queryStr}`, mainContent, (searchResult) => {
+        const gameResultsView = gameSearchResultsView(searchResult.games);
+        gameResultsView.appendChild(handleGamePagination(queries, limit, skip, searchResult.total));
         mainContent.replaceChildren(gameResultsView);
     })
 }
@@ -58,14 +58,14 @@ function getSessionSearchResults(mainContent, req) {
     req.query.gid ? queries.append('gid', req.query.gid) : null;
     req.query.pid ? queries.append('pid', req.query.pid) : null;
     req.query.state ? queries.append('state', req.query.state) : null;
-    req.query.date ? queries.append('date', req.query.date) : null;
+    req.query.date ? queries.append('date', req.query.date.replace(':', '_')) : null;
     const limit = req.query.limit ? req.query.limit : RESULTS_PER_PAGE;
     const skip = req.query.skip ? req.query.skip : 0;
     let queryStr = buildPaginationQuery(queries, limit, skip)
 
-    fetchWithHandling(API_URL + `sessions?${queryStr}`, mainContent, (sessions) => {
-        const searchResultsView = sessionSearchResultsView(sessions);
-        searchResultsView.appendChild(handleSessionPagination(queries, limit, skip));
+    fetchWithHandling(API_URL + `sessions?${queryStr}`, mainContent, (searchResults) => {
+        const searchResultsView = sessionSearchResultsView(searchResults.sessions);
+        searchResultsView.appendChild(handleSessionPagination(queries, limit, skip, searchResults.total));
         mainContent.replaceChildren(searchResultsView);
     })
 
@@ -98,12 +98,18 @@ function getPlayerDetails(mainContent, req) {
 function fetchWithHandling(url, mainContent, onSuccess) {
     fetch(url)
         .then(res => {
-            res.ok ? res.json().then(res => onSuccess(res)) : handleErrors(res, mainContent)
+            if (res.ok) {
+                if (res.status === 204)
+                    return handleErrors(res, mainContent)
+                return res.json().then(onSuccess)
+            } else {
+                handleErrors(res, mainContent)
+            }
         })
 }
 
 function handleErrors(res, mainContent) {
-    if (res.status === 404) {
+    if (res.status === 204 || res.status === 404) {
         const errView = notFoundView();
         mainContent.replaceChildren(errView)
     } else {

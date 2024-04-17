@@ -132,15 +132,15 @@ class GameEndpointsTest {
         // Assert
         assertEquals(Status.OK, response.status)
         assertEquals("application/json", response.header("Content-Type"))
-        assertEquals(2, gameList.size)
-        assertEquals("TestName", gameList[0].name)
-        assertEquals("TestDeveloper", gameList[0].developer)
-        assertEquals(listOf("RPG", "Adventure"), gameList[0].genres)
-        assertEquals(1u, gameList[0].gid)
-        assertEquals("TestName2", gameList[1].name)
-        assertEquals("TestDeveloper", gameList[1].developer)
-        assertEquals(listOf("RPG"), gameList[1].genres)
-        assertEquals(2u, gameList[1].gid)
+        assertEquals(2, gameList.games.size)
+        assertEquals("TestName", gameList.games[0].name)
+        assertEquals("TestDeveloper", gameList.games[0].developer)
+        assertEquals(listOf("RPG", "Adventure"), gameList.games[0].genres)
+        assertEquals(1u, gameList.games[0].gid)
+        assertEquals("TestName2", gameList.games[1].name)
+        assertEquals("TestDeveloper", gameList.games[1].developer)
+        assertEquals(listOf("RPG"), gameList.games[1].genres)
+        assertEquals(2u, gameList.games[1].gid)
     }
 
     @Test
@@ -154,11 +154,12 @@ class GameEndpointsTest {
         // Assert
         assertEquals(Status.OK, response.status)
         assertEquals("application/json", response.header("Content-Type"))
-        assertEquals(1, gameList.size)
-        assertEquals("TestName", gameList[0].name)
-        assertEquals("TestDeveloper", gameList[0].developer)
-        assertEquals(listOf("RPG", "Adventure"), gameList[0].genres)
-        assertEquals(1u, gameList[0].gid)
+        assertEquals(1, gameList.games.size)
+        assertEquals("TestName", gameList.games[0].name)
+        assertEquals("TestDeveloper", gameList.games[0].developer)
+        assertEquals(listOf("RPG", "Adventure"), gameList.games[0].genres)
+        assertEquals(1u, gameList.games[0].gid)
+        assertEquals(1, gameList.total)
     }
 
     @Test
@@ -183,11 +184,12 @@ class GameEndpointsTest {
         // Assert
         assertEquals(Status.OK, response.status)
         assertEquals("application/json", response.header("Content-Type"))
-        assertEquals(1, gameList.size)
-        assertEquals("TestName2", gameList[0].name)
-        assertEquals("TestDeveloper", gameList[0].developer)
-        assertEquals(listOf("RPG"), gameList[0].genres)
-        assertEquals(2u, gameList[0].gid)
+        assertEquals(1, gameList.games.size)
+        assertEquals("TestName2", gameList.games[0].name)
+        assertEquals("TestDeveloper", gameList.games[0].developer)
+        assertEquals(listOf("RPG"), gameList.games[0].genres)
+        assertEquals(2u, gameList.games[0].gid)
+        assertEquals(1, gameList.total)
     }
 
     @BeforeEach

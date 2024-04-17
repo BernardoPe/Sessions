@@ -72,21 +72,23 @@ class SessionsDataSessionTest {
         val sessions = storage.getSessionsSearch(1u, "2030-05-05T12:00:00".toLocalDateTime(), null, null, 10u, 0u)
         // Check if the session was added
         // Check the number of sessions
-        assertEquals(1, sessions.size)
+        assertEquals(1, sessions.first.size)
         // Check each field of the session
         // Check the capacity
-        assertEquals(2u, sessions[0].capacity)
+        assertEquals(2u, sessions.first[0].capacity)
         // Check each field of the game
         // Check the identifier
-        assertEquals(1u, sessions[0].gameSession.id)
+        assertEquals(1u, sessions.first[0].gameSession.id)
         // Check the name
-        assertEquals("game".toName(), sessions[0].gameSession.name)
+        assertEquals("game".toName(), sessions.first[0].gameSession.name)
         // Check the developer
-        assertEquals("developer".toName(), sessions[0].gameSession.developer)
+        assertEquals("developer".toName(), sessions.first[0].gameSession.developer)
         // Check the genres
-        assertEquals(setOf("RPG".toGenre(), "Adventure".toGenre()), sessions[0].gameSession.genres)
+        assertEquals(setOf("RPG".toGenre(), "Adventure".toGenre()), sessions.first[0].gameSession.genres)
         // Check the date
-        assertEquals("2030-05-05T12:00:00".toLocalDateTime(), sessions[0].date)
+        assertEquals("2030-05-05T12:00:00".toLocalDateTime(), sessions.first[0].date)
+
+        assertEquals(1, sessions.second)
     }
 
     @Test
@@ -101,21 +103,23 @@ class SessionsDataSessionTest {
         val sessions = storage.getSessionsSearch(1u, null, null, null, 10u, 0u)
         // Check if the session was added
         // Check the number of sessions
-        assertEquals(1, sessions.size)
+        assertEquals(1, sessions.first.size)
         // Check each field of the session
         // Check the capacity
-        assertEquals(2u, sessions[0].capacity)
+        assertEquals(2u, sessions.first[0].capacity)
         // Check each field of the game
         // Check the identifier
-        assertEquals(1u, sessions[0].gameSession.id)
+        assertEquals(1u, sessions.first[0].gameSession.id)
         // Check the name
-        assertEquals("game".toName(), sessions[0].gameSession.name)
+        assertEquals("game".toName(), sessions.first[0].gameSession.name)
         // Check the developer
-        assertEquals("developer".toName(), sessions[0].gameSession.developer)
+        assertEquals("developer".toName(), sessions.first[0].gameSession.developer)
         // Check the genres
-        assertEquals(setOf("RPG".toGenre(), "Adventure".toGenre()), sessions[0].gameSession.genres)
+        assertEquals(setOf("RPG".toGenre(), "Adventure".toGenre()), sessions.first[0].gameSession.genres)
         // Check the date
-        assertEquals("2030-05-05T12:00:00".toLocalDateTime(), sessions[0].date)
+        assertEquals("2030-05-05T12:00:00".toLocalDateTime(), sessions.first[0].date)
+
+        assertEquals(1, sessions.second)
     }
 
     @Test
@@ -213,21 +217,23 @@ class SessionsDataSessionTest {
         val sessions = storage.getSessionsSearch(1u, null, null, null, 10u, 0u)
         // Check if the session was added
         // Check the number of sessions
-        assertEquals(1, sessions.size)
+        assertEquals(1, sessions.first.size)
         // Check each field of the session
         // Check the capacity
-        assertEquals(2u, sessions[0].capacity)
+        assertEquals(2u, sessions.first[0].capacity)
         // Check each field of the game
         // Check the identifier
-        assertEquals(1u, sessions[0].gameSession.id)
+        assertEquals(1u, sessions.first[0].gameSession.id)
         // Check the name
-        assertEquals("game".toName(), sessions[0].gameSession.name)
+        assertEquals("game".toName(), sessions.first[0].gameSession.name)
         // Check the developer
-        assertEquals("developer".toName(), sessions[0].gameSession.developer)
+        assertEquals("developer".toName(), sessions.first[0].gameSession.developer)
         // Check the genres
-        assertEquals(setOf("RPG".toGenre(), "Adventure".toGenre()), sessions[0].gameSession.genres)
+        assertEquals(setOf("RPG".toGenre(), "Adventure".toGenre()), sessions.first[0].gameSession.genres)
         // Check the date
-        assertEquals("2030-05-05T12:00:00".toLocalDateTime(), sessions[0].date)
+        assertEquals("2030-05-05T12:00:00".toLocalDateTime(), sessions.first[0].date)
+
+        assertEquals(1, sessions.second)
     }
 
     @Test
@@ -241,20 +247,22 @@ class SessionsDataSessionTest {
         val sessions = storage.getSessionsSearch(1u, "2030-05-05T12:00:00".toLocalDateTime(), null, null, 10u, 0u)
         // Check if the session was added
         // Check the number of sessions
-        assertEquals(1, sessions.size)
+        assertEquals(1, sessions.first.size)
         // Check each field of the session
         // Check the capacity
-        assertEquals(2u, sessions[0].capacity)
+        assertEquals(2u, sessions.first[0].capacity)
         // Check each field of the game
         // Check the identifier
-        assertEquals(1u, sessions[0].gameSession.id)
+        assertEquals(1u, sessions.first[0].gameSession.id)
         // Check the name
-        assertEquals("game".toName(), sessions[0].gameSession.name)
+        assertEquals("game".toName(), sessions.first[0].gameSession.name)
         // Check the developer
-        assertEquals("developer".toName(), sessions[0].gameSession.developer)
+        assertEquals("developer".toName(), sessions.first[0].gameSession.developer)
         // Check the genres
-        assertEquals(setOf("RPG".toGenre(), "Adventure".toGenre()), sessions[0].gameSession.genres)
+        assertEquals(setOf("RPG".toGenre(), "Adventure".toGenre()), sessions.first[0].gameSession.genres)
         // Check the date
-        assertEquals("2030-05-05T12:00:00".toLocalDateTime(), sessions[0].date)
+        assertEquals("2030-05-05T12:00:00".toLocalDateTime(), sessions.first[0].date)
+
+        assertEquals(1, sessions.second)
     }
 }

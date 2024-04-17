@@ -9,13 +9,14 @@ import org.http4k.core.Status
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.CREATED
 import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
+import org.http4k.core.Status.Companion.NO_CONTENT
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Status.Companion.UNAUTHORIZED
 import org.http4k.routing.path
+import pt.isel.ls.data.domain.session.toState
 import pt.isel.ls.data.domain.util.Email
 import pt.isel.ls.data.domain.util.Genre
 import pt.isel.ls.data.domain.util.Name
-import pt.isel.ls.data.domain.session.toState
 import pt.isel.ls.data.mapper.toGameCreationDTO
 import pt.isel.ls.data.mapper.toGameInfoDTO
 import pt.isel.ls.data.mapper.toGameSearchDTO
@@ -119,10 +120,13 @@ class SessionsApi(
             limit,
             skip,
         )
+        if (res.first.isEmpty())
+            Response(NO_CONTENT)
+        else
+            Response(OK)
+                .header("content-type", "application/json")
+                .body(Json.encodeToString(res.toGameSearchDTO()))
 
-        Response(OK)
-            .header("content-type", "application/json")
-            .body(Json.encodeToString(res.toGameSearchDTO()))
     }
 
     fun createSession(request: Request) = authHandler(request) {
@@ -187,16 +191,18 @@ class SessionsApi(
 
         val res = sessionServices.listSessions(
             request.query("gid")?.toUInt("Game Identifier"),
-            request.query("date")?.toLocalDateTime(),
+            request.query("date")?.replace('_', ':')?.toLocalDateTime(),
             request.query("state")?.toState(),
             request.query("pid")?.toUInt("Player Identifier"),
             limit,
             skip,
         )
-
-        Response(OK)
-            .header("content-type", "application/json")
-            .body(Json.encodeToString(res.toSessionSearchDTO()))
+        if (res.first.isEmpty())
+            Response(NO_CONTENT)
+        else
+            Response(OK)
+                .header("content-type", "application/json")
+                .body(Json.encodeToString(res.toSessionSearchDTO()))
     }
 
     /**

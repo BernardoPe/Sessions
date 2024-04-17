@@ -71,4 +71,8 @@ data class SessionAddPlayerInputModel(val pid: UInt)
 /**
  * The [SessionSearchResultOutputModel] class is used to represent the response body of the session search
  */
-typealias SessionSearchResultOutputModel = List<SessionInfoOutputModel>
+@Serializable
+data class SessionSearchResultOutputModel(
+    val sessions: List<SessionInfoOutputModel>,
+    val total: Int,
+)

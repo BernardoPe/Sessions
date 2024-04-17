@@ -3,7 +3,7 @@ package pt.isel.ls.services.player
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.mapper.toEmail
 import pt.isel.ls.data.mapper.toName
-import pt.isel.ls.exceptions.ConflictException
+import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.storage.SessionsDataManager
@@ -50,11 +50,11 @@ class PlayerServiceTest {
 
         servicePlayer.createPlayer(playerName1, playerEmail1)
 
-        val exception = assertFailsWith<ConflictException> {
+        val exception = assertFailsWith<BadRequestException> {
             servicePlayer.createPlayer(playerName2, playerEmail1)
         }
-
-        assertEquals("Conflict", exception.description)
+        assertEquals(400, exception.status)
+        assertEquals("Bad Request", exception.description)
         assertEquals("Given Player email already exists", exception.errorCause)
     }
 

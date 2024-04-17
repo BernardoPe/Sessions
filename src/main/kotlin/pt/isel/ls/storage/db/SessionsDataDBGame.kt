@@ -1,8 +1,8 @@
 package pt.isel.ls.storage.db
 
+import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.util.Genre
 import pt.isel.ls.data.domain.util.Name
-import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.storage.SessionsDataGame
 import java.sql.Connection
 import java.sql.ResultSet
@@ -46,42 +46,55 @@ class SessionsDataDBGame : SessionsDataGame {
         return resultSet.next().also { statement.close() }
     }
 
-    override fun getGamesSearch(genres: Set<Genre>?, developer: Name?, limit: UInt, skip: UInt): List<Game> {
+    override fun getGamesSearch(genres: Set<Genre>?, developer: Name?, limit: UInt, skip: UInt): Pair<List<Game>, Int> {
 
-        var query = "SELECT * FROM games "
+        var resQuery = "SELECT * FROM games "
+        var countQuery = "SELECT COUNT(*) FROM games "
         val params = mutableListOf<Any>()
 
+        var searchQuery = ""
         if (genres != null || developer != null) {
-            query += "WHERE "
+            searchQuery += "WHERE "
             if (genres != null) {
-                query += "genres @> ? "
+                searchQuery += "genres @> ? "
                 params.add(connection.createArrayOf("VARCHAR", genres.map { it.toString() }.toTypedArray()))
             }
             if (developer != null) {
                 if (genres != null) {
-                    query += "AND "
+                     searchQuery += "AND "
                 }
-                query += "developer = ? "
+                searchQuery += "developer = ? "
                 params.add(developer.toString())
             }
         }
 
-        query += "ORDER BY id LIMIT ? OFFSET ?"
+        countQuery += searchQuery
+        resQuery += searchQuery
+
         params.add(limit.toInt())
         params.add(skip.toInt())
 
-        val statement = connection.prepareStatement(query)
+        resQuery += "Order by id LIMIT ? OFFSET ?"
+
+        val statement = connection.prepareStatement(resQuery)
+        val countStatement = connection.prepareStatement(countQuery)
 
         params.forEachIndexed { index, param ->
             statement.setObject(index + 1, param)
+            if (index < params.size - 2) // dont add limit and skip to count query
+                countStatement.setObject(index + 1, param)
         }
 
         connection.autoCommit = false
         val resultSet = statement.executeQuery()
+        val countResultSet = countStatement.executeQuery()
         connection.commit()
         connection.autoCommit = true
 
-        return resultSet.getGames().also { statement.close() }
+        countResultSet.next()
+        val total = countResultSet.getInt(1)
+
+        return Pair(resultSet.getGames(), total).also { statement.close(); countStatement.close() }
     }
 
     override fun getAllGames(): List<Game> {

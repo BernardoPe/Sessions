@@ -1,8 +1,8 @@
 package pt.isel.ls.storage
 
+import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.util.Genre
 import pt.isel.ls.data.domain.util.Name
-import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.storage.mem.SessionsDataMemGame
 
 /**
@@ -46,9 +46,9 @@ interface SessionsDataGame {
      *
      * @param genres The game genres
      * @param developer The game developer
-     * @return The list of game objects that match the given genres and developer
+     * @return The list of game objects that match the given genres and developer and the total number of games that match the given parameters
      */
-    fun getGamesSearch(genres: Set<Genre>?, developer: Name?, limit: UInt, skip: UInt): List<Game>
+    fun getGamesSearch(genres: Set<Genre>?, developer: Name?, limit: UInt, skip: UInt): Pair<List<Game>, Int>
 
     /**
      * Read all games from the database mock

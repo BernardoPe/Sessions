@@ -13,7 +13,11 @@ import kotlinx.serialization.Serializable
  *
  */
 @Serializable
-data class GameCreationInputModel(val name: String, val developer: String, val genres: Set<String>)
+data class GameCreationInputModel(
+    val name: String,
+    val developer: String,
+    val genres: Set<String>
+)
 
 /**
  * The [GameCreationOutputModel] class is used to represent the response body of the created game
@@ -23,7 +27,9 @@ data class GameCreationInputModel(val name: String, val developer: String, val g
  */
 
 @Serializable
-data class GameCreationOutputModel(val gid: UInt)
+data class GameCreationOutputModel(
+    val gid: UInt
+)
 
 /**
  * The [GameInfoOutputModel] class is used to represent the response body of the game details
@@ -36,10 +42,19 @@ data class GameCreationOutputModel(val gid: UInt)
  */
 
 @Serializable
-data class GameInfoOutputModel(val gid: UInt, val name: String, val developer: String, val genres: List<String>)
+data class GameInfoOutputModel(
+    val gid: UInt,
+    val name: String,
+    val developer: String,
+    val genres: List<String>
+)
 
 /**
  * The [GameSearchResultOutputModel] class is used to represent the response body of the game search result
  *
  */
-typealias GameSearchResultOutputModel = List<GameInfoOutputModel>
+@Serializable
+data class GameSearchResultOutputModel(
+    val games: List<GameInfoOutputModel>,
+    val total: Int
+)

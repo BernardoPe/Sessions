@@ -25,3 +25,9 @@ fun GameList.toGameSearchDTO() = map { it.toGameInfoDTO() }
  * @return The game creation DTO
  */
 fun GameIdentifier.toGameCreationDTO() = GameCreationOutputModel(this)
+
+/**
+ * Converts a [GameList] and an [Int] to a [GameSearchResultOutputModel]
+ * @return The game search DTO
+ */
+fun Pair<GameList, Int>.toGameSearchDTO() = GameSearchResultOutputModel(first.toGameSearchDTO(), second)

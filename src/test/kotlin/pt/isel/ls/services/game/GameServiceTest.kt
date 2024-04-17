@@ -2,10 +2,10 @@ package pt.isel.ls.services.game
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import pt.isel.ls.data.domain.util.Genre
 import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.data.domain.util.Genre
 import pt.isel.ls.data.mapper.toName
-import pt.isel.ls.exceptions.ConflictException
+import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.services.GameService
 import pt.isel.ls.storage.SessionsDataManager
@@ -17,6 +17,7 @@ import kotlin.random.nextUInt
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class GameServiceTest {
 
@@ -43,11 +44,11 @@ class GameServiceTest {
 
         serviceGame.createGame(gameName, developer, genres)
 
-        val exception = assertFailsWith<ConflictException> {
+        val exception = assertFailsWith<BadRequestException> {
             serviceGame.createGame(gameName, developer, genres)
         }
 
-        assertEquals("Conflict", exception.description)
+        assertEquals("Bad Request", exception.description)
         assertEquals("Game name already exists", exception.errorCause)
     }
 
@@ -95,8 +96,9 @@ class GameServiceTest {
 
         assertEquals(
             listOf(Game(createdGame1, gameName1, developer, genres), Game(createdGame2, gameName2, developer, genres)),
-            gameSearched,
+            gameSearched.first,
         )
+        assertEquals(2, gameSearched.second)
     }
 
     @Test
@@ -115,12 +117,10 @@ class GameServiceTest {
         assertNotNull(createdGame1)
         assertNotNull(createdGame2)
 
-        val exception = assertFailsWith<NotFoundException> {
-            serviceGame.searchGames(genres, developer2, limit, skip)
-        }
+        val games = serviceGame.searchGames(genres, developer2, limit, skip)
 
-        assertEquals("Not Found", exception.description)
-        assertEquals("No games were found", exception.errorCause)
+        assertTrue { games.first.isEmpty() }
+        assertEquals(0, games.second)
     }
 
     @BeforeEach

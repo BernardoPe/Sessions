@@ -9,7 +9,6 @@ import pt.isel.ls.data.domain.util.Genre
 import pt.isel.ls.data.mapper.toEmail
 import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.exceptions.BadRequestException
-import pt.isel.ls.exceptions.ConflictException
 import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
@@ -30,6 +29,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.milliseconds
 
 class SessionServiceTest {
@@ -154,12 +154,13 @@ class SessionServiceTest {
 
         serviceSession.addPlayer(createdSession, player.first)
 
-        val exception = assertFailsWith<ConflictException> {
+        val exception = assertFailsWith<BadRequestException> {
             serviceSession.addPlayer(createdSession, player.first)
         }
 
-        assertEquals("Conflict", exception.description)
+        assertEquals("Bad Request", exception.description)
         assertEquals("Player already in session", exception.errorCause)
+        assertEquals(400, exception.status)
     }
 
     @Test
@@ -480,8 +481,9 @@ class SessionServiceTest {
                 Session(createdSession1, capacity, date, getGame, emptySet()),
                 Session(createdSession2, capacity, date, getGame, emptySet()),
             ),
-            sessionSearched,
+            sessionSearched.first,
         )
+        assertEquals(2, sessionSearched.second)
     }
 
     @Test
@@ -492,12 +494,10 @@ class SessionServiceTest {
 
         val randomGameId = Random.nextUInt()
 
-        val exception = assertFailsWith<NotFoundException> {
-            serviceSession.listSessions(randomGameId, date, State.OPEN, null, limit, skip)
-        }
+        val sessions = serviceSession.listSessions(randomGameId, date, State.OPEN, null, limit, skip)
 
-        assertEquals("Not Found", exception.description)
-        assertEquals("No sessions were found", exception.errorCause)
+        assertTrue { sessions.first.isEmpty() }
+        assertEquals(0, sessions.second)
     }
 
     @Test

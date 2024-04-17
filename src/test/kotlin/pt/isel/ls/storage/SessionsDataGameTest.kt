@@ -47,13 +47,15 @@ class SessionsDataGameTest {
         // Check if gameData is not null
         assertNotNull(gameData)
         // Check the game id
-        assertEquals(1u, gameData[0].id)
+        assertEquals(1u, gameData.first[0].id)
         // Check the game name
-        assertEquals("game".toName(), gameData[0].name)
+        assertEquals("game".toName(), gameData.first[0].name)
         // Check the game developer
-        assertEquals("developer".toName(), gameData[0].developer)
+        assertEquals("developer".toName(), gameData.first[0].developer)
         // Check the game genres
-        assertEquals(setOf("RPG".toGenre(), "Adventure".toGenre()), gameData[0].genres)
+        assertEquals(setOf("RPG".toGenre(), "Adventure".toGenre()), gameData.first[0].genres)
+
+        assertEquals(1, gameData.second)
     }
 
     @Test
@@ -114,7 +116,8 @@ class SessionsDataGameTest {
         // read the game from the storage
         val gameData = gameStorage.getGamesSearch(setOf("RPG".toGenre()), "developer".toName(), 2u, 0u)
         // Check if gameData is empty
-        assertEquals(0, gameData.size)
+        assertEquals(0, gameData.first.size)
+        assertEquals(0, gameData.second)
     }
 
     @Test

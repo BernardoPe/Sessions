@@ -29,7 +29,7 @@ fun SessionOperationMessage.toSessionOperationMessage() = SessionOperationOutput
 fun Session.toSessionInfoDTO() = SessionInfoOutputModel(id, capacity, date.toString(), gameSession.toGameInfoDTO(), playersSession.map { it.toPlayerInfoDTO() })
 
 /**
- * Converts [SessionList] to [SessionSearchResultOutputModel]
+ * Converts [SessionList] and an [Int] representing total results to [SessionSearchResultOutputModel]
  * @return The session search DTO
  */
-fun SessionList.toSessionSearchDTO() = map { it.toSessionInfoDTO() }
+fun Pair<SessionList, Int>.toSessionSearchDTO() = SessionSearchResultOutputModel(first.map { it.toSessionInfoDTO() }, second)
