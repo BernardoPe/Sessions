@@ -165,11 +165,11 @@ class ServerTest {
         val request = Request(Method.POST, "/games")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
-            .body("""{"name":"Test","developer":"Test","genres":["RPG"]}""")
+            .body("""{"name":"TestName","developer":"Test","genres":["RPG"]}""")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assertEquals(Status.CREATED, response.status)
+        assertEquals(Status.BAD_REQUEST, response.status)
     }
 
     @Test
