@@ -78,6 +78,7 @@ class SessionsApi(
 
         Response(CREATED)
             .header("content-type", "application/json")
+            .header("location", "/players/${res.first}")
             .body(Json.encodeToString(res.toPlayerCreationDTO()))
     }
 
@@ -96,6 +97,7 @@ class SessionsApi(
 
         Response(CREATED)
             .header("content-type", "application/json")
+            .header("location", "/games/${res}")
             .body(Json.encodeToString(res.toGameCreationDTO()))
     }
 
@@ -135,6 +137,7 @@ class SessionsApi(
 
         Response(CREATED)
             .header("content-type", "application/json")
+            .header("location", "/sessions/${res}")
             .body(Json.encodeToString(res.toSessionCreationDTO()))
     }
 
