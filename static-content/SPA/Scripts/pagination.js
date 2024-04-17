@@ -45,7 +45,7 @@ function handlePagination(url, limit, skip, generateUrl, total) {
 
 }
 
-function createPaginationButton(text, limit, skip, generateUrl, total) {
+function createPaginationButton(text, limit, skip, generateUrl) {
 	const buttonElement = button({type: "button", class:"pagination-button"}, text);
 	buttonElement.addEventListener('click', () => {
 		window.location.href = generateUrl(limit, skip);
