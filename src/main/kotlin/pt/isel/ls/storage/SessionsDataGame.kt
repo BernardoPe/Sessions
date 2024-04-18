@@ -46,7 +46,9 @@ interface SessionsDataGame {
      *
      * @param genres The game genres
      * @param developer The game developer
-     * @return The list of game objects that match the given genres and developer and the total number of games that match the given parameters
+     * @return The list of game objects that match the given genres and developer
+     *          and the total number of games that match the given parameters
+     *          independently of the limit and skip
      */
     fun getGamesSearch(genres: Set<Genre>?, developer: Name?, limit: UInt, skip: UInt): Pair<List<Game>, Int>
 

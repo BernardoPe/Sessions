@@ -131,7 +131,7 @@ class SessionsDataDBGame : SessionsDataGame {
         connection.autoCommit = false
         statement.setString(1, value.name.toString())
         statement.setString(2, value.developer.toString())
-        statement.setArray(3, connection.createArrayOf("VARCHAR(40)", value.genres.map { it.toString() }.toTypedArray()))
+        statement.setArray(3, connection.createArrayOf("VARCHAR", value.genres.map { it.toString() }.toTypedArray()))
         statement.setInt(4, value.id.toInt())
         val updated = statement.executeUpdate()
         connection.commit()
@@ -161,7 +161,8 @@ class SessionsDataDBGame : SessionsDataGame {
             val genreArr = this.getArray("genres").resultSet
 
             while (genreArr.next()) {
-                genres += Genre(genreArr.getString(2))
+                val genreStr = genreArr.getString(2)
+                genres += Genre(genreStr)
             }
 
             games += Game(
