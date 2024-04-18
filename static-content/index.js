@@ -12,7 +12,6 @@ window.addEventListener('hashchange', hashChangeHandler)
  * Routes were defined using the express.js syntax, with the addition of the colon (:) character to indicate a parameter.
  */
 function loadHandler(){
-
     // home page
     router.addRouteHandler("home", handlers.getHome)
     // search bar page
@@ -29,6 +28,12 @@ function loadHandler(){
     router.addRouteHandler("sessions/:sid", handlers.getSessionDetails)
     // page with player details
     router.addRouteHandler("players/:pid", handlers.getPlayerDetails)
+
+    router.addRouteHandler("login", handlers.login)
+
+    router.addRouteHandler("register", handlers.register)
+
+    router.addRouteHandler("logout", handlers.logout)
 
     router.addDefaultNotFoundRouteHandler(() => window.location.hash = "home")
 

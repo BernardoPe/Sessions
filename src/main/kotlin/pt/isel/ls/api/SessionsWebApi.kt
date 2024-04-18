@@ -12,6 +12,9 @@ import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
 import org.http4k.core.Status.Companion.NO_CONTENT
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Status.Companion.UNAUTHORIZED
+import org.http4k.core.cookie.Cookie
+import org.http4k.core.cookie.SameSite
+import org.http4k.core.cookie.cookie
 import org.http4k.routing.path
 import pt.isel.ls.data.domain.session.toState
 import pt.isel.ls.data.domain.util.Email
@@ -79,6 +82,7 @@ class SessionsApi(
         Response(CREATED)
             .header("content-type", "application/json")
             .header("location", "/players/${res.first}")
+            .cookie(Cookie("Authorization", res.second.toString()).secure().httpOnly().sameSite(SameSite.Strict))
             .body(Json.encodeToString(res.toPlayerCreationDTO()))
     }
 
@@ -89,6 +93,26 @@ class SessionsApi(
         Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(res.toPlayerInfoDTO()))
+    }
+
+    fun authPlayer(request: Request) = processRequest(request) {
+
+        val token = request.header("Authorization")?.split(" ")?.get(1)?.let { UUID.fromString(it) }
+            ?: throw BadRequestException("No Authorization Token provided")
+
+        val player = playerServices.authenticatePlayer(token)
+
+        if (player != null) {
+            Response(OK)
+                .header("content-type", "application/json")
+                .cookie(Cookie("Authorization", token.toString()).secure().httpOnly().sameSite(SameSite.Strict))
+                .body(Json.encodeToString(player.toPlayerInfoDTO()))
+        } else {
+            Response(UNAUTHORIZED)
+                .header("content-type", "application/json")
+                .body(Json.encodeToString("Unauthorized"))
+        }
+
     }
 
     fun createGame(request: Request) = authHandler(request) {
@@ -278,10 +302,19 @@ class SessionsApi(
 
     private fun verifyAuth(request: Request): Boolean {
         return try {
+
+            val cookie = request.cookie("Authorization")?.value?.let { UUID.fromString(it) }
+
+            if (cookie != null && playerServices.authenticatePlayer(cookie) != null) {
+                return true
+            }
+
             val token = UUID.fromString(
                 request.header("Authorization")?.split(" ")?.get(1) ?: return false,
             )
-            playerServices.authenticatePlayer(token)
+
+            playerServices.authenticatePlayer(token) != null
+
         } catch (e: Exception) {
             false
         }

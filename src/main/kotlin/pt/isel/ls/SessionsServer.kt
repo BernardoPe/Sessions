@@ -30,6 +30,7 @@ const val SESSION_DETAILS_ROUTE = "/sessions/{sid}"
 const val SESSION_PLAYER_ROUTE = "/sessions/{sid}/players"
 const val SESSION_PLAYER_DETAILS_ROUTE = "/sessions/{sid}/players/{pid}"
 const val SESSION_ROUTE = "/sessions"
+const val AUTH_ROUTE = "/auth"
 
 /**
  * The [SessionsServer] class is responsible for starting and stopping the server.
@@ -48,6 +49,7 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
         routes(
             PLAYER_ROUTE bind POST to requestHandler::createPlayer,
             PLAYER_DETAILS_ROUTE bind GET to requestHandler::getPlayerDetails,
+            AUTH_ROUTE bind GET to requestHandler::authPlayer,
         )
 
     private val gameRoutes =

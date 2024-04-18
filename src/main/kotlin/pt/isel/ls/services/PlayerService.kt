@@ -21,8 +21,8 @@ class PlayerService(val storage: SessionsDataManager) {
         return storagePlayer.create(player)
     }
 
-    fun authenticatePlayer(token: UUID): Boolean {
-        return storage.player.getByToken(token) != null
+    fun authenticatePlayer(token: UUID): Player? {
+        return storage.player.getByToken(token)
     }
 
     fun getPlayerDetails(pid: UInt): Player {

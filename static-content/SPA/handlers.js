@@ -5,13 +5,30 @@ import {sessionSearchView, gameSearchView} from "./Views/searchViews.js";
 import {handleGamePagination, handleSessionPagination} from "./Scripts/pagination.js";
 import {submitFormGameSearch, submitFormSessionSearch} from "./Scripts/formSubmit.js";
 import {genericErrorView, notFoundView} from "./Views/errorViews.js";
+import {loginView, registerView} from "./Views/authViews.js";
+import {authLogin, authLogout, authRegister, getPlayerData} from "./Scripts/AuthHandling.js";
 
 const API_URL = 'http://localhost:8080/';
 
 const RESULTS_PER_PAGE = 5;
 
 function getHome(mainContent, req) {
-    mainContent.replaceChildren(homeView());
+    const user = getPlayerData()
+    mainContent.replaceChildren(homeView(user));
+}
+
+function login(mainContent, req) {
+    mainContent.replaceChildren(loginView());
+    document.getElementById('loginForm').addEventListener('submit', authLogin)
+}
+
+function logout(mainContent, req) {
+    authLogout()
+}
+
+function register(mainContent, req) {
+    mainContent.replaceChildren(registerView());
+    document.getElementById('registerForm').addEventListener('submit', authRegister)
 }
 
 function getGameSearch(mainContent, req) {
@@ -122,6 +139,9 @@ function handleErrors(res, mainContent) {
 
 export default {
     getHome,
+    login,
+    logout,
+    register,
     getGameSearch,
     getSessionSearch,
     getGameSearchResults,
