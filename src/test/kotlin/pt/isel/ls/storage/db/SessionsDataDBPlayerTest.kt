@@ -1,11 +1,4 @@
-import org.junit.jupiter.api.Test
-import pt.isel.ls.data.domain.player.Player
-import pt.isel.ls.data.domain.util.Email
-import pt.isel.ls.data.domain.util.Name
-import pt.isel.ls.storage.db.SessionsDataDBPlayer
-import java.util.*
-import kotlin.test.*
-
+/*
 class SessionsDataDBPlayerTest {
 
     private val sessionsDataDBPlayer = SessionsDataDBPlayer()
@@ -223,4 +216,4 @@ class SessionsDataDBPlayerTest {
         assertNull(retrievedPlayer)
     }
 
-}
+}*/

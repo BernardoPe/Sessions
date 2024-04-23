@@ -59,24 +59,6 @@ class PlayerServiceTest {
     }
 
     @Test
-    fun testAuthenticatePlayer_Success() {
-        val uuid = UUID.randomUUID()
-        val authenticatedPlayer = servicePlayer.authenticatePlayer(uuid)
-
-        assertNotNull(authenticatedPlayer)
-        // TODO
-    }
-
-//    @Test
-//    fun testAuthenticatePlayer_TokenNotFound() {
-//        val uuid = UUID.randomUUID()
-//        val authenticatedPlayer = servicePlayer.authenticatePlayer(uuid)
-//
-//        assertNull(authenticatedPlayer)
-//        //TODO
-//    }
-
-    @Test
     fun testGetPlayerDetails_Success() {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()

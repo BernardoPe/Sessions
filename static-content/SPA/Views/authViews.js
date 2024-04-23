@@ -1,4 +1,4 @@
-import {div, h1, form, input, button, label, p, a} from "../WebDSL/web_dsl.js";
+import {div, form, input, button, label, p, a} from "../WebDSL/web_dsl.js";
 
 function loginView() {
 	return (

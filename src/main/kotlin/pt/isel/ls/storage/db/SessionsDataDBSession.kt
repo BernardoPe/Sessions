@@ -59,10 +59,9 @@ class SessionsDataDBSession : SessionsDataSession {
 
     override fun getSessionsSearch(gid: UInt?, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): Pair<List<Session>, Int> {
         val resQuery = StringBuilder(
-            "SELECT sessions.id as sid, sessions.game_id as gid, date, capacity, games.name as gname, genres, developer, players.id as pid, players.name as pname,email, token_hash FROM (" +
-                    "SELECT * FROM sessions "
+            "SELECT DISTINCT sessions.id FROM sessions "
         )
-        val countQuery = StringBuilder("SELECT COUNT(*) FROM (SELECT * FROM sessions ")
+        val countQuery = StringBuilder("SELECT COUNT(*) FROM (SELECT DISTINCT sessions.id FROM sessions ")
         val queryParams = mutableListOf<Any>()
 
         var firstCondition = true
@@ -86,12 +85,6 @@ class SessionsDataDBSession : SessionsDataSession {
             countQuery.append(if (firstCondition) "WHERE $cond " else "AND $cond ")
         }
 
-        resQuery.append("Order by id LIMIT ? OFFSET ?) as sessions ")
-        countQuery.append(") as sessions ")
-
-        queryParams.add(limit.toInt())
-        queryParams.add(skip.toInt())
-
         resQuery.append(
             "JOIN games ON sessions.game_id = games.id " +
                     "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
@@ -110,6 +103,12 @@ class SessionsDataDBSession : SessionsDataSession {
             queryParams.add(pid.toInt())
         }
 
+        countQuery.append(") as sessions ")
+        resQuery.append("ORDER BY sessions.id LIMIT ? OFFSET ?")
+
+        queryParams.add(limit.toInt())
+        queryParams.add(skip.toInt())
+
         val statement = connection.prepareStatement(resQuery.toString())
         val countStatement = connection.prepareStatement(countQuery.toString())
 
@@ -124,11 +123,14 @@ class SessionsDataDBSession : SessionsDataSession {
         val countResultSet = countStatement.executeQuery()
         connection.commit()
         connection.autoCommit = true
-
         countResultSet.next()
 
         val total = countResultSet.getInt(1)
-        val resultSessions = resultSet.getSessions()
+
+        val resultSessions = mutableListOf<Session>()
+        while (resultSet.next()) {
+            resultSessions.add(getById(resultSet.getInt("id").toUInt())!!)
+        }
 
         return resultSessions to total.also { statement.close(); countStatement.close() }
     }

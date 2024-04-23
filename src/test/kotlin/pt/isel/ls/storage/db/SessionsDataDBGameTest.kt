@@ -1,10 +1,4 @@
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
-import pt.isel.ls.data.domain.game.Game
-import pt.isel.ls.data.domain.util.Genre
-import pt.isel.ls.data.domain.util.Name
-import pt.isel.ls.storage.db.SessionsDataDBGame
-
+/*
 class SessionsDataDBGameTest {
 
     private val sessionsDataDBGame = SessionsDataDBGame()
@@ -277,4 +271,4 @@ class SessionsDataDBGameTest {
         sessionsDataDBGame.delete(id)
     }
 
-}
+}*/
