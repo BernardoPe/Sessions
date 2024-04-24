@@ -31,9 +31,8 @@ open class DBManager(
             ret = query(connection)
             connection.commit()
         } catch (e: Exception) {
-            logger.error("Error while processing the request", e)
-            connection.rollback()
             logger.error("Error while executing query", e)
+            connection.rollback()
             // an error occurred that is not related to the request validation
             throw InternalServerErrorException("There was a server error while processing the request. Please try again.")
         }
