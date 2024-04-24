@@ -59,4 +59,12 @@ function submitFormSessionSearch(event) {
 		window.location.href = `#sessions/searchResults`;
 }
 
-export { submitFormGameSearch, submitFormSessionSearch };
+function submitFormCreateGame(event) {
+	// TODO: implement
+}
+
+function submitFormCreateSession(event) {
+	// TODO: implement
+}
+
+export {submitFormGameSearch, submitFormSessionSearch, submitFormCreateGame, submitFormCreateSession};
