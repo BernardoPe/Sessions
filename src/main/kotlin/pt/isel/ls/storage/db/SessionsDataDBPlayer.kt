@@ -1,128 +1,109 @@
 package pt.isel.ls.storage.db
 
+import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.util.Email
 import pt.isel.ls.data.domain.util.Name
-import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.storage.SessionsDataPlayer
-import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Statement
 import java.util.*
 
-class SessionsDataDBPlayer : SessionsDataPlayer {
+class SessionsDataDBPlayer : SessionsDataPlayer, DBManager() {
 
-    private val connManager: DBConnectionManager = DBConnectionManager()
-    private val connection: Connection get() = connManager.getConnection()
-    override fun create(player: Player): Pair<UInt, UUID> {
+    @Suppress("UNCHECKED_CAST")
+    override fun create(player: Player): Pair<UInt, UUID> = execQuery { connection ->
         val statement = connection.prepareStatement(
             "INSERT INTO players (name, email,token_hash) VALUES (?, ?, ?)",
             Statement.RETURN_GENERATED_KEYS,
         )
 
         val token = UUID.randomUUID()
-        connection.autoCommit = false
+
         statement.setString(1, player.name.toString())
         statement.setString(2, player.email.toString())
         statement.setLong(3, token.hash())
         statement.executeUpdate()
-        connection.commit()
-        connection.autoCommit = true
 
         val generatedKeys = statement.generatedKeys
         generatedKeys.next()
-        return Pair(generatedKeys.getInt(1).toUInt(), token)
-    }
+        Pair(generatedKeys.getInt(1).toUInt(), token)
 
-    override fun getById(id: UInt): Player? {
+    } as Pair<UInt, UUID>
+
+    override fun getById(id: UInt): Player? = execQuery { connection ->
         val statement = connection.prepareStatement(
             "SELECT * FROM players WHERE id = ?",
         )
-        connection.autoCommit = false
         statement.setInt(1, id.toInt())
         val resultSet = statement.executeQuery()
-        connection.commit()
-        connection.autoCommit = true
 
-        return resultSet.getPlayers().firstOrNull().also { statement.close() }
-    }
+        resultSet.getPlayers().firstOrNull().also { statement.close() }
+    } as Player?
 
-    override fun isEmailStored(email: Email): Boolean {
+    override fun isEmailStored(email: Email): Boolean = execQuery { connection ->
         val statement = connection.prepareStatement(
             "SELECT * FROM players WHERE email = ?",
         )
-        connection.autoCommit = false
+
         statement.setString(1, email.toString())
         val resultSet = statement.executeQuery()
-        connection.commit()
-        connection.autoCommit = true
 
-        return resultSet.next().also { statement.close() }
-    }
+        resultSet.next().also { statement.close() }
+    } as Boolean
 
-    override fun getAll(): List<Player> {
+    @Suppress("UNCHECKED_CAST")
+    override fun getAll(): List<Player> = execQuery { connection ->
         val statement = connection.prepareStatement(
             "SELECT * FROM players",
         )
 
-        connection.autoCommit = false
         val resultSet = statement.executeQuery()
-        connection.commit()
-        connection.autoCommit = true
 
-        return resultSet.getPlayers().also { statement.close() }
-    }
+        resultSet.getPlayers().also { statement.close() }
+    } as List<Player>
 
-    override fun update(id: UInt, value: Player): Boolean {
+    override fun update(id: UInt, value: Player): Boolean = execQuery { connection ->
         val statement = connection.prepareStatement(
             "UPDATE players SET name = ?, email = ? WHERE id = ?",
         )
 
-        connection.autoCommit = false
         statement.setString(1, value.name.toString())
         statement.setString(2, value.email.toString())
         statement.setInt(3, id.toInt())
         val updated = statement.executeUpdate()
-        connection.commit()
-        connection.autoCommit = true
 
-        return updated > 0
-    }
+        updated > 0
+    } as Boolean
 
-    override fun delete(id: UInt): Boolean {
+    override fun delete(id: UInt): Boolean = execQuery { connection ->
 
-        connection.autoCommit = false
         val statement = connection.prepareStatement(
             "DELETE FROM players WHERE id = ?",
         )
 
         statement.setInt(1, id.toInt())
         val deleted = statement.executeUpdate()
-        connection.commit()
-        connection.autoCommit = true
 
-        return deleted > 0
-    }
+        deleted > 0
+    } as Boolean
 
-    override fun getByToken(token: UUID): Player? {
+    override fun getByToken(token: UUID): Player? = execQuery { connection ->
         val statement = connection.prepareStatement(
             "SELECT * FROM players WHERE token_hash = ?",
         )
 
-        connection.autoCommit = false
         statement.setLong(1, token.hash())
         val resultSet = statement.executeQuery()
-        connection.commit()
-        connection.autoCommit = true
 
-        return resultSet.getPlayers().firstOrNull().also { statement.close() }
-    }
+        resultSet.getPlayers().firstOrNull().also { statement.close() }
+    } as Player?
 
     private fun UUID.hash(): Long {
         return leastSignificantBits xor mostSignificantBits
     }
 
     private fun ResultSet.getPlayers(): List<Player> {
-        var players = listOf<Player>()
+        val players = mutableListOf<Player>()
         while (this.next()) {
             players += Player(
                 this.getInt("id").toUInt(),

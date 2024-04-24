@@ -1,5 +1,6 @@
 package pt.isel.ls.services.player
 
+import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.mapper.toEmail
 import pt.isel.ls.data.mapper.toName
@@ -85,12 +86,17 @@ class PlayerServiceTest {
         assertEquals("Player not found", exception.errorCause)
     }
 
+    @BeforeEach
+    fun clearStorage() {
+        storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+    }
+
     companion object {
         private fun newTestPlayerName() = "player-${abs(Random.nextLong())}"
 
         private fun newTestEmail() = "email-${abs(Random.nextLong())}@test.com"
 
-        private val storage =
+        private var storage =
             SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
 
         private val servicePlayer = PlayerService(storage)

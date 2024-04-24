@@ -260,7 +260,7 @@ class ServerTest {
         assertEquals("TestDeveloper", gameList.games[0].developer)
         assertEquals(listOf("RPG", "Adventure"), gameList.games[0].genres)
         assertEquals(2u, gameList.games[0].gid)
-        assertEquals(1, gameList.total)
+        assertEquals(2, gameList.total)
     }
 
     @Test
@@ -730,7 +730,7 @@ class ServerTest {
         assertEquals(sessionList.sessions[0].capacity, 100u)
         assertEquals(sessionList.sessions[0].date, "2030-06-01T00:00:00".toLocalDateTime().toString())
         assertEquals(sessionList.sessions[0].sid, 2u)
-        assertEquals(sessionList.total, 1)
+        assertEquals(sessionList.total, 2)
     }
 
     @BeforeEach

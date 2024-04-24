@@ -16,9 +16,6 @@ import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
 import pt.isel.ls.storage.SessionsDataManager
-import pt.isel.ls.storage.db.SessionsDataDBGame
-import pt.isel.ls.storage.db.SessionsDataDBPlayer
-import pt.isel.ls.storage.db.SessionsDataDBSession
 
 val logger = LoggerFactory.getLogger("pt.isel.ls.http.HTTPServer")
 
@@ -99,11 +96,7 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
 
 fun main() {
 
-    val storage = SessionsDataManager(
-        SessionsDataDBGame(),
-        SessionsDataDBPlayer(),
-        SessionsDataDBSession(),
-    )
+    val storage = SessionsDataManager()
 
     storage.use {
         val server = SessionsServer(

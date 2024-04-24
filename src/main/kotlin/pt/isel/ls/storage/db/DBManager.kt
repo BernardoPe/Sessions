@@ -1,6 +1,7 @@
 package pt.isel.ls.storage.db
 
 import org.postgresql.ds.PGSimpleDataSource
+import pt.isel.ls.exceptions.InternalServerErrorException
 import java.sql.Connection
 
 /**
@@ -19,16 +20,17 @@ import java.sql.Connection
  */
 open class DBManager {
 
-     fun execQuery(query: (Connection) -> Any) : Any {
+     fun execQuery(query: (Connection) -> Any?) : Any? {
         val connection = getConnection()
         connection.autoCommit = false
-        val ret : Any
+        val ret : Any?
         try {
             ret = query(connection)
             connection.commit()
         } catch (e: Exception) {
             connection.rollback()
-            throw e // maybe add handling here
+            // an error occurred that is not related to the request validation
+            throw InternalServerErrorException("There was a server error while processing the request. Please try again.")
         }
         finally {
             connection.autoCommit = true
@@ -46,7 +48,7 @@ open class DBManager {
     /**
      * Current thread DB connection
      */
-    fun getConnection(): Connection {
+    private fun getConnection(): Connection {
         val connection = connections.getOrPut(Thread.currentThread().id) { getNewConnection() }
         if (connection.isClosed) {
             connections[Thread.currentThread().id] = getNewConnection()

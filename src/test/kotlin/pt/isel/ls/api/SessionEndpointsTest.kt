@@ -531,7 +531,7 @@ class SessionEndpointsTest {
         assertEquals(sessionList.sessions[0].capacity, 100u)
         assertEquals(sessionList.sessions[0].date, "2030-06-01T00:00:00".toLocalDateTime().toString())
         assertEquals(sessionList.sessions[0].sid, 2u)
-        assertEquals(sessionList.total, 1)
+        assertEquals(sessionList.total, 2)
     }
 
     @BeforeEach

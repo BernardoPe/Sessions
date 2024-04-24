@@ -1,5 +1,6 @@
 package pt.isel.ls.services.session
 
+import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.SESSION_MAX_CAPACITY
@@ -536,6 +537,11 @@ class SessionServiceTest {
         assertEquals("Session not found", exception.errorCause)
     }
 
+    @BeforeEach
+    fun clearStorage() {
+        storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+    }
+
     companion object {
         private fun newTestCapacity() = Random.nextInt(1, 100).toUInt()
 
@@ -553,7 +559,7 @@ class SessionServiceTest {
 
         private fun UUID.testTokenHash() = mostSignificantBits xor leastSignificantBits
 
-        private val storage =
+        private var storage =
             SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
 
         private val serviceSession = SessionsService(storage)

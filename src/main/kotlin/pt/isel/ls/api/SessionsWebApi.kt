@@ -282,7 +282,7 @@ class SessionsApi(
         } catch (e: Exception) {
             logger.error(e.message, e)
             Response(INTERNAL_SERVER_ERROR).header("content-type", "application/json").body(
-                Json.encodeToString(InternalServerErrorException()),
+                Json.encodeToString(InternalServerErrorException("Internal Server Error")),
             )
         }
 

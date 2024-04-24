@@ -79,9 +79,9 @@ class SessionsDataMemGame : SessionsDataGame {
             developer?.let { game.developer == it } ?: true
         }
 
-        games = games.sortedBy { it.id }.drop(skip.toInt()).take(limit.toInt())
+        games = games.sortedBy { it.id }
 
-        return Pair(games, games.size)
+        return Pair(games.drop(skip.toInt()).take(limit.toInt()), games.size)
 
     }
 
