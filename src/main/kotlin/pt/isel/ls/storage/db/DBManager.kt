@@ -29,6 +29,7 @@ open class DBManager {
             ret = query(connection)
             connection.commit()
         } catch (e: Exception) {
+            logger.error("Error while processing the request", e)
             connection.rollback()
             logger.error("Error while executing query", e)
             // an error occurred that is not related to the request validation
