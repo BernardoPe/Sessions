@@ -17,7 +17,26 @@ import java.sql.Connection
  * @property getConnection gets the connection for the current thread
 
  */
-class DBConnectionManager {
+open class DBManager {
+
+     fun execQuery(query: (Connection) -> Any) : Any {
+        val connection = getConnection()
+        connection.autoCommit = false
+        val ret : Any
+        try {
+            ret = query(connection)
+            connection.commit()
+        } catch (e: Exception) {
+            connection.rollback()
+            throw e // maybe add handling here
+        }
+        finally {
+            connection.autoCommit = true
+        }
+        return ret
+    }
+
+
     private fun getNewConnection(): Connection {
         val newSource = PGSimpleDataSource()
         newSource.setUrl(System.getenv("JDBC_DATABASE_URL"))
