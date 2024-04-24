@@ -2,6 +2,7 @@ package pt.isel.ls.storage.db
 
 import org.postgresql.ds.PGSimpleDataSource
 import pt.isel.ls.exceptions.InternalServerErrorException
+import pt.isel.ls.logger
 import java.sql.Connection
 
 /**
@@ -28,6 +29,7 @@ open class DBManager {
             ret = query(connection)
             connection.commit()
         } catch (e: Exception) {
+            logger.error("Error while processing the request", e)
             connection.rollback()
             // an error occurred that is not related to the request validation
             throw InternalServerErrorException("There was a server error while processing the request. Please try again.")
