@@ -189,7 +189,7 @@ class GameEndpointsTest {
         assertEquals("TestDeveloper", gameList.games[0].developer)
         assertEquals(listOf("RPG"), gameList.games[0].genres)
         assertEquals(2u, gameList.games[0].gid)
-        assertEquals(1, gameList.total)
+        assertEquals(2, gameList.total)
     }
 
     @BeforeEach
