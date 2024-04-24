@@ -8,7 +8,7 @@ import java.sql.ResultSet
 import java.sql.Statement
 import java.util.*
 
-class SessionsDataDBPlayer : SessionsDataPlayer, DBManager() {
+class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL) {
 
     @Suppress("UNCHECKED_CAST")
     override fun create(player: Player): Pair<UInt, UUID> = execQuery { connection ->

@@ -1,6 +1,9 @@
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
+
 import kotlinx.datetime.LocalDateTime
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Test
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
@@ -10,7 +13,7 @@ import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.storage.db.SessionsDataDBGame
 import pt.isel.ls.storage.db.SessionsDataDBPlayer
 import pt.isel.ls.storage.db.SessionsDataDBSession
-import java.util.UUID
+import java.util.*
 
 class SessionsDataDBSessionTest {
 
@@ -21,12 +24,13 @@ class SessionsDataDBSessionTest {
     private val TEST_DEVELOPER_2 = "Test Dev 2".toName()
     private val TEST_DATE = LocalDateTime(2025, 1, 1, 0, 0)
 
+    private val dbURL = System.getenv("JDBC_DEVELOPMENT_DATABASE_URL")
 
     @Test
     fun `create session successfully`() {
         // Arrange
-        val gameDB = SessionsDataDBGame()
-        val sessionDB = SessionsDataDBSession()
+        val gameDB = SessionsDataDBGame(dbURL)
+        val sessionDB = SessionsDataDBSession(dbURL)
         var game = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val gid = gameDB.create(game)
         game = game.copy(id = gid)
@@ -44,8 +48,8 @@ class SessionsDataDBSessionTest {
     @Test
     fun `get session by id`() {
         // Arrange
-        val gameDB = SessionsDataDBGame()
-        val sessionDB = SessionsDataDBSession()
+        val gameDB = SessionsDataDBGame(dbURL)
+        val sessionDB = SessionsDataDBSession(dbURL)
         // Game
         var game = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val gid = gameDB.create(game)
@@ -66,7 +70,7 @@ class SessionsDataDBSessionTest {
     @Test
     fun `get non-existent session by id`() {
         // Arrange
-        val sessionDB = SessionsDataDBSession()
+        val sessionDB = SessionsDataDBSession(dbURL)
         // Act
         val retrievedSession = sessionDB.getById(999u)
         // Assert
@@ -76,8 +80,8 @@ class SessionsDataDBSessionTest {
     @Test
     fun `delete session by id`() {
         // Arrange
-        val gameDB = SessionsDataDBGame()
-        val sessionDB = SessionsDataDBSession()
+        val gameDB = SessionsDataDBGame(dbURL)
+        val sessionDB = SessionsDataDBSession(dbURL)
         var game = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val gid = gameDB.create(game)
         game = game.copy(id = gid)
@@ -96,8 +100,8 @@ class SessionsDataDBSessionTest {
     @Test
     fun `update session successfully`() {
         // Arrange
-        val gameDB = SessionsDataDBGame()
-        val sessionDB = SessionsDataDBSession()
+        val gameDB = SessionsDataDBGame(dbURL)
+        val sessionDB = SessionsDataDBSession(dbURL)
         // Game
         var game = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val gid = gameDB.create(game)
@@ -119,7 +123,7 @@ class SessionsDataDBSessionTest {
     @Test
     fun `update non-existent session`() {
         // Arrange
-        val sessionDB = SessionsDataDBSession()
+        val sessionDB = SessionsDataDBSession(dbURL)
         // Act
         val isUpdated = sessionDB.update(999u, capacity = 20u, date = TEST_DATE)
         // Assert
@@ -129,8 +133,8 @@ class SessionsDataDBSessionTest {
     @Test
     fun `get all sessions`() {
         // Arrange
-        val gameDB = SessionsDataDBGame()
-        val sessionDB = SessionsDataDBSession()
+        val gameDB = SessionsDataDBGame(dbURL)
+        val sessionDB = SessionsDataDBSession(dbURL)
         // Game
         var game = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val gid = gameDB.create(game)
@@ -156,8 +160,8 @@ class SessionsDataDBSessionTest {
     @Test
     fun `get all sessions with limit`() {
         // Arrange
-        val gameDB = SessionsDataDBGame()
-        val sessionDB = SessionsDataDBSession()
+        val gameDB = SessionsDataDBGame(dbURL)
+        val sessionDB = SessionsDataDBSession(dbURL)
         // Game
         var game = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val gid = gameDB.create(game)
@@ -183,8 +187,8 @@ class SessionsDataDBSessionTest {
     @Test
     fun `get all sessions with skip`() {
         // Arrange
-        val gameDB = SessionsDataDBGame()
-        val sessionDB = SessionsDataDBSession()
+        val gameDB = SessionsDataDBGame(dbURL)
+        val sessionDB = SessionsDataDBSession(dbURL)
         var game = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val gid = gameDB.create(game)
         game = game.copy(id = gid)
@@ -205,8 +209,8 @@ class SessionsDataDBSessionTest {
     @Test
     fun `get all sessions with search`() {
         // Arrange
-        val gameDB = SessionsDataDBGame()
-        val sessionDB = SessionsDataDBSession()
+        val gameDB = SessionsDataDBGame(dbURL)
+        val sessionDB = SessionsDataDBSession(dbURL)
         // Game 1
         var game1 = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val gid1 = gameDB.create(game1)
@@ -236,8 +240,8 @@ class SessionsDataDBSessionTest {
     @Test
     fun `get all sessions with search and limit`() {
         // Arrange
-        val gameDB = SessionsDataDBGame()
-        val sessionDB = SessionsDataDBSession()
+        val gameDB = SessionsDataDBGame(dbURL)
+        val sessionDB = SessionsDataDBSession(dbURL)
         var game1 = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         var game2 = Game(2u, TEST_NAME_2, TEST_DEVELOPER_2, setOf(Genre("RPG")))
         val gid1 = gameDB.create(game1)
@@ -262,8 +266,8 @@ class SessionsDataDBSessionTest {
     @Test
     fun `get all sessions with search and skip`() {
         // Arrange
-        val gameDB = SessionsDataDBGame()
-        val sessionDB = SessionsDataDBSession()
+        val gameDB = SessionsDataDBGame(dbURL)
+        val sessionDB = SessionsDataDBSession(dbURL)
         var game1 = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         var game2 = Game(2u, TEST_NAME_2, TEST_DEVELOPER_2, setOf(Genre("RPG")))
         val gid1 = gameDB.create(game1)
@@ -288,8 +292,8 @@ class SessionsDataDBSessionTest {
     @Test
     fun `get all sessions with search with gid and date`() {
         // Arrange
-        val gameDB = SessionsDataDBGame()
-        val sessionDB = SessionsDataDBSession()
+        val gameDB = SessionsDataDBGame(dbURL)
+        val sessionDB = SessionsDataDBSession(dbURL)
         var game1 = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         var game2 = Game(2u, TEST_NAME_2, TEST_DEVELOPER_2, setOf(Genre("RPG")))
         val gid1 = gameDB.create(game1)
@@ -314,9 +318,9 @@ class SessionsDataDBSessionTest {
     @Test
     fun `remove player from session`() {
         // Arrange
-        val gameDB = SessionsDataDBGame()
-        val sessionDB = SessionsDataDBSession()
-        val playerDB = SessionsDataDBPlayer()
+        val gameDB = SessionsDataDBGame(dbURL)
+        val sessionDB = SessionsDataDBSession(dbURL)
+        val playerDB = SessionsDataDBPlayer(dbURL)
         // Game
         var game = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val gid = gameDB.create(game)

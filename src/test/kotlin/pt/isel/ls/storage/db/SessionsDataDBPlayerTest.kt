@@ -1,16 +1,21 @@
 
 package pt.isel.ls.storage.db
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.util.Email
 import pt.isel.ls.data.domain.util.Name
-import java.util.UUID
+import java.util.*
 
 class SessionsDataDBPlayerTest {
 
-    private val sessionsDataDBPlayer = SessionsDataDBPlayer()
+    private val dbURL = System.getenv("JDBC_DEVELOPMENT_DATABASE_URL")
+    private val sessionsDataDBPlayer = SessionsDataDBPlayer(dbURL)
 
     // Constants
     private val TEST_EMAIL = "testEmailthatnooneelsewilluse@dont.com"

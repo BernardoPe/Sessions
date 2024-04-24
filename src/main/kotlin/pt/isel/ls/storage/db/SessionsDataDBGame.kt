@@ -7,7 +7,7 @@ import pt.isel.ls.storage.SessionsDataGame
 import java.sql.ResultSet
 import java.sql.Statement
 
-class SessionsDataDBGame : SessionsDataGame, DBManager() {
+class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
     override fun create(game: Game): UInt = execQuery { connection ->
         val statement = connection.prepareStatement(
             "INSERT INTO games (name, developer, genres) VALUES (?, ?, ?)",

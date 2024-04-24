@@ -19,7 +19,9 @@ import java.sql.Connection
  * @property getConnection gets the connection for the current thread
 
  */
-open class DBManager {
+open class DBManager(
+    private val dbUrl : String
+) {
 
      fun execQuery(query: (Connection) -> Any?) : Any? {
         val connection = getConnection()
@@ -44,7 +46,7 @@ open class DBManager {
 
     private fun getNewConnection(): Connection {
         val newSource = PGSimpleDataSource()
-        newSource.setUrl(System.getenv("JDBC_DATABASE_URL"))
+        newSource.setUrl(dbUrl)
         return newSource.connection
     }
 

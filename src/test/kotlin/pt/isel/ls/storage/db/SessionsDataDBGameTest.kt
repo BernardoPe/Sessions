@@ -1,7 +1,11 @@
 
 package pt.isel.ls.storage.db
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.util.Genre
@@ -9,7 +13,8 @@ import pt.isel.ls.data.domain.util.Name
 
 class SessionsDataDBGameTest {
 
-    private val sessionsDataDBGame = SessionsDataDBGame()
+    private val dbURL = System.getenv("JDBC_DEVELOPMENT_DATABASE_URL")
+    private val sessionsDataDBGame = SessionsDataDBGame(dbURL)
     
     private val TEST_NAME = Name("Test Game that no one else will use")
     private val TEST_DEVELOPER = Name("Test Developer that no one else will use")
@@ -53,7 +58,7 @@ class SessionsDataDBGameTest {
         val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val id = sessionsDataDBGame.create(game)
         // Act
-        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), TEST_DEVELOPER, 10u, 0u)
+        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), TEST_DEVELOPER, null, 10u, 0u)
         // Assert
         assertTrue(result.first.isNotEmpty())
         assertEquals(1, result.second)
@@ -64,7 +69,7 @@ class SessionsDataDBGameTest {
     @Test
     fun `get games search with no results returns empty list`() {
         // Act
-        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), Name("Nonexistent Developer"), 10u, 0u)
+        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), Name("Nonexistent Developer"), null,10u, 0u)
         // Assert
         assertTrue(result.first.isEmpty())
         assertEquals(0, result.second)
@@ -76,7 +81,7 @@ class SessionsDataDBGameTest {
         val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val id = sessionsDataDBGame.create(game)
         // Act
-        val result = sessionsDataDBGame.getGamesSearch(null, TEST_DEVELOPER, 10u, 0u)
+        val result = sessionsDataDBGame.getGamesSearch(null, TEST_DEVELOPER, null,10u, 0u)
         // Assert
         assertTrue(result.first.isNotEmpty())
         assertEquals(1, result.second)
@@ -90,7 +95,7 @@ class SessionsDataDBGameTest {
         val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val id = sessionsDataDBGame.create(game)
         // Act
-        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), null, 10u, 0u)
+        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), null, null,10u, 0u)
         // Assert
         assertTrue(result.first.isNotEmpty())
         assertEquals(1, result.second)
@@ -104,7 +109,7 @@ class SessionsDataDBGameTest {
         val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val id = sessionsDataDBGame.create(game)
         // Act
-        val result = sessionsDataDBGame.getGamesSearch(null, null, 10u, 0u)
+        val result = sessionsDataDBGame.getGamesSearch(null, null, null,10u, 0u)
         // Assert
         assertTrue(result.first.isNotEmpty())
         assertEquals(1, result.second)
@@ -118,7 +123,7 @@ class SessionsDataDBGameTest {
         val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val id = sessionsDataDBGame.create(game)
         // Act
-        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), TEST_DEVELOPER, 1u, 0u)
+        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), TEST_DEVELOPER, null,1u, 0u)
         // Assert
         assertTrue(result.first.isNotEmpty())
         assertEquals(1, result.second)
@@ -134,7 +139,7 @@ class SessionsDataDBGameTest {
         val id1 = sessionsDataDBGame.create(game1)
         val id2 = sessionsDataDBGame.create(game2)
         // Act
-        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), TEST_DEVELOPER, 10u, 1u)
+        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), TEST_DEVELOPER, null,10u, 1u)
         // Assert
         assertTrue(result.first.isNotEmpty())
         assertEquals(2, result.second)
@@ -151,7 +156,7 @@ class SessionsDataDBGameTest {
         val id1 = sessionsDataDBGame.create(game1)
         val id2 = sessionsDataDBGame.create(game2)
         // Act
-        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), TEST_DEVELOPER, 1u, 1u)
+        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), TEST_DEVELOPER, null,1u, 1u)
         // Assert
         assertTrue(result.first.isNotEmpty())
         assertEquals(2, result.second)

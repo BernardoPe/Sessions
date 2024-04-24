@@ -14,7 +14,7 @@ import pt.isel.ls.utils.toTimestamp
 import java.sql.ResultSet
 import java.sql.Statement
 
-class SessionsDataDBSession : SessionsDataSession, DBManager() {
+class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbURL) {
 
     override fun create(session: Session): UInt = execQuery { connection ->
 
