@@ -26,7 +26,7 @@ class SessionsDataDBGame : SessionsDataGame, DBManager() {
 
     override fun isGameNameStored(name: Name): Boolean = execQuery { connection ->
         val statement = connection.prepareStatement(
-            "SELECT * FROM games WHERE name = ?",
+            "SELECT 1 FROM games WHERE name = ?",
         )
 
         statement.setString(1, name.toString())
@@ -36,7 +36,7 @@ class SessionsDataDBGame : SessionsDataGame, DBManager() {
     } as Boolean
 
     @Suppress("UNCHECKED_CAST")
-    override fun getGamesSearch(genres: Set<Genre>?, developer: Name?, limit: UInt, skip: UInt): Pair<List<Game>, Int> =
+    override fun getGamesSearch(genres: Set<Genre>?, developer: Name?, name: Name?, limit: UInt, skip: UInt): Pair<List<Game>, Int> =
         execQuery { connection ->
 
             var resQuery = "SELECT * FROM games "
@@ -44,19 +44,23 @@ class SessionsDataDBGame : SessionsDataGame, DBManager() {
             val params = mutableListOf<Any>()
 
             var searchQuery = ""
-            if (genres != null || developer != null) {
-                searchQuery += "WHERE "
-                if (genres != null) {
-                    searchQuery += "genres @> ? "
-                    params.add(connection.createArrayOf("VARCHAR", genres.map { it.toString() }.toTypedArray()))
-                }
-                if (developer != null) {
-                    if (genres != null) {
-                        searchQuery += "AND "
-                    }
-                    searchQuery += "developer = ? "
-                    params.add(developer.toString())
-                }
+            var firstCondition = true
+
+            if (genres != null) {
+                searchQuery += "WHERE genres @> ?"
+                params.add(connection.createArrayOf("VARCHAR", genres.map { it.toString() }.toTypedArray()))
+                firstCondition = false
+            }
+
+            if (developer != null) {
+                searchQuery += if (firstCondition) "WHERE developer = ?" else "AND developer = ?"
+                params.add(developer.toString())
+                firstCondition = false
+            }
+
+            if (name != null) {
+                searchQuery += if (firstCondition) "WHERE lower(name) LIKE ?" else "AND lower(name) LIKE ?"
+                params.add("${name.name.lowercase()}%")
             }
 
             countQuery += searchQuery

@@ -16,6 +16,10 @@ class PlayerService(val storage: SessionsDataManager) {
             throw BadRequestException("Given Player email already exists")
         }
 
+        if (storagePlayer.isNameStored(name)) {
+            throw BadRequestException("Given Player name already exists")
+        }
+
         val player = Player(0u, name, email,0L)
 
         return storagePlayer.create(player)
@@ -28,6 +32,14 @@ class PlayerService(val storage: SessionsDataManager) {
     fun getPlayerDetails(pid: UInt): Player {
         return storage.player.getById(pid) ?: throw NotFoundException("Player not found")
     }
+
+    fun getPlayerList(name: Name?, limit: UInt, skip: UInt): Pair<PlayerList, Int> {
+        val gamesSearch = storage.player.getPlayersSearch(name, limit, skip)
+        return Pair(gamesSearch.first, gamesSearch.second)
+    }
+
 }
+
+typealias PlayerList = List<Player>
 
 typealias PlayerCredentials = Pair<UInt, UUID>

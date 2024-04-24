@@ -45,6 +45,7 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
     private val playerRoutes =
         routes(
             PLAYER_ROUTE bind POST to requestHandler::createPlayer,
+            PLAYER_ROUTE bind GET to requestHandler::getPlayerList,
             PLAYER_DETAILS_ROUTE bind GET to requestHandler::getPlayerDetails,
             AUTH_ROUTE bind GET to requestHandler::authPlayer,
         )
