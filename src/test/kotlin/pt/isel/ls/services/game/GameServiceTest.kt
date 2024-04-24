@@ -92,7 +92,7 @@ class GameServiceTest {
         assertNotNull(createdGame1)
         assertNotNull(createdGame2)
 
-        val gameSearched = serviceGame.searchGames(genres, developer, limit, skip)
+        val gameSearched = serviceGame.searchGames(genres, developer, null, limit, skip)
 
         assertEquals(
             listOf(Game(createdGame1, gameName1, developer, genres), Game(createdGame2, gameName2, developer, genres)),
@@ -117,7 +117,7 @@ class GameServiceTest {
         assertNotNull(createdGame1)
         assertNotNull(createdGame2)
 
-        val games = serviceGame.searchGames(genres, developer2, limit, skip)
+        val games = serviceGame.searchGames(genres, developer2, null, limit, skip)
 
         assertTrue { games.first.isEmpty() }
         assertEquals(0, games.second)

@@ -36,6 +36,19 @@ class PlayerEndpointsTest {
     }
 
     @Test
+    fun `test create player name taken`() {
+        // Arrange
+        val request = Request(Method.POST, "/players")
+            .header("Content-Type", "application/json")
+            .body("""{"name":"Test","email":"Testemail@test.pt"}""")
+        // Act
+        api.createPlayer(request)
+        val response = api.createPlayer(request)
+        // Assert
+        assertEquals(response.status, Status.BAD_REQUEST)
+    }
+
+    @Test
     fun `test create player, invalid email`() {
         // Arrange
         val request = Request(Method.POST, "/players")

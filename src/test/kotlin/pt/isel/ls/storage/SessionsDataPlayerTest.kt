@@ -74,8 +74,17 @@ class SessionsDataPlayerTest {
         // Add a player to the storage
         playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), 0L))
         // Check if the email is stored
-        // Check if the email is stored
         assert(playerStorage.isEmailStored("testEmail@test.com".toEmail()))
+    }
+
+    @Test
+    fun isNameStoredTest() {
+        // Create a player storage
+        val playerStorage = SessionsDataMemPlayer()
+        // Add a player to the storage
+        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), 0L))
+        // Check if the name is stored
+        assert(playerStorage.isNameStored("testPlayer".toName()))
     }
 
     @Test

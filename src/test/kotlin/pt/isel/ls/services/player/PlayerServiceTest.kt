@@ -86,6 +86,22 @@ class PlayerServiceTest {
         assertEquals("Player not found", exception.errorCause)
     }
 
+    @Test
+    fun testCreatePlayerNameStored() {
+        val playerName = newTestPlayerName().toName()
+        val playerEmail = newTestEmail().toEmail()
+
+        servicePlayer.createPlayer(playerName, playerEmail)
+
+        val exception = assertFailsWith<BadRequestException> {
+            servicePlayer.createPlayer(playerName, newTestEmail().toEmail())
+        }
+
+        assertEquals(400, exception.status)
+        assertEquals("Bad Request", exception.description)
+        assertEquals("Given Player name already exists", exception.errorCause)
+    }
+
     @BeforeEach
     fun clearStorage() {
         storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
