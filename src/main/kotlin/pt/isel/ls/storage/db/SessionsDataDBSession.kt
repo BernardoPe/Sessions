@@ -64,44 +64,41 @@ class SessionsDataDBSession : SessionsDataSession {
         val countQuery = StringBuilder("SELECT COUNT(*) FROM (SELECT DISTINCT sessions.id FROM sessions ")
         val queryParams = mutableListOf<Any>()
 
+        val searchQuery = StringBuilder()
+
+        searchQuery.append(
+            "JOIN games ON sessions.game_id = games.id " +
+                "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
+                "LEFT JOIN players ON sessions_players.player_id = players.id "
+        )
+
         var firstCondition = true
 
         if (gid != null) {
-            resQuery.append("WHERE game_id = ? ")
-            countQuery.append("WHERE game_id = ? ")
+            searchQuery.append(if (firstCondition) "WHERE games.id = ? " else "AND games.id = ? ")
             queryParams.add(gid.toInt())
             firstCondition = false
         }
 
         if (date != null) {
-            resQuery.append(if (firstCondition) "WHERE date = ? " else "AND date = ? ")
-            countQuery.append(if (firstCondition) "WHERE date = ? " else "AND date = ? ")
+            searchQuery.append(if (firstCondition) "WHERE date = ? " else "AND date = ? ")
             queryParams.add(date.toTimestamp())
+            firstCondition = false
         }
 
         if (state != null) {
             val cond = if (state == State.OPEN) "date >= now()" else "date < now()"
-            resQuery.append(if (firstCondition) "WHERE $cond " else "AND $cond ")
-            countQuery.append(if (firstCondition) "WHERE $cond " else "AND $cond ")
+            searchQuery.append(if (firstCondition) "WHERE $cond " else "AND $cond ")
+            firstCondition = false
         }
-
-        resQuery.append(
-            "JOIN games ON sessions.game_id = games.id " +
-                    "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
-                    "LEFT JOIN players ON sessions_players.player_id = players.id "
-        )
-
-        countQuery.append(
-            "JOIN games ON sessions.game_id = games.id " +
-                    "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
-                    "LEFT JOIN players ON sessions_players.player_id = players.id "
-        )
 
         if (pid != null) {
-            resQuery.append("WHERE session_id IN (SELECT session_id FROM sessions_players WHERE player_id = ?) ")
-            countQuery.append("WHERE session_id IN (SELECT session_id FROM sessions_players WHERE player_id = ?) ")
+            searchQuery.append(if (firstCondition) "WHERE players.id = ? " else "AND players.id = ? ")
             queryParams.add(pid.toInt())
         }
+
+        resQuery.append(searchQuery)
+        countQuery.append(searchQuery)
 
         countQuery.append(") as sessions ")
         resQuery.append("ORDER BY sessions.id LIMIT ? OFFSET ?")
@@ -121,16 +118,24 @@ class SessionsDataDBSession : SessionsDataSession {
         connection.autoCommit = false
         val resultSet = statement.executeQuery()
         val countResultSet = countStatement.executeQuery()
+        val sessionStmt = connection.prepareStatement(
+            "SELECT sessions.id as sid, sessions.game_id as gid, date, capacity, games.name as gname, genres, developer, players.id as pid, players.name as pname, email, token_hash FROM sessions " +
+                    "JOIN games ON sessions.game_id = games.id " +
+                    "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
+                    "LEFT JOIN players ON sessions_players.player_id = players.id " +
+                    "WHERE sessions.id = ?",
+        )
+        val resultSessions = mutableListOf<Session>()
+        while (resultSet.next()) {
+            sessionStmt.setInt(1, resultSet.getInt("id"))
+            val sessionResultSet = sessionStmt.executeQuery()
+            resultSessions.add(sessionResultSet.getSessions().first())
+        }
         connection.commit()
         connection.autoCommit = true
         countResultSet.next()
 
         val total = countResultSet.getInt(1)
-
-        val resultSessions = mutableListOf<Session>()
-        while (resultSet.next()) {
-            resultSessions.add(getById(resultSet.getInt("id").toUInt())!!)
-        }
 
         return resultSessions to total.also { statement.close(); countStatement.close() }
     }
