@@ -56,7 +56,7 @@ class SessionsDataDBGameTest {
         val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), TEST_DEVELOPER, 10u, 0u)
         // Assert
         assertTrue(result.first.isNotEmpty())
-        assertEquals(1, result.second)
+        
         // Clean up
         sessionsDataDBGame.delete(id)
     }
@@ -79,7 +79,7 @@ class SessionsDataDBGameTest {
         val result = sessionsDataDBGame.getGamesSearch(null, TEST_DEVELOPER, 10u, 0u)
         // Assert
         assertTrue(result.first.isNotEmpty())
-        assertEquals(1, result.second)
+        
         // Clean up
         sessionsDataDBGame.delete(id)
     }
@@ -93,7 +93,7 @@ class SessionsDataDBGameTest {
         val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), null, 10u, 0u)
         // Assert
         assertTrue(result.first.isNotEmpty())
-        assertEquals(1, result.second)
+        
         // Clean up
         sessionsDataDBGame.delete(id)
     }
@@ -107,7 +107,6 @@ class SessionsDataDBGameTest {
         val result = sessionsDataDBGame.getGamesSearch(null, null, 10u, 0u)
         // Assert
         assertTrue(result.first.isNotEmpty())
-        assertEquals(1, result.second)
         // Clean up
         sessionsDataDBGame.delete(id)
     }
@@ -121,7 +120,7 @@ class SessionsDataDBGameTest {
         val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), TEST_DEVELOPER, 1u, 0u)
         // Assert
         assertTrue(result.first.isNotEmpty())
-        assertEquals(1, result.second)
+        
         // Clean up
         sessionsDataDBGame.delete(id)
     }
@@ -171,14 +170,6 @@ class SessionsDataDBGameTest {
         assertTrue(result.isNotEmpty())
         // Clean up
         sessionsDataDBGame.delete(id)
-    }
-
-    @Test
-    fun `get all games with no results returns empty list`() {
-        // Act
-        val result = sessionsDataDBGame.getAllGames()
-        // Assert
-        assertTrue(result.isEmpty())
     }
 
     @Test

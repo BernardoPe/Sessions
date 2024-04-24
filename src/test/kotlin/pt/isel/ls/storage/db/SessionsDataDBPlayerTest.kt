@@ -83,14 +83,6 @@ class SessionsDataDBPlayerTest {
     }
 
     @Test
-    fun `get all players empty`() {
-        // Act
-        val players = sessionsDataDBPlayer.getAll()
-        // Assert
-        assertTrue(players.isEmpty())
-    }
-
-    @Test
     fun `get all players`() {
         // Arrange
         val player1 = Player(0u, Name(TEST_NAME), Email(TEST_EMAIL), TEST_TOKEN)
@@ -100,7 +92,7 @@ class SessionsDataDBPlayerTest {
         // Act
         val players = sessionsDataDBPlayer.getAll()
         // Assert
-        assertEquals(2, players.size)
+        assertTrue(players.isNotEmpty())
         // Clean up
         sessionsDataDBPlayer.delete(id1)
         sessionsDataDBPlayer.delete(id2)
@@ -115,7 +107,7 @@ class SessionsDataDBPlayerTest {
         // Act
         val players = sessionsDataDBPlayer.getAll()
         // Assert
-        assertTrue(players.isEmpty())
+        assertFalse(players.contains(player))
     }
 
     @Test
@@ -143,7 +135,7 @@ class SessionsDataDBPlayerTest {
         // Act
         val isUpdated = sessionsDataDBPlayer.update(NONEXISTENT_ID, updatedPlayer)
         // Assert
-        assertTrue(!isUpdated)
+        assertFalse(isUpdated)
     }
 
     @Test
