@@ -87,6 +87,36 @@ class PlayerServiceTest {
     }
 
     @Test
+    fun searchPlayersByNameTest() {
+        val playerName = newTestPlayerName().toName()
+        val playerEmail = newTestEmail().toEmail()
+
+        servicePlayer.createPlayer(playerName, playerEmail)
+
+        val searchResult = servicePlayer.getPlayerList("pla".toName(), 10u, 0u)
+
+        assertEquals(1, searchResult.first.size)
+        assertEquals(1, searchResult.second)
+        assertEquals(2u, searchResult.first[0].id)
+        assertEquals(playerName, searchResult.first[0].name)
+        assertEquals(playerEmail, searchResult.first[0].email)
+    }
+
+    @Test
+    fun searchPlayersByNameTestNotFound() {
+        val playerName = newTestPlayerName().toName()
+        val playerEmail = newTestEmail().toEmail()
+
+        servicePlayer.createPlayer(playerName, playerEmail)
+
+        val searchResult = servicePlayer.getPlayerList("yer".toName(), 10u, 0u)
+
+        assertEquals(0, searchResult.first.size)
+        assertEquals(0, searchResult.second)
+    }
+
+
+    @Test
     fun testCreatePlayerNameStored() {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
@@ -105,6 +135,7 @@ class PlayerServiceTest {
     @BeforeEach
     fun clearStorage() {
         storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+        servicePlayer = PlayerService(storage)
     }
 
     companion object {
@@ -115,7 +146,7 @@ class PlayerServiceTest {
         private var storage =
             SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
 
-        private val servicePlayer = PlayerService(storage)
+        private var servicePlayer = PlayerService(storage)
 
         private fun UUID.testTokenHash() = mostSignificantBits xor leastSignificantBits
     }

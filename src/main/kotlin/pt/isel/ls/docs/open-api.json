@@ -83,6 +83,86 @@
             }
           }
         }
+      },
+      "get": {
+        "summary": "Get list of players",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "int",
+              "default": 5
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "int",
+              "default": 0
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "john"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "200": {
+            "description": "List of players retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "players": [
+                      {
+                        "pid": 1,
+                        "name": "John Doe",
+                        "email": "testemail@isel.pt"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Bad Request"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "The name must be between 3 and 40 characters"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/players/{pid}": {
@@ -312,6 +392,14 @@
           },
           {
             "name": "developer",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
             "in": "query",
             "required": false,
             "schema": {

@@ -19,6 +19,7 @@ import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.dto.GameInfoOutputModel
 import pt.isel.ls.dto.GameSearchResultOutputModel
 import pt.isel.ls.dto.PlayerInfoOutputModel
+import pt.isel.ls.dto.PlayerSearchOutputModel
 import pt.isel.ls.dto.SessionInfoOutputModel
 import pt.isel.ls.dto.SessionSearchResultOutputModel
 import pt.isel.ls.services.GameService
@@ -121,6 +122,48 @@ class ServerTest {
         assertEquals(playerDetails.email, "testemail@test.pt")
         assertEquals(playerDetails.pid, 2u)
     }
+
+    @Test
+    fun `test get player list invalid name`() {
+        // Arrange
+        val request = Request(Method.GET, "/players?name=Te")
+        // Act
+        val response = server.sessionsHandler(request)
+        // Assert
+        assertEquals(response.status, Status.BAD_REQUEST)
+    }
+
+    @Test
+    fun `test get player list partial name should give 2 results`() {
+        // Arrange
+        val request = Request(Method.GET, "/players?name=test")
+        // Act
+        val response = server.sessionsHandler(request)
+        val playerListJson = response.bodyString()
+        val playerList = Json.decodeFromString<PlayerSearchOutputModel>(playerListJson)
+        // Assert
+        assertEquals(response.status, Status.OK)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(2, playerList.players.size)
+        assertEquals(2, playerList.total)
+        assertEquals(2u, playerList.players[0].pid)
+        assertEquals("TestName", playerList.players[0].name)
+        assertEquals("testemail@test.pt", playerList.players[0].email)
+        assertEquals(3u, playerList.players[1].pid)
+        assertEquals("TestName", playerList.players[1].name)
+        assertEquals("testemail2@test.pt", playerList.players[1].email)
+    }
+
+    @Test
+    fun `test get player list empty fields should give bad request`() {
+        // Arrange
+        val request = Request(Method.GET, "/players?name=&limit=&skip=")
+        // Act
+        val response = server.sessionsHandler(request)
+        // Assert
+        assertEquals(response.status, Status.BAD_REQUEST)
+    }
+
 
     @Test
     fun `test get player details should give not found`() {

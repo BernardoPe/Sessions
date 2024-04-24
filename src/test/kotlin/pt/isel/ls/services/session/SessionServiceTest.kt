@@ -540,6 +540,9 @@ class SessionServiceTest {
     @BeforeEach
     fun clearStorage() {
         storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+        serviceSession = SessionsService(storage)
+        serviceGame = GameService(storage)
+        servicePlayer = PlayerService(storage)
     }
 
     companion object {
@@ -562,10 +565,10 @@ class SessionServiceTest {
         private var storage =
             SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
 
-        private val serviceSession = SessionsService(storage)
+        private var serviceSession = SessionsService(storage)
 
-        private val serviceGame = GameService(storage)
+        private var serviceGame = GameService(storage)
 
-        private val servicePlayer = PlayerService(storage)
+        private var servicePlayer = PlayerService(storage)
     }
 }

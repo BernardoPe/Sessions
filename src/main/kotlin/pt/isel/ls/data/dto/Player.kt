@@ -39,9 +39,9 @@ data class PlayerCreationOutputModel(
 data class PlayerInfoOutputModel(val pid: UInt, val name: String, val email: String)
 
 /**
- * The [PlayerListOutputModel] class is used to represent the response body of the player list
+ * The [PlayerSearchOutputModel] class is used to represent the response body of the player list
  * @param players The list of players
  * @param total The total number of players
  */
 @Serializable
-data class PlayerListOutputModel(val players: List<PlayerInfoOutputModel>, val total: Int)
+data class PlayerSearchOutputModel(val players: List<PlayerInfoOutputModel>, val total: Int)
