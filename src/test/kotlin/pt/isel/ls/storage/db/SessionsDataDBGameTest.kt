@@ -1,12 +1,23 @@
-/*
+
+package pt.isel.ls.storage.db
+
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+import pt.isel.ls.data.domain.game.Game
+import pt.isel.ls.data.domain.util.Genre
+import pt.isel.ls.data.domain.util.Name
+
 class SessionsDataDBGameTest {
 
     private val sessionsDataDBGame = SessionsDataDBGame()
+    
+    private val TEST_NAME = Name("Test Game that no one else will use")
+    private val TEST_DEVELOPER = Name("Test Developer that no one else will use")
 
     @Test
     fun `create game successfully`() {
         // Arrange
-        val game = Game(0u, Name("Test Game"), Name("Test Developer"), setOf(Genre("RPG")))
+        val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         // Act
         val id = sessionsDataDBGame.create(game)
         // Assert
@@ -18,10 +29,10 @@ class SessionsDataDBGameTest {
     @Test
     fun `game name is stored`() {
         // Arrange
-        val game = Game(0u, Name("Test Game"), Name("Test Developer"), setOf(Genre("RPG")))
+        val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val id = sessionsDataDBGame.create(game)
         // Act
-        val isStored = sessionsDataDBGame.isGameNameStored(Name("Test Game"))
+        val isStored = sessionsDataDBGame.isGameNameStored(TEST_NAME)
         // Assert
         assertTrue(isStored)
         // Clean up
@@ -39,10 +50,10 @@ class SessionsDataDBGameTest {
     @Test
     fun `get games search returns correct results`() {
         // Arrange
-        val game = Game(0u, Name("Test Game"), Name("Test Developer"), setOf(Genre("RPG")))
+        val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val id = sessionsDataDBGame.create(game)
         // Act
-        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), Name("Test Developer"), 10u, 0u)
+        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), TEST_DEVELOPER, 10u, 0u)
         // Assert
         assertTrue(result.first.isNotEmpty())
         assertEquals(1, result.second)
@@ -62,10 +73,10 @@ class SessionsDataDBGameTest {
     @Test
     fun `get games search with no genres returns correct results`() {
         // Arrange
-        val game = Game(0u, Name("Test Game"), Name("Test Developer"), setOf(Genre("RPG")))
+        val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val id = sessionsDataDBGame.create(game)
         // Act
-        val result = sessionsDataDBGame.getGamesSearch(null, Name("Test Developer"), 10u, 0u)
+        val result = sessionsDataDBGame.getGamesSearch(null, TEST_DEVELOPER, 10u, 0u)
         // Assert
         assertTrue(result.first.isNotEmpty())
         assertEquals(1, result.second)
@@ -76,7 +87,7 @@ class SessionsDataDBGameTest {
     @Test
     fun `get games search with no developer returns correct results`() {
         // Arrange
-        val game = Game(0u, Name("Test Game"), Name("Test Developer"), setOf(Genre("RPG")))
+        val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val id = sessionsDataDBGame.create(game)
         // Act
         val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), null, 10u, 0u)
@@ -90,7 +101,7 @@ class SessionsDataDBGameTest {
     @Test
     fun `get games search with no genres and developer returns correct results`() {
         // Arrange
-        val game = Game(0u, Name("Test Game"), Name("Test Developer"), setOf(Genre("RPG")))
+        val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val id = sessionsDataDBGame.create(game)
         // Act
         val result = sessionsDataDBGame.getGamesSearch(null, null, 10u, 0u)
@@ -104,10 +115,10 @@ class SessionsDataDBGameTest {
     @Test
     fun `get games search with limit returns correct results`() {
         // Arrange
-        val game = Game(0u, Name("Test Game"), Name("Test Developer"), setOf(Genre("RPG")))
+        val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val id = sessionsDataDBGame.create(game)
         // Act
-        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), Name("Test Developer"), 1u, 0u)
+        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), TEST_DEVELOPER, 1u, 0u)
         // Assert
         assertTrue(result.first.isNotEmpty())
         assertEquals(1, result.second)
@@ -118,12 +129,12 @@ class SessionsDataDBGameTest {
     @Test
     fun `get games search with skip returns correct results`() {
         // Arrange
-        val game1 = Game(0u, Name("Test Game 1"), Name("Test Developer"), setOf(Genre("RPG")))
-        val game2 = Game(0u, Name("Test Game 2"), Name("Test Developer"), setOf(Genre("RPG")))
+        val game1 = Game(0u, Name("Test Game 1"), TEST_DEVELOPER, setOf(Genre("RPG")))
+        val game2 = Game(0u, Name("Test Game 2"), TEST_DEVELOPER, setOf(Genre("RPG")))
         val id1 = sessionsDataDBGame.create(game1)
         val id2 = sessionsDataDBGame.create(game2)
         // Act
-        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), Name("Test Developer"), 10u, 1u)
+        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), TEST_DEVELOPER, 10u, 1u)
         // Assert
         assertTrue(result.first.isNotEmpty())
         assertEquals(2, result.second)
@@ -135,12 +146,12 @@ class SessionsDataDBGameTest {
     @Test
     fun `get games search with limit and skip returns correct results`() {
         // Arrange
-        val game1 = Game(0u, Name("Test Game 1"), Name("Test Developer"), setOf(Genre("RPG")))
-        val game2 = Game(0u, Name("Test Game 2"), Name("Test Developer"), setOf(Genre("RPG")))
+        val game1 = Game(0u, Name("Test Game 1"), TEST_DEVELOPER, setOf(Genre("RPG")))
+        val game2 = Game(0u, Name("Test Game 2"), TEST_DEVELOPER, setOf(Genre("RPG")))
         val id1 = sessionsDataDBGame.create(game1)
         val id2 = sessionsDataDBGame.create(game2)
         // Act
-        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), Name("Test Developer"), 1u, 1u)
+        val result = sessionsDataDBGame.getGamesSearch(setOf(Genre("RPG")), TEST_DEVELOPER, 1u, 1u)
         // Assert
         assertTrue(result.first.isNotEmpty())
         assertEquals(2, result.second)
@@ -152,7 +163,7 @@ class SessionsDataDBGameTest {
     @Test
     fun `get all games returns correct results`() {
         // Arrange
-        val game = Game(0u, Name("Test Game"), Name("Test Developer"), setOf(Genre("RPG")))
+        val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val id = sessionsDataDBGame.create(game)
         // Act
         val result = sessionsDataDBGame.getAllGames()
@@ -173,7 +184,7 @@ class SessionsDataDBGameTest {
     @Test
     fun `get game by id returns correct result`() {
         // Arrange
-        val game = Game(0u, Name("Test Game"), Name("Test Developer"), setOf(Genre("RPG")))
+        val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val id = sessionsDataDBGame.create(game)
         // Act
         val result = sessionsDataDBGame.getById(id)
@@ -197,7 +208,7 @@ class SessionsDataDBGameTest {
     @Test
     fun `update game successfully`() {
         // Arrange
-        val game = Game(0u, Name("Test Game"), Name("Test Developer"), setOf(Genre("RPG")))
+        val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val id = sessionsDataDBGame.create(game)
         val updatedGame = Game(id, Name("Updated Game"), Name("Updated Developer"), setOf(Genre("Adventure")))
         // Act
@@ -225,7 +236,7 @@ class SessionsDataDBGameTest {
     @Test
     fun `update game with nonexistent id returns false`() {
         // Arrange
-        val game = Game(0u, Name("Test Game"), Name("Test Developer"), setOf(Genre("RPG")))
+        val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val id = sessionsDataDBGame.create(game)
         val updatedGame = Game(9999u, Name("Updated Game"), Name("Updated Developer"), setOf(Genre("Adventure")))
         // Act
@@ -239,13 +250,13 @@ class SessionsDataDBGameTest {
     @Test
     fun `delete game successfully`() {
         // Arrange
-        val game = Game(0u, Name("Test Game"), Name("Test Developer"), setOf(Genre("RPG")))
+        val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val id = sessionsDataDBGame.create(game)
         // Act
         val isDeleted = sessionsDataDBGame.delete(id)
         // Assert
         assertTrue(isDeleted)
-        assertFalse(sessionsDataDBGame.isGameNameStored(Name("Test Game")))
+        assertFalse(sessionsDataDBGame.isGameNameStored(TEST_NAME))
         // Clean up
         sessionsDataDBGame.delete(id)
     }
@@ -261,7 +272,7 @@ class SessionsDataDBGameTest {
     @Test
     fun `delete game with nonexistent id returns false`() {
         // Arrange
-        val game = Game(0u, Name("Test Game"), Name("Test Developer"), setOf(Genre("RPG")))
+        val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
         val id = sessionsDataDBGame.create(game)
         // Act
         val isDeleted = sessionsDataDBGame.delete(9999u)
@@ -271,4 +282,4 @@ class SessionsDataDBGameTest {
         sessionsDataDBGame.delete(id)
     }
 
-}*/
+}
