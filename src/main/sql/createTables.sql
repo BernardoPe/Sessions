@@ -13,7 +13,7 @@ CREATE TABLE games (
 
 create table players (
     id serial primary key,
-    name varchar(40) not null,
+    name varchar(40) unique not null,
     email varchar(40) unique not null check (email like '%_@_%.__%'),
     token_hash int8 unique not null
 );
@@ -48,7 +48,7 @@ CREATE OR REPLACE PROCEDURE fill_games()
     LANGUAGE plpgsql
 AS $$
 BEGIN
-    FOR i IN 1..10000 LOOP
+    FOR i IN 1..100000 LOOP
             INSERT INTO games (name, developer, genres)
             VALUES ('demoGame' || i, 'demoDeveloper' || i, ARRAY['Action', 'Adventure', 'RPG']);
         END LOOP;
@@ -59,7 +59,7 @@ CREATE OR REPLACE PROCEDURE fill_sessions()
     LANGUAGE plpgsql
 AS $$
 BEGIN
-    FOR i IN 1..10000 LOOP
+    FOR i IN 1..100000 LOOP
         INSERT INTO sessions (game_id, capacity, date)
         VALUES (i, 10, CURRENT_TIMESTAMP + (i || ' days')::INTERVAL);
     END LOOP;

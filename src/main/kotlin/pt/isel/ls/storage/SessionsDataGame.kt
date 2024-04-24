@@ -50,7 +50,7 @@ interface SessionsDataGame {
      *          and the total number of games that match the given parameters
      *          independently of the limit and skip
      */
-    fun getGamesSearch(genres: Set<Genre>?, developer: Name?, limit: UInt, skip: UInt): Pair<List<Game>, Int>
+    fun getGamesSearch(genres: Set<Genre>?, developer: Name?, name: Name?, limit: UInt, skip: UInt): Pair<List<Game>, Int>
 
     /**
      * Read all games from the database mock

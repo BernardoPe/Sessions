@@ -45,6 +45,19 @@ class ServerTest {
     }
 
     @Test
+    fun `test create player name taken`() {
+        // Arrange
+        val request = Request(Method.POST, "/players")
+            .header("Content-Type", "application/json")
+            .body("""{"name":"Test","email":"Testemail@test.pt"}""")
+        // Act
+        server.sessionsHandler(request)
+        val response = server.sessionsHandler(request)
+        // Assert
+        assertEquals(response.status, Status.BAD_REQUEST)
+    }
+
+    @Test
     fun `test create player, invalid email`() {
         // Arrange
         val request = Request(Method.POST, "/players")
@@ -215,6 +228,29 @@ class ServerTest {
     fun `test get game list should return game list`() {
         // Arrange
         val request = Request(Method.GET, "/games?developer=TestDeveloper&genres=RPG")
+        // Act
+        val response = server.sessionsHandler(request)
+        val gameListJson = response.bodyString()
+        val gameList = Json.decodeFromString<GameSearchResultOutputModel>(gameListJson)
+        // Assert
+        assertEquals(Status.OK, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(2, gameList.games.size)
+        assertEquals("TestName", gameList.games[0].name)
+        assertEquals("TestDeveloper", gameList.games[0].developer)
+        assertEquals(listOf("RPG"), gameList.games[0].genres)
+        assertEquals(1u, gameList.games[0].gid)
+        assertEquals("TestName123", gameList.games[1].name)
+        assertEquals("TestDeveloper", gameList.games[1].developer)
+        assertEquals(listOf("RPG", "Adventure"), gameList.games[1].genres)
+        assertEquals(2u, gameList.games[1].gid)
+        assertEquals(2, gameList.total)
+    }
+
+    @Test
+    fun `test get game list partial name search`() {
+        // Arrange
+        val request = Request(Method.GET, "/games?name=test")
         // Act
         val response = server.sessionsHandler(request)
         val gameListJson = response.bodyString()
