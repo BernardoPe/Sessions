@@ -7,10 +7,9 @@ import {submitFormGameSearch, submitFormSessionSearch} from "./Scripts/formSubmi
 import {genericErrorView, notFoundView} from "./Views/errorViews.js";
 import {loginView, registerView} from "./Views/authViews.js";
 import {authLogin, authLogout, authRegister, getPlayerData} from "./Scripts/AuthHandling.js";
+import {API_URL} from "../index.js";
 
-const API_URL = 'http://localhost:8080/';
-
-const RESULTS_PER_PAGE = 5;
+export const RESULTS_PER_PAGE = 5;
 
 function getHome(mainContent, req) {
     const user = getPlayerData()
@@ -40,26 +39,31 @@ function getGameSearchResults(mainContent, req) {
     const queries = new URLSearchParams();
     req.query.developer ? queries.append('developer', req.query.developer) : null;
     req.query.genres ? queries.append('genres', req.query.genres) : null;
-    const limit = req.query.limit ? req.query.limit : RESULTS_PER_PAGE;
-    const skip = req.query.skip ? req.query.skip : 0;
-    let queryStr = buildPaginationQuery(queries, limit, skip)
+    req.query.name ? queries.append('name', req.query.name) : null;
+    const page = req.query.page ? req.query.page : 1;
+    let queryStr = buildPaginationQuery(queries, page)
+    if (page < 1) {
+        const errView = notFoundView();
+        mainContent.replaceChildren(errView)
+        return
+    }
     fetchWithHandling(API_URL + `games?${queryStr}`, mainContent, (searchResult) => {
         const gameResultsView = gameSearchResultsView(searchResult.games);
-        gameResultsView.appendChild(handleGamePagination(queries, limit, skip, searchResult.total));
+        gameResultsView.appendChild(handleGamePagination(queries, page, searchResult.total));
         mainContent.replaceChildren(gameResultsView);
     })
 }
 
 
-function buildPaginationQuery(queries, limit, skip) {
+function buildPaginationQuery(queries, page) {
     let queryStr = queries.toString();
-
+    const limit = RESULTS_PER_PAGE;
+    const skip = (page - 1) * limit;
     if (queryStr.length === 0) {
         queryStr = `limit=${limit}&skip=${skip}`;
     } else {
         queryStr += `&limit=${limit}&skip=${skip}`;
     }
-
     return queryStr;
 }
 
@@ -76,13 +80,18 @@ function getSessionSearchResults(mainContent, req) {
     req.query.pid ? queries.append('pid', req.query.pid) : null;
     req.query.state ? queries.append('state', req.query.state) : null;
     req.query.date ? queries.append('date', req.query.date.replace(':', '_')) : null;
-    const limit = req.query.limit ? req.query.limit : RESULTS_PER_PAGE;
-    const skip = req.query.skip ? req.query.skip : 0;
-    let queryStr = buildPaginationQuery(queries, limit, skip)
+    const page = req.query.page ? req.query.page : 1;
+    let queryStr = buildPaginationQuery(queries, page)
+
+    if (page < 1) {
+        const errView = notFoundView();
+        mainContent.replaceChildren(errView)
+        return
+    }
 
     fetchWithHandling(API_URL + `sessions?${queryStr}`, mainContent, (searchResults) => {
         const searchResultsView = sessionSearchResultsView(searchResults.sessions);
-        searchResultsView.appendChild(handleSessionPagination(queries, limit, skip, searchResults.total));
+        searchResultsView.appendChild(handleSessionPagination(queries, page, searchResults.total));
         mainContent.replaceChildren(searchResultsView);
     })
 
@@ -148,7 +157,7 @@ export default {
     getSessionSearchResults,
     getGameDetails,
     getSessionDetails,
-    getPlayerDetails
+    getPlayerDetails,
+    RESULTS_PER_PAGE
 }
 
-export {API_URL}

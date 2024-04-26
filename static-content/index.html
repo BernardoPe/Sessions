@@ -10,20 +10,17 @@
 <body>
 
 <div class="wrapper">
-
+    <header class="nav-bar">
+        <nav>
+            <div class="nav-bar__links"><a href="#home">Home</a></div>
+            <div class="nav-bar__links" id="login"><a href="#login">Login</a></div>
+            <div class="nav-bar__links" id="register"><a href="#register">Register</a></div>
+            <div class="nav-bar__links" style="display: none" id="logout"><a href="#logout">Logout</a></div>
+        </nav>
+    </header>
     <div id="content">
-        <div class="nav-column" id="left-column">
-            <nav>
-                <p class="nav-item"><a href="#home">Home</a></p>
-                <p class="nav-item" id="login"><a href="#login">Login</a></p>
-                <p class="nav-item" id="register"><a href="#register">Sign up</a></p>
-                <p class="nav-item" style="display: none" id="logout"><a href="#logout">Logout</a></p>
-            </nav>
-        </div>
         <div id="mainContent"></div>
-        <div class="side-column" id="right-column"></div>
     </div>
-
 </div>
 </body>
 </html>

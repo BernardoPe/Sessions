@@ -2,6 +2,8 @@ body {
     position: relative;
     font-family: 'Open Sans', sans-serif;
     margin: 0;
+    height: 100%;
+    background: rgba(11, 10, 10, 0.88);
 
     h2 {
         margin-block-end: 0.2em;
@@ -14,10 +16,16 @@ body {
         text-decoration: none;
         transition: color 0.3s ease;
         cursor: pointer;
+        position: relative;
         font-size: 1.2em;
         font-weight: bold;
         text-align: center;
         display: inline-block;
+    }
+
+    a:hover {
+        color: #F5F5F5;
+        transition: color 0.3s ease;
     }
 
     .error-message-container {
@@ -33,41 +41,72 @@ body {
         font-size: 20px;
     }
 
+    .nav-bar {
+        background: rgba(13, 12, 12, 0.02);
+        color: #F5F5F5;
+        border-bottom: rgb(255, 255, 255) solid 2px;
+        padding: 10px;
+        position: relative;
+        height: 8.3vh;
+        align-content: center;
+
+        .nav-item {
+            display: inline-block;
+            padding: 20px;
+            margin-left: 1.25em;
+            margin-right: 1.25em;
+            color: #F5F5F5;
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .nav-bar__title {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .nav-bar__links {
+            display: inline-block;
+            justify-content: space-between;
+            align-items: flex-end;
+            width: 5%;
+            margin-left: 50px;
+
+            a:after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                height: 2px;
+                width: 100%;
+                background: #6495ED;
+                transform: scaleX(0);
+                transform-origin: left;
+                transition: transform 0.3s ease-in-out;
+            }
+
+            a:hover::after {
+                transform: scaleX(1);
+            }
+        }
+    }
+
     .wrapper {
+
         width: 100%;
-        height: 100vh;
-        background: #2D2D2D;
-        position: absolute;
+        height: 100%;
+        position: relative;
 
         #content {
-            display: flex;
-            justify-content: space-between;
+            margin-left: auto;
+            margin-right: auto;
             width: 100%;
-            height: 100%;
-            margin: 0;
-            overflow: auto;
-            .nav-column {
-                flex: 1;
-                height: fit-content;
+            height: 90vh;
+            max-width: 65%;
+            padding-left: 1.25rem;
+            padding-right: 1.25rem;
 
-                .nav {
-                    padding: 20px;
-                    color: #F5F5F5;
-                    text-align: center;
-                    font-size: 20px;
-                    font-weight: bold;
-                    border-bottom: 2px solid #F5F5F5;
-                }
-
-                .nav-item {
-                    padding: 20px;
-                    color: #F5F5F5;
-                    text-align: center;
-                    font-size: 15px;
-                    font-weight: bold;
-                    border-bottom: 1px solid #F5F5F5;
-                }
-            }
 
             .side-column {
                 flex: 1;
@@ -78,12 +117,14 @@ body {
 
             #mainContent {
                 flex: auto;
-                background: #333333;
                 height: 100%;
-                outline: 2px solid #6495ED;
                 position: relative;
                 overflow: auto;
-                
+                background: #333333;
+                padding-left: 1.25em;
+                padding-right: 1.25em;
+                border-left: aliceblue solid 2px;
+                border-right: aliceblue solid 2px;
                 .title {
                     position: relative;
                     height: 100px;
@@ -91,6 +132,25 @@ body {
                     color: #F5F5F5;
                     font-size: 2em;
                 }
+
+                button[type="submit"],
+                button[type="button"] {
+                    max-width: fit-content;
+                    min-width: 150px;
+                    height: 50px;
+                    border: none;
+                    outline: none;
+                    background: #6495ED;
+                    color: #F5F5F5;
+                    font-size: 20px;
+                    border-radius: 40px;
+                    text-align: center;
+                    box-shadow: 0 6px 20px -5px rgba(0,0,0,0.4);
+                    position: relative;
+                    overflow: hidden;
+                    cursor: pointer;
+                }
+
 
                 .subtitle {
                     position: relative;
@@ -145,9 +205,11 @@ body {
 
                     position: relative;
                     width: 100%;
-                    margin-top: 10px;
                     margin-bottom: 20px;
+                    margin-top: 20px;
                     padding: 15px 0 0;
+                    box-shadow: 0 10px 10px -10px #171717   ; /* Add this line */
+
 
                     .form__field {
                         font-family: inherit;
@@ -171,6 +233,48 @@ body {
                             top: 20px;
                         }
 
+                    }
+
+                    .search_results {
+                        display: none;
+                        flex-direction: column;
+                        max-height: 10em;
+                        overflow: scroll;
+                        margin: 0;
+                        background: rgba(11, 10, 10, 0.88);
+                        border-radius: 0 0 24px 24px;
+                        box-shadow: 0 4px 6px 0 #171717;
+                        border: 0;
+                        padding-left: 0;
+                        padding-bottom: 4px;
+                        position: absolute;
+                        width: 100%;
+                        z-index: 1;
+
+                        &::-webkit-scrollbar {
+                            display: none;
+                        }
+                        .search_result {
+                            display: flex;
+                            flex-direction: column;
+                            font-size: 1.25em;
+                            border: none;
+                            min-width: 0;
+                            max-height: none;
+                            color: #ffffff;
+                            margin: 0;
+                            padding-bottom: 10px;
+                            padding-top: 10px;
+                            padding-left: 20px;
+                        }
+                        .search_result.selected {
+                            background: rgba(92, 96, 105, 0.67);
+                            border-radius: 4px;
+                        }
+                        .search_result:hover {
+                            background: rgba(92, 96, 105, 0.67);
+                            border-radius: 4px;
+                        }
                     }
 
                     .form__label {
@@ -286,28 +390,11 @@ body {
                     font-size: 1em;
                 }
 
-                button[type="submit"],
-                button[type="button"] {
-                    width: 150px;
-                    height: 50px;
-                    border: none;
-                    outline: none;
-                    background: #6495ED;
-                    color: #F5F5F5;
-                    font-size: 22px;
-                    border-radius: 40px;
-                    text-align: center;
-                    box-shadow: 0 6px 20px -5px rgba(0,0,0,0.4);
-                    position: relative;
-                    overflow: hidden;
-                    cursor: pointer;
-                }
 
             }
 
             .error-container {
                 width: 100%;
-                position:absolute;
                 background: #333333;
                 color: #F5F5F5;
                 text-align: center;
@@ -320,6 +407,7 @@ body {
                 background: #333333;
                 color: #F5F5F5;
                 text-align: center;
+                border-bottom: #6495ED solid 2px;
             }
 
             .player-container {
@@ -330,7 +418,7 @@ body {
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                outline: 2px solid #6495ED;
+                border-top: #6495ED solid 2px;
 
                 .player__name {
                     font-size: 2em;
@@ -361,7 +449,7 @@ body {
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                outline: 2px solid #6495ED;
+                border-top: #6495ED solid 2px;
 
                 .session__date {
                     font-size: 1.5em;
@@ -378,6 +466,7 @@ body {
                 .session__game {
                     font-size: 1.5em;
                     font-weight: bold;
+                    width: 100%;
                     margin: 15px;
                     a {
                         font-size: 1.5em;
@@ -424,15 +513,15 @@ body {
                 background: #333333;
                 color: #F5F5F5;
                 text-align: center;
-                outline: 2px solid #6495ED;
+                border-top: #6495ED solid 2px;
                 padding: 5px;
 
                 .game__title {
-                    font-size: 1.5em;
+                    font-size: 2.5em;
                     font-weight: bold;
                     margin-bottom: 5px;
                     a {
-                        font-size: 1.5em;
+                        font-size: 1em;
                         color: #6495ED;
                     }
                 }
@@ -444,6 +533,12 @@ body {
                 }
 
                 .game__reference{
+                    font-size: 1.2em;
+                    font-weight: bold;
+                    margin-bottom: 20px;
+                }
+
+                .session__reference{
                     font-size: 1.2em;
                     font-weight: bold;
                     margin-bottom: 20px;
@@ -476,6 +571,7 @@ body {
                 position: relative;
                 .pagination-button {
                     padding: 10px;
+                    margin: 5px;
                     border: 1px solid #6495ED;
                     color: #F5F5F5;
                     background: #333333;

@@ -33,8 +33,7 @@ function authRegister(event) {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({ name, email })
-	})
-		.then(res => {
+	}).then(res => {
 			res.json()
 				.then(data => {
 					if (res.ok) {
@@ -43,7 +42,7 @@ function authRegister(event) {
 						user.email = email
 						document.getElementById('login').style.display = "none"
 						document.getElementById('register').style.display = "none"
-						document.getElementById('logout').style.display = "block"
+						document.getElementById('logout').style.display = "inline-block"
 						document.getElementById('registerForm').style.display = "none"
 						document.getElementById('token-info').style.display = "block"
 						document.getElementById('token').innerHTML = "Your token is: " + data.token
@@ -93,7 +92,7 @@ function authLogin(event) {
 		.then(data => {
 			document.getElementById('login').style.display = "none"
 			document.getElementById('register').style.display = "none"
-			document.getElementById('logout').style.display = "block"
+			document.getElementById('logout').style.display = "inline-block"
 			user = data
 			user.token = token
 			window.location.href = "#home"
@@ -107,8 +106,8 @@ function authLogin(event) {
 
 function authLogout() {
 	user = null
-	document.getElementById('login').style.display = "block"
-	document.getElementById('register').style.display = "block"
+	document.getElementById('login').style.display = "inline-block"
+	document.getElementById('register').style.display = "inline-block"
 	document.getElementById('logout').style.display = "none"
 	window.location.href = "#home"
 }

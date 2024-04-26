@@ -27,10 +27,10 @@ class SessionsDataManager(
             game.closeAll()
         }
         if (player is SessionsDataDBPlayer) {
-            (player).closeAll()
+            player.closeAll()
         }
         if (session is SessionsDataDBSession) {
-            (session).closeAll()
+            session.closeAll()
         }
     }
 

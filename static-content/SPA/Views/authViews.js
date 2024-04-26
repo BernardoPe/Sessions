@@ -1,16 +1,17 @@
-import {div, form, input, button, label, p, a} from "../WebDSL/web_dsl.js";
+import {div, form, button, p} from "../WebDSL/web_dsl.js";
+import {errorMessage, formInputField} from "./models.js";
 
 function loginView() {
 	return (
 		div({class: "form__group"},
 			form({id: "loginForm", method: "POST"},
-				div({class: "form__input"},
-					input({type: "password", class: "form__field", id: "token", placeholder: "token"}),
-					label("token", {class:"form__label"}, "Token"),
+				formInputField(
+					"token",
+					"Token",
+					"password",
+					"Token"
 				),
-				div({class: "error-message-container"},
-					p({class: "error_message", id: "error-token"}, "")
-				),
+				errorMessage("error-token", ""),
 				button({type: "submit"}, "Login")
 			),
 		)
@@ -22,26 +23,26 @@ function registerView() {
 		div(null,
 			div({class: "form__group", id: "registerForm"},
 				form({id: "registerForm", method: "POST"},
-					div({class: "form__input"},
-						input({type: "text", class: "form__field", id: "username", placeholder: "username"}),
-						label("username", {class:"form__label"}, "Username"),
+					formInputField(
+						"username",
+						"Username",
+						"text",
+						"Username"
 					),
-					div ({class: "error-message-container"},
-						p({class: "error_message", id: "error-username"}, "")
+					errorMessage("error-username", ""),
+					formInputField(
+						"email",
+						"Email",
+						"text",
+						"Email"
 					),
-					div({class: "form__input"},
-						input({type: "text", class: "form__field", id: "email", placeholder: "email"}),
-						label("password2", {class:"form__label"}, "Email"),
-					),
-					div ({class: "error-message-container"},
-						p({class: "error_message", id: "error-email"}, "")
-					),
+					errorMessage("error-email", ""),
 					button({type: "submit"}, "Register")
 				),
 			),
 			div({class: "subtitle", id: "token-info", style: "display: none"},
 				p({id: "token"}, ""),
-				a({href: "#home"}, null,"Go to home page")
+				button({type: "submit", onclick: "window.location.href = '#home'"}, "Go to home page")
 			)
 		)
 	)
