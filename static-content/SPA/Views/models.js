@@ -17,7 +17,7 @@ function formInputField(id, name, type, title) {
 			name: name,
 			autocomplete: "off"
 		}),
-		label("developer", {class:"form__label"}, title),
+		label(title, {class:"form__label"}, title),
 	)
 }
 
@@ -76,7 +76,7 @@ function formInputWithSearchResults(id, searchType, fieldType, title) {
 			onblur: "setTimeout(() => hideSearchResults(id), 100)", // delay to allow click on search result
 			onkeydown: "resultsKeyPressHandler(event, id)",
 		}),
-		label("name", {class:"form__label"}, title),
+		label(title, {class:"form__label"}, title),
 		ul({class: "search_results", id: "search_results_" + id }, div({class: "search-results"})),
 	)
 }

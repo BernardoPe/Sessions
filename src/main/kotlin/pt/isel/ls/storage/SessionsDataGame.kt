@@ -21,9 +21,9 @@ import pt.isel.ls.storage.mem.SessionsDataMemGame
 interface SessionsDataGame {
 
     /**
-     * Create a game in the database mock
+     * Create a game in the database
      *
-     * This function creates a new game object and adds it to the database mock
+     * This function creates a new game object and adds it to the database
      *
      * @param game The [Game] object to be created
      * @return The last identifier
@@ -31,7 +31,7 @@ interface SessionsDataGame {
     fun create(game: Game): UInt
 
     /**
-     * Checks for the name of a game in the database mock
+     * Checks for the name of a game in the database
      *
      * This function uses the [isGameNameStored] function from the [SessionsDataMemGame] class
      *
@@ -40,20 +40,19 @@ interface SessionsDataGame {
     fun isGameNameStored(name: Name): Boolean
 
     /**
-     * Read games from the database mock
+     * Read games from the database
      *
      * The function [getGamesSearch] gets all the games that match the given genres and developer
      *
      * @param genres The game genres
      * @param developer The game developer
      * @return The list of game objects that match the given genres and developer
-     *          and the total number of games that match the given parameters
-     *          independently of the limit and skip
+     *          and the total number of games that match the given search criteria
      */
     fun getGamesSearch(genres: Set<Genre>?, developer: Name?, name: Name?, limit: UInt, skip: UInt): Pair<List<Game>, Int>
 
     /**
-     * Read all games from the database mock
+     * Read all games from the database
      *
      * This function gets all the games from the database mock
      *
@@ -62,7 +61,7 @@ interface SessionsDataGame {
     fun getAllGames(): List<Game>
 
     /**
-     * Read a game from the database mock
+     * Read a game from the database
      *
      * This function uses the [get] function from the [SessionsDataMemGame] class
      *
@@ -72,7 +71,7 @@ interface SessionsDataGame {
     fun getById(id: UInt): Game?
 
     /**
-     * Update a game in the database mock
+     * Update a game in the database
      *
      * This function uses the [update] function from the [SessionsDataMemGame] class
      *
@@ -81,7 +80,7 @@ interface SessionsDataGame {
     fun update(value: Game): Boolean
 
     /**
-     * Delete a game from the database mock
+     * Delete a game from the database
      *
      * This function uses the [delete] function from the [SessionsDataMemGame] class
      *

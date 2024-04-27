@@ -1,5 +1,11 @@
 package pt.isel.ls.data.domain.util
 
+
+/**
+ * Represents a genre
+ *
+ * Used to ensure that the genre is in a valid format and follows the proper data integrity rules
+ */
 data class Genre(val genre: String) {
 
     companion object {

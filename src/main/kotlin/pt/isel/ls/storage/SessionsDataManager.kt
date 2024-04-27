@@ -22,6 +22,10 @@ class SessionsDataManager(
     val session: SessionsDataSession,
 ) : Closeable {
 
+    /**
+     * Closes all the data managers.
+     * This function has no effect on the data managers if they are not DB data managers.
+     */
     override fun close() {
         if (game is SessionsDataDBGame) {
             game.closeAll()

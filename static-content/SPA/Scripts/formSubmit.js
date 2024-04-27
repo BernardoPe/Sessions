@@ -5,30 +5,27 @@ function submitFormGameSearch(event) {
 	const developer = document.getElementById('developer').value;
 	const name = document.getElementById('game').value;
 	const checkedCheckboxes = document.querySelectorAll('input[name="genre"]:checked');
-	const genres = Array.from(checkedCheckboxes).map(checkbox => checkbox.value).join(',');
+	const genres = Array.from(checkedCheckboxes).map(checkbox => checkbox.value).join('_');
 
-	let queries = '';
+	let queries = new URLSearchParams();
 
 	if (name !== '') {
 		if (handleNameInput(name, 'game') === undefined)
 			return;
-		queries += `name=${name}&`;
+		queries.append('name', name);
 	}
 
 	if (developer !== '') {
 		if (handleNameInput(developer, 'developer') === undefined)
 			return;
-		queries += `developer=${developer}&`;
+		queries.append('developer', developer);
 	}
 
 	if (genres) {
-		queries += `genres=${genres}&`;
+		queries.append('genres', genres);
 	}
 
-	if (queries.length > 0)
-		queries = queries.slice(0, queries.length - 1); // remove trailing '&'
-
-	if (queries.toString().length > 0) {
+	if (queries.size > 0) {
 		window.location.href = `#games?${queries}`;
 	}
 	else
@@ -45,14 +42,14 @@ async function submitFormSessionSearch(event) {
 	const state = stateElement ? stateElement.value : null;
 	const date = document.getElementById('date').value.replace(':', '_');
 
-	let queries = '';
+	let queries = new URLSearchParams();
 
 	if (gameName.length > 0) {
 		if (handleNameInput(gameName, 'game') === undefined)
 			return;
 		const gid = await getUniqueGameId(gameName);
 		if (gid) {
-			queries += `gid=${gid}&`;
+			queries.append('gid', gid)
 		} else {
 			const err = document.getElementById('err_message-game');
 			err.style.display = 'block';
@@ -66,7 +63,7 @@ async function submitFormSessionSearch(event) {
 			return;
 		const pid = await getUniquePlayerId(playerName);
 		if (pid) {
-			queries += `pid=${pid}&`;
+			queries.append('pid', pid)
 		} else {
 			const err = document.getElementById('err_message-player');
 			err.style.display = 'block';
@@ -76,11 +73,11 @@ async function submitFormSessionSearch(event) {
 	}
 
 	if (state) {
-		queries += `state=${state}&`;
+		queries.append('state', state);
 	}
 
 	if (date) {
-		queries += `date=${date}&`;
+		queries.append('date', date);
 	}
 
 	if (queries.length > 0)

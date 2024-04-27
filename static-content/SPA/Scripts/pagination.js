@@ -23,7 +23,6 @@ function handleSessionPagination(queries, page, total) {
 }
 
 function handlePagination(url, page, generateUrl, total) {
-
 	const divElement = div({class: "pagination"});
 	const skip = (page - 1) * RESULTS_PER_PAGE;
 

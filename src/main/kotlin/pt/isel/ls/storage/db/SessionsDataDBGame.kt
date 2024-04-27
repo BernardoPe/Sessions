@@ -91,8 +91,6 @@ class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
         }  as Pair<List<Game>, Int>
 
 
-
-
     @Suppress("UNCHECKED_CAST")
     override fun getAllGames(): List<Game> = execQuery { connection ->
         val statement = connection.prepareStatement(
