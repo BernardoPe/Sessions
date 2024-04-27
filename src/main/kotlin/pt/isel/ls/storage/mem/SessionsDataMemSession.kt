@@ -85,9 +85,9 @@ class SessionsDataMemSession : SessionsDataSession {
             sessions = sessions.filter { it.playersSession.any { it.id == pid } }
         }
 
-        sessions = sessions.sortedBy { it.id }.drop(skip.toInt()).take(limit.toInt())
+        sessions = sessions.sortedBy { it.id }
 
-        return Pair(sessions, sessions.size)
+        return Pair(sessions.drop(skip.toInt()).take(limit.toInt()), sessions.size)
 
     }
 

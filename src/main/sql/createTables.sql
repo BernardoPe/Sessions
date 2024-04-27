@@ -5,7 +5,7 @@ drop table if exists players;
 
 CREATE TABLE games (
    id SERIAL PRIMARY KEY,
-   name VARCHAR(40) UNIQUE NOT NULL,
+   name VARCHAR(60) UNIQUE NOT NULL,
    developer VARCHAR(40) NOT NULL,
    genres VARCHAR(40)[] NOT NULL
    CONSTRAINT valid_genres CHECK (ARRAY['Action', 'Adventure', 'RPG', 'Strategy', 'Turn-Based']::VARCHAR(40)[] @> genres)
@@ -13,7 +13,7 @@ CREATE TABLE games (
 
 create table players (
     id serial primary key,
-    name varchar(40) not null,
+    name varchar(60) unique not null,
     email varchar(40) unique not null check (email like '%_@_%.__%'),
     token_hash int8 unique not null
 );
@@ -35,9 +35,3 @@ CREATE TABLE sessions_players (
      player_id INT REFERENCES players(id) ON DELETE CASCADE,
      PRIMARY KEY (session_id, player_id)
 );
-
---insert into players (name, email, token_hash) values ('John Doe', 'testemail@a.pt', 0);
---select * from players;
---select * from games;
---select * from sessions;
---select * from sessions_players;

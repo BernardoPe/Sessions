@@ -19,6 +19,7 @@ import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.dto.GameInfoOutputModel
 import pt.isel.ls.dto.GameSearchResultOutputModel
 import pt.isel.ls.dto.PlayerInfoOutputModel
+import pt.isel.ls.dto.PlayerSearchOutputModel
 import pt.isel.ls.dto.SessionInfoOutputModel
 import pt.isel.ls.dto.SessionSearchResultOutputModel
 import pt.isel.ls.services.GameService
@@ -42,6 +43,19 @@ class ServerTest {
         val response = server.sessionsHandler(request)
         // Assert
         assertEquals(response.status, Status.CREATED)
+    }
+
+    @Test
+    fun `test create player name taken`() {
+        // Arrange
+        val request = Request(Method.POST, "/players")
+            .header("Content-Type", "application/json")
+            .body("""{"name":"Test","email":"Testemail@test.pt"}""")
+        // Act
+        server.sessionsHandler(request)
+        val response = server.sessionsHandler(request)
+        // Assert
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
 
     @Test
@@ -108,6 +122,48 @@ class ServerTest {
         assertEquals(playerDetails.email, "testemail@test.pt")
         assertEquals(playerDetails.pid, 2u)
     }
+
+    @Test
+    fun `test get player list invalid name`() {
+        // Arrange
+        val request = Request(Method.GET, "/players?name=Te")
+        // Act
+        val response = server.sessionsHandler(request)
+        // Assert
+        assertEquals(response.status, Status.BAD_REQUEST)
+    }
+
+    @Test
+    fun `test get player list partial name should give 2 results`() {
+        // Arrange
+        val request = Request(Method.GET, "/players?name=test")
+        // Act
+        val response = server.sessionsHandler(request)
+        val playerListJson = response.bodyString()
+        val playerList = Json.decodeFromString<PlayerSearchOutputModel>(playerListJson)
+        // Assert
+        assertEquals(response.status, Status.OK)
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(2, playerList.players.size)
+        assertEquals(2, playerList.total)
+        assertEquals(2u, playerList.players[0].pid)
+        assertEquals("TestName", playerList.players[0].name)
+        assertEquals("testemail@test.pt", playerList.players[0].email)
+        assertEquals(3u, playerList.players[1].pid)
+        assertEquals("TestName", playerList.players[1].name)
+        assertEquals("testemail2@test.pt", playerList.players[1].email)
+    }
+
+    @Test
+    fun `test get player list empty fields should give bad request`() {
+        // Arrange
+        val request = Request(Method.GET, "/players?name=&limit=&skip=")
+        // Act
+        val response = server.sessionsHandler(request)
+        // Assert
+        assertEquals(response.status, Status.BAD_REQUEST)
+    }
+
 
     @Test
     fun `test get player details should give not found`() {
@@ -235,6 +291,29 @@ class ServerTest {
     }
 
     @Test
+    fun `test get game list partial name search`() {
+        // Arrange
+        val request = Request(Method.GET, "/games?name=test")
+        // Act
+        val response = server.sessionsHandler(request)
+        val gameListJson = response.bodyString()
+        val gameList = Json.decodeFromString<GameSearchResultOutputModel>(gameListJson)
+        // Assert
+        assertEquals(Status.OK, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(2, gameList.games.size)
+        assertEquals("TestName", gameList.games[0].name)
+        assertEquals("TestDeveloper", gameList.games[0].developer)
+        assertEquals(listOf("RPG"), gameList.games[0].genres)
+        assertEquals(1u, gameList.games[0].gid)
+        assertEquals("TestName123", gameList.games[1].name)
+        assertEquals("TestDeveloper", gameList.games[1].developer)
+        assertEquals(listOf("RPG", "Adventure"), gameList.games[1].genres)
+        assertEquals(2u, gameList.games[1].gid)
+        assertEquals(2, gameList.total)
+    }
+
+    @Test
     fun `test get game list empty fields should give bad request`() {
         // Arrange
         val request = Request(Method.GET, "/games?developer=&genres=")
@@ -260,7 +339,7 @@ class ServerTest {
         assertEquals("TestDeveloper", gameList.games[0].developer)
         assertEquals(listOf("RPG", "Adventure"), gameList.games[0].genres)
         assertEquals(2u, gameList.games[0].gid)
-        assertEquals(1, gameList.total)
+        assertEquals(2, gameList.total)
     }
 
     @Test
@@ -730,7 +809,7 @@ class ServerTest {
         assertEquals(sessionList.sessions[0].capacity, 100u)
         assertEquals(sessionList.sessions[0].date, "2030-06-01T00:00:00".toLocalDateTime().toString())
         assertEquals(sessionList.sessions[0].sid, 2u)
-        assertEquals(sessionList.total, 1)
+        assertEquals(sessionList.total, 2)
     }
 
     @BeforeEach

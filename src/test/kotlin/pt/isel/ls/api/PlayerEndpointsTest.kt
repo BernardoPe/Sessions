@@ -11,6 +11,7 @@ import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.mapper.toEmail
 import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.dto.PlayerInfoOutputModel
+import pt.isel.ls.dto.PlayerSearchOutputModel
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
@@ -33,6 +34,19 @@ class PlayerEndpointsTest {
         val response = api.createPlayer(request)
         // Assert
         assertEquals(response.status, Status.CREATED)
+    }
+
+    @Test
+    fun `test create player name taken`() {
+        // Arrange
+        val request = Request(Method.POST, "/players")
+            .header("Content-Type", "application/json")
+            .body("""{"name":"Test","email":"Testemail@test.pt"}""")
+        // Act
+        api.createPlayer(request)
+        val response = api.createPlayer(request)
+        // Assert
+        assertEquals(response.status, Status.BAD_REQUEST)
     }
 
     @Test
@@ -111,6 +125,29 @@ class PlayerEndpointsTest {
         // Assert
         assertEquals(response.header("Content-Type"), "application/json")
         assertEquals(response.status, Status.NOT_FOUND)
+    }
+
+    @Test
+    fun `test get player list should give player list`() {
+        // Arrange
+        val request = Request(Method.GET, "/players?name=test&limit=1&skip=0")
+        // Act
+        val response = api.getPlayerList(request)
+        // Assert
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.OK)
+
+        val playerListJson = response.bodyString()
+        val playerSearch = Json.decodeFromString<PlayerSearchOutputModel>(playerListJson)
+
+        val players = playerSearch.players
+
+        assertEquals(players.size, 1)
+        assertEquals(players[0].name, "TestName")
+        assertEquals(players[0].email, "TestEmail@test.pt")
+
+        assertEquals(2, playerSearch.total)
+
     }
 
     @BeforeEach

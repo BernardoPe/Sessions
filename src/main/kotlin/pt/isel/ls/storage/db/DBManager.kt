@@ -1,6 +1,8 @@
 package pt.isel.ls.storage.db
 
 import org.postgresql.ds.PGSimpleDataSource
+import pt.isel.ls.exceptions.InternalServerErrorException
+import pt.isel.ls.logger
 import java.sql.Connection
 
 /**
@@ -17,17 +19,39 @@ import java.sql.Connection
  * @property getConnection gets the connection for the current thread
 
  */
-class DBConnectionManager {
+open class DBManager(
+    private val dbUrl: String
+) {
+
+    fun execQuery(query: (Connection) -> Any?): Any? {
+        val connection = getConnection()
+        connection.autoCommit = false
+        val ret: Any?
+        try {
+            ret = query(connection)
+            connection.commit()
+        } catch (e: Exception) {
+            logger.error("Error while executing query", e)
+            connection.rollback()
+            // an error occurred that is not related to the request validation
+            throw InternalServerErrorException("There was a server error while processing the request. Please try again.")
+        } finally {
+            connection.autoCommit = true
+        }
+        return ret
+    }
+
+
     private fun getNewConnection(): Connection {
         val newSource = PGSimpleDataSource()
-        newSource.setUrl(System.getenv("JDBC_DATABASE_URL"))
+        newSource.setUrl(dbUrl)
         return newSource.connection
     }
 
     /**
      * Current thread DB connection
      */
-    fun getConnection(): Connection {
+    private fun getConnection(): Connection {
         val connection = connections.getOrPut(Thread.currentThread().id) { getNewConnection() }
         if (connection.isClosed) {
             connections[Thread.currentThread().id] = getNewConnection()

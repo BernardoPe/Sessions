@@ -4,155 +4,145 @@ import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.util.Genre
 import pt.isel.ls.data.domain.util.Name
 import pt.isel.ls.storage.SessionsDataGame
-import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Statement
 
-class SessionsDataDBGame : SessionsDataGame {
-
-    private val connManager: DBConnectionManager = DBConnectionManager()
-    private val connection: Connection get() = connManager.getConnection()
-
-    override fun create(game: Game): UInt {
-
+class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
+    override fun create(game: Game): UInt = execQuery { connection ->
         val statement = connection.prepareStatement(
             "INSERT INTO games (name, developer, genres) VALUES (?, ?, ?)",
             Statement.RETURN_GENERATED_KEYS,
         )
-        connection.autoCommit = false
+
         statement.setString(1, game.name.toString())
         statement.setString(2, game.developer.toString())
         statement.setArray(3, connection.createArrayOf("VARCHAR", game.genres.map { it.toString() }.toTypedArray()))
         statement.executeUpdate()
-        connection.commit()
-        connection.autoCommit = true
 
         val generatedKeys = statement.generatedKeys
         generatedKeys.next()
-        return generatedKeys.getInt(1).toUInt().also { statement.close(); connection.close() }
-    }
+        generatedKeys.getInt(1).toUInt().also { statement.close() }
+    } as UInt
 
-    override fun isGameNameStored(name: Name): Boolean {
+    override fun isGameNameStored(name: Name): Boolean = execQuery { connection ->
         val statement = connection.prepareStatement(
-            "SELECT * FROM games WHERE name = ?",
+            "SELECT 1 FROM games WHERE name = ?",
         )
 
-        connection.autoCommit = false
         statement.setString(1, name.toString())
         val resultSet = statement.executeQuery()
-        connection.commit()
-        connection.autoCommit = true
 
-        return resultSet.next().also { statement.close() }
-    }
+        resultSet.next().also { statement.close() }
+    } as Boolean
 
-    override fun getGamesSearch(genres: Set<Genre>?, developer: Name?, limit: UInt, skip: UInt): Pair<List<Game>, Int> {
+    @Suppress("UNCHECKED_CAST")
+    override fun getGamesSearch(
+        genres: Set<Genre>?,
+        developer: Name?,
+        name: Name?,
+        limit: UInt,
+        skip: UInt
+    ): Pair<List<Game>, Int> =
+        execQuery { connection ->
 
-        var resQuery = "SELECT * FROM games "
-        var countQuery = "SELECT COUNT(*) FROM games "
-        val params = mutableListOf<Any>()
+            var resQuery = "SELECT * FROM games "
+            var countQuery = "SELECT COUNT(*) FROM games "
+            val params = mutableListOf<Any>()
 
-        var searchQuery = ""
-        if (genres != null || developer != null) {
-            searchQuery += "WHERE "
+            var searchQuery = ""
+            var firstCondition = true
+
             if (genres != null) {
-                searchQuery += "genres @> ? "
+                searchQuery += "WHERE genres @> ?"
                 params.add(connection.createArrayOf("VARCHAR", genres.map { it.toString() }.toTypedArray()))
+                firstCondition = false
             }
+
             if (developer != null) {
-                if (genres != null) {
-                     searchQuery += "AND "
-                }
-                searchQuery += "developer = ? "
+                searchQuery += if (firstCondition) "WHERE developer = ?" else "AND developer = ?"
                 params.add(developer.toString())
+                firstCondition = false
             }
-        }
 
-        countQuery += searchQuery
-        resQuery += searchQuery
+            if (name != null) {
+                searchQuery += if (firstCondition) "WHERE lower(name) LIKE ?" else "AND lower(name) LIKE ?"
+                params.add("${name.name.lowercase()}%")
+            }
 
-        params.add(limit.toInt())
-        params.add(skip.toInt())
+            countQuery += searchQuery
+            resQuery += searchQuery
 
-        resQuery += "Order by id LIMIT ? OFFSET ?"
+            params.add(limit.toInt())
+            params.add(skip.toInt())
 
-        val statement = connection.prepareStatement(resQuery)
-        val countStatement = connection.prepareStatement(countQuery)
+            resQuery += "Order by id LIMIT ? OFFSET ?"
 
-        params.forEachIndexed { index, param ->
-            statement.setObject(index + 1, param)
-            if (index < params.size - 2) // dont add limit and skip to count query
-                countStatement.setObject(index + 1, param)
-        }
+            val statement = connection.prepareStatement(resQuery)
+            val countStatement = connection.prepareStatement(countQuery)
 
-        connection.autoCommit = false
-        val resultSet = statement.executeQuery()
-        val countResultSet = countStatement.executeQuery()
-        connection.commit()
-        connection.autoCommit = true
+            params.forEachIndexed { index, param ->
+                statement.setObject(index + 1, param)
+                if (index < params.size - 2) // dont add limit and skip to count query
+                    countStatement.setObject(index + 1, param)
+            }
 
-        countResultSet.next()
-        val total = countResultSet.getInt(1)
+            val resultSet = statement.executeQuery()
+            val countResultSet = countStatement.executeQuery()
 
-        return Pair(resultSet.getGames(), total).also { statement.close(); countStatement.close() }
-    }
+            countResultSet.next()
+            val total = countResultSet.getInt(1)
 
-    override fun getAllGames(): List<Game> {
+            Pair(resultSet.getGames(), total).also { statement.close(); countStatement.close() }
+
+        } as Pair<List<Game>, Int>
+
+
+    @Suppress("UNCHECKED_CAST")
+    override fun getAllGames(): List<Game> = execQuery { connection ->
         val statement = connection.prepareStatement(
             "SELECT * FROM games",
         )
-        connection.autoCommit = false
         val resultSet = statement.executeQuery()
-        connection.commit()
-        connection.autoCommit = true
 
-        return resultSet.getGames().also { statement.close() }
-    }
+        resultSet.getGames().also { statement.close() }
+    } as List<Game>
 
-    override fun getById(id: UInt): Game? {
+    override fun getById(id: UInt): Game? = execQuery { connection ->
         val statement = connection.prepareStatement(
             "SELECT * FROM games WHERE id = ?",
         )
 
-        connection.autoCommit = false
         statement.setInt(1, id.toInt())
         val resultSet = statement.executeQuery()
-        connection.commit()
-        connection.autoCommit = true
 
-        return resultSet.getGames().firstOrNull().also { statement.close() }
-    }
+        resultSet.getGames().firstOrNull().also { statement.close() }
 
-    override fun update(value: Game): Boolean {
+    } as Game?
+
+    override fun update(value: Game): Boolean = execQuery { connection ->
         val statement = connection.prepareStatement(
             "UPDATE games SET name = ?, developer = ?, genres = ? WHERE id = ?",
         )
 
-        connection.autoCommit = false
         statement.setString(1, value.name.toString())
         statement.setString(2, value.developer.toString())
         statement.setArray(3, connection.createArrayOf("VARCHAR", value.genres.map { it.toString() }.toTypedArray()))
         statement.setInt(4, value.id.toInt())
         val updated = statement.executeUpdate()
-        connection.commit()
-        connection.autoCommit = true
 
-        return updated > 0.also { statement.close() }
-    }
+        updated > 0.also { statement.close() }
+    } as Boolean
 
-    override fun delete(id: UInt): Boolean {
+    override fun delete(id: UInt): Boolean = execQuery { connection ->
         val statement = connection.prepareStatement(
             "DELETE FROM games WHERE id = ?",
         )
 
-        connection.autoCommit = false
         statement.setInt(1, id.toInt())
         val deleted = statement.executeUpdate()
-        connection.commit()
-        connection.autoCommit = true
 
-        return deleted > 0.also { statement.close() }
-    }
+        deleted > 0.also { statement.close() }
+    } as Boolean
 
     private fun ResultSet.getGames(): List<Game> {
         var games = listOf<Game>()

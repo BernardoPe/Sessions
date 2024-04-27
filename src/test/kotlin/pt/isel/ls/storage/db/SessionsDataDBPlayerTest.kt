@@ -1,25 +1,31 @@
+package pt.isel.ls.storage.db
+
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.util.Email
 import pt.isel.ls.data.domain.util.Name
-import pt.isel.ls.storage.db.SessionsDataDBPlayer
 import java.util.*
-import kotlin.test.*
 
 class SessionsDataDBPlayerTest {
 
-    private val sessionsDataDBPlayer = SessionsDataDBPlayer()
+    private val dbURL = System.getenv("JDBC_DEVELOPMENT_DATABASE_URL")
+    private val sessionsDataDBPlayer = SessionsDataDBPlayer(dbURL)
 
     // Constants
-    private val TEST_EMAIL = "test@test.com"
-    private val TEST_NAME = "Test"
+    private val TEST_EMAIL = "testEmailthatnooneelsewilluse@dont.com"
+    private val TEST_NAME = "Test Name that no one else will use"
     private val TEST_TOKEN = 1L
     private val TEST_ID = 1u
-    private val TEST_UPDATED_NAME = "Updated Name"
-    private val TEST_UPDATED_EMAIL = "updatedtest@test.com"
+    private val TEST_UPDATED_NAME = "Updated Name that no one else will use"
+    private val TEST_UPDATED_EMAIL = "updatedtestthatnooneelsewilluse@dont.com"
     private val TEST_UPDATED_TOKEN = 2L
-    private val NONEXISTENT_EMAIL = "unexistentemail@test.com"
-    private val NONEXISTENT_ID = 999u
+    private val NONEXISTENT_EMAIL = "unexistentemailthatnoonseelsewilluse@dont.com"
+    private val NONEXISTENT_ID = 9999u
 
     @Test
     fun `create player and verify by id`() {
@@ -30,8 +36,8 @@ class SessionsDataDBPlayerTest {
         // Assert
         val retrievedPlayer = sessionsDataDBPlayer.getById(id)
         assertNotNull(retrievedPlayer)
-        assertEquals(player.name, retrievedPlayer.name)
-        assertEquals(player.email, retrievedPlayer.email)
+        assertEquals(player.name, retrievedPlayer?.name)
+        assertEquals(player.email, retrievedPlayer?.email)
         // Clean up
         sessionsDataDBPlayer.delete(id)
     }
@@ -45,8 +51,8 @@ class SessionsDataDBPlayerTest {
         val retrievedPlayer = sessionsDataDBPlayer.getById(id)
         // Assert
         assertNotNull(retrievedPlayer)
-        assertEquals(player.name, retrievedPlayer.name)
-        assertEquals(player.email, retrievedPlayer.email)
+        assertEquals(player.name, retrievedPlayer?.name)
+        assertEquals(player.email, retrievedPlayer?.email)
         // Clean up
         sessionsDataDBPlayer.delete(id)
     }
@@ -81,14 +87,6 @@ class SessionsDataDBPlayerTest {
     }
 
     @Test
-    fun `get all players empty`() {
-        // Act
-        val players = sessionsDataDBPlayer.getAll()
-        // Assert
-        assertTrue(players.isEmpty())
-    }
-
-    @Test
     fun `get all players`() {
         // Arrange
         val player1 = Player(0u, Name(TEST_NAME), Email(TEST_EMAIL), TEST_TOKEN)
@@ -98,7 +96,7 @@ class SessionsDataDBPlayerTest {
         // Act
         val players = sessionsDataDBPlayer.getAll()
         // Assert
-        assertEquals(2, players.size)
+        assertTrue(players.isNotEmpty())
         // Clean up
         sessionsDataDBPlayer.delete(id1)
         sessionsDataDBPlayer.delete(id2)
@@ -113,7 +111,7 @@ class SessionsDataDBPlayerTest {
         // Act
         val players = sessionsDataDBPlayer.getAll()
         // Assert
-        assertTrue(players.isEmpty())
+        assertFalse(players.contains(player))
     }
 
     @Test
@@ -141,7 +139,7 @@ class SessionsDataDBPlayerTest {
         // Act
         val isUpdated = sessionsDataDBPlayer.update(NONEXISTENT_ID, updatedPlayer)
         // Assert
-        assertTrue(!isUpdated)
+        assertFalse(isUpdated)
     }
 
     @Test
@@ -174,8 +172,8 @@ class SessionsDataDBPlayerTest {
         val retrievedPlayer = sessionsDataDBPlayer.getByToken(token)
         // Assert
         assertNotNull(retrievedPlayer)
-        assertEquals(player.name, retrievedPlayer.name)
-        assertEquals(player.email, retrievedPlayer.email)
+        assertEquals(player.name, retrievedPlayer?.name)
+        assertEquals(player.email, retrievedPlayer?.email)
         // Clean up
         sessionsDataDBPlayer.delete(id)
     }

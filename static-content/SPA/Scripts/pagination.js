@@ -1,43 +1,42 @@
 import {button, div} from "../WebDSL/web_dsl.js";
 
-import {API_URL} from "../handlers.js";
-function handleGamePagination(queries, limit, skip, total) {
-	return handlePagination(API_URL + `games?${queries}`, limit, skip, (limit, skip) => {
+import {API_URL, GAMES_URL, SESSIONS_URL} from "../../index.js";
+import {RESULTS_PER_PAGE} from "../handlers.js";
+
+function handleGamePagination(queries, page, total) {
+	return handlePagination(API_URL + GAMES_URL + `?${queries}`, page, (page) => {
 		if (queries.toString().length > 0) {
-			return `#games/searchResults?${queries}&limit=${limit}&skip=${skip}`;
+			return `#` + GAMES_URL + `?${queries}&page=${page}`;
 		} else {
-			return `#games/searchResults?limit=${limit}&skip=${skip}`;
+			return `#` + GAMES_URL + `?page=${page}`;
 		}
 	}, total);
 }
 
-function handleSessionPagination(queries, limit, skip, total) {
-	return handlePagination(API_URL + `sessions?${queries}`, limit, skip, (limit, skip) => {
+function handleSessionPagination(queries, page, total) {
+	return handlePagination(API_URL + SESSIONS_URL + `?${queries}`, page, (page) => {
 		if (queries.toString().length > 0) {
-			return `#sessions/searchResults?${queries}&limit=${limit}&skip=${skip}`;
+			return `#` + SESSIONS_URL + `?${queries}&page=${page}`;
 		} else {
-			return `#sessions/searchResults?limit=${limit}&skip=${skip}`;
+			return `#` + SESSIONS_URL + `?page=${page}`;
 		}
 	}, total);
 }
 
-function handlePagination(url, limit, skip, generateUrl, total) {
+function handlePagination(url, page, generateUrl, total) {
 
 	const divElement = div({class: "pagination"});
+	const skip = (page - 1) * RESULTS_PER_PAGE;
 
 	if (parseInt(skip) > 0) {
-		let resSkip = parseInt(skip) - parseInt(limit);
-		if (resSkip < 0) {
-			resSkip = 0;
-		}
 		divElement.appendChild(
-			createPaginationButton("Previous", limit, resSkip, generateUrl)
+			createPaginationButton("Previous", parseInt(page) - 1, generateUrl)
 		)
 	}
 
-	if (parseInt(skip) + parseInt(limit) < total) {
+	if (parseInt(skip) + RESULTS_PER_PAGE < total) {
 		divElement.appendChild(
-			createPaginationButton("Next", limit, parseInt(skip) + parseInt(limit), generateUrl)
+			createPaginationButton("Next", parseInt(page) + 1, generateUrl)
 		)
 	}
 
@@ -45,10 +44,10 @@ function handlePagination(url, limit, skip, generateUrl, total) {
 
 }
 
-function createPaginationButton(text, limit, skip, generateUrl) {
+function createPaginationButton(text, page, generateUrl) {
 	const buttonElement = button({type: "button", class:"pagination-button"}, text);
 	buttonElement.addEventListener('click', () => {
-		window.location.href = generateUrl(limit, skip);
+		window.location.href = generateUrl(page);
 	});
 	return buttonElement;
 }

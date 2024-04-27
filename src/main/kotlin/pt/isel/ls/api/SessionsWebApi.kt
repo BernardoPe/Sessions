@@ -25,6 +25,7 @@ import pt.isel.ls.data.mapper.toGameInfoDTO
 import pt.isel.ls.data.mapper.toGameSearchDTO
 import pt.isel.ls.data.mapper.toPlayerCreationDTO
 import pt.isel.ls.data.mapper.toPlayerInfoDTO
+import pt.isel.ls.data.mapper.toPlayerSearchDTO
 import pt.isel.ls.data.mapper.toSessionCreationDTO
 import pt.isel.ls.data.mapper.toSessionInfoDTO
 import pt.isel.ls.data.mapper.toSessionOperationMessage
@@ -139,10 +140,12 @@ class SessionsApi(
 
         val genres = request.query("genres")?.split(",")
         val developer = request.query("developer")
+        val name = request.query("name")
 
         val res = gameServices.searchGames(
             genres?.map { Genre(it) }?.toSet(),
             developer?.let { Name(it) },
+            name?.let { Name(it) },
             limit,
             skip,
         )
@@ -214,6 +217,24 @@ class SessionsApi(
             .body(Json.encodeToString(res.toSessionInfoDTO()))
     }
 
+    fun getPlayerList(request: Request) = processRequest(request) {
+        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip")
+            ?: 0u)
+        val name = request.query("name")
+        val res = playerServices.getPlayerList(
+            name?.let { Name(it) },
+            limit,
+            skip
+        )
+        if (res.first.isEmpty())
+            Response(NO_CONTENT)
+        else {
+            Response(OK)
+                .header("content-type", "application/json")
+                .body(Json.encodeToString(res.toPlayerSearchDTO()))
+        }
+    }
+
     fun getSessionList(request: Request) = processRequest(request) {
         val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip") ?: 0u)
 
@@ -282,7 +303,7 @@ class SessionsApi(
         } catch (e: Exception) {
             logger.error(e.message, e)
             Response(INTERNAL_SERVER_ERROR).header("content-type", "application/json").body(
-                Json.encodeToString(InternalServerErrorException()),
+                Json.encodeToString(InternalServerErrorException("Internal Server Error")),
             )
         }
 
@@ -337,4 +358,6 @@ class SessionsApi(
             response.header("content-type"),
         )
     }
+
+
 }

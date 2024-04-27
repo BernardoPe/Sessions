@@ -74,8 +74,47 @@ class SessionsDataPlayerTest {
         // Add a player to the storage
         playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), 0L))
         // Check if the email is stored
-        // Check if the email is stored
         assert(playerStorage.isEmailStored("testEmail@test.com".toEmail()))
+    }
+
+    @Test
+    fun isNameStoredTest() {
+        // Create a player storage
+        val playerStorage = SessionsDataMemPlayer()
+        // Add a player to the storage
+        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), 0L))
+        // Check if the name is stored
+        assert(playerStorage.isNameStored("testPlayer".toName()))
+    }
+
+    @Test
+    fun testPlayerNameSearch() {
+        // Create a player storage
+        val playerStorage = SessionsDataMemPlayer()
+        // Add a player to the storage
+        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), 0L))
+        // Check if the name is stored
+        assert(playerStorage.isNameStored("testPlayer".toName()))
+
+        val playerSearch = playerStorage.getPlayersSearch("tes".toName(), 10u, 0u)
+        assertEquals(1, playerSearch.first.size)
+        assertEquals(1, playerSearch.second)
+        assertEquals(2u, playerSearch.first[0].id)
+        assertEquals("testPlayer".toName(), playerSearch.first[0].name)
+        assertEquals("testEmail@test.com".toEmail(), playerSearch.first[0].email)
+    }
+
+    @Test
+    fun testPlayerNameSearchNotFound() {
+        val playerStorage = SessionsDataMemPlayer()
+        // Add a player to the storage
+        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), 0L))
+        // Check if the name is stored
+        assert(playerStorage.isNameStored("testPlayer".toName()))
+        // Search by name, characters are contained in the name but not from the start
+        val playerSearch = playerStorage.getPlayersSearch("play".toName(), 10u, 0u)
+        assertEquals(0, playerSearch.first.size)
+        assertEquals(0, playerSearch.second)
     }
 
     @Test

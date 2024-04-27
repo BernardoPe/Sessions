@@ -5,7 +5,6 @@ import pt.isel.ls.data.domain.session.SESSION_MAX_CAPACITY
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
 import pt.isel.ls.exceptions.BadRequestException
-import pt.isel.ls.exceptions.InternalServerErrorException
 import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.storage.SessionsDataManager
 import pt.isel.ls.utils.currentLocalTime
@@ -42,10 +41,8 @@ class SessionsService(val storage: SessionsDataManager) {
             throw BadRequestException("Session is closed")
         }
 
-        return if (storage.session.addPlayer(sid, getPlayer)) {
-            "Player successfully added to session"
-        } else {
-            throw InternalServerErrorException()
+        storage.session.addPlayer(sid, getPlayer).also {
+            return "Player successfully added to session"
         }
         // If update fails after checks this means that something went wrong with the update, so we throw an internal server error
     }
@@ -59,10 +56,8 @@ class SessionsService(val storage: SessionsDataManager) {
             throw NotFoundException("Player not in session")
         }
 
-        return if (storage.session.removePlayer(sid, getPlayer.id)) {
-            "Player successfully removed from session"
-        } else {
-            throw InternalServerErrorException()
+        storage.session.removePlayer(sid, getPlayer.id).also {
+            return "Player successfully removed from session"
         }
         // If update fails after checks this means that something went wrong with the update, so we throw an internal server error
     }
@@ -82,10 +77,8 @@ class SessionsService(val storage: SessionsDataManager) {
             throw BadRequestException("Session capacity must at least 1 and at most $SESSION_MAX_CAPACITY")
         }
 
-        return if (storage.session.update(sid, capacity, date)) {
-            "Session successfully updated"
-        } else {
-            throw InternalServerErrorException()
+        storage.session.update(sid, capacity, date).also {
+            return "Session successfully updated"
         }
         // If update fails after checks this means that something went wrong with the update, so we throw an internal server error
     }
@@ -103,10 +96,8 @@ class SessionsService(val storage: SessionsDataManager) {
         if (storage.session.getById(sid) == null) {
             throw NotFoundException("Session not found")
         }
-        return if (storage.session.delete(sid)) {
-            "Session successfully deleted"
-        } else {
-            throw InternalServerErrorException()
+        storage.session.delete(sid).also {
+            return "Session successfully deleted"
         }
     }
 }

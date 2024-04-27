@@ -33,8 +33,9 @@ class NotImplementedException : SessionsExceptions(NOT_IMPLEMENTED.code, "Not Im
 /**
  * The [InternalServerErrorException] class is an exception that is thrown when the server has an internal error.
  */
-@Serializable
-class InternalServerErrorException : SessionsExceptions(Status.INTERNAL_SERVER_ERROR.code, "Internal Server Error", null)
+
+class InternalServerErrorException(message: String?) :
+    SessionsExceptions(Status.INTERNAL_SERVER_ERROR.code, "Internal Server Error", message)
 
 /**
  * The [UnsupportedMediaTypeException] class is an exception that is thrown when the media type is not supported.

@@ -1,8 +1,8 @@
 package pt.isel.ls.storage.mem
 
+import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.util.Email
 import pt.isel.ls.data.domain.util.Name
-import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.storage.SessionsDataPlayer
 import java.util.*
 
@@ -43,6 +43,10 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
         return db.find { it.token == token.hash() }
     }
 
+    override fun isNameStored(name: Name): Boolean {
+        return db.any { it.name == name }
+    }
+
     override fun create(player: Player): Pair<UInt, UUID> {
         // Add the player object to the database mock
 
@@ -63,6 +67,19 @@ class SessionsDataMemPlayer : SessionsDataPlayer {
     override fun isEmailStored(email: Email): Boolean {
         // Check if the player email exists in the database mock
         return db.any { it.email == email }
+    }
+
+    override fun getPlayersSearch(name: Name?, limit: UInt, skip: UInt): Pair<List<Player>, Int> {
+
+        var players = db.toList()
+
+        name?.let {
+            players = players.filter { it.name.toString().startsWith(name.toString(), ignoreCase = true) }
+        }
+
+        val total = players.size
+
+        return Pair(players.drop(skip.toInt()).take(limit.toInt()), total)
     }
 
     override fun getById(id: UInt): Player? {

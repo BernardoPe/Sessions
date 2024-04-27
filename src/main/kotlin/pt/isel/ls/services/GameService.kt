@@ -23,8 +23,8 @@ class GameService(val storage: SessionsDataManager) {
         return storage.game.getById(id) ?: throw NotFoundException("Game not found")
     }
 
-    fun searchGames(genres: Set<Genre>?, developer: Name?, limit: UInt, skip: UInt): Pair<GameList, Int> {
-        val gamesSearch = storage.game.getGamesSearch(genres, developer, limit, skip)
+    fun searchGames(genres: Set<Genre>?, developer: Name?, name: Name?, limit: UInt, skip: UInt): Pair<GameList, Int> {
+        val gamesSearch = storage.game.getGamesSearch(genres, developer, name, limit, skip)
         return Pair(gamesSearch.first, gamesSearch.second)
     }
 }

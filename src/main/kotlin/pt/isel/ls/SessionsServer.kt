@@ -48,6 +48,7 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
     private val playerRoutes =
         routes(
             PLAYER_ROUTE bind POST to requestHandler::createPlayer,
+            PLAYER_ROUTE bind GET to requestHandler::getPlayerList,
             PLAYER_DETAILS_ROUTE bind GET to requestHandler::getPlayerDetails,
             AUTH_ROUTE bind GET to requestHandler::authPlayer,
         )
@@ -99,11 +100,13 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
 
 fun main() {
 
-    val storage = SessionsDataManager(
-        SessionsDataDBGame(),
-        SessionsDataDBPlayer(),
-        SessionsDataDBSession(),
-    )
+    val databaseURL = System.getenv("JDBC_PRODUCTION_DATABASE_URL")
+
+    val gameStorage = SessionsDataDBGame(databaseURL)
+    val playerStorage = SessionsDataDBPlayer(databaseURL)
+    val sessionStorage = SessionsDataDBSession(databaseURL)
+
+    val storage = SessionsDataManager(gameStorage, playerStorage, sessionStorage)
 
     storage.use {
         val server = SessionsServer(

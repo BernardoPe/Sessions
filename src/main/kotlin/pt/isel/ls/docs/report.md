@@ -29,7 +29,7 @@ In this model, we have 3 entities: Game, Player, and Session.
 
 Each game has a unique identifier, a unique name, a developer and a set of genres.
 
-Each player has a unique identifier, a name, a unique e-mail and a unique token hash for authentication.
+Each player has a unique identifier, a unique name, a unique e-mail and a unique token hash for authentication.
 
 Each session has a unique identifier, a capacity, and a date.
 
@@ -93,9 +93,11 @@ The Games group has 3 endpoints:
  - Game Search : GET /games
  - Game Search by id : GET /games/{id}
 
-The Players group has 2 endpoints: 
+The Players group has 3 endpoints:
+
  - Player Creation : POST /players
- - Player Search by id : GET /players/{id}
+- Player Details : GET /players/{id}
+- Player Search : GET /players
 
 The Sessions group has 7 endpoints: 
  - Create Session : POST /sessions

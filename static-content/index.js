@@ -4,6 +4,20 @@ import handlers from "./SPA/handlers.js";
 window.addEventListener('load', loadHandler)
 window.addEventListener('hashchange', hashChangeHandler)
 
+const HOME_URL = 'home'
+const GAMES_URL = 'games'
+const SESSIONS_URL = 'sessions'
+const SESSION_DETAILS_URL = 'sessions/:sid'
+const GAMES_SEARCH_URL = 'games/search'
+const GAME_DETAILS_URL = 'games/:gid'
+const SESSIONS_SEARCH_URL = 'sessions/search'
+const PLAYER_DETAILS_URL = 'players/:pid'
+const PLAYERS_URL = 'players'
+const LOGIN_URL = 'login'
+const REGISTER_URL = 'register'
+const LOGOUT_URL = 'logout'
+const API_URL = 'http://localhost:8080/';
+
 
 /**
  * Handler for the load event. This function is called when the page is loaded.
@@ -13,29 +27,27 @@ window.addEventListener('hashchange', hashChangeHandler)
  */
 function loadHandler(){
     // home page
-    router.addRouteHandler("home", handlers.getHome)
+    router.addRouteHandler(HOME_URL, handlers.getHome)
     // search bar page
-    router.addRouteHandler("games/search", handlers.getGameSearch)
+    router.addRouteHandler(GAMES_SEARCH_URL, handlers.getGameSearch)
     // search bar page
-    router.addRouteHandler("sessions/search", handlers.getSessionSearch)
+    router.addRouteHandler(SESSIONS_SEARCH_URL, handlers.getSessionSearch)
     // page with search results, with search query parameters in the URL query string
-    router.addRouteHandler("games/searchResults", handlers.getGameSearchResults)
+    router.addRouteHandler(GAMES_URL, handlers.getGameSearchResults)
     // page with search results, with search query parameters in the URL query string
-    router.addRouteHandler("sessions/searchResults", handlers.getSessionSearchResults)
+    router.addRouteHandler(SESSIONS_URL, handlers.getSessionSearchResults)
     // page with game details
-    router.addRouteHandler("games/:gid", handlers.getGameDetails)
+    router.addRouteHandler(GAME_DETAILS_URL, handlers.getGameDetails)
     // page with session details
-    router.addRouteHandler("sessions/:sid", handlers.getSessionDetails)
+    router.addRouteHandler(SESSION_DETAILS_URL, handlers.getSessionDetails)
     // page with player details
-    router.addRouteHandler("players/:pid", handlers.getPlayerDetails)
+    router.addRouteHandler(PLAYER_DETAILS_URL, handlers.getPlayerDetails)
 
-    router.addRouteHandler("login", handlers.login)
+    router.addRouteHandler(LOGIN_URL, handlers.login)
+    router.addRouteHandler(REGISTER_URL, handlers.register)
+    router.addRouteHandler(LOGOUT_URL, handlers.logout)
 
-    router.addRouteHandler("register", handlers.register)
-
-    router.addRouteHandler("logout", handlers.logout)
-
-    router.addDefaultNotFoundRouteHandler(() => window.location.hash = "home")
+    router.addDefaultNotFoundRouteHandler(() => window.location.hash = HOME_URL)
 
     hashChangeHandler()
 }
@@ -50,4 +62,20 @@ function hashChangeHandler(){
     const handler = router.getRouteHandler(path)
     const req = router.getRequestParamsAndQuery(path)
     handler(mainContent, req)
+}
+
+export {
+    API_URL,
+    HOME_URL,
+    GAMES_URL,
+    SESSIONS_URL,
+    SESSION_DETAILS_URL,
+    GAMES_SEARCH_URL,
+    GAME_DETAILS_URL,
+    SESSIONS_SEARCH_URL,
+    PLAYER_DETAILS_URL,
+    PLAYERS_URL,
+    LOGIN_URL,
+    REGISTER_URL,
+    LOGOUT_URL
 }

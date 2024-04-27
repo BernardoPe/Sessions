@@ -1,5 +1,6 @@
 package pt.isel.ls.services.player
 
+import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.mapper.toEmail
 import pt.isel.ls.data.mapper.toName
@@ -59,24 +60,6 @@ class PlayerServiceTest {
     }
 
     @Test
-    fun testAuthenticatePlayer_Success() {
-        val uuid = UUID.randomUUID()
-        val authenticatedPlayer = servicePlayer.authenticatePlayer(uuid)
-
-        assertNotNull(authenticatedPlayer)
-        // TODO
-    }
-
-//    @Test
-//    fun testAuthenticatePlayer_TokenNotFound() {
-//        val uuid = UUID.randomUUID()
-//        val authenticatedPlayer = servicePlayer.authenticatePlayer(uuid)
-//
-//        assertNull(authenticatedPlayer)
-//        //TODO
-//    }
-
-    @Test
     fun testGetPlayerDetails_Success() {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
@@ -103,15 +86,67 @@ class PlayerServiceTest {
         assertEquals("Player not found", exception.errorCause)
     }
 
+    @Test
+    fun searchPlayersByNameTest() {
+        val playerName = newTestPlayerName().toName()
+        val playerEmail = newTestEmail().toEmail()
+
+        servicePlayer.createPlayer(playerName, playerEmail)
+
+        val searchResult = servicePlayer.getPlayerList("pla".toName(), 10u, 0u)
+
+        assertEquals(1, searchResult.first.size)
+        assertEquals(1, searchResult.second)
+        assertEquals(2u, searchResult.first[0].id)
+        assertEquals(playerName, searchResult.first[0].name)
+        assertEquals(playerEmail, searchResult.first[0].email)
+    }
+
+    @Test
+    fun searchPlayersByNameTestNotFound() {
+        val playerName = newTestPlayerName().toName()
+        val playerEmail = newTestEmail().toEmail()
+
+        servicePlayer.createPlayer(playerName, playerEmail)
+
+        val searchResult = servicePlayer.getPlayerList("yer".toName(), 10u, 0u)
+
+        assertEquals(0, searchResult.first.size)
+        assertEquals(0, searchResult.second)
+    }
+
+
+    @Test
+    fun testCreatePlayerNameStored() {
+        val playerName = newTestPlayerName().toName()
+        val playerEmail = newTestEmail().toEmail()
+
+        servicePlayer.createPlayer(playerName, playerEmail)
+
+        val exception = assertFailsWith<BadRequestException> {
+            servicePlayer.createPlayer(playerName, newTestEmail().toEmail())
+        }
+
+        assertEquals(400, exception.status)
+        assertEquals("Bad Request", exception.description)
+        assertEquals("Given Player name already exists", exception.errorCause)
+    }
+
+    @BeforeEach
+    fun clearStorage() {
+        storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+        servicePlayer = PlayerService(storage)
+    }
+
     companion object {
         private fun newTestPlayerName() = "player-${abs(Random.nextLong())}"
 
         private fun newTestEmail() = "email-${abs(Random.nextLong())}@test.com"
 
-        private val storage =
+        private var storage =
             SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
 
-        private val servicePlayer = PlayerService(storage)
+        private var servicePlayer = PlayerService(storage)
 
         private fun UUID.testTokenHash() = mostSignificantBits xor leastSignificantBits
     }

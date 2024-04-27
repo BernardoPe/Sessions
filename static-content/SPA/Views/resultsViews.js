@@ -1,33 +1,25 @@
-import {a, br, div, p} from "../WebDSL/web_dsl.js";
+import {a, div} from "../WebDSL/web_dsl.js";
+import {gameSearchResult, sessionSearchResult,} from "./models.js";
 
 function sessionSearchResultsView(sessions) {
-	return div({class: "search-results-container"},
-		a("#sessions/search", {class: "session__reference"}, "Search for more sessions"),
-		...sessions.map(s =>
-			div({class: "session-container"},
-				p({class: "session__game"},
-					a(`#games/${s.gameSession.gid}`, null, s.gameSession.name)
-				),
-				p({class: "session__date"}, s.date),
-				a(`#sessions/${s.sid}`, {class: "session__reference"}, "Get more details"),
-				br(null)
-			)
+    return div(null,
+        div({class: "search-results-container"},
+            ...sessions.map(s =>
+                sessionSearchResult(s)
+            ),
 		),
-	);
+        a("#sessions/search", {class: "session__reference"}, "Search for more sessions"),
+    )
 }
 
 function gameSearchResultsView(games) {
-	return div({class: "search-results-container"},
-		...games.map(g =>
-			div({class: "game-container"},
-				p({class: "game__title"},
-					a(`#games/${g.gid}`, null, g.name)
-				),
-				p({class: "game__developer"}, g.developer),
-				br(null)
-			)
-		),
-	);
+    return div(null,
+        div({class: "search-results-container"},
+            ...games.map(g =>
+                gameSearchResult(g)
+            ),
+        )
+    )
 }
 
 export {sessionSearchResultsView, gameSearchResultsView};

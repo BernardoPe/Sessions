@@ -1,4 +1,4 @@
-import {a, div, h2, li, ol, p} from "../WebDSL/web_dsl.js";
+import {a, div, h2, li, ol} from "../WebDSL/web_dsl.js";
 
 export function homeView (user) {
 	const welcome = user ? `Welcome to Sessions, ${user.name}` : "Welcome to Sessions";
