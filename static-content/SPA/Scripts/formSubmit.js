@@ -145,8 +145,10 @@ function submitFormCreateGame(event) {
 			const gid = data.gid;
 			window.location.href = `#games/${gid}`;
 		}).catch(err => {
-		nameErr.innerHTML = err.errorCause
-		nameErr.style.display = 'block';
+			err.json().then(err => {
+				nameErr.innerHTML = err.errorCause
+				nameErr.style.display = 'block';
+			})
 	})
 }
 
