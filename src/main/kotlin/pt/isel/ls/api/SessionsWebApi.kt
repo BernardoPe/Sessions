@@ -325,7 +325,8 @@ class SessionsApi(
      */
 
     fun getPlayerList(request: Request) = processRequest(request) {
-        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip") ?: 0u)
+        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip")
+            ?: 0u)
         val name = request.query("name")
         val res = playerServices.getPlayerList(
             name?.let { Name(it) },

@@ -36,7 +36,13 @@ class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
     } as Boolean
 
     @Suppress("UNCHECKED_CAST")
-    override fun getGamesSearch(genres: Set<Genre>?, developer: Name?, name: Name?, limit: UInt, skip: UInt): Pair<List<Game>, Int> =
+    override fun getGamesSearch(
+        genres: Set<Genre>?,
+        developer: Name?,
+        name: Name?,
+        limit: UInt,
+        skip: UInt
+    ): Pair<List<Game>, Int> =
         execQuery { connection ->
 
             var resQuery = "SELECT * FROM games "
@@ -88,7 +94,7 @@ class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
 
             Pair(resultSet.getGames(), total).also { statement.close(); countStatement.close() }
 
-        }  as Pair<List<Game>, Int>
+        } as Pair<List<Game>, Int>
 
 
     @Suppress("UNCHECKED_CAST")

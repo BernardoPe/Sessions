@@ -1,4 +1,3 @@
-
 package pt.isel.ls.storage.db
 
 import org.junit.jupiter.api.Assertions.assertEquals

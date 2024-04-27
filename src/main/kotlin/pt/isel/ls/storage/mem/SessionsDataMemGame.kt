@@ -66,7 +66,13 @@ class SessionsDataMemGame : SessionsDataGame {
         return null
     }
 
-    override fun getGamesSearch(genres: Set<Genre>?, developer: Name?, name: Name?, limit: UInt, skip: UInt): Pair<List<Game>, Int> {
+    override fun getGamesSearch(
+        genres: Set<Genre>?,
+        developer: Name?,
+        name: Name?,
+        limit: UInt,
+        skip: UInt
+    ): Pair<List<Game>, Int> {
         // Read all the game objects from the database mock that match the given genres and developer
         // Start by checking the genres
         var games = db.filter { game ->

@@ -13,6 +13,8 @@ const GAME_DETAILS_URL = 'games/:gid'
 const SESSIONS_SEARCH_URL = 'sessions/search'
 const PLAYER_DETAILS_URL = 'players/:pid'
 const PLAYERS_URL = 'players'
+const GAME_CREATION_URL = 'games/create'
+const SESSION_CREATION_URL = 'sessions/create'
 const LOGIN_URL = 'login'
 const REGISTER_URL = 'register'
 const LOGOUT_URL = 'logout'
@@ -36,15 +38,19 @@ function loadHandler(){
     router.addRouteHandler(GAMES_URL, handlers.getGameSearchResults)
     // page with search results, with search query parameters in the URL query string
     router.addRouteHandler(SESSIONS_URL, handlers.getSessionSearchResults)
+    // page with game creation form
+    router.addRouteHandler(GAME_CREATION_URL, handlers.createGame)
     // page with game details
     router.addRouteHandler(GAME_DETAILS_URL, handlers.getGameDetails)
     // page with session details
     router.addRouteHandler(SESSION_DETAILS_URL, handlers.getSessionDetails)
     // page with player details
     router.addRouteHandler(PLAYER_DETAILS_URL, handlers.getPlayerDetails)
-
+    // page with login form
     router.addRouteHandler(LOGIN_URL, handlers.login)
+    // page with register form
     router.addRouteHandler(REGISTER_URL, handlers.register)
+    // page with logout form
     router.addRouteHandler(LOGOUT_URL, handlers.logout)
 
     router.addDefaultNotFoundRouteHandler(() => window.location.hash = HOME_URL)
@@ -77,5 +83,6 @@ export {
     PLAYERS_URL,
     LOGIN_URL,
     REGISTER_URL,
-    LOGOUT_URL
+    LOGOUT_URL,
+    GAME_CREATION_URL
 }

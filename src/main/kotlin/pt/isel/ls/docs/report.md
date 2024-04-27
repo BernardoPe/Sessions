@@ -93,10 +93,11 @@ The Games group has 3 endpoints:
  - Game Search : GET /games
  - Game Search by id : GET /games/{id}
 
-The Players group has 3 endpoints: 
+The Players group has 3 endpoints:
+
  - Player Creation : POST /players
- - Player Details : GET /players/{id}
- - Player Search : GET /players
+- Player Details : GET /players/{id}
+- Player Search : GET /players
 
 The Sessions group has 7 endpoints: 
  - Create Session : POST /sessions

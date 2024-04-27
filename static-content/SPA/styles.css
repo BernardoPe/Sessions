@@ -145,7 +145,7 @@ body {
                     font-size: 20px;
                     border-radius: 40px;
                     text-align: center;
-                    box-shadow: 0 6px 20px -5px rgba(0,0,0,0.4);
+                    box-shadow: 0 6px 20px -5px rgba(0, 0, 0, 0.4);
                     position: relative;
                     overflow: hidden;
                     cursor: pointer;
@@ -208,7 +208,7 @@ body {
                     margin-bottom: 20px;
                     margin-top: 20px;
                     padding: 15px 0 0;
-                    box-shadow: 0 10px 10px -10px #171717   ; /* Add this line */
+                    box-shadow: 0 10px 10px -10px #171717; /* Add this line */
 
 
                     .form__field {
@@ -254,6 +254,7 @@ body {
                         &::-webkit-scrollbar {
                             display: none;
                         }
+
                         .search_result {
                             display: flex;
                             flex-direction: column;
@@ -267,10 +268,12 @@ body {
                             padding-top: 10px;
                             padding-left: 20px;
                         }
+
                         .search_result.selected {
                             background: rgba(92, 96, 105, 0.67);
                             border-radius: 4px;
                         }
+
                         .search_result:hover {
                             background: rgba(92, 96, 105, 0.67);
                             border-radius: 4px;
@@ -538,7 +541,7 @@ body {
                     margin-bottom: 20px;
                 }
 
-                .session__reference{
+                .session__reference {
                     font-size: 1.2em;
                     font-weight: bold;
                     margin-bottom: 20px;

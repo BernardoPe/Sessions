@@ -49,7 +49,13 @@ interface SessionsDataGame {
      * @return The list of game objects that match the given genres and developer
      *          and the total number of games that match the given search criteria
      */
-    fun getGamesSearch(genres: Set<Genre>?, developer: Name?, name: Name?, limit: UInt, skip: UInt): Pair<List<Game>, Int>
+    fun getGamesSearch(
+        genres: Set<Genre>?,
+        developer: Name?,
+        name: Name?,
+        limit: UInt,
+        skip: UInt
+    ): Pair<List<Game>, Int>
 
     /**
      * Read all games from the database

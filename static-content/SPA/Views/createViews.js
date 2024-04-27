@@ -1,0 +1,57 @@
+import {button, div, form} from "../WebDSL/web_dsl.js";
+import {dateTimeInput, errorMessage, formInputField, genresInput} from "./models.js";
+
+function gameCreateView() {
+    return div({class: "form__group"},
+        form({id: "gameCreationForm", method: "POST"},
+            formInputField(
+                "game_name",
+                "game_name",
+                "text",
+                "Game name"
+            ),
+            errorMessage("err_message-game", "Game name must be at least 3 characters long"),
+
+            formInputField(
+                "developer_name",
+                "developer",
+                "text",
+                "Developer name"
+            ),
+            errorMessage("err_message-developer", "Developer name must be at least 3 characters long"),
+
+            genresInput(),
+            errorMessage("err_message-genres", "Select at least one genre"),
+            button({type: "submit"}, "Create Game"),
+        ),
+    );
+}
+
+function sessionCreateView() {
+    return div(
+        form({id: "sessionCreationForm", method: "POST"},
+            formInputField(
+                "game_name",
+                "game_name",
+                "text",
+                "Game name"
+            ),
+            errorMessage("err_message-game", "Game name must be at least 3 characters long"),
+
+            formInputField(
+                "capacity",
+                "capacity",
+                "number",
+                "Capacity of the session"
+            ),
+            errorMessage("err_message-game", "Game name must be at least 3 characters long"),
+
+            dateTimeInput(),
+            errorMessage("error-date", "Invalid date to create a session"),
+
+            button({type: "submit"}, "Create Session"),
+        ),
+    );
+}
+
+export {gameCreateView, sessionCreateView};

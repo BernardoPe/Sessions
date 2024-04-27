@@ -114,7 +114,7 @@ class SessionsDataGameTest {
         // Create a game storage
         val gameStorage = SessionsDataMemGame()
         // read the game from the storage
-        val gameData = gameStorage.getGamesSearch(setOf("RPG".toGenre()), "developer".toName(), null,2u, 0u)
+        val gameData = gameStorage.getGamesSearch(setOf("RPG".toGenre()), "developer".toName(), null, 2u, 0u)
         // Check if gameData is empty
         assertEquals(0, gameData.first.size)
         assertEquals(0, gameData.second)

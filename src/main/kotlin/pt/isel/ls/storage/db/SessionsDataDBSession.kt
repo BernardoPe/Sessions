@@ -49,7 +49,14 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
     } as Session?
 
     @Suppress("UNCHECKED_CAST")
-    override fun getSessionsSearch(gid: UInt?, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): Pair<List<Session>, Int> =
+    override fun getSessionsSearch(
+        gid: UInt?,
+        date: LocalDateTime?,
+        state: State?,
+        pid: UInt?,
+        limit: UInt,
+        skip: UInt
+    ): Pair<List<Session>, Int> =
         execQuery { connection ->
             val resQuery = StringBuilder(
                 "SELECT DISTINCT sessions.id FROM sessions "
@@ -61,8 +68,8 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
 
             searchQuery.append(
                 "JOIN games ON sessions.game_id = games.id " +
-                    "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
-                    "LEFT JOIN players ON sessions_players.player_id = players.id "
+                        "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
+                        "LEFT JOIN players ON sessions_players.player_id = players.id "
             )
 
             var firstCondition = true
@@ -128,25 +135,25 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
             val total = countResultSet.getInt(1)
 
             resultSessions to total.also { statement.close(); countStatement.close(); sessionStmt.close() }
-    } as Pair<List<Session>, Int>
+        } as Pair<List<Session>, Int>
 
     override fun addPlayer(sid: UInt, player: Player): Boolean = execQuery { connection ->
-            // Check if the player is already in the session
-            // Set the statement to insert a new player in the session
-            val statement = connection.prepareStatement(
-                "INSERT INTO sessions_players (session_id, player_id) VALUES (?, ?)",
-            )
+        // Check if the player is already in the session
+        // Set the statement to insert a new player in the session
+        val statement = connection.prepareStatement(
+            "INSERT INTO sessions_players (session_id, player_id) VALUES (?, ?)",
+        )
 
-            // Set the parameters
-            statement.setInt(1, sid.toInt())
-            statement.setInt(2, player.id.toInt())
-            // Execute the statement and get the result
-            val res = statement.executeUpdate()
+        // Set the parameters
+        statement.setInt(1, sid.toInt())
+        statement.setInt(2, player.id.toInt())
+        // Execute the statement and get the result
+        val res = statement.executeUpdate()
 
-            // Return the result of the operation
-            // It returns true if the player was added to the session
-            res > 0.also { statement.close() }
-        } as Boolean
+        // Return the result of the operation
+        // It returns true if the player was added to the session
+        res > 0.also { statement.close() }
+    } as Boolean
 
     override fun removePlayer(sid: UInt, pid: UInt): Boolean = execQuery { connection ->
         // Set the statement to remove a player from the session

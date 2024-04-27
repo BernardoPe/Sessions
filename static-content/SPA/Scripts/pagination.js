@@ -2,6 +2,7 @@ import {button, div} from "../WebDSL/web_dsl.js";
 
 import {API_URL, GAMES_URL, SESSIONS_URL} from "../../index.js";
 import {RESULTS_PER_PAGE} from "../handlers.js";
+
 function handleGamePagination(queries, page, total) {
 	return handlePagination(API_URL + GAMES_URL + `?${queries}`, page, (page) => {
 		if (queries.toString().length > 0) {

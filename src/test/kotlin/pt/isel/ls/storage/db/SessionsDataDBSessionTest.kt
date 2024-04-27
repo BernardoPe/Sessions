@@ -1,4 +1,3 @@
-
 import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -305,7 +304,8 @@ class SessionsDataDBSessionTest {
         val sid1 = sessionDB.create(session1)
         val sid2 = sessionDB.create(session2)
         // Act
-        val retrievedSessions = sessionDB.getSessionsSearch(game1.id, session1.date, null, null, limit = 10u, skip = 0u).first
+        val retrievedSessions =
+            sessionDB.getSessionsSearch(game1.id, session1.date, null, null, limit = 10u, skip = 0u).first
         // Assert
         assertEquals(listOf(session1.copy(id = sid1)), retrievedSessions)
         // Clean up
