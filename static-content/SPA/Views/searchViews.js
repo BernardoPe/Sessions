@@ -16,6 +16,7 @@ function gameSearchView() {
 				"developer",
 				"text",
 				"Developer name",
+				"",
 			),
 			errorMessage("err_message-developer", "Developer name must be at least 3 characters long"),
 			formInputWithSearchResults(
@@ -23,6 +24,7 @@ function gameSearchView() {
 				"games",
 				"text",
 				"Game name",
+				"",
 			),
 			genresInput(),
 			errorMessage("err_message-game", "Game name must be at least 3 characters long"),
@@ -39,6 +41,7 @@ function sessionSearchView() {
 				"games",
 				"text",
 				"Game name",
+				"",
 			),
 			errorMessage("err_message-game", "Game name must be at least 3 characters long"),
 			formInputWithSearchResults(
@@ -46,6 +49,7 @@ function sessionSearchView() {
 				"players",
 				"text",
 				"Player name",
+				"",
 			),
 			errorMessage("err_message-player", "Player name must be at least 3 characters long"),
 			sessionStateInput(),

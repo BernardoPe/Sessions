@@ -1,19 +1,19 @@
 import {a, br, div, fieldset, h1, input, label, legend, p, ul} from "../WebDSL/web_dsl.js";
 import {GAMES_URL, PLAYERS_URL, SESSIONS_URL} from "../../index.js";
-import {handleSearch, showSearchResults, resultsKeyHandler, hideSearchResults} from "../Scripts/searchHandling.js";
+import {handleSearch, hideSearchResults, resultsKeyHandler, showSearchResults} from "../Scripts/searchHandling.js";
 
 window.handleSearch = handleSearch;
 window.showSearchResults = showSearchResults;
 window.resultsKeyPressHandler = resultsKeyHandler;
 window.hideSearchResults = hideSearchResults;
 
-function formInputField(id, name, type, title) {
+function formInputField(id, name, type, title, placeholder) {
     return div({class: "form__input"},
         input({
             id: id,
             class: "form__field",
             type: type,
-            placeholder: "",
+            placeholder: placeholder,
             name: name,
             autocomplete: "off"
         }),
@@ -60,13 +60,13 @@ function sessionDetails(session) {
     )
 }
 
-function formInputWithSearchResults(id, searchType, fieldType, title) {
+function formInputWithSearchResults(id, searchType, fieldType, title, placeholder) {
     return div({class: "form__input"},
         input({
             id: id,
             class: "form__field",
             type: fieldType,
-            placeholder: "",
+            placeholder: placeholder,
             name: searchType,
             autocomplete: "off",
             oninput: "handleSearch(event, id, name)",
