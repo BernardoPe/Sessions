@@ -15,7 +15,7 @@ function gameCreateView() {
             errorMessage("err_message-game", "Game name must be at least 3 characters long"),
 
             formInputField(
-                "developer",
+                "developer_name",
                 "developer",
                 "text",
                 "Developer name",
@@ -25,6 +25,7 @@ function gameCreateView() {
             errorMessage("err_message-developer", "Developer name must be at least 3 characters long"),
 
             genresInput(),
+            errorMessage("err_message-genres", "Select at least one genre"),
             button({type: "submit"}, "Create Game"),
         ),
     );

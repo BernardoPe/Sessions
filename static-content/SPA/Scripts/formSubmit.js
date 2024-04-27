@@ -43,7 +43,7 @@ async function submitFormSessionSearch(event) {
 	const playerName = document.getElementById('player').value;
 	const stateElement = document.querySelector('input[name="state"]:checked');
 	const state = stateElement ? stateElement.value : null;
-	const date = document.getElementById('date').value.replace(':', '_');
+	const date = document.getElementById('date').value.replace(':', '_'); // replace ':' with '_' to avoid issues with URL query separator
 
 	let queries = '';
 
@@ -92,6 +92,60 @@ async function submitFormSessionSearch(event) {
 		window.location.href = `#sessions`;
 }
 
+function submitFormCreateGame(event) {
+	event.preventDefault();
+	const name = document.getElementById('game_name').value;
+	const developer = document.getElementById('developer_name').value;
+	const checkedCheckboxes = document.querySelectorAll('input[name="genre"]:checked');
+	const genres = Array.from(checkedCheckboxes).map(checkbox => checkbox.value);
+	const nameErr = document.getElementById('err_message-game');
+	const developerErr = document.getElementById('err_message-developer');
+	const genreErr = document.getElementById('err_message-genres');
+
+	nameErr.style.display = 'none';
+	developerErr.style.display = 'none';
+	genreErr.style.display = 'none';
+
+	if (name.length < 3) {
+		nameErr.style.display = 'block';
+		nameErr.innerHTML = 'Name must be at least 3 characters long';
+		return;
+	}
+
+	if (developer.length < 3) {
+		developerErr.style.display = 'block';
+		developerErr.innerHTML = 'Name must be at least 3 characters long';
+		return;
+	}
+
+	if (genres.length === 0) {
+		genreErr.style.display = 'block';
+		genreErr.innerHTML = 'At least one genre must be selected';
+		return;
+	}
+
+
+	fetch(API_URL + `games`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({name, developer, genres})
+	})
+		.then(res => res.status === 201 ? res.json() : Promise.reject(res))
+		.then(data => {
+			const gid = data.gid;
+			window.location.href = `#games/${gid}`;
+		}).catch(err => {
+		nameErr.innerHTML = err.errorCause
+		nameErr.style.display = 'block';
+	})
+}
+
+function submitFormCreateSession(event) {
+	// TODO: implement
+}
+
 function handleNameInput(name, type) {
 	const err = document.getElementById('err_message-' + type)
 	if (name.length < 3) {
@@ -132,12 +186,6 @@ function getUniquePlayerId(playerName) {
 }
 
 
-function submitFormCreateGame(event) {
-	// TODO: implement
-}
 
-function submitFormCreateSession(event) {
-	// TODO: implement
-}
 
 export {submitFormGameSearch, submitFormSessionSearch, submitFormCreateGame, submitFormCreateSession};
