@@ -8,9 +8,7 @@ function gameCreateView() {
                 "game_name",
                 "game_name",
                 "text",
-                "Game name",
-                "Enter the name of the game",
-                true,
+                "Game name"
             ),
             errorMessage("err_message-game", "Game name must be at least 3 characters long"),
 
@@ -18,9 +16,7 @@ function gameCreateView() {
                 "developer_name",
                 "developer",
                 "text",
-                "Developer name",
-                "Enter the name of the developer",
-                true,
+                "Developer name"
             ),
             errorMessage("err_message-developer", "Developer name must be at least 3 characters long"),
 
@@ -38,9 +34,7 @@ function sessionCreateView() {
                 "game_name",
                 "game_name",
                 "text",
-                "Game name",
-                "Enter the name of the game",
-                true,
+                "Game name"
             ),
             errorMessage("err_message-game", "Game name must be at least 3 characters long"),
 
@@ -48,9 +42,7 @@ function sessionCreateView() {
                 "capacity",
                 "capacity",
                 "number",
-                "Capacity of the session",
-                "Enter the capacity of the session",
-                true,
+                "Capacity of the session"
             ),
             errorMessage("err_message-game", "Game name must be at least 3 characters long"),
 

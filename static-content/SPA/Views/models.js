@@ -7,17 +7,17 @@ window.showSearchResults = showSearchResults;
 window.resultsKeyPressHandler = resultsKeyHandler;
 window.hideSearchResults = hideSearchResults;
 
-function formInputField(id, name, type, title, placeholder, isRequired) {
+function formInputField(id, name, type, title) {
     return div({class: "form__input"},
         input({
             id: id,
             class: "form__field",
             type: type,
-            placeholder: placeholder,
+            placeholder: "",
             name: name,
             autocomplete: "off"
         }),
-        label("developer", {class: "form__label", required: isRequired}, title),
+        label("developer", {class: "form__label"}, title),
     )
 }
 
@@ -60,13 +60,13 @@ function sessionDetails(session) {
     )
 }
 
-function formInputWithSearchResults(id, searchType, fieldType, title, placeholder, isRequired) {
+function formInputWithSearchResults(id, searchType, fieldType, title) {
     return div({class: "form__input"},
         input({
             id: id,
             class: "form__field",
             type: fieldType,
-            placeholder: placeholder,
+            placeholder: "",
             name: searchType,
             autocomplete: "off",
             oninput: "handleSearch(event, id, name)",
@@ -76,7 +76,7 @@ function formInputWithSearchResults(id, searchType, fieldType, title, placeholde
             onblur: "setTimeout(() => hideSearchResults(id), 100)", // delay to allow click on search result
             onkeydown: "resultsKeyPressHandler(event, id)",
         }),
-        label("name", {class: "form__label", required: isRequired}, title),
+        label("name", {class: "form__label"}, title),
         ul({class: "search_results", id: "search_results_" + id}, div({class: "search-results"})),
     )
 }

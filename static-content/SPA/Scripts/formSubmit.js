@@ -106,13 +106,25 @@ function submitFormCreateGame(event) {
 	developerErr.style.display = 'none';
 	genreErr.style.display = 'none';
 
-	if (name.length < 3) {
+	if (name === '') {
+		nameErr.style.display = 'block';
+		nameErr.innerHTML = 'Please enter a name for a game';
+		return;
+	}
+
+	if (name.length < 3 && name.length > 0) {
 		nameErr.style.display = 'block';
 		nameErr.innerHTML = 'Name must be at least 3 characters long';
 		return;
 	}
 
-	if (developer.length < 3) {
+	if (developer === '') {
+		developerErr.style.display = 'block';
+		developerErr.innerHTML = 'Please enter a name for a developer';
+		return;
+	}
+
+	if (developer.length < 3 && developer.length > 0) {
 		developerErr.style.display = 'block';
 		developerErr.innerHTML = 'Name must be at least 3 characters long';
 		return;
@@ -123,7 +135,6 @@ function submitFormCreateGame(event) {
 		genreErr.innerHTML = 'At least one genre must be selected';
 		return;
 	}
-
 
 	fetch(API_URL + `games`, {
 		method: 'POST',
