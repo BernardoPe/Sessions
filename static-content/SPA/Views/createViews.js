@@ -1,42 +1,30 @@
-import {br, button, div, fieldset, form, input, label, legend} from "../WebDSL/web_dsl.js";
+import {button, div, form} from "../WebDSL/web_dsl.js";
+import {dateTimeInput, errorMessage, formInputField, genresInput} from "./models.js";
 
 function gameCreateView() {
     return div({class: "form__group"},
         form({id: "gameCreationForm", method: "POST"},
-
-            div({class: "form__input"},
-                input({id: "game_name", class: "form__field", type: "text", placeholder: "Enter the name of the game"}),
-                label("game_name", {class: "form__label", required: true}, "Game name"),
+            formInputField(
+                "game_name",
+                "game_name",
+                "text",
+                "Game name",
+                "Enter the name of the game",
+                true,
             ),
+            errorMessage("err_message-game", "Game name must be at least 3 characters long"),
 
-            div({class: "form__input"},
-                input({
-                    id: "developer_name",
-                    class: "form__field",
-                    type: "text",
-                    placeholder: "Enter the name of the developer"
-                }),
-                label("developer_name", {class: "form__label", required: true}, "Developer name"),
+            formInputField(
+                "developer",
+                "developer",
+                "text",
+                "Developer name",
+                "Enter the name of the developer",
+                true,
             ),
+            errorMessage("err_message-developer", "Developer name must be at least 3 characters long"),
 
-            fieldset(null,
-                legend(null, "Select Genres:"),
-                input({id: "RPG", type: "checkbox", name: "genre", value: "RPG"}),
-                label("RPG", null, "RPG"),
-                br(null),
-                input({id: "Adventure", type: "checkbox", name: "genre", value: "Adventure"}),
-                label("Adventure", null, "Adventure"),
-                br(null),
-                input({id: "Shooter", type: "checkbox", name: "genre", value: "Shooter"}),
-                label("Shooter", null, "Shooter"),
-                br(null),
-                input({id: "TurnBased", type: "checkbox", name: "genre", value: "Turn-Based"}),
-                label("TurnBased", null, "TurnBased"),
-                br(null),
-                input({id: "Action", type: "checkbox", name: "genre", value: "Action"}),
-                label("Action", null, "Action"),
-                br(null),
-            ),
+            genresInput(),
             button({type: "submit"}, "Create Game"),
         ),
     );
@@ -45,32 +33,28 @@ function gameCreateView() {
 function sessionCreateView() {
     return div(
         form({id: "sessionCreationForm", method: "POST"},
-            div({class: "form__input"},
-                input({
-                    id: "capacity",
-                    class: "form__field",
-                    type: "number",
-                    placeholder: "Enter the capacity of the session"
-                }),
-                label("capacity", {class: "form__label", required: true}, "Capacity of the session"),
+            formInputField(
+                "game_name",
+                "game_name",
+                "text",
+                "Game name",
+                "Enter the name of the game",
+                true,
             ),
+            errorMessage("err_message-game", "Game name must be at least 3 characters long"),
 
-            div({class: "form__input"},
-                input({
-                    id: "date",
-                    type: "datetime-local",
-                    class: "form__field datepicker",
-                    placeholder: "yyyy-mm-dd",
-                    name: "date",
-                    value: ""
-                }),
-                label("date", {class: "form__label"}, "Date"),
+            formInputField(
+                "capacity",
+                "capacity",
+                "number",
+                "Capacity of the session",
+                "Enter the capacity of the session",
+                true,
             ),
+            errorMessage("err_message-game", "Game name must be at least 3 characters long"),
 
-            div({class: "form__input"},
-                input({id: "game_name", class: "form__field", type: "text", placeholder: "Enter the name of the game"}),
-                label("game_name", {class: "form__label", required: true}, "Game name"),
-            ),
+            dateTimeInput(),
+            errorMessage("error-date", "Invalid date to create a session"),
 
             button({type: "submit"}, "Create Session"),
         ),
