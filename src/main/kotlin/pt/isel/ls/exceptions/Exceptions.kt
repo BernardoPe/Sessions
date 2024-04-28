@@ -14,13 +14,13 @@ open class SessionsExceptions(val status: Int, val description: String, val erro
 
 /**
  * The [BadRequestException] class is an exception that is thrown when the request is invalid.
- * @property cause The cause of the exception
+ * @param cause The cause of the exception
  */
 class BadRequestException(cause: String?) : SessionsExceptions(BAD_REQUEST.code, "Bad Request", cause)
 
 /**
  * The [NotFoundException] class is an exception that is thrown when the resource is not found.
- * @property item The item that was not found
+ * @param item The item that was not found
  */
 class NotFoundException(item: String?) : SessionsExceptions(NOT_FOUND.code, "Not Found", item)
 
@@ -32,8 +32,8 @@ class NotImplementedException : SessionsExceptions(NOT_IMPLEMENTED.code, "Not Im
 
 /**
  * The [InternalServerErrorException] class is an exception that is thrown when the server has an internal error.
+ * @param message The message of the exception
  */
-
 class InternalServerErrorException(message: String?) :
     SessionsExceptions(Status.INTERNAL_SERVER_ERROR.code, "Internal Server Error", message)
 

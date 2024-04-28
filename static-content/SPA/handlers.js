@@ -2,9 +2,14 @@ import {homeView} from './Views/home.js';
 import {gameSearchResultsView, sessionSearchResultsView} from "./Views/resultsViews.js";
 import {gameDetailsView, playerDetailsView, sessionDetailsView} from "./Views/detailsViews.js";
 import {gameSearchView, sessionSearchView} from "./Views/searchViews.js";
-import {gameCreateView} from "./Views/createViews.js";
+import {gameCreateView, sessionCreateView} from "./Views/createViews.js";
 import {handleGamePagination, handleSessionPagination} from "./Scripts/pagination.js";
-import {submitFormCreateGame, submitFormGameSearch, submitFormSessionSearch} from "./Scripts/formSubmit.js";
+import {
+    submitFormCreateGame,
+    submitFormCreateSession,
+    submitFormGameSearch,
+    submitFormSessionSearch
+} from "./Scripts/formSubmit.js";
 import {genericErrorView, notFoundView} from "./Views/errorViews.js";
 import {loginView, registerView} from "./Views/authViews.js";
 import {authLogin, authLogout, authRegister, getPlayerData} from "./Scripts/AuthHandling.js";
@@ -127,6 +132,11 @@ function createGame(mainContent, req) {
     document.getElementById('gameCreationForm').addEventListener('submit', submitFormCreateGame)
 }
 
+function createSession(mainContent, req) {
+    mainContent.replaceChildren(sessionCreateView());
+    document.getElementById('sessionCreationForm').addEventListener('submit', submitFormCreateSession)
+}
+
 function fetchWithHandling(url, mainContent, onSuccess) {
     fetch(url)
         .then(res => {
@@ -165,6 +175,7 @@ export default {
     getSessionDetails,
     getPlayerDetails,
     createGame,
+    createSession,
     RESULTS_PER_PAGE
 }
 

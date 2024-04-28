@@ -1,4 +1,4 @@
-package pt.isel.ls.dto
+package pt.isel.ls.data.dto
 
 import kotlinx.serialization.Serializable
 
@@ -52,6 +52,8 @@ data class GameInfoOutputModel(
 /**
  * The [GameSearchResultOutputModel] class is used to represent the response body of the game search result
  *
+ * @param games The list of games
+ * @param total The total number of games
  */
 @Serializable
 data class GameSearchResultOutputModel(

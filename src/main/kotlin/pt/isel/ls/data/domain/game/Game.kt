@@ -8,9 +8,12 @@ import pt.isel.ls.data.domain.primitives.Name
  *
  *  The [Game] Data Class is the representation of a Game in the system.
  *
- *  @param id The game identifier
- *  @param developer The game developer
- *  @param genres The game list of genres
+ *  @param id The game identifier (unique [UInt] number)
+ *  @param name The game name ([Name] object)
+ *  @param developer The game developer ([Name] object)
+ *  @param genres The game genres ([Set] of [Genre] objects)
+ *
+ *  @throws IllegalArgumentException If the game has no genres
  */
 data class Game(
     val id: UInt,

@@ -49,6 +49,13 @@ open class DBManager(
     }
 
 
+    /**
+     * Gets a new connection to the database
+     *
+     * It uses the [PGSimpleDataSource] to create a new connection to the database
+     *
+     * @return The new connection
+     */
     private fun getNewConnection(): Connection {
         val newSource = PGSimpleDataSource()
         newSource.setUrl(dbUrl)
@@ -56,6 +63,13 @@ open class DBManager(
     }
 
 
+    /**
+     * Gets the connection for the current thread
+     *
+     * If the connection is closed, it will create a new connection
+     *
+     * @return The connection for the current thread
+     */
     private fun getConnection(): Connection {
         val connection = connections.getOrPut(Thread.currentThread().id) { getNewConnection() }
         if (connection.isClosed) {
@@ -63,7 +77,9 @@ open class DBManager(
         }
         return connections[Thread.currentThread().id]!!
     }
+
     companion object {
+        // Map that stores the connections for each thread
         private val connections = mutableMapOf<Long, Connection>()
     }
 
