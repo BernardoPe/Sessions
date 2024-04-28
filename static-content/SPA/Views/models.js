@@ -1,6 +1,6 @@
-import {a, br, div, fieldset, h1, input, label, legend, p, ul} from "../WebDSL/web_dsl.js";
-import {GAMES_URL, PLAYERS_URL, SESSIONS_URL} from "../../index.js";
-import { handleSearch, showSearchResults, resultsKeyHandler, hideSearchResults} from "../Scripts/searchHandling.js";
+import {a, br, button, div, fieldset, h1, input, label, legend, p, ul} from "../WebDSL/web_dsl.js";
+import {API_URL, GAMES_URL, PLAYERS_URL, SESSIONS_URL} from "../../index.js";
+import {handleSearch, hideSearchResults, resultsKeyHandler, showSearchResults} from "../Scripts/searchHandling.js";
 
 window.handleSearch = handleSearch;
 window.showSearchResults = showSearchResults;
@@ -42,20 +42,107 @@ function playerDetails(player) {
 	)
 }
 
+function removePlayerFromSession(sid, pid) {
+	const confirmRemove = confirm("Are you sure you want to remove this player from the session?");
+	if (!confirmRemove) {
+		return;
+	}
+	const errMessage = document.getElementById("err_message-remove_player");
+
+	errMessage.style.display = 'none';
+
+	fetch(API_URL + SESSIONS_URL + `/${sid}/players/${pid}`, {
+		method: "DELETE",
+		headers: {
+			"Content-Type": "application/json"
+		}
+	})
+		.then(res => {
+			res.json()
+				.then(data => {
+					if (res.ok) {
+						location.reload();
+						console.log(data);
+						window.location.href = `#sessions/${sid}`;
+					} else {
+						return Promise.reject(res)
+					}
+				})
+				.catch(error => {
+					errMessage.innerHTML = error.errorCause
+					errMessage.style.display = "block"
+				});
+		});
+}
+
+function deleteSession(sid) {
+	const confirmDelete = confirm("Are you sure you want to delete this session?");
+	if (!confirmDelete) {
+		return;
+	}
+	// const errMessage = document.getElementById("err_message-delete_session");
+	//
+	// errMessage.style.display = 'none';
+
+	fetch(API_URL + SESSIONS_URL + `/${sid}`, {
+		method: "DELETE",
+		headers: {
+			"Content-Type": "application/json"
+		}
+	})
+		.then(res => {
+			res.json()
+				.then(data => {
+					if (res.ok) {
+						location.reload();
+						console.log(data);
+						window.location.href = `#home`;
+					} else {
+						return Promise.reject(res)
+					}
+				})
+			// .catch(error => {
+			// 	console.log(error) // this may not work
+			// 	errMessage.innerHTML = error.errorCause
+			// 	errMessage.style.display = "block"
+			// });
+		});
+}
+
 function sessionDetails(session) {
 	return div({class:"session-container"},
 		p({class:"session__game"},
 			a(`#` + `${GAMES_URL}/` + `${session.gameSession.gid}`, null, session.gameSession.name)
 		),
 		p({class:"session__date"}, session.date),
+
 		fieldset({class:"session__players"},
 			legend(null, "Players " + session.playersSession.length + "/" + session.capacity),
 			...session.playersSession.map(
 				player =>
 					div({class:"session__player"},
-						a(`#` + `${PLAYERS_URL}/` + `${player.pid}`, null, player.name)
+						a(`#` + `${PLAYERS_URL}/` + `${player.pid}`, null, player.name),
+						button({
+							class: "session__player__remove",
+							id: "remove_player",
+							type: "button",
+							onclick: `removePlayerFromSession(${session.sid}, ${player.pid})`
+						}, "Remove Player"),
+						errorMessage("err_message-remove_player", "Error removing player from session")
 					)
 			)
+		),
+		p({class: "session__add__player"} // Must create a css style class for this
+			//TODO: add player to session form
+		),
+		p({class: "session__delete"},
+			button({
+				class: "session__delete__button",
+				id: "delete_session",
+				type: "button",
+				onclick: `deleteSession(${session.sid})`
+			}, "Delete Session"),
+			//errorMessage("err_message-delete_session", "Error deleting session") // maybe this is not needed
 		),
 	)
 }

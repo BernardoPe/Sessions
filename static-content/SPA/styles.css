@@ -503,6 +503,17 @@ body {
                         width: fit-content;
                         text-align: center;
                     }
+
+                    .session__player__remove {
+                        font-size: 1em;
+                        font-weight: bold;
+                        margin-left: 10px;
+                        border-radius: 5px;
+                        background-color: #333333;
+                        width: fit-content;
+                        text-align: center;
+                        cursor: pointer;
+                    }
                 }
 
                 .session__identifier {

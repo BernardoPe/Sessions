@@ -221,6 +221,68 @@ async function submitFormCreateSession(event) {
 		})
 }
 
+async function submitFormSessionAddPlayer(event) {
+	event.preventDefault();
+	const playerName = document.getElementById('player_name').value;
+	const sessionName = document.getElementById('session_name').value;
+	const playerNameErr = document.getElementById('err_message-player');
+	const sessionNameErr = document.getElementById('err_message-session');
+
+	playerNameErr.style.display = 'none';
+	sessionNameErr.style.display = 'none';
+
+	if (isTextNotInserted(playerName, 'player', playerNameErr))
+		return;
+
+	if (handleNameInput(playerName, 'player') === undefined)
+		return;
+
+	if (isTextNotInserted(sessionName, 'session', sessionNameErr))
+		return;
+
+	if (handleNameInput(sessionName, 'session') === undefined)
+		return;
+
+	const pid = await getUniquePlayerId(playerName);
+	if (!pid) {
+		const err = document.getElementById('err_message-player');
+		err.style.display = 'block';
+		err.innerHTML = 'No player found with that name';
+		return
+	}
+
+	const sid = await getUniqueSessionId(sessionName);
+	if (!sid) {
+		const err = document.getElementById('err_message-session');
+		err.style.display = 'block';
+		err.innerHTML = 'No session found with that name';
+		return
+	}
+
+	fetch(API_URL + `sessions/${sid}/players`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({pid})
+	})
+		.then(res => res.status === 201 ? res.json() : Promise.reject(res))
+		.then(data => {
+			const sid = data.sid;
+			window.location.href = `#sessions/${sid}`;
+		}).catch(err => {
+		err.json().then(err => {
+			if (err.errorCause.toLowerCase().includes("player")) {
+				playerNameErr.innerHTML = err.errorCause
+				playerNameErr.style.display = "block"
+			} else {
+				sessionNameErr.innerHTML = err.errorCause
+				sessionNameErr.style.display = "block"
+			}
+		})
+	})
+}
+
 function handleNameInput(name, errMessage) {
 	if (name.length < 3) {
 		errMessage.style.display = 'block';
