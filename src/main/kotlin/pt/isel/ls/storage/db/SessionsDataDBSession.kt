@@ -6,7 +6,7 @@ import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
-import pt.isel.ls.data.domain.util.Genre
+import pt.isel.ls.data.domain.primitives.Genre
 import pt.isel.ls.data.mapper.toEmail
 import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.storage.SessionsDataSession
