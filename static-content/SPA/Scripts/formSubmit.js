@@ -1,11 +1,13 @@
 import {API_URL} from "../../index.js";
 
+const SESSION_MAX_CAPACITY = 100;
+
 function submitFormGameSearch(event) {
 	event.preventDefault()
 	const developer = document.getElementById('developer').value;
 	const name = document.getElementById('game').value;
 	const checkedCheckboxes = document.querySelectorAll('input[name="genre"]:checked');
-	const genres = Array.from(checkedCheckboxes).map(checkbox => checkbox.value).join('_');
+	const genres = Array.from(checkedCheckboxes).map(checkbox => checkbox.value).join(',');
 
 	let queries = new URLSearchParams();
 
@@ -30,7 +32,6 @@ function submitFormGameSearch(event) {
 	}
 	else
 		window.location.href = `#games`;
-
 }
 
 async function submitFormSessionSearch(event) {
@@ -103,29 +104,17 @@ function submitFormCreateGame(event) {
 	developerErr.style.display = 'none';
 	genreErr.style.display = 'none';
 
-	if (name === '') {
-		nameErr.style.display = 'block';
-		nameErr.innerHTML = 'Please enter a name for a game';
+	if (isTextNotInserted(name, 'game', nameErr))
 		return;
-	}
 
-	if (name.length < 3 && name.length > 0) {
-		nameErr.style.display = 'block';
-		nameErr.innerHTML = 'Name must be at least 3 characters long';
+	if (handleNameInput(name, 'game') === undefined)
 		return;
-	}
 
-	if (developer === '') {
-		developerErr.style.display = 'block';
-		developerErr.innerHTML = 'Please enter a name for a developer';
+	if (isTextNotInserted(developer, 'developer', developerErr))
 		return;
-	}
 
-	if (developer.length < 3 && developer.length > 0) {
-		developerErr.style.display = 'block';
-		developerErr.innerHTML = 'Name must be at least 3 characters long';
+	if (handleNameInput(developer, 'developer') === undefined)
 		return;
-	}
 
 	if (genres.length === 0) {
 		genreErr.style.display = 'block';
@@ -152,8 +141,81 @@ function submitFormCreateGame(event) {
 	})
 }
 
-function submitFormCreateSession(event) {
-	// TODO: implement
+async function submitFormCreateSession(event) {
+	event.preventDefault();
+	const capacity = document.getElementById('capacity').value;
+	const date = document.getElementById('date').value;
+	const gameName = document.getElementById('game_name').value;
+	const capacityErr = document.getElementById('err_message-capacity');
+	const dateErr = document.getElementById('err_message-date');
+	const gameNameErr = document.getElementById('err_message-game');
+
+	capacityErr.style.display = 'none';
+	dateErr.style.display = 'none';
+	gameNameErr.style.display = 'none';
+
+	if (capacity < 1) {
+		capacityErr.style.display = 'block';
+		capacityErr.innerHTML = 'Capacity of the session must be at least 1';
+		return;
+	}
+
+	if (capacity > SESSION_MAX_CAPACITY) {
+		capacityErr.style.display = 'block';
+		capacityErr.innerHTML = 'Capacity of the session must be at most ' + SESSION_MAX_CAPACITY;
+		return;
+	}
+
+	if (date === '') {
+		dateErr.style.display = 'block';
+		dateErr.innerHTML = 'Please enter a date for the session';
+		return;
+	}
+
+	const dateDOMToDate = new Date(date);
+
+	if (dateDOMToDate < new Date()) {
+		dateErr.style.display = 'block';
+		dateErr.innerHTML = 'Date of the session must be in the future';
+		return;
+	}
+
+	if (isTextNotInserted(gameName, 'game', gameNameErr))
+		return;
+
+	if (handleNameInput(gameName, 'game') === undefined)
+		return;
+
+	const gid = await getUniqueGameId(gameName);
+	if (!gid) {
+		const err = document.getElementById('err_message-game');
+		err.style.display = 'block';
+		err.innerHTML = 'No game found with that name';
+		return
+	}
+
+	fetch(API_URL + `sessions`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({capacity, date, gid})
+	})
+		.then(res => res.status === 201 ? res.json() : Promise.reject(res))
+		.then(data => {
+			const sid = data.sid;
+			window.location.href = `#sessions/${sid}`;
+		}).catch(err => {
+		err.json().then(err => {
+			if (err.errorCause.toLowerCase().includes("date")) {
+				dateErr.innerHTML = err.errorCause
+				dateErr.style.display = "block"
+			} else {
+				gameNameErr.innerHTML = err.errorCause
+				gameNameErr.style.display = "block"
+			}
+		})
+	})
 }
 
 function handleNameInput(name, type) {
@@ -166,6 +228,14 @@ function handleNameInput(name, type) {
 		err.style.display = 'none';
 		return name;
 	}
+}
+
+function isTextNotInserted(name, type, err) {
+	if (name === '') {
+		err.style.display = 'block';
+		err.innerHTML = 'Please enter a name for a ' + type;
+		return true;
+	} else return false;
 }
 
 function getUniqueGameId(gameName) {

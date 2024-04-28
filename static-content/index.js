@@ -40,6 +40,8 @@ function loadHandler(){
     router.addRouteHandler(SESSIONS_URL, handlers.getSessionSearchResults)
     // page with game creation form
     router.addRouteHandler(GAME_CREATION_URL, handlers.createGame)
+    // page with session creation form
+    router.addRouteHandler(SESSION_CREATION_URL, handlers.createSession)
     // page with game details
     router.addRouteHandler(GAME_DETAILS_URL, handlers.getGameDetails)
     // page with session details
@@ -84,5 +86,6 @@ export {
     LOGIN_URL,
     REGISTER_URL,
     LOGOUT_URL,
-    GAME_CREATION_URL
+    GAME_CREATION_URL,
+    SESSION_CREATION_URL
 }
