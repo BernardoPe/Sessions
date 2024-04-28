@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import pt.isel.ls.data.domain.player.Player
-import pt.isel.ls.data.domain.util.Email
-import pt.isel.ls.data.domain.util.Name
+import pt.isel.ls.data.domain.primitives.Email
+import pt.isel.ls.data.domain.primitives.Name
 import java.util.*
 
 class SessionsDataDBPlayerTest {
