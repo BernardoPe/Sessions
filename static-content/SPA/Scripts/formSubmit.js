@@ -7,7 +7,7 @@ function submitFormGameSearch(event) {
 	const developer = document.getElementById('developer').value;
 	const name = document.getElementById('game').value;
 	const checkedCheckboxes = document.querySelectorAll('input[name="genre"]:checked');
-	const genres = Array.from(checkedCheckboxes).map(checkbox => checkbox.value).join('_');
+	const genres = Array.from(checkedCheckboxes).map(checkbox => checkbox.value).join(',');
 
 	let queries = new URLSearchParams();
 
