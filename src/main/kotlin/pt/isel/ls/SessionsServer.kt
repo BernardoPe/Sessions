@@ -102,6 +102,11 @@ fun main() {
 
     val databaseURL = System.getenv("JDBC_PRODUCTION_DATABASE_URL")
 
+    if (databaseURL == null) {
+        logger.error("Database URL not found")
+        return
+    }
+
     val gameStorage = SessionsDataDBGame(databaseURL)
     val playerStorage = SessionsDataDBPlayer(databaseURL)
     val sessionStorage = SessionsDataDBSession(databaseURL)
