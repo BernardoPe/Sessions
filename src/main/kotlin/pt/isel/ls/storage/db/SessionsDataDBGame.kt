@@ -53,19 +53,19 @@ class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
             var firstCondition = true
 
             if (genres != null) {
-                searchQuery += "WHERE genres @> ?"
+                searchQuery += "WHERE genres @> ? "
                 params.add(connection.createArrayOf("VARCHAR", genres.map { it.toString() }.toTypedArray()))
                 firstCondition = false
             }
 
             if (developer != null) {
-                searchQuery += if (firstCondition) "WHERE developer = ?" else "AND developer = ?"
+                searchQuery += if (firstCondition) "WHERE developer = ? " else "AND developer = ? "
                 params.add(developer.toString())
                 firstCondition = false
             }
 
             if (name != null) {
-                searchQuery += if (firstCondition) "WHERE lower(name) LIKE ?" else "AND lower(name) LIKE ?"
+                searchQuery += if (firstCondition) "WHERE lower(name) LIKE ? " else "AND lower(name) LIKE ? "
                 params.add("${name.name.lowercase()}%")
             }
 
