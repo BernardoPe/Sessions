@@ -10,7 +10,7 @@ import {
 
 function gameSearchView() {
 	return div({class: "form__group"},
-		form({id: "gameSearchForm", method: "GET"},
+		form({onsubmit: "submitFormGameSearch(event)"},
 			formInputField(
 				"developer",
 				"developer",
@@ -33,7 +33,7 @@ function gameSearchView() {
 
 function sessionSearchView() {
 	return div({class: "form__group"},
-		form({id: "sessionSearchForm", method: "GET"},
+		form({onsubmit: "submitFormSessionSearch(event)"},
 			formInputWithSearchResults(
 				"game",
 				"games",

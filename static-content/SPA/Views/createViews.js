@@ -3,7 +3,7 @@ import {dateTimeInput, errorMessage, formInputField, formInputWithSearchResults,
 
 function gameCreateView() {
     return div({class: "form__group"},
-        form({id: "gameCreationForm", method: "POST"},
+        form({onsubmit: "submitFormCreateGame(event)"},
             formInputField(
                 "game_name",
                 "game_name",
@@ -29,7 +29,7 @@ function gameCreateView() {
 
 function sessionCreateView() {
     return div({class: "form__group"},
-        form({id: "sessionCreationForm", method: "POST"},
+        form({onsubmit: "submitFormCreateSession(event)"},
             formInputField(
                 "capacity",
                 "capacity",

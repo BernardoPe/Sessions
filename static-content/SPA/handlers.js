@@ -24,7 +24,6 @@ function getHome(mainContent, req) {
 
 function login(mainContent, req) {
     mainContent.replaceChildren(loginView());
-    document.getElementById('loginForm').addEventListener('submit', authLogin)
 }
 
 function logout(mainContent, req) {
@@ -33,12 +32,10 @@ function logout(mainContent, req) {
 
 function register(mainContent, req) {
     mainContent.replaceChildren(registerView());
-    document.getElementById('registerForm').addEventListener('submit', authRegister)
 }
 
 function getGameSearch(mainContent, req) {
     mainContent.replaceChildren(gameSearchView());
-    document.getElementById('gameSearchForm').addEventListener('submit', submitFormGameSearch);
 }
 
 function getGameSearchResults(mainContent, req) {
@@ -76,7 +73,6 @@ function buildPaginationQuery(queries, page) {
 
 function getSessionSearch(mainContent, req) {
     mainContent.replaceChildren(sessionSearchView());
-    document.getElementById('sessionSearchForm').addEventListener('submit', submitFormSessionSearch);
 }
 
 function getSessionSearchResults(mainContent, req) {
@@ -130,13 +126,11 @@ function getPlayerDetails(mainContent, req) {
 function createGame(mainContent, req) {
     if (!getPlayerData()) return window.location.replace('#login')
     mainContent.replaceChildren(gameCreateView());
-    document.getElementById('gameCreationForm').addEventListener('submit', submitFormCreateGame)
 }
 
 function createSession(mainContent, req) {
     if (!getPlayerData()) return window.location.replace('#login')
     mainContent.replaceChildren(sessionCreateView());
-    document.getElementById('sessionCreationForm').addEventListener('submit', submitFormCreateSession)
 }
 
 function fetchWithHandling(url, mainContent, onSuccess) {
@@ -160,8 +154,6 @@ function handleErrors(res, mainContent) {
         const errView = genericErrorView();
         mainContent.replaceChildren(errView)
     }
-    document.querySelector('button')
-        .addEventListener('click', () => window.history.back())
 }
 
 export default {

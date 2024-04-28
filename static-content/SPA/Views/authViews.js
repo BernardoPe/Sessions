@@ -4,7 +4,7 @@ import {errorMessage, formInputField} from "./models.js";
 function loginView() {
 	return (
 		div({class: "form__group"},
-			form({id: "loginForm", method: "POST"},
+			form({onsubmit: "authLogin(event)"},
                 formInputField(
                     "token",
                     "Token",
@@ -22,7 +22,7 @@ function registerView() {
 	return (
 		div(null,
 			div({class: "form__group", id: "registerForm"},
-				form({id: "registerForm", method: "POST"},
+				form({onsubmit: "authRegister(event)"},
                     formInputField(
                         "username",
                         "Username",
