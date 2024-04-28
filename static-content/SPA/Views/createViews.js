@@ -28,8 +28,19 @@ function gameCreateView() {
 }
 
 function sessionCreateView() {
-    return div(
+    return div({class: "form__group"},
         form({id: "sessionCreationForm", method: "POST"},
+            formInputField(
+                "capacity",
+                "capacity",
+                "number",
+                "Capacity of the session"
+            ),
+            errorMessage("err_message-capacity", "Capacity must be a number"),
+
+            dateTimeInput(),
+            errorMessage("err_message-date", "Invalid date to create a session"),
+
             formInputField(
                 "game_name",
                 "game_name",
@@ -37,17 +48,6 @@ function sessionCreateView() {
                 "Game name"
             ),
             errorMessage("err_message-game", "Game name must be at least 3 characters long"),
-
-            formInputField(
-                "capacity",
-                "capacity",
-                "number",
-                "Capacity of the session"
-            ),
-            errorMessage("err_message-game", "Game name must be at least 3 characters long"),
-
-            dateTimeInput(),
-            errorMessage("error-date", "Invalid date to create a session"),
 
             button({type: "submit"}, "Create Session"),
         ),
