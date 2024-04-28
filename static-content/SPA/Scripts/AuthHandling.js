@@ -1,5 +1,8 @@
 let user = null
 
+window.authRegister = authRegister
+window.authLogin = authLogin
+
 function authRegister(event) {
 
 	event.preventDefault()

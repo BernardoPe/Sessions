@@ -2,6 +2,11 @@ import {API_URL} from "../../index.js";
 
 const SESSION_MAX_CAPACITY = 100;
 
+window.submitFormGameSearch = submitFormGameSearch;
+window.submitFormSessionSearch = submitFormSessionSearch;
+window.submitFormCreateGame = submitFormCreateGame;
+window.submitFormCreateSession = submitFormCreateSession;
+
 function submitFormGameSearch(event) {
 	event.preventDefault()
 	const developer = document.getElementById('developer').value;

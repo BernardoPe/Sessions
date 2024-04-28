@@ -36,7 +36,10 @@ function showSearchResults(id) {
 }
 
 function hideSearchResults(id) {
-    document.getElementById(`search_results_${id}`).style.display = 'none';
+    const searchResults = document.getElementById(`search_results_${id}`);
+    if (searchResults) {
+        searchResults.style.display = 'none';
+    }
 }
 
 function resultsKeyHandler(event, id) {
