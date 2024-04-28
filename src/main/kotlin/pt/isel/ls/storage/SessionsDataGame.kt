@@ -1,8 +1,8 @@
 package pt.isel.ls.storage
 
 import pt.isel.ls.data.domain.game.Game
-import pt.isel.ls.data.domain.util.Genre
-import pt.isel.ls.data.domain.util.Name
+import pt.isel.ls.data.domain.primitives.Genre
+import pt.isel.ls.data.domain.primitives.Name
 import pt.isel.ls.storage.mem.SessionsDataMemGame
 
 /**

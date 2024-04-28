@@ -1,8 +1,8 @@
 package pt.isel.ls.services
 
 import pt.isel.ls.data.domain.game.Game
-import pt.isel.ls.data.domain.util.Genre
-import pt.isel.ls.data.domain.util.Name
+import pt.isel.ls.data.domain.primitives.Genre
+import pt.isel.ls.data.domain.primitives.Name
 import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.storage.SessionsDataManager

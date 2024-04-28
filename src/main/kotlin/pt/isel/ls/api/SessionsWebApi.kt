@@ -16,10 +16,10 @@ import org.http4k.core.cookie.Cookie
 import org.http4k.core.cookie.SameSite
 import org.http4k.core.cookie.cookie
 import org.http4k.routing.path
+import pt.isel.ls.data.domain.primitives.Email
+import pt.isel.ls.data.domain.primitives.Genre
+import pt.isel.ls.data.domain.primitives.Name
 import pt.isel.ls.data.domain.session.toState
-import pt.isel.ls.data.domain.util.Email
-import pt.isel.ls.data.domain.util.Genre
-import pt.isel.ls.data.domain.util.Name
 import pt.isel.ls.data.mapper.toGameCreationDTO
 import pt.isel.ls.data.mapper.toGameInfoDTO
 import pt.isel.ls.data.mapper.toGameSearchDTO
@@ -187,9 +187,12 @@ class SessionsApi(
     fun getGameList(request: Request) = processRequest(request) {
         val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip") ?: 0u)
 
-        val genres = request.query("genres")?.replace('_', ',')?.split(',')
-        val developer = request.query("developer")
-        val name = request.query("name")
+        val genres = request.query("genres")?.replace("%2C", ",")
+                                                  ?.split(',')
+                                                  ?.map { it.trim() }
+
+        val developer = request.query("developer")?.replace('+', ' ')
+        val name = request.query("name")?.replace('+', ' ')
 
         val res = gameServices.searchGames(
             genres?.map { Genre(it) }?.toSet(),
@@ -327,7 +330,7 @@ class SessionsApi(
     fun getPlayerList(request: Request) = processRequest(request) {
         val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip")
             ?: 0u)
-        val name = request.query("name")
+        val name = request.query("name")?.replace('+', ' ')
         val res = playerServices.getPlayerList(
             name?.let { Name(it) },
             limit,
@@ -364,7 +367,7 @@ class SessionsApi(
 
         val res = sessionServices.listSessions(
             request.query("gid")?.toUInt("Game Identifier"),
-            request.query("date")?.replace('_', ':')?.toLocalDateTime(),
+            request.query("date")?.replace("%3A", ":")?.toLocalDateTime(),
             request.query("state")?.toState(),
             request.query("pid")?.toUInt("Player Identifier"),
             limit,
