@@ -1,8 +1,8 @@
 package pt.isel.ls.data.mapper
 
-import pt.isel.ls.data.domain.util.Email
-import pt.isel.ls.data.domain.util.Genre
-import pt.isel.ls.data.domain.util.Name
+import pt.isel.ls.data.domain.primitives.Email
+import pt.isel.ls.data.domain.primitives.Genre
+import pt.isel.ls.data.domain.primitives.Name
 
 fun String.toName(): Name = Name(this)
 

@@ -1,8 +1,8 @@
 package pt.isel.ls.services
 
 import pt.isel.ls.data.domain.player.Player
-import pt.isel.ls.data.domain.util.Email
-import pt.isel.ls.data.domain.util.Name
+import pt.isel.ls.data.domain.primitives.Email
+import pt.isel.ls.data.domain.primitives.Name
 import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.storage.SessionsDataManager

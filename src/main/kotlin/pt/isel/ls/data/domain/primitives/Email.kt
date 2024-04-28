@@ -1,4 +1,4 @@
-package pt.isel.ls.data.domain.util
+package pt.isel.ls.data.domain.primitives
 
 /**
  * Represents an e-mail address

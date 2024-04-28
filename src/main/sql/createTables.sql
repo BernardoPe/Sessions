@@ -8,7 +8,7 @@ CREATE TABLE games (
    name VARCHAR(60) UNIQUE NOT NULL,
    developer VARCHAR(40) NOT NULL,
    genres VARCHAR(40)[] NOT NULL
-   CONSTRAINT valid_genres CHECK (ARRAY['Action', 'Adventure', 'RPG', 'Strategy', 'Turn-Based']::VARCHAR(40)[] @> genres)
+   CONSTRAINT valid_genres CHECK (ARRAY['Action', 'Adventure', 'RPG', 'Turn-Based', 'Shooter']::VARCHAR(40)[] @> genres)
 );
 
 create table players (
