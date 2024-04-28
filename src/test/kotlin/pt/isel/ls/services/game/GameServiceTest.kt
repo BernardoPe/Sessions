@@ -3,7 +3,7 @@ package pt.isel.ls.services.game
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import pt.isel.ls.data.domain.game.Game
-import pt.isel.ls.data.domain.util.Genre
+import pt.isel.ls.data.domain.primitives.Genre
 import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.NotFoundException

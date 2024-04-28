@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import pt.isel.ls.data.domain.game.Game
-import pt.isel.ls.data.domain.util.Genre
-import pt.isel.ls.data.domain.util.Name
+import pt.isel.ls.data.domain.primitives.Genre
+import pt.isel.ls.data.domain.primitives.Name
 
 class SessionsDataDBGameTest {
 
