@@ -1,5 +1,10 @@
 package pt.isel.ls.data.domain.util
 
+/**
+ * Represents an e-mail address
+ *
+ * Used to ensure that the e-mail is in a valid format and follows the proper data integrity rules
+ */
 data class Email(val email: String) {
     init {
         require(email.isNotBlank()) { "Emails must not be blank" }

@@ -1,5 +1,10 @@
 package pt.isel.ls.data.domain.util
 
+/**
+ * Represents a name
+ *
+ * Used to ensure that the name is in a valid format and follows the proper data integrity rules
+ */
 data class Name(val name: String) {
     init {
         require(name.isNotBlank()) { "The name must not be empty" }

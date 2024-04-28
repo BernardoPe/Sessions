@@ -51,8 +51,7 @@ interface SessionsDataSession {
      *  @param limit The maximum number of sessions to be returned
      *  @param skip The number of sessions to be skipped
      *  @return A list with all the sessions in the database that match the given parameters
-     *              and the total number of sessions that match the given parameters
-     *              independently of the limit and skip parameters
+     *              and the total number of sessions that match the given search criteria
      */
     fun getSessionsSearch(gid: UInt?, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): Pair<List<Session>, Int>
 

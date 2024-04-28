@@ -20,13 +20,19 @@ import java.sql.Connection
 
  */
 open class DBManager(
-    private val dbUrl: String
+    private val dbUrl : String
 ) {
-
-    fun execQuery(query: (Connection) -> Any?): Any? {
+    /**
+     * Executes a query on the database
+     * @param query The query to execute
+     * @return The result of the query
+     * @throws InternalServerErrorException If an error occurs while executing the query. Since data integrity restrictions and
+     * business logic are expected to be validated before calling this method, this exception is thrown when an unexpected error occurs.
+     */
+    fun execQuery(query: (Connection) -> Any?) : Any? {
         val connection = getConnection()
         connection.autoCommit = false
-        val ret: Any?
+        val ret : Any?
         try {
             ret = query(connection)
             connection.commit()
@@ -35,7 +41,8 @@ open class DBManager(
             connection.rollback()
             // an error occurred that is not related to the request validation
             throw InternalServerErrorException("There was a server error while processing the request. Please try again.")
-        } finally {
+        }
+        finally {
             connection.autoCommit = true
         }
         return ret
@@ -48,9 +55,7 @@ open class DBManager(
         return newSource.connection
     }
 
-    /**
-     * Current thread DB connection
-     */
+
     private fun getConnection(): Connection {
         val connection = connections.getOrPut(Thread.currentThread().id) { getNewConnection() }
         if (connection.isClosed) {
@@ -64,6 +69,8 @@ open class DBManager(
 
     /**
      * Closes the connection for the thread that calls this method
+     * If the connection is not closed, it will roll back any transaction that is in progress and then close the connection
+     * If the connection is closed, the function will have no effect
      */
     fun closeThreadConnection() {
         connections.remove(Thread.currentThread().id)?.let {
@@ -77,6 +84,11 @@ open class DBManager(
 
     /**
      * Closes all connections currently stored
+     *
+     * If a connection is not closed, it will roll back any transaction that is in progress and then close the connection
+     * If a connection is closed, the function will have no effect
+     *
+     * This method is useful when the application is shutting down
      */
     fun closeAll() {
         connections.values.forEach {
