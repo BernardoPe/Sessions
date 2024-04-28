@@ -15,7 +15,7 @@ import {loginView, registerView} from "./Views/authViews.js";
 import {authLogin, authLogout, authRegister, getPlayerData} from "./Scripts/AuthHandling.js";
 import {API_URL} from "../index.js";
 
-export const RESULTS_PER_PAGE = 5;
+export const RESULTS_PER_PAGE = 10;
 
 function getHome(mainContent, req) {
     const user = getPlayerData()
@@ -85,7 +85,7 @@ function getSessionSearchResults(mainContent, req) {
     req.query.gid ? queries.append('gid', req.query.gid) : null;
     req.query.pid ? queries.append('pid', req.query.pid) : null;
     req.query.state ? queries.append('state', req.query.state) : null;
-    req.query.date ? queries.append('date', req.query.date.replace(':', '_')) : null;
+    req.query.date ? queries.append('date', req.query.date) : null;
     const page = req.query.page ? req.query.page : 1;
     let queryStr = buildPaginationQuery(queries, page)
 
@@ -128,11 +128,13 @@ function getPlayerDetails(mainContent, req) {
 }
 
 function createGame(mainContent, req) {
+    if (!getPlayerData()) return window.location.replace('#login')
     mainContent.replaceChildren(gameCreateView());
     document.getElementById('gameCreationForm').addEventListener('submit', submitFormCreateGame)
 }
 
 function createSession(mainContent, req) {
+    if (!getPlayerData()) return window.location.replace('#login')
     mainContent.replaceChildren(sessionCreateView());
     document.getElementById('sessionCreationForm').addEventListener('submit', submitFormCreateSession)
 }

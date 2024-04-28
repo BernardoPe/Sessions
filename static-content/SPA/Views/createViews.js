@@ -1,5 +1,5 @@
 import {button, div, form} from "../WebDSL/web_dsl.js";
-import {dateTimeInput, errorMessage, formInputField, genresInput} from "./models.js";
+import {dateTimeInput, errorMessage, formInputField, formInputWithSearchResults, genresInput} from "./models.js";
 
 function gameCreateView() {
     return div({class: "form__group"},
@@ -34,16 +34,14 @@ function sessionCreateView() {
                 "capacity",
                 "capacity",
                 "number",
-                "Capacity of the session"
+                "Session capacity"
             ),
             errorMessage("err_message-capacity", "Capacity must be a number"),
-
             dateTimeInput(),
             errorMessage("err_message-date", "Invalid date to create a session"),
-
-            formInputField(
+            formInputWithSearchResults(
                 "game_name",
-                "game_name",
+                "games",
                 "text",
                 "Game name"
             ),

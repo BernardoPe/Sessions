@@ -8,17 +8,18 @@ function submitFormGameSearch(event) {
 	const name = document.getElementById('game').value;
 	const checkedCheckboxes = document.querySelectorAll('input[name="genre"]:checked');
 	const genres = Array.from(checkedCheckboxes).map(checkbox => checkbox.value).join(',');
-
+	const errMessageGame = document.getElementById('err_message-game');
+	const errMessageDeveloper = document.getElementById('err_message-developer');
 	let queries = new URLSearchParams();
 
 	if (name !== '') {
-		if (handleNameInput(name, 'game') === undefined)
+		if (!handleNameInput(name, errMessageGame))
 			return;
 		queries.append('name', name);
 	}
 
 	if (developer !== '') {
-		if (handleNameInput(developer, 'developer') === undefined)
+		if (!handleNameInput(developer, errMessageDeveloper))
 			return;
 		queries.append('developer', developer);
 	}
@@ -32,6 +33,7 @@ function submitFormGameSearch(event) {
 	}
 	else
 		window.location.href = `#games`;
+
 }
 
 async function submitFormSessionSearch(event) {
@@ -41,34 +43,33 @@ async function submitFormSessionSearch(event) {
 	const playerName = document.getElementById('player').value;
 	const stateElement = document.querySelector('input[name="state"]:checked');
 	const state = stateElement ? stateElement.value : null;
-	const date = document.getElementById('date').value.replace(':', '_'); // replace ':' with '_' to avoid issues with URL query separator
-
+	const date = document.getElementById('date').value;
+	const errMessageGame = document.getElementById('err_message-game');
+	const errMessagePlayer = document.getElementById('err_message-player');
 	let queries = new URLSearchParams();
 
 	if (gameName.length > 0) {
-		if (handleNameInput(gameName, 'game') === undefined)
+		if (handleNameInput(gameName, errMessageGame) === undefined)
 			return;
 		const gid = await getUniqueGameId(gameName);
 		if (gid) {
 			queries.append('gid', gid)
 		} else {
-			const err = document.getElementById('err_message-game');
-			err.style.display = 'block';
-			err.innerHTML = 'No game found with that name';
+			errMessageGame.style.display = 'block';
+			errMessageGame.innerHTML = 'No game found with that name';
 			return
 		}
 	}
 
 	if (playerName.length > 0) {
-		if (handleNameInput(playerName, 'player') === undefined)
+		if (handleNameInput(playerName, errMessagePlayer) === undefined)
 			return;
 		const pid = await getUniquePlayerId(playerName);
 		if (pid) {
 			queries.append('pid', pid)
 		} else {
-			const err = document.getElementById('err_message-player');
-			err.style.display = 'block';
-			err.innerHTML = 'No player found with that name';
+			errMessagePlayer.style.display = 'block';
+			errMessagePlayer.innerHTML = 'No player found with that name';
 			return
 		}
 	}
@@ -96,24 +97,24 @@ function submitFormCreateGame(event) {
 	const developer = document.getElementById('developer_name').value;
 	const checkedCheckboxes = document.querySelectorAll('input[name="genre"]:checked');
 	const genres = Array.from(checkedCheckboxes).map(checkbox => checkbox.value);
-	const nameErr = document.getElementById('err_message-game');
+	const gameErr = document.getElementById('err_message-game');
 	const developerErr = document.getElementById('err_message-developer');
 	const genreErr = document.getElementById('err_message-genres');
 
-	nameErr.style.display = 'none';
+	gameErr.style.display = 'none';
 	developerErr.style.display = 'none';
 	genreErr.style.display = 'none';
 
-	if (isTextNotInserted(name, 'game', nameErr))
+	if (isTextNotInserted(name, 'game', gameErr))
 		return;
 
-	if (handleNameInput(name, 'game') === undefined)
+	if (!handleNameInput(name, gameErr))
 		return;
 
 	if (isTextNotInserted(developer, 'developer', developerErr))
 		return;
 
-	if (handleNameInput(developer, 'developer') === undefined)
+	if (!handleNameInput(developer, developerErr))
 		return;
 
 	if (genres.length === 0) {
@@ -129,15 +130,16 @@ function submitFormCreateGame(event) {
 		},
 		body: JSON.stringify({name, developer, genres})
 	})
-		.then(res => res.status === 201 ? res.json() : Promise.reject(res))
-		.then(data => {
-			const gid = data.gid;
-			window.location.href = `#games/${gid}`;
-		}).catch(err => {
-			err.json().then(err => {
-				nameErr.innerHTML = err.errorCause
-				nameErr.style.display = 'block';
-			})
+	.then(res => res.status === 201 ? res.json() : Promise.reject(res))
+	.then(data => {
+		const gid = data.gid;
+		window.location.href = `#games/${gid}`;
+	})
+	.catch(err => {
+		err.json().then(err => {
+			gameErr.innerHTML = err.errorCause
+			gameErr.style.display = 'block';
+		})
 	})
 }
 
@@ -156,13 +158,13 @@ async function submitFormCreateSession(event) {
 
 	if (capacity < 1) {
 		capacityErr.style.display = 'block';
-		capacityErr.innerHTML = 'Capacity of the session must be at least 1';
+		capacityErr.innerHTML = 'Session capacity must be at least 1';
 		return;
 	}
 
 	if (capacity > SESSION_MAX_CAPACITY) {
 		capacityErr.style.display = 'block';
-		capacityErr.innerHTML = 'Capacity of the session must be at most ' + SESSION_MAX_CAPACITY;
+		capacityErr.innerHTML = 'Session capacity must be at most ' + SESSION_MAX_CAPACITY;
 		return;
 	}
 
@@ -183,7 +185,7 @@ async function submitFormCreateSession(event) {
 	if (isTextNotInserted(gameName, 'game', gameNameErr))
 		return;
 
-	if (handleNameInput(gameName, 'game') === undefined)
+	if (handleNameInput(gameName, gameNameErr) === undefined)
 		return;
 
 	const gid = await getUniqueGameId(gameName);
@@ -201,31 +203,31 @@ async function submitFormCreateSession(event) {
 		},
 		body: JSON.stringify({capacity, date, gid})
 	})
-		.then(res => res.status === 201 ? res.json() : Promise.reject(res))
+		.then(res => res.json())
 		.then(data => {
 			const sid = data.sid;
 			window.location.href = `#sessions/${sid}`;
-		}).catch(err => {
-		err.json().then(err => {
-			if (err.errorCause.toLowerCase().includes("date")) {
-				dateErr.innerHTML = err.errorCause
-				dateErr.style.display = "block"
-			} else {
-				gameNameErr.innerHTML = err.errorCause
-				gameNameErr.style.display = "block"
-			}
 		})
-	})
+		.catch(err => {
+			err.json().then(err => {
+				if (err.errorCause.toLowerCase().includes("date")) {
+					dateErr.innerHTML = err.errorCause
+					dateErr.style.display = "block"
+				} else {
+					gameNameErr.innerHTML = err.errorCause
+					gameNameErr.style.display = "block"
+				}
+			})
+		})
 }
 
-function handleNameInput(name, type) {
-	const err = document.getElementById('err_message-' + type)
+function handleNameInput(name, errMessage) {
 	if (name.length < 3) {
-		err.style.display = 'block';
-		err.innerHTML = 'Name must be at least 3 characters long';
+		errMessage.style.display = 'block';
+		errMessage.innerHTML = 'Name must be at least 3 characters long';
 		return undefined;
 	} else {
-		err.style.display = 'none';
+		errMessage.style.display = 'none';
 		return name;
 	}
 }

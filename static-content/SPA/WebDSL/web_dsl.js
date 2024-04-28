@@ -22,10 +22,40 @@ function createElement(tagName, props, ...children) {
     return element;
 }
 
+function createElementNS(namespace, tagName, props, ...children) {
+    const element = document.createElementNS(namespace, tagName);
+
+    // Set the properties
+    if (props !== null && props !== undefined) {
+        for (const key in props) {
+            element.setAttribute(key, props[key])
+        }
+    }
+
+    // Append the children
+    for (const child of children) {
+        if (typeof child === 'string') {
+            element.appendChild(document.createTextNode(child));
+        } else {
+            element.appendChild(child);
+        }
+    }
+
+    return element;
+}
+
 // For now using free functions. In the future, we can create a class to represent the elements
 
 function body(props=null, ...children) {
     return createElement('body', props, ...children);
+}
+
+export function path(props=null, ...children) {
+    return createElementNS('http://www.w3.org/2000/svg', 'path', props, ...children);
+}
+
+function svg(props=null, ...children) {
+    return createElementNS('http://www.w3.org/2000/svg', 'svg', props, ...children);
 }
 
 function div(props=null, ...children) {
@@ -141,5 +171,6 @@ export {
     form,
     textarea,
     fieldset,
-    legend
+    legend,
+    svg
 };
