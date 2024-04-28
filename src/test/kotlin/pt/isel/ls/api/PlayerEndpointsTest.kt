@@ -10,8 +10,8 @@ import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.mapper.toEmail
 import pt.isel.ls.data.mapper.toName
-import pt.isel.ls.dto.PlayerInfoOutputModel
-import pt.isel.ls.dto.PlayerSearchOutputModel
+import pt.isel.ls.data.dto.PlayerInfoOutputModel
+import pt.isel.ls.data.dto.PlayerSearchOutputModel
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService

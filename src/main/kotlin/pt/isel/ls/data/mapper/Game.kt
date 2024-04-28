@@ -1,9 +1,9 @@
 package pt.isel.ls.data.mapper
 
 import pt.isel.ls.data.domain.game.Game
-import pt.isel.ls.dto.GameCreationOutputModel
-import pt.isel.ls.dto.GameInfoOutputModel
-import pt.isel.ls.dto.GameSearchResultOutputModel
+import pt.isel.ls.data.dto.GameCreationOutputModel
+import pt.isel.ls.data.dto.GameInfoOutputModel
+import pt.isel.ls.data.dto.GameSearchResultOutputModel
 import pt.isel.ls.services.GameIdentifier
 import pt.isel.ls.services.GameList
 

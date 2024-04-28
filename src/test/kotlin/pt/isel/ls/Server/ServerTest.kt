@@ -16,10 +16,10 @@ import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.mapper.toEmail
 import pt.isel.ls.data.mapper.toGenre
 import pt.isel.ls.data.mapper.toName
-import pt.isel.ls.dto.GameInfoOutputModel
-import pt.isel.ls.dto.GameSearchResultOutputModel
-import pt.isel.ls.dto.PlayerInfoOutputModel
-import pt.isel.ls.dto.PlayerSearchOutputModel
+import pt.isel.ls.data.dto.GameInfoOutputModel
+import pt.isel.ls.data.dto.GameSearchResultOutputModel
+import pt.isel.ls.data.dto.PlayerInfoOutputModel
+import pt.isel.ls.data.dto.PlayerSearchOutputModel
 import pt.isel.ls.dto.SessionInfoOutputModel
 import pt.isel.ls.dto.SessionSearchResultOutputModel
 import pt.isel.ls.services.GameService

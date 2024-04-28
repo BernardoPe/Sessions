@@ -8,10 +8,10 @@ import pt.isel.ls.data.domain.util.Name
  *
  *  The [Player] Data Class is the representation of a Game in the system.
  *
- *  @param id The player identifier
- *  @param name The player name
- *  @param email The player email
- *  @param token The player token
+ * @param id The player's id (unique [UInt] number)
+ * @param name The player's name (unique [Name] object)
+ * @param email The player's email (unique [Email] object)
+ * @param token The player's token (unique [Long] number)
  */
 data class Player(
     val id: UInt,

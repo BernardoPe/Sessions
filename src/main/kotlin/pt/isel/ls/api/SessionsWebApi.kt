@@ -30,8 +30,8 @@ import pt.isel.ls.data.mapper.toSessionCreationDTO
 import pt.isel.ls.data.mapper.toSessionInfoDTO
 import pt.isel.ls.data.mapper.toSessionOperationMessage
 import pt.isel.ls.data.mapper.toSessionSearchDTO
-import pt.isel.ls.dto.GameCreationInputModel
-import pt.isel.ls.dto.PlayerCreationInputModel
+import pt.isel.ls.data.dto.GameCreationInputModel
+import pt.isel.ls.data.dto.PlayerCreationInputModel
 import pt.isel.ls.dto.SessionAddPlayerInputModel
 import pt.isel.ls.dto.SessionCreationInputModel
 import pt.isel.ls.dto.SessionUpdateInputModel

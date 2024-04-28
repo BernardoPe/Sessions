@@ -1,4 +1,4 @@
-package pt.isel.ls.dto
+package pt.isel.ls.data.dto
 
 import kotlinx.serialization.Serializable
 
@@ -10,7 +10,10 @@ import kotlinx.serialization.Serializable
  *
  */
 @Serializable
-data class PlayerCreationInputModel(val name: String, val email: String)
+data class PlayerCreationInputModel(
+    val name: String,
+    val email: String
+)
 
 /**
  * The [PlayerCreationOutputModel] class is used to represent the response body of player creation
@@ -36,7 +39,11 @@ data class PlayerCreationOutputModel(
  */
 
 @Serializable
-data class PlayerInfoOutputModel(val pid: UInt, val name: String, val email: String)
+data class PlayerInfoOutputModel(
+    val pid: UInt,
+    val name: String,
+    val email: String
+)
 
 /**
  * The [PlayerSearchOutputModel] class is used to represent the response body of the player list
@@ -44,4 +51,7 @@ data class PlayerInfoOutputModel(val pid: UInt, val name: String, val email: Str
  * @param total The total number of players
  */
 @Serializable
-data class PlayerSearchOutputModel(val players: List<PlayerInfoOutputModel>, val total: Int)
+data class PlayerSearchOutputModel(
+    val players: List<PlayerInfoOutputModel>,
+    val total: Int
+)
