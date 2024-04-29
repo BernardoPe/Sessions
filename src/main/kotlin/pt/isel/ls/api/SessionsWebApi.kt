@@ -47,6 +47,7 @@ import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
 import pt.isel.ls.utils.toLocalDateTime
 import pt.isel.ls.utils.toUInt
+import java.net.URLDecoder
 import java.util.*
 
 /**
@@ -472,16 +473,7 @@ class SessionsApi(
     }
 
     private fun String.parseURLEncodedString(): String {
-        return replace("%2F", "/")
-            .replace("%2B", "+")
-            .replace("%2C", ",")
-            .replace("%3A", ":")
-            .replace("%3D", "=")
-            .replace("%3F", "?")
-            .replace("%40", "@")
-            .replace("%5B", "[")
-            .replace("%5D", "]")
-            .replace("+", " ")
+        return URLDecoder.decode(this, Charsets.UTF_8)
     }
 
     private fun logRequest(request: Request) {
