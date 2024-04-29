@@ -9,18 +9,16 @@ import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.api.SessionsApi
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.dto.GameInfoOutputModel
+import pt.isel.ls.data.dto.GameSearchResultOutputModel
 import pt.isel.ls.data.mapper.toEmail
 import pt.isel.ls.data.mapper.toGenre
 import pt.isel.ls.data.mapper.toName
-import pt.isel.ls.data.dto.GameInfoOutputModel
-import pt.isel.ls.data.dto.GameSearchResultOutputModel
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
+import pt.isel.ls.storage.DataManagerType
 import pt.isel.ls.storage.SessionsDataManager
-import pt.isel.ls.storage.mem.SessionsDataMemGame
-import pt.isel.ls.storage.mem.SessionsDataMemPlayer
-import pt.isel.ls.storage.mem.SessionsDataMemSession
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -194,14 +192,14 @@ class GameEndpointsTest {
 
     @BeforeEach
     fun clear() {
-        storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+        storage = SessionsDataManager(DataManagerType.MEMORY)
         api = SessionsApi(PlayerService(storage), GameService(storage), SessionsService(storage))
         setup()
     }
 
     companion object {
 
-        private var storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+        private var storage = SessionsDataManager(DataManagerType.MEMORY)
 
         private var api = SessionsApi(PlayerService(storage), GameService(storage), SessionsService(storage))
 

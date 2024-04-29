@@ -8,10 +8,8 @@ import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.services.GameService
+import pt.isel.ls.storage.DataManagerType
 import pt.isel.ls.storage.SessionsDataManager
-import pt.isel.ls.storage.mem.SessionsDataMemGame
-import pt.isel.ls.storage.mem.SessionsDataMemPlayer
-import pt.isel.ls.storage.mem.SessionsDataMemSession
 import kotlin.random.Random
 import kotlin.random.nextUInt
 import kotlin.test.assertEquals
@@ -125,7 +123,7 @@ class GameServiceTest {
 
     @BeforeEach
     fun clearStorage() {
-        storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+        storage = SessionsDataManager(DataManagerType.MEMORY)
         serviceGame = GameService(storage)
     }
 
@@ -142,7 +140,7 @@ class GameServiceTest {
         private fun newTestGenres() = setOf(Genre("RPG"), Genre("Adventure"))
 
         private var storage =
-            SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+            SessionsDataManager(DataManagerType.MEMORY)
 
         private var serviceGame = GameService(storage)
     }

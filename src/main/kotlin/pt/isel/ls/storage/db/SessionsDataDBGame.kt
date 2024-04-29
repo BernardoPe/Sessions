@@ -145,9 +145,9 @@ class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
     } as Boolean
 
     private fun ResultSet.getGames(): List<Game> {
-        var games = listOf<Game>()
+        val games = mutableListOf<Game>()
         while (this.next()) {
-            var genres = emptySet<Genre>()
+            val genres = mutableSetOf<Genre>()
             val genreArr = this.getArray("genres").resultSet
 
             while (genreArr.next()) {

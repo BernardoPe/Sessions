@@ -1,3 +1,4 @@
+
 import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -5,8 +6,8 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
-import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.primitives.Genre
+import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.mapper.toEmail
 import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.storage.db.SessionsDataDBGame
@@ -170,9 +171,8 @@ class SessionsDataDBSessionTest {
         val sid1 = sessionDB.create(session1)
         session1 = session1.copy(id = sid1)
         // Session2
-        var session2 = Session(0u, 10u, TEST_DATE, game, emptySet())
+        val session2 = Session(0u, 10u, TEST_DATE, game, emptySet())
         val sid2 = sessionDB.create(session2)
-        session2 = session2.copy(id = sid2)
         // Act
         val retrievedSessions = sessionDB.getSessionsSearch(null, null, null, null, limit = 1u, skip = 0u).first
         // Assert
