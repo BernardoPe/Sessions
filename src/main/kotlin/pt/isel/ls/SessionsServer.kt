@@ -15,10 +15,8 @@ import pt.isel.ls.api.SessionsApi
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
+import pt.isel.ls.storage.DataManagerType
 import pt.isel.ls.storage.SessionsDataManager
-import pt.isel.ls.storage.db.SessionsDataDBGame
-import pt.isel.ls.storage.db.SessionsDataDBPlayer
-import pt.isel.ls.storage.db.SessionsDataDBSession
 
 val logger = LoggerFactory.getLogger("pt.isel.ls.http.HTTPServer")
 
@@ -102,16 +100,7 @@ fun main() {
 
     val databaseURL = System.getenv("JDBC_PRODUCTION_DATABASE_URL")
 
-    if (databaseURL == null) {
-        logger.error("Database URL not found")
-        return
-    }
-
-    val gameStorage = SessionsDataDBGame(databaseURL)
-    val playerStorage = SessionsDataDBPlayer(databaseURL)
-    val sessionStorage = SessionsDataDBSession(databaseURL)
-
-    val storage = SessionsDataManager(gameStorage, playerStorage, sessionStorage)
+    val storage = SessionsDataManager(DataManagerType.DATABASE, databaseURL)
 
     storage.use {
         val server = SessionsServer(

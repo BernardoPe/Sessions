@@ -1,8 +1,25 @@
+/**
+ * Represents the player currently logged in to the SPA
+ *
+ * Since the SPA does not send browser requests, cookies are not used to store the user's session.
+ *
+ * Instead, the user's data is stored in browser memory, and is lost when the browser is closed or refreshed.
+ */
 let user = null
 
 window.authRegister = authRegister
 window.authLogin = authLogin
 
+/**
+ * Handles the registration of a new player
+ *
+ * For the registration to be successful, the player must provide a name and an email,
+ * each of which must be unique and have at 3-60 characters in length.
+ *
+ * If the registration is successful, the user is logged in and their token is displayed.
+ *
+ * If the registration is unsuccessful, the user is informed of the error.
+ */
 function authRegister(event) {
 
 	event.preventDefault()
@@ -66,10 +83,17 @@ function authRegister(event) {
 					}
 				})
 		})
-
-
 }
 
+
+/**
+ * Handles the login of an existing player
+ *
+ * For the login to be successful, the player must provide a unique token that follows the UUID format.
+ *
+ * If the login is successful, the user is logged in and redirected to the home page.
+ * @param event
+ */
 function authLogin(event) {
 
 	event.preventDefault()
@@ -107,6 +131,12 @@ function authLogin(event) {
 		})
 }
 
+
+/**
+ * Handles the logout of a player
+ *
+ * When a user logs out, they are redirected to the home page and lose all access to authenticated features.
+ */
 function authLogout() {
 	user = null
 	document.getElementById('login').style.display = "inline-block"
@@ -115,6 +145,13 @@ function authLogout() {
 	window.location.href = "#home"
 }
 
+/**
+ * Returns the data of player currently logged in
+ *
+ * If no player is logged in, the function returns null.
+ *
+ * For details on how the SPA handles user sessions, see [user]{@link user}
+ */
 function getPlayerData() {
 	return user
 }

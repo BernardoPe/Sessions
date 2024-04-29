@@ -3,10 +3,10 @@ package pt.isel.ls.services.session
 import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.domain.primitives.Genre
 import pt.isel.ls.data.domain.session.SESSION_MAX_CAPACITY
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
-import pt.isel.ls.data.domain.primitives.Genre
 import pt.isel.ls.data.mapper.toEmail
 import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.exceptions.BadRequestException
@@ -14,10 +14,8 @@ import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
+import pt.isel.ls.storage.DataManagerType
 import pt.isel.ls.storage.SessionsDataManager
-import pt.isel.ls.storage.mem.SessionsDataMemGame
-import pt.isel.ls.storage.mem.SessionsDataMemPlayer
-import pt.isel.ls.storage.mem.SessionsDataMemSession
 import pt.isel.ls.utils.currentLocalTime
 import pt.isel.ls.utils.plus
 import pt.isel.ls.utils.toLocalDateTime
@@ -539,7 +537,7 @@ class SessionServiceTest {
 
     @BeforeEach
     fun clearStorage() {
-        storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+        storage = SessionsDataManager(DataManagerType.MEMORY)
         serviceSession = SessionsService(storage)
         serviceGame = GameService(storage)
         servicePlayer = PlayerService(storage)
@@ -563,7 +561,7 @@ class SessionServiceTest {
         private fun UUID.testTokenHash() = mostSignificantBits xor leastSignificantBits
 
         private var storage =
-            SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+            SessionsDataManager(DataManagerType.MEMORY)
 
         private var serviceSession = SessionsService(storage)
 

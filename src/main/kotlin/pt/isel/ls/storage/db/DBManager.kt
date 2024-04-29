@@ -85,7 +85,9 @@ open class DBManager(
 
     /**
      * Closes the connection for the thread that calls this method
+     *
      * If the connection is not closed, it will roll back any transaction that is in progress and then close the connection
+     *
      * If the connection is closed, the function will have no effect
      */
     fun closeThreadConnection() {

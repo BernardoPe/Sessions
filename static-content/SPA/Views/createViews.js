@@ -1,6 +1,11 @@
 import {button, div, form} from "../WebDSL/web_dsl.js";
 import {dateTimeInput, errorMessage, formInputField, formInputWithSearchResults, genresInput} from "./models.js";
 
+/**
+ * Creates the view for the game creation form
+ *
+ * For details about the game creation operation, see [Game Creation]{@link submitFormCreateGame}
+ */
 function gameCreateView() {
     return div({class: "form__group"},
         form({onsubmit: "submitFormCreateGame(event)"},
@@ -27,6 +32,12 @@ function gameCreateView() {
     );
 }
 
+
+/**
+ * Creates the view for the session creation form
+ *
+ * For details about the session creation operation, see [Session Creation]{@link submitFormCreateSession}
+ */
 function sessionCreateView() {
     return div({class: "form__group"},
         form({onsubmit: "submitFormCreateSession(event)"},

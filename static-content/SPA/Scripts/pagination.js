@@ -1,8 +1,19 @@
-import {button, div, li, p, path, svg, ul} from "../WebDSL/web_dsl.js";
+import {button, div, p, path, svg, ul} from "../WebDSL/web_dsl.js";
 
 import {API_URL, GAMES_URL, SESSIONS_URL} from "../../index.js";
 import {RESULTS_PER_PAGE} from "../handlers.js";
 
+/**
+ * Handles pagination for the games page
+ *
+ * This function calls handlePagination, with a generated callback function that is used to generate the url for the pagination buttons,
+ * supporting parameterized page numbers to create multiple references to other pages.
+ *
+ * @param queries - the queries to be used in the url
+ * @param page - the current page
+ * @param total - the total number of results matching the given queries
+ * @returns {any}
+ */
 function handleGamePagination(queries, page, total) {
 	return handlePagination(API_URL + "#" +  GAMES_URL + `?${queries}`, page, (page) => {
 		if (queries.toString().length > 0) {
@@ -13,6 +24,18 @@ function handleGamePagination(queries, page, total) {
 	}, total);
 }
 
+/**
+ * Handles pagination for the sessions page
+ *
+ * This function calls handlePagination, with a generated callback function that is used to generate the url for the pagination buttons,
+ * supporting parameterized page numbers to create multiple references to other pages.
+ *
+ * @param queries - the queries to be used in the url
+ * @param page - the current page
+ * @param total - the total number of results matching the given queries
+ * @returns {any}
+ */
+
 function handleSessionPagination(queries, page, total) {
 	return handlePagination(API_URL + "#" + SESSIONS_URL + `?${queries}`, page, (page) => {
 		if (queries.toString().length > 0) {
@@ -22,6 +45,19 @@ function handleSessionPagination(queries, page, total) {
 		}
 	}, total);
 }
+
+
+/**
+ * Handles the pagination for the given page.
+ *
+ * This function generates a set of pagination reference buttons that allow the user to navigate through the results.
+ *
+ * @param url - the url to be used for the pagination
+ * @param page - the current page
+ * @param generateUrl - the callback function to generate the url for the desired page
+ * @param total - the total number of results matching the given queries
+ * @returns {any}
+ */
 
 function handlePagination(url, page, generateUrl, total) {
 	const skip = (page - 1) * RESULTS_PER_PAGE;
@@ -59,9 +95,22 @@ function handlePagination(url, page, generateUrl, total) {
 
 }
 
+/**
+ * Generates the numbered pagination items for the given page.
+ *
+ * This function generates five numbered pagination items, with the current page in the middle.
+ *
+ * If the current page is at least two pages away from the first and last pages, and the total number of pages is greater than 5,
+ * the pagination items will include a spacer to indicate that there are more pages to be shown, and a reference to the first and last pages.
+ *
+ * @param url - the url to be used for the pagination
+ * @param page - the current page
+ * @param maxPage - the maximum number of pages
+ * @param generateUrl - the callback function to generate the url for the desired page
+ */
 function paginationItems(url, page, maxPage, generateUrl) {
-	const slices = 5;
 	const items = [];
+	const slices = 5;
 	const start = Math.max(1, page - Math.floor(slices / 2));
 	const end = Math.min(maxPage, start + slices - 1);
 
@@ -88,6 +137,14 @@ function paginationItems(url, page, maxPage, generateUrl) {
 	return items;
 }
 
+/**
+ * Creates a numbered pagination item for the given page.
+ * @param page - the page number
+ * @param currentPage - the current page. Used to determine if the item is active or not.
+ * @param generateUrl - the callback function to generate the url for the desired page
+ * @returns {any}
+ */
+
 function createPaginationItem(page, currentPage, generateUrl) {
 	const divElement = div({class: "pagination-item"}, `${page}`);
 	if (parseInt(page) === parseInt(currentPage)) {
@@ -100,6 +157,15 @@ function createPaginationItem(page, currentPage, generateUrl) {
 	return divElement;
 }
 
+/**
+ * Creates an arrow pagination button for the given page.
+ *
+ * Used for the next and previous page references.
+ *
+ * @param page - the page number
+ * @param generateUrl - the callback function to generate the url for the desired page
+ * @param next - whether the button is for the next page or the previous page
+ */
 function createPaginationButton(page, generateUrl, next) {
 	const elemClass = next ? "pagination-button next" : "pagination-button prev";
 	const buttonElement = button({class: elemClass},

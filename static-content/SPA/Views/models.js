@@ -7,6 +7,13 @@ window.showSearchResults = showSearchResults;
 window.resultsKeyPressHandler = resultsKeyHandler;
 window.hideSearchResults = hideSearchResults;
 
+/**
+ * Returns an HTML structure for a form input field
+ * @param id - id of the input field
+ * @param name - name of the input field
+ * @param type - type of the input field
+ * @param title - title of the input field
+ */
 function formInputField(id, name, type, title) {
 	return div({class: "form__input"},
 		input({
@@ -21,6 +28,11 @@ function formInputField(id, name, type, title) {
 	)
 }
 
+/**
+ * Returns an HTML structure for a game's details
+ * @param game - game object
+ */
+
 function gameDetails(game) {
 	return div(null,
 		div({class:"game-container"},
@@ -32,6 +44,12 @@ function gameDetails(game) {
 	)
 }
 
+
+/**
+ * Returns an HTML structure for a player's details
+ * @param player - player object
+ */
+
 function playerDetails(player) {
 	return div(null,
 		div({class: "player-container"},
@@ -42,6 +60,10 @@ function playerDetails(player) {
 	)
 }
 
+/**
+ * Returns an HTML structure for a session's details
+ * @param session - session object
+ */
 function removePlayerFromSession(sid, pid) {
 	const confirmRemove = confirm("Are you sure you want to remove this player from the session?");
 	if (!confirmRemove) {
@@ -115,7 +137,6 @@ function sessionDetails(session) {
 			a(`#` + `${GAMES_URL}/` + `${session.gameSession.gid}`, null, session.gameSession.name)
 		),
 		p({class:"session__date"}, session.date),
-
 		fieldset({class:"session__players"},
 			legend(null, "Players " + session.playersSession.length + "/" + session.capacity),
 			...session.playersSession.map(
@@ -147,6 +168,18 @@ function sessionDetails(session) {
 	)
 }
 
+
+/**
+ * Returns an HTML structure for a form input field with search results
+ * @param id - id of the input field
+ *
+ * @param searchType - type of the search. This is used to determine the name search endpoint to call from the API.
+ *
+ * @param fieldType - type of the input field
+ *
+ * @param title - title of the input field
+ */
+
 function formInputWithSearchResults(id, searchType, fieldType, title) {
 	return div({class: "form__input"},
 		input({
@@ -168,6 +201,11 @@ function formInputWithSearchResults(id, searchType, fieldType, title) {
 	)
 }
 
+/**
+ * Returns an HTML structure for a game search result
+ * @param game - game object
+ */
+
 function gameSearchResult(game) {
 	return div({class: "game-container"},
 		p({class: "game__title"},
@@ -177,6 +215,10 @@ function gameSearchResult(game) {
 		br(null)
 	)
 }
+
+/**
+ * Returns an HTML structure for a genre input field
+ */
 
 function genresInput() {
 	return fieldset(null,
@@ -199,6 +241,9 @@ function genresInput() {
 	)
 }
 
+/**
+ * Returns an HTML structure for a session state input field
+ */
 function sessionStateInput() {
 	return fieldset(null,
 		legend(null, "Session state:"),
@@ -211,6 +256,11 @@ function sessionStateInput() {
 	)
 }
 
+
+/**
+ * Returns an HTML structure for a session search result
+ */
+
 function sessionSearchResult(session) {
 	return div({class: "session-container"},
 		p({class: "session__game"},
@@ -222,12 +272,20 @@ function sessionSearchResult(session) {
 	)
 }
 
+/**
+ * Returns an HTML structure for a date time input field
+ */
 function dateTimeInput() {
 	return div({class: "form__input"},
 		input({id: "date", type: "datetime-local", class:"form__field datepicker", placeholder: "yyyy-mm-dd", name: "date", value: ""}),
 		label("date", {class:"form__label"}, "Date"),
 	)
 }
+
+
+/**
+ * Returns an HTML structure for an error message
+ */
 
 function errorMessage(id, msg) {
 	return div({class: "error-message-container"},

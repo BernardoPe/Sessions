@@ -1,6 +1,11 @@
 import {div, form, button, p} from "../WebDSL/web_dsl.js";
 import {errorMessage, formInputField} from "./models.js";
 
+/**
+ * Creates the HTML login page view.
+ *
+ * For details on the login operation see [authLogin]{@link authLogin}
+ */
 function loginView() {
 	return (
 		div({class: "form__group"},
@@ -18,6 +23,11 @@ function loginView() {
 	)
 }
 
+/**
+ * Creates the HTML register page view.
+ *
+ * For details on the register operation see [authRegister]{@link authRegister}
+ */
 function registerView() {
 	return (
 		div(null,

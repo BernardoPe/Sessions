@@ -20,6 +20,8 @@ import pt.isel.ls.data.domain.primitives.Email
 import pt.isel.ls.data.domain.primitives.Genre
 import pt.isel.ls.data.domain.primitives.Name
 import pt.isel.ls.data.domain.session.toState
+import pt.isel.ls.data.dto.GameCreationInputModel
+import pt.isel.ls.data.dto.PlayerCreationInputModel
 import pt.isel.ls.data.mapper.toGameCreationDTO
 import pt.isel.ls.data.mapper.toGameInfoDTO
 import pt.isel.ls.data.mapper.toGameSearchDTO
@@ -30,8 +32,6 @@ import pt.isel.ls.data.mapper.toSessionCreationDTO
 import pt.isel.ls.data.mapper.toSessionInfoDTO
 import pt.isel.ls.data.mapper.toSessionOperationMessage
 import pt.isel.ls.data.mapper.toSessionSearchDTO
-import pt.isel.ls.data.dto.GameCreationInputModel
-import pt.isel.ls.data.dto.PlayerCreationInputModel
 import pt.isel.ls.dto.SessionAddPlayerInputModel
 import pt.isel.ls.dto.SessionCreationInputModel
 import pt.isel.ls.dto.SessionUpdateInputModel
@@ -187,12 +187,14 @@ class SessionsApi(
     fun getGameList(request: Request) = processRequest(request) {
         val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip") ?: 0u)
 
-        val genres = request.query("genres")?.replace("%2C", ",")
+        val genres = request.query("genres")?.parseURLEncodedString()
                                                   ?.split(',')
                                                   ?.map { it.trim() }
 
-        val developer = request.query("developer")?.replace('+', ' ')
-        val name = request.query("name")?.replace('+', ' ')
+        val developer = request.query("developer")?.parseURLEncodedString()
+        val name = request.query("name")?.parseURLEncodedString()
+
+        println(name)
 
         val res = gameServices.searchGames(
             genres?.map { Genre(it) }?.toSet(),
@@ -330,7 +332,7 @@ class SessionsApi(
     fun getPlayerList(request: Request) = processRequest(request) {
         val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip")
             ?: 0u)
-        val name = request.query("name")?.replace('+', ' ')
+        val name = request.query("name")?.parseURLEncodedString()
         val res = playerServices.getPlayerList(
             name?.let { Name(it) },
             limit,
@@ -367,7 +369,7 @@ class SessionsApi(
 
         val res = sessionServices.listSessions(
             request.query("gid")?.toUInt("Game Identifier"),
-            request.query("date")?.replace("%3A", ":")?.toLocalDateTime(),
+            request.query("date")?.parseURLEncodedString().let { it?.toLocalDateTime() },
             request.query("state")?.toState(),
             request.query("pid")?.toUInt("Player Identifier"),
             limit,
@@ -467,6 +469,19 @@ class SessionsApi(
         } catch (e: Exception) {
             false
         }
+    }
+
+    private fun String.parseURLEncodedString(): String {
+        return replace("%2F", "/")
+            .replace("%2B", "+")
+            .replace("%2C", ",")
+            .replace("%3A", ":")
+            .replace("%3D", "=")
+            .replace("%3F", "?")
+            .replace("%40", "@")
+            .replace("%5B", "[")
+            .replace("%5D", "]")
+            .replace("+", " ")
     }
 
     private fun logRequest(request: Request) {

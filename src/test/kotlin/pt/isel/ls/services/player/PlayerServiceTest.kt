@@ -7,10 +7,8 @@ import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.services.PlayerService
+import pt.isel.ls.storage.DataManagerType
 import pt.isel.ls.storage.SessionsDataManager
-import pt.isel.ls.storage.mem.SessionsDataMemGame
-import pt.isel.ls.storage.mem.SessionsDataMemPlayer
-import pt.isel.ls.storage.mem.SessionsDataMemSession
 import java.util.*
 import kotlin.math.abs
 import kotlin.random.Random
@@ -134,7 +132,7 @@ class PlayerServiceTest {
 
     @BeforeEach
     fun clearStorage() {
-        storage = SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+        storage = SessionsDataManager(DataManagerType.MEMORY)
         servicePlayer = PlayerService(storage)
     }
 
@@ -143,8 +141,7 @@ class PlayerServiceTest {
 
         private fun newTestEmail() = "email-${abs(Random.nextLong())}@test.com"
 
-        private var storage =
-            SessionsDataManager(SessionsDataMemGame(), SessionsDataMemPlayer(), SessionsDataMemSession())
+        private var storage = SessionsDataManager(DataManagerType.MEMORY)
 
         private var servicePlayer = PlayerService(storage)
 

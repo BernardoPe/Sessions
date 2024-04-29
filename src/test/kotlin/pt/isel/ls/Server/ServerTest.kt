@@ -25,6 +25,7 @@ import pt.isel.ls.dto.SessionSearchResultOutputModel
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
+import pt.isel.ls.storage.DataManagerType
 import pt.isel.ls.storage.SessionsDataManager
 import pt.isel.ls.storage.mem.SessionsDataMemGame
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
@@ -814,11 +815,7 @@ class ServerTest {
 
     @BeforeEach
     fun start() {
-        storage = SessionsDataManager(
-            SessionsDataMemGame(),
-            SessionsDataMemPlayer(),
-            SessionsDataMemSession(),
-        )
+        storage = SessionsDataManager(DataManagerType.MEMORY)
         api = SessionsApi(
             PlayerService(storage),
             GameService(storage),
@@ -836,11 +833,7 @@ class ServerTest {
 
     companion object {
 
-        private var storage = SessionsDataManager(
-            SessionsDataMemGame(),
-            SessionsDataMemPlayer(),
-            SessionsDataMemSession(),
-        )
+        private var storage = SessionsDataManager(DataManagerType.MEMORY)
 
         private var api = SessionsApi(
             PlayerService(storage),

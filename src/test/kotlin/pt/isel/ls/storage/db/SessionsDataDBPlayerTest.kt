@@ -69,7 +69,7 @@ class SessionsDataDBPlayerTest {
     fun `check email stored`() {
         // Arrange
         val player = Player(TEST_ID, Name(TEST_NAME), Email(TEST_EMAIL), TEST_TOKEN)
-        val (id, uuid) = sessionsDataDBPlayer.create(player)
+        val (id) = sessionsDataDBPlayer.create(player)
         // Act
         val isStored = sessionsDataDBPlayer.isEmailStored(Email(TEST_EMAIL))
         // Assert
@@ -134,7 +134,7 @@ class SessionsDataDBPlayerTest {
     @Test
     fun `update non-existent player`() {
         // Arrange
-        val player = Player(0u, Name(TEST_NAME), Email(TEST_EMAIL), TEST_TOKEN)
+        Player(0u, Name(TEST_NAME), Email(TEST_EMAIL), TEST_TOKEN)
         val updatedPlayer = Player(NONEXISTENT_ID, Name(TEST_UPDATED_NAME), Email(TEST_UPDATED_EMAIL), TEST_UPDATED_TOKEN)
         // Act
         val isUpdated = sessionsDataDBPlayer.update(NONEXISTENT_ID, updatedPlayer)
@@ -190,7 +190,7 @@ class SessionsDataDBPlayerTest {
     fun `get player by non-existent token`() {
         // Arrange
         val player = Player(0u, Name(TEST_NAME), Email(TEST_EMAIL), TEST_TOKEN)
-        val (id, token) = sessionsDataDBPlayer.create(player)
+        val (id) = sessionsDataDBPlayer.create(player)
         // Act
         val retrievedPlayer = sessionsDataDBPlayer.getByToken(UUID.randomUUID())
         // Assert
