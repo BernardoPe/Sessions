@@ -1,5 +1,18 @@
 let timer;
 
+/**
+ * Handles API calls for search results and displays them in a container below the input field
+ *
+ * The search results are displayed as a list of clickable items, to be selected by the user.
+ *
+ * This function is called every time the user types in the input field, only makes the API call
+ * after the user has stopped typing for 100ms. The purpose of this is to avoid api calls for every
+ * key press.
+ *
+ * @param event
+ * @param id
+ * @param searchType
+ */
 function handleSearch(event, id, searchType) {
     clearTimeout(timer);
     const searchResults = document.getElementById(`search_results_${id}`);
@@ -28,6 +41,10 @@ function handleSearch(event, id, searchType) {
     }, 100);
 }
 
+/**
+ * Shows the search results container for the given input field
+ * @param id - the id of the input field
+ */
 function showSearchResults(id) {
     const searchResults = document.getElementById(`search_results_${id}`);
     if (searchResults.children.length > 1 || searchResults.children.item(0).tagName === 'LI') {
@@ -35,6 +52,10 @@ function showSearchResults(id) {
     }
 }
 
+/**
+ * Hides the search results container for the given input field
+ * @param id - the id of the input field
+ */
 function hideSearchResults(id) {
     const searchResults = document.getElementById(`search_results_${id}`);
     if (searchResults) {
@@ -42,6 +63,15 @@ function hideSearchResults(id) {
     }
 }
 
+/**
+ * Handles key events for search results
+ *
+ * Allows the user to navigate the search results using the arrow keys and select a result
+ * using the enter key or by clicking on the result
+ *
+ * @param event
+ * @param id
+ */
 function resultsKeyHandler(event, id) {
     const searchResults = document.getElementById(`search_results_${id}`);
     const searchResultsList = searchResults.children;

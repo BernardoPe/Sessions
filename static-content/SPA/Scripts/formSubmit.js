@@ -2,11 +2,17 @@ import {API_URL} from "../../index.js";
 
 const SESSION_MAX_CAPACITY = 100;
 
-window.submitFormGameSearch = submitFormGameSearch;
-window.submitFormSessionSearch = submitFormSessionSearch;
-window.submitFormCreateGame = submitFormCreateGame;
-window.submitFormCreateSession = submitFormCreateSession;
 
+/**
+ * Handles the search operation for games
+ *
+ * To search for games, the user can input the name of the game, the developer of the game, and the genres of the game.
+ *
+ * In case the user searches by game name, the game name must be at least 3 characters long, and it must be an exact match
+ * to an existing game name in the Application's database.
+ *
+ * All of these fields are optional, and the user can search for games by any combination of these fields, or by none of them.
+ */
 function submitFormGameSearch(event) {
 	event.preventDefault()
 	const developer = document.getElementById('developer').value;
@@ -18,6 +24,7 @@ function submitFormGameSearch(event) {
 	let queries = new URLSearchParams();
 
 	if (name !== '') {
+		console.log(name)
 		if (!handleNameInput(name, errMessageGame))
 			return;
 		queries.append('name', name);
@@ -41,6 +48,19 @@ function submitFormGameSearch(event) {
 
 }
 
+/**
+ * Handles the search operation for sessions
+ *
+ * To search for sessions, the user can input the name of the game, the name of the player, the state of the session, and the date of the session.
+ *
+ * In case the user searches by game or player name, the name must be at least 3 characters long, and it must
+ * have an exact match to an existing game or player name in the Application's database.
+ *
+ * The state of the session can be 'open' or 'closed', and the date of the session must be in the future.
+ *
+ * All of these fields are optional, and the user can search for sessions by any combination of these fields, or by none of them.
+ *
+ */
 async function submitFormSessionSearch(event) {
 
 	event.preventDefault();
@@ -54,7 +74,7 @@ async function submitFormSessionSearch(event) {
 	let queries = new URLSearchParams();
 
 	if (gameName.length > 0) {
-		if (handleNameInput(gameName, errMessageGame) === undefined)
+		if (!handleNameInput(gameName, errMessageGame))
 			return;
 		const gid = await getUniqueGameId(gameName);
 		if (gid) {
@@ -67,7 +87,7 @@ async function submitFormSessionSearch(event) {
 	}
 
 	if (playerName.length > 0) {
-		if (handleNameInput(playerName, errMessagePlayer) === undefined)
+		if (!handleNameInput(playerName, errMessagePlayer))
 			return;
 		const pid = await getUniquePlayerId(playerName);
 		if (pid) {
@@ -96,7 +116,18 @@ async function submitFormSessionSearch(event) {
 		window.location.href = `#sessions`;
 }
 
+/**
+ * Handles the creation of a new game
+ *
+ * To create a new game, the user must input the name of the game, the name of the developer, and select at least one genre.
+ *
+ * The name of the game and the developer must be at least 3 characters long.
+ *
+ * If any errors occur during the creation of the game, an error message will be displayed to the user, informing them of the issue.
+ *
+ */
 function submitFormCreateGame(event) {
+
 	event.preventDefault();
 	const name = document.getElementById('game_name').value;
 	const developer = document.getElementById('developer_name').value;
@@ -110,23 +141,13 @@ function submitFormCreateGame(event) {
 	developerErr.style.display = 'none';
 	genreErr.style.display = 'none';
 
-	if (isTextNotInserted(name, 'game', gameErr))
-		return;
-
-	if (!handleNameInput(name, gameErr))
-		return;
-
-	if (isTextNotInserted(developer, 'developer', developerErr))
-		return;
-
-	if (!handleNameInput(developer, developerErr))
-		return;
-
-	if (genres.length === 0) {
-		genreErr.style.display = 'block';
-		genreErr.innerHTML = 'At least one genre must be selected';
-		return;
-	}
+	if (
+		isInputNotInserted(name, 'game', gameErr) ||
+		isInputNotInserted(developer, 'developer', developerErr) ||
+		isInputNotInserted(genres, 'genre', genreErr) ||
+		!handleNameInput(name, gameErr) ||
+		!handleNameInput(developer, developerErr)
+	) return;
 
 	fetch(API_URL + `games`, {
 		method: 'POST',
@@ -148,6 +169,19 @@ function submitFormCreateGame(event) {
 	})
 }
 
+/**
+ * Handles the creation of a new session
+ *
+ * To create a new session, the user must input the capacity of the session, the date of the session, and the name of the game.
+ *
+ * The capacity of the session must be at least 1 and at most 100.
+ *
+ * The date of the session must be in the future.
+ *
+ * The name of the game must be at least 3 characters long, and it must be an exact match to an existing game name in the Application's database.
+ *
+ * If any of the above conditions are not met, an error message will be displayed to the user, informing them of the issue.
+ */
 async function submitFormCreateSession(event) {
 	event.preventDefault();
 	const capacity = document.getElementById('capacity').value;
@@ -161,39 +195,15 @@ async function submitFormCreateSession(event) {
 	dateErr.style.display = 'none';
 	gameNameErr.style.display = 'none';
 
-	if (capacity < 1) {
-		capacityErr.style.display = 'block';
-		capacityErr.innerHTML = 'Session capacity must be at least 1';
-		return;
-	}
-
-	if (capacity > SESSION_MAX_CAPACITY) {
-		capacityErr.style.display = 'block';
-		capacityErr.innerHTML = 'Session capacity must be at most ' + SESSION_MAX_CAPACITY;
-		return;
-	}
-
-	if (date === '') {
-		dateErr.style.display = 'block';
-		dateErr.innerHTML = 'Please enter a date for the session';
-		return;
-	}
-
-	const dateDOMToDate = new Date(date);
-
-	if (dateDOMToDate < new Date()) {
-		dateErr.style.display = 'block';
-		dateErr.innerHTML = 'Date of the session must be in the future';
-		return;
-	}
-
-	if (isTextNotInserted(gameName, 'game', gameNameErr))
-		return;
-
-	if (handleNameInput(gameName, gameNameErr) === undefined)
+	if (
+		!handleGameCapacity(capacity, capacityErr) ||
+		!handleDateInput(date, dateErr ||
+		!handleNameInput(gameName, gameNameErr))
+	)
 		return;
 
 	const gid = await getUniqueGameId(gameName);
+
 	if (!gid) {
 		const err = document.getElementById('err_message-game');
 		err.style.display = 'block';
@@ -226,6 +236,14 @@ async function submitFormCreateSession(event) {
 		})
 }
 
+/**
+ * Handles the input of a name
+ *
+ * The name must be at least 3 characters long
+ *
+ * @param name - the name to be checked
+ * @param errMessage - the error message to be displayed in case the name is invalid
+ */
 function handleNameInput(name, errMessage) {
 	if (name.length < 3) {
 		errMessage.style.display = 'block';
@@ -237,15 +255,28 @@ function handleNameInput(name, errMessage) {
 	}
 }
 
-function isTextNotInserted(name, type, err) {
-	if (name === '') {
+
+/**
+ * Checks if the text is not inserted
+ * @param input - the input to be checked
+ * @param type - the type of the input
+ * @param err - the error message to be displayed in case the input is invalid
+ */
+
+function isInputNotInserted(input, type, err) {
+	if (input.length === 0) {
 		err.style.display = 'block';
 		err.innerHTML = 'Please enter a name for a ' + type;
 		return true;
 	} else return false;
 }
 
+/**
+ * Tries to get the unique game id from the database based on the game name
+ * @param gameName - the name of the game
+ */
 function getUniqueGameId(gameName) {
+	console.log(gameName)
 	return fetch(API_URL + `games?name=${gameName}`)
 		.then(response => response.status === 200 ? response.json() : Promise.reject(response))
 		.then(res => {
@@ -260,6 +291,10 @@ function getUniqueGameId(gameName) {
 		})
 }
 
+/**
+ * Tries to get the unique player id from the database based on the player name
+ * @param playerName
+ */
 function getUniquePlayerId(playerName) {
 	return fetch(API_URL + `players?name=${playerName}`)
 		.then(response => response.status === 200 ? response.json() : Promise.reject(response))
@@ -272,7 +307,53 @@ function getUniquePlayerId(playerName) {
 		})
 }
 
+/**
+ * Handles the capacity of the game
+ *
+ * The capacity of the game must be at least 1 and at most 100
+ * @param capacity - the capacity to be checked
+ * @param errMessage - the error message to be displayed in case the capacity is invalid
+ */
+function handleGameCapacity(capacity, errMessage) {
+	if (capacity < 1 || capacity > SESSION_MAX_CAPACITY) {
+		errMessage.style.display = 'block';
+		errMessage.innerHTML = 'Capacity must be between 1 and 100';
+		return false;
+	} else {
+		errMessage.style.display = 'none';
+		return true;
+	}
+}
 
 
+/**
+ * Handles the date input
+ *
+ * The date must be in the future
+ *
+ * @param date - the date to be checked
+ * @param errMessage - the error message to be displayed in case the date is invalid
+ */
+function handleDateInput(date, errMessage) {
+	const currentDate = new Date();
+	if (date === '') {
+		errMessage.style.display = 'block';
+		errMessage.innerHTML = 'Please enter a date';
+		return false;
+	}
+	const inputDate = new Date(date);
+	if (inputDate < currentDate) {
+		errMessage.style.display = 'block';
+		errMessage.innerHTML = 'Date must be in the future';
+		return false;
+	}
+	errMessage.style.display = 'none';
+	return true;
+}
+
+window.submitFormGameSearch = submitFormGameSearch;
+window.submitFormSessionSearch = submitFormSessionSearch;
+window.submitFormCreateGame = submitFormCreateGame;
+window.submitFormCreateSession = submitFormCreateSession;
 
 export {submitFormGameSearch, submitFormSessionSearch, submitFormCreateGame, submitFormCreateSession};

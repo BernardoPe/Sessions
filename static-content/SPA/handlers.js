@@ -12,32 +12,50 @@ import {
 } from "./Scripts/formSubmit.js";
 import {genericErrorView, notFoundView} from "./Views/errorViews.js";
 import {loginView, registerView} from "./Views/authViews.js";
-import {authLogin, authLogout, authRegister, getPlayerData} from "./Scripts/AuthHandling.js";
-import {API_URL} from "../index.js";
+import {authLogout, getPlayerData} from "./Scripts/AuthHandling.js";
+import {API_URL, GAMES_URL} from "../index.js";
 
 export const RESULTS_PER_PAGE = 10;
 
+/**
+ * Handles the routing of the application to the home page
+ */
 function getHome(mainContent, req) {
     const user = getPlayerData()
     mainContent.replaceChildren(homeView(user));
 }
 
+/**
+ * Handles the routing of the application to the login page
+ */
 function login(mainContent, req) {
     mainContent.replaceChildren(loginView());
 }
 
+/**
+ * Handles the routing of the application for logging out
+ */
 function logout(mainContent, req) {
     authLogout()
 }
 
+/**
+ * Handles the routing of the application to the registration page
+ */
 function register(mainContent, req) {
     mainContent.replaceChildren(registerView());
 }
 
+/**
+ * Handles the routing of the application to the game search page
+ */
 function getGameSearch(mainContent, req) {
     mainContent.replaceChildren(gameSearchView());
 }
 
+/**
+ * Handles the routing of the application to the game search results page
+ */
 function getGameSearchResults(mainContent, req) {
     const queries = new URLSearchParams();
     req.query.developer ? queries.append('developer', req.query.developer) : null;
@@ -50,7 +68,7 @@ function getGameSearchResults(mainContent, req) {
         mainContent.replaceChildren(errView)
         return
     }
-    fetchWithHandling(API_URL + `games?${queryStr}`, mainContent, (searchResult) => {
+    fetchWithHandling(API_URL + GAMES_URL + `?${queryStr}`, mainContent, (searchResult) => {
         const gameResultsView = gameSearchResultsView(searchResult.games);
         gameResultsView.appendChild(handleGamePagination(queries, page, searchResult.total));
         mainContent.replaceChildren(gameResultsView);
@@ -58,6 +76,9 @@ function getGameSearchResults(mainContent, req) {
 }
 
 
+/**
+ * Builds the query string for pagination
+ */
 function buildPaginationQuery(queries, page) {
     let queryStr = queries.toString();
     const limit = RESULTS_PER_PAGE;
@@ -70,11 +91,16 @@ function buildPaginationQuery(queries, page) {
     return queryStr;
 }
 
-
+/**
+ * Handles the routing of the application to the session search page
+ */
 function getSessionSearch(mainContent, req) {
     mainContent.replaceChildren(sessionSearchView());
 }
 
+/**
+ * Handles the routing of the application to the session search results page
+ */
 function getSessionSearchResults(mainContent, req) {
 
     const queries = new URLSearchParams();
@@ -99,6 +125,9 @@ function getSessionSearchResults(mainContent, req) {
 
 }
 
+/**
+ * Handles the routing of the application to the game details page
+ */
 function getGameDetails(mainContent, req) {
     const gameId = req.params.gid
     fetchWithHandling(API_URL + `games/${gameId}`, mainContent, (game) => {
@@ -107,6 +136,9 @@ function getGameDetails(mainContent, req) {
     })
 }
 
+/**
+ * Handles the routing of the application to the session details page
+ */
 function getSessionDetails(mainContent, req) {
     const sessionId = req.params.sid
     fetchWithHandling(API_URL + `sessions/${sessionId}`, mainContent, (session) => {
@@ -115,6 +147,9 @@ function getSessionDetails(mainContent, req) {
     })
 }
 
+/**
+ * Handles the routing of the application to the player details page
+ */
 function getPlayerDetails(mainContent, req) {
     const playerId = req.params.pid
     fetchWithHandling(API_URL + `players/${playerId}`, mainContent, (player) => {
@@ -123,16 +158,33 @@ function getPlayerDetails(mainContent, req) {
     })
 }
 
+/**
+ * Handles the routing of the application to the game creation page
+ * If the user is not logged in, they are redirected to the login page
+ */
 function createGame(mainContent, req) {
     if (!getPlayerData()) return window.location.replace('#login')
     mainContent.replaceChildren(gameCreateView());
 }
 
+/**
+ * Handles the routing of the application to the session creation page
+ * If the user is not logged in, they are redirected to the login page
+ */
 function createSession(mainContent, req) {
     if (!getPlayerData()) return window.location.replace('#login')
     mainContent.replaceChildren(sessionCreateView());
 }
 
+/**
+ * Handles API requests
+ *
+ * If an error occurs, it is handled and an error view is displayed
+ *
+ * @param url
+ * @param mainContent
+ * @param onSuccess
+ */
 function fetchWithHandling(url, mainContent, onSuccess) {
     fetch(url)
         .then(res => {
@@ -146,6 +198,12 @@ function fetchWithHandling(url, mainContent, onSuccess) {
         })
 }
 
+/**
+ * Handles errors that occur during API requests
+ *
+ * If the status code is 204 or 404, a not found view is displayed
+ * Otherwise, a generic error view is displayed
+ */
 function handleErrors(res, mainContent) {
     if (res.status === 204 || res.status === 404) {
         const errView = notFoundView();

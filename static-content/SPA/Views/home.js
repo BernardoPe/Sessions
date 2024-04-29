@@ -1,5 +1,12 @@
 import {a, div, h2, li, ol} from "../WebDSL/web_dsl.js";
 
+/**
+ * Home view for the Sessions app - displays a welcome message and links to other views
+ *
+ * If a user is logged in, it also displays a link to the user's profile and links to create a game and session
+ *
+ * @param user - the user currently logged in, null if no user is logged in
+ */
 export function homeView (user) {
 	const welcome = user ? `Welcome to Sessions, ${user.name}` : "Welcome to Sessions";
 

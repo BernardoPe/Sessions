@@ -8,6 +8,11 @@ import {
 	sessionStateInput
 } from "./models.js";
 
+/**
+ * View for the game search form
+ *
+ * For details about the game search operation, see [Game Search]{@link submitFormGameSearch}
+ */
 function gameSearchView() {
 	return div({class: "form__group"},
 		form({onsubmit: "submitFormGameSearch(event)"},
@@ -31,6 +36,12 @@ function gameSearchView() {
 	);
 }
 
+
+/**
+ * View for the session search form
+ *
+ * For details about the session search operation, see [Session Search]{@link submitFormSessionSearch}
+ */
 function sessionSearchView() {
 	return div({class: "form__group"},
 		form({onsubmit: "submitFormSessionSearch(event)"},

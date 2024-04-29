@@ -1,6 +1,11 @@
 import {a, div} from "../WebDSL/web_dsl.js";
 import {gameSearchResult, sessionSearchResult,} from "./models.js";
 
+/**
+ * View for the search results of sessions
+ *
+ * @param sessions - the sessions to display
+ */
 function sessionSearchResultsView(sessions) {
     return div(null,
         div({class: "search-results-container"},
@@ -12,6 +17,10 @@ function sessionSearchResultsView(sessions) {
     )
 }
 
+/**
+ * View for the search results of games
+ * @param games - the games to display
+ */
 function gameSearchResultsView(games) {
     return div(null,
         div({class: "search-results-container"},
