@@ -27,7 +27,8 @@ function gameSearchResultsView(games) {
             ...games.map(g =>
                 gameSearchResult(g)
             ),
-        )
+        ),
+        a("#games/search", {class: "session__reference"}, "Search for more games"),
     )
 }
 

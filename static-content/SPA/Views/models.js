@@ -202,8 +202,8 @@ function dateTimeInput() {
  */
 
 function errorMessage(id, msg) {
-	return div({class: "error-message-container"},
-		p({id: id, class: "error_message"}, msg)
+	return div({id: id, class: "error-message-container"},
+		p({class: "error_message"}, msg)
 	)
 }
 

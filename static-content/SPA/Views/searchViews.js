@@ -29,8 +29,8 @@ function gameSearchView() {
 				"text",
 				"Game name"
 			),
-			genresInput(),
 			errorMessage("err_message-game", "Game name must be at least 3 characters long"),
+			genresInput(),
 			button({type: "submit"}, "Search")
 		)
 	);
