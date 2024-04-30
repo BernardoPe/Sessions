@@ -24,6 +24,7 @@ function handleSearch(event, id, searchType) {
                 .then(response => response.status === 200 ? response.json() : Promise.reject(response))
                 .then(data => {
                     searchResults.style.display = 'block';
+                    searchResults.innerHTML = '';
                     data[searchType].forEach(elem => {
                         const li = document.createElement('li');
                         li.className = 'search_result';

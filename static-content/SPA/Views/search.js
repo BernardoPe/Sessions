@@ -6,7 +6,7 @@ import {
 	formInputWithSearchResults,
 	genresInput,
 	sessionStateInput
-} from "./models.js";
+} from "./Models/models.js";
 
 /**
  * View for the game search form

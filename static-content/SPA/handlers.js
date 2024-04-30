@@ -1,8 +1,8 @@
 import {homeView} from './Views/home.js';
-import {gameSearchResultsView, sessionSearchResultsView} from "./Views/resultsViews.js";
-import {gameDetailsView, playerDetailsView, sessionDetailsView} from "./Views/detailsViews.js";
-import {gameSearchView, sessionSearchView} from "./Views/searchViews.js";
-import {gameCreateView, sessionCreateView} from "./Views/createViews.js";
+import {gameSearchResultsView, sessionSearchResultsView} from "./Views/results.js";
+import {gameDetailsView, playerDetailsView, sessionDetailsView} from "./Views/details.js";
+import {gameSearchView, sessionSearchView} from "./Views/search.js";
+import {gameCreateView, sessionCreateView} from "./Views/create.js";
 import {handleGamePagination, handleSessionPagination} from "./Scripts/pagination.js";
 import {
     submitFormCreateGame,
@@ -10,9 +10,9 @@ import {
     submitFormGameSearch,
     submitFormSessionSearch
 } from "./Scripts/formSubmit.js";
-import {genericErrorView, notFoundView} from "./Views/errorViews.js";
-import {loginView, registerView} from "./Views/authViews.js";
-import {authLogout, getPlayerData} from "./Scripts/AuthHandling.js";
+import {genericErrorView, notFoundView} from "./Views/error.js";
+import {loginView, registerView} from "./Views/auth.js";
+import {authLogout, getPlayerData} from "./Scripts/auth.js";
 import {API_URL, GAMES_URL} from "../index.js";
 
 export const RESULTS_PER_PAGE = 10;

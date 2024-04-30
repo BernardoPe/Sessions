@@ -1,6 +1,6 @@
-import {a, br, div, fieldset, h1, input, label, legend, p, ul} from "../WebDSL/web_dsl.js";
-import {GAMES_URL, PLAYERS_URL, SESSIONS_URL} from "../../index.js";
-import { handleSearch, showSearchResults, resultsKeyHandler, hideSearchResults} from "../Scripts/searchHandling.js";
+import {a, br, div, fieldset, h1, input, label, legend, p, ul} from "../../WebDSL/web_dsl.js";
+import {GAMES_URL, PLAYERS_URL, SESSIONS_URL} from "../../../index.js";
+import { handleSearch, showSearchResults, resultsKeyHandler, hideSearchResults} from "../../Scripts/search.js";
 
 window.handleSearch = handleSearch;
 window.showSearchResults = showSearchResults;

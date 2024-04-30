@@ -1,5 +1,5 @@
 import {a, div} from "../WebDSL/web_dsl.js";
-import {gameSearchResult, sessionSearchResult,} from "./models.js";
+import {gameSearchResult, sessionSearchResult,} from "./Models/models.js";
 
 /**
  * View for the search results of sessions
