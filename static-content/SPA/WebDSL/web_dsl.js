@@ -148,6 +148,10 @@ function legend(props = null, ...children) {
     return createElement('legend', props, ...children);
 }
 
+function nav(props = null, ...children) {
+    return createElement('nav', props, ...children);
+}
+
 export {
     body,
     div,
@@ -172,5 +176,6 @@ export {
     textarea,
     fieldset,
     legend,
-    svg
+    svg,
+    nav,
 };
