@@ -19,14 +19,6 @@
     src: local('Montserrat Light'), url('fonts/Montserrat-Light.woff') format('woff');
 }
 
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Montserrat Regular', sans-serif;
-}
-
-
 body {
     position: relative;
     font-family: 'Open Sans', sans-serif;
