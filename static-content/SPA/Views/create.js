@@ -1,5 +1,5 @@
 import {button, div, form} from "../WebDSL/web_dsl.js";
-import {dateTimeInput, errorMessage, formInputField, formInputWithSearchResults, genresInput} from "./models.js";
+import {dateTimeInput, errorMessage, formInputField, formInputWithSearchResults, genresInput} from "./Models/models.js";
 
 /**
  * Creates the view for the game creation form

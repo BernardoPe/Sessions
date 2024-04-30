@@ -1,4 +1,4 @@
-import {gameDetails, playerDetails, sessionDetails} from "./models.js";
+import {gameDetails, playerDetails, sessionDetails} from "./Models/models.js";
 
 /**
  * Returns the game details view with the game's name, genres, and developer
