@@ -9,19 +9,20 @@ We covered the implemented features with unit tests using the `JUnit` library.
 The database is managed by `PostgreSQL` and the connections are made using the `JDBC` library.
 
 On the frontend side, we used Javascript modules to manage the user interface of the website.
-The web application loads only a single web page document,
-and then updates the body content of that single document via JavaScript making by HTTP requests to the server and 
-replacing the body content with the response content.
+The web application loads only a single web page document and updates its content via JavaScript making by HTTP requests to the server and 
+replacing the body content with the content of the 'rendered' view.
 
 This technique is called Single Page Application (SPA).
 
-## Modeling the database
+## Implementation Details
 
-### Conceptual model ###
+### Database
 
+#### Conceptual model ###
 The following diagram holds the Entity-Relationship model for the information managed by the system.
 
-[ER Diagram](ae_model_diagram.png)
+
+![ER Diagram](ea_model_new.png)
 
 We highlight the following aspects:
 
@@ -47,11 +48,10 @@ The conceptual model has the following restrictions:
 - Sessions must have a capacity greater than 0 and at most 100.
 - Sessions must have a date in the future.
 - To add a player to a session, the player must not already be in the session, the session must not be full and not closed
-(current date must be before the session date).
+- To create a session, the current date must be after the session date.
 
 
-### Physical Model ###
-
+#### Physical Model ###
 
 The physical model of the database is available [here](../../../../../sql/createTables.sql).
 
@@ -65,62 +65,16 @@ Additionally, the foreign key pair is defined as the primary key of the table, e
 
 IDs were defined as serial primary keys. The Sessions table holds a foreign key to the Games table, representing the 1 to N relationship between games and sessions.
 
-The genres defined as valid were 'Action', 'Adventure', 'RPG', 'Strategy', 'Turn-Based'.
+The genres defined as valid were 'Action', 'Adventure', 'RPG', 'Shooter', 'Turn-Based'.
 
 Data Integrity restrictions mentioned in the conceptual model are enforced by the database by defining the proper types and constraints for each column.
 
 The remaining restrictions mentioned in the conceptual model that are
 not present in the physical model are enforced by the application logic at the service layer.
 
-## Software organization
+### Software organization
 
-### Open-API Specification
-
-[Open-api Specification](open-api.json)
-
-In our Open-API specification, we highlight the following aspects:
-
-We have 3 groups of endpoints: Games, Players, and Sessions.  
-
-The types of request methods the api supports are :
-    - GET
-    - POST
-    - DELETE
-    - PUT
-
-The Games group has 3 endpoints: 
- - Game Creation : POST /games
- - Game Search : GET /games
- - Game Search by id : GET /games/{id}
-
-The Players group has 3 endpoints:
-
- - Player Creation : POST /players
-- Player Details : GET /players/{id}
-- Player Search : GET /players
-
-The Sessions group has 7 endpoints: 
- - Create Session : POST /sessions
- - Update session : PUT /sessions/{id}
- - Delete session : DELETE /sessions/{id}
- - Session Search : GET /sessions/{gid}/list
- - Session Search by id : GET /sessions/{id}
- - Add player to session : POST /sessions/{id}/players
- - Remove player from session : DELETE /sessions/{id}/players/{pid}
-
-
-Response codes are:
-
-| Response Code           | Description           | Examples                           |
-|-------------------------|-----------------------|------------------------------------|
-| 200                     | OK                    | Got a Player                       |
-| 201                     | Created               | Create a Game                      |
-| 204                     | No Content            | No results found for search        |
-| 400                     | Bad Request           | Missing a parameter on the request |
-| 404                     | Not Found             | Player not found                   |
-| 500                     | Internal Server Error | An error in the server             |
-
-### Request Details
+#### Request Details
 
 #### Server Request Flow
 
@@ -155,57 +109,57 @@ any errors that may occur at the application level.
 
 #### Client Request Flow
 
-The requests of the frontend of the application uses the Single Page Application (SPA) technique.
-This technique allows the user interface to load only a single web page document and then updates the body content
-of that single document using DOM elements without making any additional HTTP requests made by the client.
-When a client request needs information from the server API it is used the javascript Fetch API to make the request.
+The requests of the frontend of the application use the Single Page Application (SPA) technique.
+
+This technique allows the user interface to load only a single web page document and then update the body content
+of that single document using DOM elements without making any additional HTTP browser requests.
 
 The redirection of the user interface is done by replacing the body content of the document with the content of the
 requested page.
+
 The requested page URL is changed with a hash mark (#) on its path, which is then used to determine which content to
 show on the page.
 
-In the file `index.html`, the body content is replaced by the content of the requested page using the event listener of
-type `load`
-and verify if it's hash mark has changed on the redirected URL by the event listener of type `hashchange`.
+Whenever the page is first loaded, the `loadHandler` function is called to define the SPA routes.
 
-The function `loadHandler` is responsible for loading the content of the requested page and replacing the body content
-with it, by adding route handlers, that contains the path, and it's the content to be replaced in DOM.
+The `loadHandler` function defines the routes of the SPA application and calls the `hashChangeHandler` function to load the content of the requested page.
 
-The function `hashChangeHandler` is responsible for verifying if the hash mark of the URL has changed and if it has, it
-calls the `loadHandler` function to load the content of the requested page.
+The function `hashChangeHandler` is called whenever the hash mark of the URL changes, and it calls the `router` module to match the route and get the
+correct handler.
 
-The `router` module handles the URL path and it's params and queries to be processed by the `loadHandler`
-and `hashChangeHandler`.
+The `router` module handles the route matching and URL query/parameter extraction logic of the SPA application.
 
 The `handlers` module contains the functions that are called by the `router` module to load the content of the requested
 page which contains DOM elements to be displayed.
 
+#### Connection Management
 
-### Connection Management
+The project manages connections to a PostgresSQL database through a class named `DBManager`. 
 
-The project manages connections to a PostgreSQL database through a class named DBConnectionManager.
+This class is extended by each of the database classes responsible for managing the data of the entities (Games, Players, and Sessions).
+
 This class is responsible for giving out connections to the database for each thread, and closing them when they are no longer needed.
 For each new connection, the class creates a new instance of a PGSimpleDataSource, and sets its connection parameters.
 The connections are closed using the close method of the class.
 
 In the overall application, at the `main` function, the application creates a new instance of the `SessionsDataManager` class. This 
-class internally uses the `DBConnectionManager` class to allow the user to shut down the connections when the application is finished.
+class internally calls the `close` method for each of the database classes, implemented by the `DBManager` class, to close the connections.
 
 When the `storage.use {}` block is finished, the `SessionsDataManager` internally calls the close method of the `DBConnectionManager` to close the connections.
 
-### Data Access
+#### Data Access
 
 For data access, we implemented the `SessionsDataManager` class, which is responsible for managing storage, be it in memory or in a database.
-
-This class uses the `DBConnectionManager` class to allow the user to shut down the connections when the application is finished.
 
 We also implemented the `SessionsDataGame`, `SessionsDataPlayer`, and `SessionsDataSession` interfaces, which are responsible for managing the data of the respective entities and support different types of implementations, such as in-memory storage or database storage.
 
 For the storage interface implementation, we created the `SessionsDataGameDB`, `SessionsDataPlayerDB`, and `SessionsDataSessionDB` classes for database storage,
 and the `SessionsDataGameMem`, `SessionsDataPlayerMem`, and `SessionsDataSessionMem` classes for in-memory storage.
 
-### Error Handling/Processing
+The database storage classes extend the `DBManager` class, which is responsible for managing the database connections for each thread and executing queries.
+
+#### Error Handling/Processing
+
    #### Back-End 
 As said in the Request Details section, the application processes the request at the API level, which is responsible for catching any errors and returning the appropriate response.
 
@@ -226,15 +180,81 @@ If a Back-End error is relevant to the user, the application displays an error m
 
 An example would be if no results are found for a given search, the application informs the user that no results were found and that they should try again with different parameters.
 
-For pagination, the SPA uses the `total` property of search results to calculate the number of pages and display the correct pagination buttons to the user.
+
+## Open-API Specification
+
+[Open-api Specification](open-api.json)
+
+In our Open-API specification, we highlight the following aspects:
+
+We have 3 groups of endpoints: Games, Players, and Sessions.
+
+The types of request methods the api supports are :
+- GET
+- POST
+- DELETE
+- PUT
+
+The Games group has 3 endpoints:
+- Game Creation : POST /games
+- Game Search : GET /games
+- Game Search by id : GET /games/{id}
+
+The Players group has 3 endpoints:
+
+- Player Creation : POST /players
+- Player Details : GET /players/{id}
+- Player Search : GET /players
+
+The Sessions group has 7 endpoints:
+- Create Session : POST /sessions
+- Update session : PUT /sessions/{id}
+- Delete session : DELETE /sessions/{id}
+- Session Search : GET /sessions/{gid}/list
+- Session Search by id : GET /sessions/{id}
+- Add player to session : POST /sessions/{id}/players
+- Remove player from session : DELETE /sessions/{id}/players/{pid}
+
+
+Response codes are:
+
+| Response Code           | Description           | Examples                           |
+|-------------------------|-----------------------|------------------------------------|
+| 200                     | OK                    | Got a Player                       |
+| 201                     | Created               | Create a Game                      |
+| 204                     | No Content            | No results found for search        |
+| 400                     | Bad Request           | Missing a parameter on the request |
+| 404                     | Not Found             | Player not found                   |
+| 500                     | Internal Server Error | An error in the server             |
+
+
+## Single Page Application 
+
+### SPA Operations 
+
+The SPA offers the following operations to the user:
+- Search for games
+- Search for sessions
+- Create a player
+- Create a game
+- Create a session
+- Update a session
+- Delete a session
+- See the details of a player
+- Add a player to a session
+- Remove a player from a session
+
+### SPA Navigation 
+
+![SPA Navigation Graph](spa_views.png)
+
+
+
 ## Critical Evaluation
 
 As of the moment this report was written, the application is able to create, search, and add players to games and sessions.
-All functionality for the first phase was implemented and tested.
 
 No major defects were detected as of the time of writing this report, but some improvements can be made in the future:
-
-No major defects were detected as of the time of writing this report.
 
 The currently planned changes are to increase the API test coverage with more edge cases, and improve the project documentation at the 
 code level.
