@@ -274,6 +274,9 @@ async function submitFormSessionAddPlayer(event, sid) {
 	});
 	if (response.status === 201) {
 		const sessionPlayers = document.querySelector('.session__players');
+		const capacityElement = document.getElementById("capacity");
+		const capacityValues = capacityElement.innerHTML.split("/"); // Players x/y
+		capacityElement.innerHTML = "Players " + (parseInt(capacityValues[0].split(" ")[1]) + 1) + "/" + capacityValues[1];
 		const player = sessionPlayer(sid, {pid, name: playerName}, true);
 		sessionPlayers.appendChild(player);
 	} else {
@@ -281,7 +284,6 @@ async function submitFormSessionAddPlayer(event, sid) {
 		playerNameErr.innerHTML = error.errorCause;
 		playerNameErr.style.display = "block";
 	}
-
 }
 
 /**
@@ -302,7 +304,7 @@ function removePlayerFromSession(event, sid, pid) {
 		if (res.ok) {
 			const playerDiv = document.querySelector(`.session__player_${pid}`);
 			const capacityElement = document.getElementById("capacity");
-			const capacityValues = capacityElement.innerHTML.split("/");
+			const capacityValues = capacityElement.innerHTML.split("/"); // Players x/y
 			capacityElement.innerHTML = "Players " + (parseInt(capacityValues[0].split(" ")[1]) - 1) + "/" + capacityValues[1];
 			playerDiv.remove();
 		}

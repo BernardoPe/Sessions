@@ -260,7 +260,7 @@ function dateTimeInput() {
  * Returns an HTML structure for an error message
  */
 function errorMessage(id, msg) {
-	return div({id: id, class: "error-message-container"},
+	return div({id: id, class: "error-message-container fade-up"},
 		p({class: "error_message"}, msg)
 	)
 }
