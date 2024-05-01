@@ -1,6 +1,6 @@
-import {a, br, button, div, fieldset, h1, input, label, legend, p, ul} from "../WebDSL/web_dsl.js";
-import {API_URL, GAMES_URL, PLAYERS_URL, SESSIONS_URL} from "../../index.js";
-import {handleSearch, hideSearchResults, resultsKeyHandler, showSearchResults} from "../Scripts/searchHandling.js";
+import {a, br, button, div, fieldset, h1, input, label, legend, p, ul} from "../../WebDSL/web_dsl.js";
+import {GAMES_URL, PLAYERS_URL, SESSIONS_URL} from "../../../index.js";
+import { handleSearch, showSearchResults, resultsKeyHandler, hideSearchResults} from "../../Scripts/search.js";
 
 window.handleSearch = handleSearch;
 window.showSearchResults = showSearchResults;
@@ -288,8 +288,8 @@ function dateTimeInput() {
  */
 
 function errorMessage(id, msg) {
-	return div({class: "error-message-container"},
-		p({id: id, class: "error_message"}, msg)
+	return div({id: id, class: "error-message-container"},
+		p({class: "error_message"}, msg)
 	)
 }
 

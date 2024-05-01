@@ -64,7 +64,9 @@ function handlePagination(url, page, generateUrl, total) {
 	const maxPage = Math.ceil(total / RESULTS_PER_PAGE);
 
     const info = div({class: "pagination-info"},
-	    `Showing ${skip + 1}-${Math.min(skip + RESULTS_PER_PAGE, total)} of ${total} results`
+		p(null,
+	    	`Showing ${skip + 1}-${Math.min(skip + RESULTS_PER_PAGE, total)} of ${total} results`
+		)
     );
 
 	const paginationNav = div({class: "pagination-nav"});

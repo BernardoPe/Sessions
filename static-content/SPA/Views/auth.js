@@ -1,5 +1,5 @@
 import {div, form, button, p} from "../WebDSL/web_dsl.js";
-import {errorMessage, formInputField} from "./models.js";
+import {errorMessage, formInputField} from "./Models/models.js";
 
 /**
  * Creates the HTML login page view.
