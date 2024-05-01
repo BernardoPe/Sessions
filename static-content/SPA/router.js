@@ -83,6 +83,8 @@ function getRequestParamsAndQuery(path) {
     const route = matchPathScheme(path)
     if (!route) return {params: {}, query: {}}
 
+    path = decodeURIComponent(path)
+
     const routeParts = route.path.split("/");
     const pathParts = path.split('?')[0].split("/");
 
