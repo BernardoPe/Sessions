@@ -1,4 +1,4 @@
-import {gameDetails, playerDetails, sessionDetails} from "./Models/models.js";
+import {gameDetails, playerDetails, sessionDetails, sessionDetailsAuthenticated} from "./Models/models.js";
 
 /**
  * Returns the game details view with the game's name, genres, and developer
@@ -10,8 +10,9 @@ function gameDetailsView(game) {
 /**
  * Returns the session details view with the session's name, date, capacity, game and players
  */
-function sessionDetailsView(session) {
-	return sessionDetails(session)
+function sessionDetailsView(session, authenticated) {
+	return authenticated ? sessionDetailsAuthenticated(session)
+						 : sessionDetails(session)
 }
 
 /**

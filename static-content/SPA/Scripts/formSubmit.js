@@ -1,4 +1,6 @@
-import {API_URL} from "../../index.js";
+import {API_URL, SESSIONS_URL} from "../../index.js";
+import {getPlayerData} from "./auth.js";
+import {sessionPlayer} from "../Views/Models/models.js";
 
 const SESSION_MAX_CAPACITY = 100;
 
@@ -24,7 +26,6 @@ function submitFormGameSearch(event) {
 	let queries = new URLSearchParams();
 
 	if (name !== '') {
-		console.log(name)
 		if (!handleNameInput(name, errMessageGame))
 			return;
 		queries.append('name', name);
@@ -236,10 +237,16 @@ async function submitFormCreateSession(event) {
 		})
 }
 
+
+/**
+ * Handles the addition of a player to a session
+ * @param sid - the session id
+ */
 async function submitFormSessionAddPlayer(event, sid) {
 	event.preventDefault();
 	const playerName = document.getElementById('player').value;
 	const playerNameErr = document.getElementById('err_message-player');
+	const user = getPlayerData();
 
 	playerNameErr.style.display = 'none';
 
@@ -249,6 +256,7 @@ async function submitFormSessionAddPlayer(event, sid) {
 	) return;
 
 	const pid = await getUniquePlayerId(playerName);
+
 	if (!pid) {
 		const err = document.getElementById('err_message-player');
 		err.style.display = 'block';
@@ -256,28 +264,25 @@ async function submitFormSessionAddPlayer(event, sid) {
 		return
 	}
 
-	try { // Try and Catch may not be needed
-		const response = await fetch(API_URL + `sessions/${sid}/players`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({pid})
-		});
-
-		if (response.status === 201) {
-			await response.json();
-			/** DOUBT:
-			 * Doing "window.location.href = `#sessions/${sid}`;" won´t refresh the session with the added player
-			 */
-			location.reload();
-		} else {
-			const error = await response.json();
-			playerNameErr.innerHTML = error.errorCause;
-			playerNameErr.style.display = "block";
-		}
-	} catch (error) {
-		console.error(error);
+	const response = await fetch(API_URL + `sessions/${sid}/players`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': 'Bearer ' + user.token,
+		},
+		body: JSON.stringify({pid})
+	});
+	if (response.status === 201) {
+		const sessionPlayers = document.querySelector('.session__players');
+		const capacityElement = document.getElementById("capacity");
+		const capacityValues = capacityElement.innerHTML.split("/"); // Players x/y
+		capacityElement.innerHTML = "Players " + (parseInt(capacityValues[0].split(" ")[1]) + 1) + "/" + capacityValues[1];
+		const player = sessionPlayer(sid, {pid, name: playerName}, true);
+		sessionPlayers.appendChild(player);
+	} else {
+		const error = await response.json();
+		playerNameErr.innerHTML = error.errorCause;
+		playerNameErr.style.display = "block";
 	}
 }
 
@@ -321,6 +326,58 @@ async function submitFormUpdateSession(event, sid) {
 			})
 		})
 }
+
+/**
+ * Removes a player from a session
+ * @param sid - the session id
+ * @param pid - the player id
+ */
+function removePlayerFromSession(event, sid, pid) {
+	event.preventDefault();
+	const user = getPlayerData();
+	fetch(API_URL + SESSIONS_URL + `/${sid}/players/${pid}`, {
+		method: "DELETE",
+		headers: {
+			"Authorization": "Bearer " + user.token,
+		}
+	})
+	.then(res => {
+		if (res.ok) {
+			const playerDiv = document.querySelector(`.session__player_${pid}`);
+			const capacityElement = document.getElementById("capacity");
+			const capacityValues = capacityElement.innerHTML.split("/"); // Players x/y
+			capacityElement.innerHTML = "Players " + (parseInt(capacityValues[0].split(" ")[1]) - 1) + "/" + capacityValues[1];
+			playerDiv.remove();
+		}
+		else {
+			// maybe display an error message
+		}
+	})
+}
+
+/**
+ * Sends a DELETE request to the server to delete a session
+ * and redirects the user to the home page
+ */
+function deleteSession(event, sid) {
+	event.preventDefault();
+	const user = getPlayerData();
+	fetch(API_URL + SESSIONS_URL + `/${sid}`, {
+		method: "DELETE",
+		headers: {
+			"Authorization": "Bearer " + user.token,
+		}
+	})
+	.then(res => {
+		if (res.ok) {
+			window.location.href = `#home`;
+		}
+		else {
+			// maybe display an error message
+		}
+	})
+}
+
 
 /**
  * Handles the input of a name
@@ -437,6 +494,9 @@ function handleDateInput(date, errMessage) {
 	return true;
 }
 
+
+window.removePlayerFromSession = removePlayerFromSession;
+window.deleteSession = deleteSession;
 window.submitFormGameSearch = submitFormGameSearch;
 window.submitFormSessionSearch = submitFormSessionSearch;
 window.submitFormCreateGame = submitFormCreateGame;
