@@ -1,6 +1,6 @@
-import {a, br, button, div, fieldset, h1, input, label, legend, p, ul} from "../../WebDSL/web_dsl.js";
-import {GAMES_URL, PLAYERS_URL, SESSIONS_URL} from "../../../index.js";
-import { handleSearch, showSearchResults, resultsKeyHandler, hideSearchResults} from "../../Scripts/search.js";
+import {a, br, button, div, fieldset, form, h1, input, label, legend, p, ul} from "../../WebDSL/web_dsl.js";
+import {API_URL, GAMES_URL, PLAYERS_URL, SESSIONS_URL} from "../../../index.js";
+import {handleSearch, hideSearchResults, resultsKeyHandler, showSearchResults} from "../../Scripts/search.js";
 
 window.handleSearch = handleSearch;
 window.showSearchResults = showSearchResults;
@@ -24,7 +24,7 @@ function formInputField(id, name, type, title) {
 			name: name,
 			autocomplete: "off"
 		}),
-		label(title, {class:"form__label"}, title),
+		label(id, {class: "form__label"}, title),
 	)
 }
 
@@ -85,7 +85,7 @@ function removePlayerFromSession(sid, pid) {
 					if (res.ok) {
 						location.reload();
 						console.log(data);
-						window.location.href = `#sessions/${sid}`;
+						//window.location.href = `#sessions/${sid}`; // Not needed, the page already reloads
 					} else {
 						return Promise.reject(res)
 					}
@@ -116,13 +116,13 @@ function deleteSession(sid) {
 			res.json()
 				.then(data => {
 					if (res.ok) {
-						location.reload();
 						console.log(data);
-						window.location.href = `#home`;
+						//window.location.href = `#home`;
 					} else {
 						return Promise.reject(res)
 					}
 				})
+			window.location.href = `#home`;
 			// .catch(error => {
 			// 	console.log(error) // this may not work
 			// 	errMessage.innerHTML = error.errorCause
@@ -144,7 +144,7 @@ function sessionDetails(session) {
 					div({class:"session__player"},
 						a(`#` + `${PLAYERS_URL}/` + `${player.pid}`, null, player.name),
 						button({
-							class: "session__player__remove",
+							class: "session__player__delete__button",
 							id: "remove_player",
 							type: "button",
 							onclick: `removePlayerFromSession(${session.sid}, ${player.pid})`
@@ -153,8 +153,17 @@ function sessionDetails(session) {
 					)
 			)
 		),
-		p({class: "session__add__player"} // Must create a css style class for this
-			//TODO: add player to session form
+		p({class: "session__add__player"},
+			form({onsubmit: `submitFormSessionAddPlayer(event, ${session.sid})`},
+				formInputWithSearchResults(
+					"player",
+					"player",
+					"text",
+					"Player Name"
+				),
+				errorMessage("err_message-player", "Player name must be at least 3 characters long"),
+				button({type: "submit"}, "Add Player")
+			)
 		),
 		p({class: "session__delete"},
 			button({
@@ -163,7 +172,7 @@ function sessionDetails(session) {
 				type: "button",
 				onclick: `deleteSession(${session.sid})`
 			}, "Delete Session"),
-			//errorMessage("err_message-delete_session", "Error deleting session") // maybe this is not needed
+			//errorMessage("err_message-delete_session", "Error deleting session") // this may not be needed
 		),
 	)
 }
@@ -196,7 +205,7 @@ function formInputWithSearchResults(id, searchType, fieldType, title) {
 			onblur: "setTimeout(() => hideSearchResults(id), 100)", // delay to allow click on search result
 			onkeydown: "resultsKeyPressHandler(event, id)",
 		}),
-		label(title, {class:"form__label"}, title),
+		label(id, {class: "form__label"}, title),
 		ul({class: "search_results", id: "search_results_" + id }, div({class: "search-results"})),
 	)
 }
@@ -293,6 +302,8 @@ function errorMessage(id, msg) {
 	)
 }
 
+window.deleteSession = deleteSession;
+window.removePlayerFromSession = removePlayerFromSession;
 
 export {
 	formInputField,

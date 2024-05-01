@@ -236,6 +236,51 @@ async function submitFormCreateSession(event) {
 		})
 }
 
+async function submitFormSessionAddPlayer(event, sid) {
+	event.preventDefault();
+	const playerName = document.getElementById('player').value;
+	const playerNameErr = document.getElementById('err_message-player');
+
+	playerNameErr.style.display = 'none';
+
+	if (
+		isInputNotInserted(playerName, 'player', playerNameErr) ||
+		!handleNameInput(playerName, playerNameErr)
+	) return;
+
+	const pid = await getUniquePlayerId(playerName);
+	if (!pid) {
+		const err = document.getElementById('err_message-player');
+		err.style.display = 'block';
+		err.innerHTML = 'No player found with that name';
+		return
+	}
+
+	try { // Try and Catch may not be needed
+		const response = await fetch(API_URL + `sessions/${sid}/players`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({pid})
+		});
+
+		if (response.status === 201) {
+			await response.json();
+			/** DOUBT:
+			 * Doing "window.location.href = `#sessions/${sid}`;" won´t refresh the session with the added player
+			 */
+			location.reload();
+		} else {
+			const error = await response.json();
+			playerNameErr.innerHTML = error.errorCause;
+			playerNameErr.style.display = "block";
+		}
+	} catch (error) {
+		console.error(error);
+	}
+}
+
 /**
  * Handles the input of a name
  *
@@ -355,5 +400,12 @@ window.submitFormGameSearch = submitFormGameSearch;
 window.submitFormSessionSearch = submitFormSessionSearch;
 window.submitFormCreateGame = submitFormCreateGame;
 window.submitFormCreateSession = submitFormCreateSession;
+window.submitFormSessionAddPlayer = submitFormSessionAddPlayer;
 
-export {submitFormGameSearch, submitFormSessionSearch, submitFormCreateGame, submitFormCreateSession};
+export {
+	submitFormGameSearch,
+	submitFormSessionSearch,
+	submitFormCreateGame,
+	submitFormCreateSession,
+	submitFormSessionAddPlayer
+};

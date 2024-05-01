@@ -4,12 +4,6 @@ import {gameDetailsView, playerDetailsView, sessionDetailsView} from "./Views/de
 import {gameSearchView, sessionSearchView} from "./Views/search.js";
 import {gameCreateView, sessionCreateView} from "./Views/create.js";
 import {handleGamePagination, handleSessionPagination} from "./Scripts/pagination.js";
-import {
-    submitFormCreateGame,
-    submitFormCreateSession,
-    submitFormGameSearch,
-    submitFormSessionSearch
-} from "./Scripts/formSubmit.js";
 import {genericErrorView, notFoundView} from "./Views/error.js";
 import {loginView, registerView} from "./Views/auth.js";
 import {authLogout, getPlayerData} from "./Scripts/auth.js";
