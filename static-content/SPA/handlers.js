@@ -5,6 +5,10 @@ import {gameSearchView, sessionSearchView} from "./Views/search.js";
 import {gameCreateView, sessionCreateView} from "./Views/create.js";
 import {handleGamePagination, handleSessionPagination} from "./Scripts/pagination.js";
 import {genericErrorView, notFoundView} from "./Views/error.js";
+import {
+    submitFormGameSearch,
+    submitFormSessionSearch
+} from "./Scripts/formSubmit.js"; // do not remove, messes up the searches url for some reason
 import {loginView, registerView} from "./Views/auth.js";
 import {authLogout, getPlayerData} from "./Scripts/auth.js";
 import {API_URL, GAMES_URL} from "../index.js";
@@ -135,8 +139,9 @@ function getGameDetails(mainContent, req) {
  */
 function getSessionDetails(mainContent, req) {
     const sessionId = req.params.sid
+    const authenticated = getPlayerData()
     fetchWithHandling(API_URL + `sessions/${sessionId}`, mainContent, (session) => {
-        const sessionView = sessionDetailsView(session)
+        const sessionView = sessionDetailsView(session, authenticated)
         mainContent.replaceChildren(sessionView)
     })
 }

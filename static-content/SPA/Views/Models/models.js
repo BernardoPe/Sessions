@@ -1,5 +1,5 @@
 import {a, br, button, div, fieldset, form, h1, input, label, legend, p, ul} from "../../WebDSL/web_dsl.js";
-import {API_URL, GAMES_URL, PLAYERS_URL, SESSIONS_URL} from "../../../index.js";
+import {GAMES_URL, PLAYERS_URL, SESSIONS_URL} from "../../../index.js";
 import {handleSearch, hideSearchResults, resultsKeyHandler, showSearchResults} from "../../Scripts/search.js";
 
 window.handleSearch = handleSearch;
@@ -60,77 +60,11 @@ function playerDetails(player) {
 	)
 }
 
+
 /**
  * Returns an HTML structure for a session's details
  * @param session - session object
  */
-function removePlayerFromSession(sid, pid) {
-	const confirmRemove = confirm("Are you sure you want to remove this player from the session?");
-	if (!confirmRemove) {
-		return;
-	}
-	const errMessage = document.getElementById("err_message-remove_player");
-
-	errMessage.style.display = 'none';
-
-	fetch(API_URL + SESSIONS_URL + `/${sid}/players/${pid}`, {
-		method: "DELETE",
-		headers: {
-			"Content-Type": "application/json"
-		}
-	})
-		.then(res => {
-			res.json()
-				.then(data => {
-					if (res.ok) {
-						location.reload();
-						console.log(data);
-						//window.location.href = `#sessions/${sid}`; // Not needed, the page already reloads
-					} else {
-						return Promise.reject(res)
-					}
-				})
-				.catch(error => {
-					errMessage.innerHTML = error.errorCause
-					errMessage.style.display = "block"
-				});
-		});
-}
-
-function deleteSession(sid) {
-	const confirmDelete = confirm("Are you sure you want to delete this session?");
-	if (!confirmDelete) {
-		return;
-	}
-	// const errMessage = document.getElementById("err_message-delete_session");
-	//
-	// errMessage.style.display = 'none';
-
-	fetch(API_URL + SESSIONS_URL + `/${sid}`, {
-		method: "DELETE",
-		headers: {
-			"Content-Type": "application/json"
-		}
-	})
-		.then(res => {
-			res.json()
-				.then(data => {
-					if (res.ok) {
-						console.log(data);
-						//window.location.href = `#home`;
-					} else {
-						return Promise.reject(res)
-					}
-				})
-			window.location.href = `#home`;
-			// .catch(error => {
-			// 	console.log(error) // this may not work
-			// 	errMessage.innerHTML = error.errorCause
-			// 	errMessage.style.display = "block"
-			// });
-		});
-}
-
 function sessionDetails(session) {
 	return div({class:"session-container"},
 		p({class:"session__game"},
@@ -138,31 +72,27 @@ function sessionDetails(session) {
 		),
 		p({class:"session__date"}, session.date),
 		fieldset({class:"session__players"},
-			legend(null, "Players " + session.playersSession.length + "/" + session.capacity),
+			legend({id:"capacity"}, "Players " + session.playersSession.length + "/" + session.capacity),
 			...session.playersSession.map(
-				player =>
-					div({class:"session__player"},
-						a(`#` + `${PLAYERS_URL}/` + `${player.pid}`, null, player.name),
-						button({
-							class: "session__player__delete__button",
-							id: "remove_player",
-							type: "button",
-							onclick: `removePlayerFromSession(${session.sid}, ${player.pid})`
-						}, "Remove Player"),
-						errorMessage("err_message-remove_player", "Error removing player from session")
-					)
+				player => sessionPlayer(session.sid, player, false)
 			)
 		),
-		p({class: "session__add__player"},
-			form({onsubmit: `submitFormSessionAddPlayer(event, ${session.sid})`},
-				formInputWithSearchResults(
-					"player",
-					"player",
-					"text",
-					"Player Name"
-				),
-				errorMessage("err_message-player", "Player name must be at least 3 characters long"),
-				button({type: "submit"}, "Add Player")
+	)
+}
+
+/**
+ * Returns an HTML structure for a session's details with the additional authenticated actions
+ */
+function sessionDetailsAuthenticated(session) {
+	const sessionView = div({class:"session-container"},
+		p({class:"session__game"},
+			a(`#` + `${GAMES_URL}/` + `${session.gameSession.gid}`, null, session.gameSession.name)
+		),
+		p({class:"session__date"}, session.date),
+		fieldset({class:"session__players"},
+			legend({id:"capacity"}, "Players " + session.playersSession.length + "/" + session.capacity),
+			...session.playersSession.map(
+				player => sessionPlayer(session.sid, player, true)
 			)
 		),
 		p({class: "session__delete"},
@@ -170,12 +100,47 @@ function sessionDetails(session) {
 				class: "session__delete__button",
 				id: "delete_session",
 				type: "button",
-				onclick: `deleteSession(${session.sid})`
+				onclick: `deleteSession(event,${session.sid})`
 			}, "Delete Session"),
-			//errorMessage("err_message-delete_session", "Error deleting session") // this may not be needed
 		),
 	)
+	if (new Date(session.date) > new Date())  {
+		sessionView.appendChild(
+			p({class: "session__add__player"},
+				form({onsubmit: `submitFormSessionAddPlayer(event, ${session.sid})`},
+					formInputWithSearchResults(
+						"player",
+						"players",
+						"text",
+						"Player Name"
+					),
+					errorMessage("err_message-player", "Player name must be at least 3 characters long"),
+					button({type: "submit"}, "Add Player")
+				)
+			),
+		)
+	}
+	return sessionView
 }
+
+
+function sessionPlayer(sid, player, authenticated) {
+	const playerView = div({class:`session__player_${player.pid}`},
+		a(`#` + `${PLAYERS_URL}/` + `${player.pid}`, null, player.name),
+	)
+	if (authenticated) {
+		playerView.appendChild(
+			button({
+				class: "session__delete__button",
+				id: "remove_player",
+				type: "button",
+				onclick: `removePlayerFromSession(event,${sid}, ${player.pid})`
+			}, "Remove Player"),
+		)
+	}
+	return playerView
+}
+
 
 
 /**
@@ -291,19 +256,14 @@ function dateTimeInput() {
 	)
 }
 
-
 /**
  * Returns an HTML structure for an error message
  */
-
 function errorMessage(id, msg) {
 	return div({id: id, class: "error-message-container"},
 		p({class: "error_message"}, msg)
 	)
 }
-
-window.deleteSession = deleteSession;
-window.removePlayerFromSession = removePlayerFromSession;
 
 export {
 	formInputField,
@@ -315,6 +275,8 @@ export {
 	sessionSearchResult,
 	gameSearchResult,
 	gameDetails,
+	sessionDetailsAuthenticated,
 	playerDetails,
-	sessionDetails
+	sessionDetails,
+	sessionPlayer
 }
