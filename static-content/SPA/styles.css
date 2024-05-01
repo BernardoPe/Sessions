@@ -1,5 +1,26 @@
 /* Global Styles */
 
+@font-face {
+	font-family: 'Sans Regular';
+	font-style: normal;
+	font-weight: normal;
+	src: local('Sans Regular'), url('Styling/fonts/ProductSans-Regular.woff') format('woff');
+}
+
+@font-face {
+	font-family: 'Sans Bold';
+	font-style: normal;
+	font-weight: normal;
+	src: local('Sans Bold'), url('Styling/fonts/ProductSans-Bold.woff') format('woff');
+}
+
+@font-face {
+	font-family: 'Sans Medium';
+	font-style: normal;
+	font-weight: normal;
+	src: local('Sans Medium'), url('Styling/fonts/ProductSans-Medium.woff') format('woff');
+}
+
 * {
 	margin: 0;
 	padding: 0;
@@ -23,7 +44,7 @@
 }
 
 html, body {
-	font-family: 'Open Sans', sans-serif;
+	font-family: 'Sans Medium', sans-serif;
 	margin: 0;
 	height: 100%;
 	width: 100%;
@@ -55,6 +76,11 @@ a:hover {
 	margin-bottom: 1em;
 	color: #F5F5F5;
 	text-align: center;
+}
+
+.subtitle #token {
+	margin-top: 50px;
+	color: var(--color-primary);
 }
 
 #mainContent::-webkit-scrollbar {
@@ -94,6 +120,10 @@ nav div {
 	padding: 1em;
 	margin-bottom: 1em;
 	width: 60%;
+}
+
+a {
+	width: fit-content;
 }
 
 nav a:after {
@@ -193,6 +223,7 @@ form {
 .form__input {
 	margin: 3em 0;
 	position: relative;
+	width: 70%;
 	padding: 0 !important;
 
 	&::-webkit-scrollbar {
@@ -258,8 +289,7 @@ form {
 	color: white;
 	justify-content: center;
 	width: fit-content;
-	margin: auto;
-	margin-top: 1em;
+	margin: 1em auto auto;
 }
 
 .error-container p {
@@ -274,7 +304,6 @@ form {
 	background: var(--color-error-background);
 	display: none; /**/
 	text-align: center;
-	width: 50%;
 	height: fit-content;
 	padding: 1em !important;
 	border-radius: 10px;
@@ -307,7 +336,8 @@ form {
 	flex-direction: column;
 	max-height: 10em;
 	overflow: scroll;
-	margin: 0;
+	font-size: 1em;
+	margin: 5px;
 	background: rgba(11, 10, 10, 0.88);
 	border-radius: 0 0 24px 24px;
 	box-shadow: 0 4px 6px 0 #171717;
@@ -326,15 +356,12 @@ form {
 .search_result {
 	display: flex;
 	flex-direction: column;
-	font-size: 1.25em;
 	border: none;
 	min-width: 0;
 	max-height: none;
 	color: #ffffff;
-	margin: 0;
-	padding-bottom: 10px;
-	padding-top: 10px;
-	padding-left: 20px;
+	margin: 0 !important;
+	padding: 10px 10px 10px 20px;
 }
 
 .search_result.selected {
@@ -511,8 +538,8 @@ button[type="button"]:hover {
 
 .search-ref {
 	display: block;
-	margin: 1em auto;
-	padding: 1em;
+	width: fit-content;
+	margin: 0.5em auto;
 	position: relative;
 }
 
@@ -526,10 +553,10 @@ button[type="button"]:hover {
 
 .session-container {
 	display: block;
-	max-width: 40em;
-	height: fit-content;
+	max-width: 60em;
+	height: 12em;
 	margin: 2em auto;
-	padding: 1em;
+	padding: 1.5em;
 	background: var(--color-background-tertiary);
 	border-radius: 10px;
 	box-shadow: 0 6px 20px -5px rgba(0, 0, 0, 0.4);
@@ -560,16 +587,32 @@ button[type="button"]:hover {
 
 .session__reference {
 	display: block;
-	margin: 0.5em;
+	margin: 0.5em auto;
 	position: relative;
+	width: fit-content;
+}
+
+.session__players {
+	display: flex;
+	width: 75%;
+	flex-direction: column;
+	font-size: 1.2em;
+	margin: auto;
+	position: relative;
+}
+
+.session__players a {
+	font-size: 1em;
+	margin: 0.5em;
+	padding: 0;
 }
 
 /* Game Containers From Search Results */
 
 .game-container {
 	display: block;
-	max-width: 40em;
-	height: fit-content;
+	max-width: 60em;
+	height: 12em;
 	margin: 2em auto;
 	padding: 1em;
 	background: var(--color-background-tertiary);
@@ -600,6 +643,38 @@ button[type="button"]:hover {
 	font-size: 1.5em;
 	color: var(--color-text-title);
 	margin: 0.5em;
+	text-align: center;
+}
+
+/* Player Details */
+
+.player-container {
+	display: block;
+	max-width: 40em;
+	height: fit-content;
+	margin: 2em auto;
+	padding: 1em;
+	background: var(--color-background-tertiary);
+	border-radius: 10px;
+	box-shadow: 0 6px 20px -5px rgba(0, 0, 0, 0.4);
+	position: relative;
+	align-items: center;
+	justify-content: center;
+}
+
+.player__name {
+	font-size: 2em;
+	font-weight: bold;
+	color: var(--color-text-title);
+	margin: 0.5em 0.5em;
+	padding: 0;
+	text-align: center;
+}
+
+.player__email {
+	font-size: 1.5em;
+	color: var(--color-text-title);
+	margin: 1em 0.5em;
 	text-align: center;
 }
 
@@ -640,24 +715,23 @@ button[type="button"]:hover {
 }
 
 .pagination-button:hover {
-	transform: background-color 0.3s ease;
+	transform: scale(1.1);
 }
 
 /* Pagination Info */
 
 .pagination-info {
+	position: relative;
 	display: block;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	margin: 0em auto;
+	margin: 2em auto;
 	padding: 1em;
-	width: 40em;
-	height: 5em;
+	max-width: 60em;
 	background: var(--color-background-tertiary);
 	border-radius: 10px;
 	box-shadow: 0 6px 20px -5px rgba(0, 0, 0, 0.4);
-	position: relative;
 }
 
 .pagination-info p {
