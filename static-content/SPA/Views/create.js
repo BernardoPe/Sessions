@@ -7,7 +7,7 @@ import {dateTimeInput, errorMessage, formInputField, formInputWithSearchResults,
  * For details about the game creation operation, see [Game Creation]{@link submitFormCreateGame}
  */
 function gameCreateView() {
-    return div({class: "form__group"},
+    return div({class: "form__group fade-up"},
         form({onsubmit: "submitFormCreateGame(event)"},
             formInputField(
                 "game_name",

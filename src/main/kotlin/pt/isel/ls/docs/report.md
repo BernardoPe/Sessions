@@ -249,7 +249,6 @@ The SPA offers the following operations to the user:
 ![SPA Navigation Graph](spa_views.png)
 
 
-
 ## Critical Evaluation
 
 As of the moment this report was written, the application is able to create, search, and add players to games and sessions.

@@ -14,7 +14,7 @@ import {
  * For details about the game search operation, see [Game Search]{@link submitFormGameSearch}
  */
 function gameSearchView() {
-	return div({class: "form__group"},
+	return div({class: "form__group fade-up"},
 		form({onsubmit: "submitFormGameSearch(event)"},
 			formInputField(
 				"developer",
@@ -43,7 +43,7 @@ function gameSearchView() {
  * For details about the session search operation, see [Session Search]{@link submitFormSessionSearch}
  */
 function sessionSearchView() {
-	return div({class: "form__group"},
+	return div({class: "form__group fade-up"},
 		form({onsubmit: "submitFormSessionSearch(event)"},
 			formInputWithSearchResults(
 				"game",

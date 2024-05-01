@@ -26,7 +26,6 @@ function submitFormGameSearch(event) {
 	let queries = new URLSearchParams();
 
 	if (name !== '') {
-		console.log(name)
 		if (!handleNameInput(name, errMessageGame))
 			return;
 		queries.append('name', name);

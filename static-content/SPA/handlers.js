@@ -13,7 +13,7 @@ import {loginView, registerView} from "./Views/auth.js";
 import {authLogout, getPlayerData} from "./Scripts/auth.js";
 import {API_URL, GAMES_URL} from "../index.js";
 
-export const RESULTS_PER_PAGE = 10;
+export const RESULTS_PER_PAGE = 3;
 
 /**
  * Handles the routing of the application to the home page

@@ -1,31 +1,8 @@
-@font-face {
-    font-family: 'Montserrat Regular';
-    font-style: normal;
-    font-weight: normal;
-    src: local('Montserrat Regular'), url('fonts/Montserrat-Regular.woff') format('woff');
-}
-
-@font-face {
-    font-family: 'Montserrat Bold';
-    font-style: normal;
-    font-weight: bold;
-    src: local('Montserrat Bold'), url('fonts/Montserrat-Bold.woff') format('woff');
-}
-
-@font-face {
-    font-family: 'Montserrat Light';
-    font-style: normal;
-    font-weight: 300;
-    src: local('Montserrat Light'), url('fonts/Montserrat-Light.woff') format('woff');
-}
-
 body {
     position: relative;
     font-family: 'Open Sans', sans-serif;
     margin: 0;
     height: 100%;
-    overflow-x: hidden;
-    overflow-y: scroll;
     background: rgba(11, 10, 10, 0.88);
 
     h2 {
@@ -170,6 +147,7 @@ body {
                     text-align: center;
                     box-shadow: 0 6px 20px -5px rgba(0, 0, 0, 0.4);
                     position: relative;
+                    overflow: hidden;
                     cursor: pointer;
                 }
 
@@ -263,11 +241,14 @@ body {
                     .search_results {
                         display: none;
                         flex-direction: column;
-                        overflow: scroll;
                         max-height: 10em;
+                        overflow: scroll;
+                        margin: 0;
                         background: rgba(11, 10, 10, 0.88);
                         border-radius: 0 0 24px 24px;
                         box-shadow: 0 4px 6px 0 #171717;
+                        border: 0;
+                        padding-left: 0;
                         padding-bottom: 4px;
                         position: absolute;
                         width: 100%;
@@ -522,28 +503,6 @@ body {
                         width: fit-content;
                         text-align: center;
                     }
-
-                    .session__player__delete__button {
-                        font-size: 1em;
-                        font-weight: bold;
-                        margin-left: 10px;
-                        border-radius: 5px;
-                        background-color: #333333;
-                        width: fit-content;
-                        text-align: center;
-                        cursor: pointer;
-                    }
-
-                    .session__add__player {
-                        font-size: 1em;
-                        font-weight: bold;
-                        margin-left: 10px;
-                        border-radius: 5px;
-                        background-color: #333333;
-                        width: fit-content;
-                        text-align: center;
-                        cursor: pointer;
-                    }
                 }
 
                 .session__identifier {
@@ -624,7 +583,7 @@ body {
                 justify-content: center;
                 padding: 15px 15px 50px;
                 position: relative;
-                width: 100%;
+                font-weight: revert;
                 .pagination-button {
                     padding: 0;
                     margin: 0;
@@ -647,9 +606,6 @@ body {
                     color: white;
                     background: inherit;
                     border: none;
-                    margin-left: 5px;
-                    margin-right: 5px;
-                    margin-top: 10px;
                     font-weight: bold;
                     letter-spacing: 1px;
                 }
@@ -671,7 +627,7 @@ body {
                         justify-content: center;
                         padding: 10px;
                         margin: 5px;
-                        width: 50px;
+                        width: 25px;
                         border-radius: 5px;
                         cursor: pointer;
                         background: rgba(92, 96, 105, 0.67);

@@ -8,7 +8,7 @@ import {errorMessage, formInputField} from "./Models/models.js";
  */
 function loginView() {
 	return (
-		div({class: "form__group"},
+		div({class: "form__group fade-up"},
 			form({onsubmit: "authLogin(event)"},
                 formInputField(
                     "token",
