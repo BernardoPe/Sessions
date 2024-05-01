@@ -281,6 +281,47 @@ async function submitFormSessionAddPlayer(event, sid) {
 	}
 }
 
+async function submitFormUpdateSession(event, sid) {
+	event.preventDefault();
+	const capacity = document.getElementById('capacity').value;
+	const date = document.getElementById('date').value;
+	const capacityErr = document.getElementById('err_message-capacity');
+	const dateErr = document.getElementById('err_message-date');
+
+	capacityErr.style.display = 'none';
+	dateErr.style.display = 'none';
+
+	if (
+		!handleGameCapacity(capacity, capacityErr) ||
+		!handleDateInput(date, dateErr)
+	)
+		return;
+
+	fetch(API_URL + `sessions/${sid}`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({capacity, date})
+	})
+		.then(res => res.json())
+		.then(data => {
+			//window.location.href = `#sessions/${sid}`;
+			window.location.reload();
+		})
+		.catch(err => {
+			err.json().then(err => {
+				if (err.errorCause.toLowerCase().includes("date")) {
+					dateErr.innerHTML = err.errorCause
+					dateErr.style.display = "block"
+				} else {
+					capacityErr.innerHTML = err.errorCause
+					capacityErr.style.display = "block"
+				}
+			})
+		})
+}
+
 /**
  * Handles the input of a name
  *
@@ -401,11 +442,13 @@ window.submitFormSessionSearch = submitFormSessionSearch;
 window.submitFormCreateGame = submitFormCreateGame;
 window.submitFormCreateSession = submitFormCreateSession;
 window.submitFormSessionAddPlayer = submitFormSessionAddPlayer;
+window.submitFormUpdateSession = submitFormUpdateSession;
 
 export {
 	submitFormGameSearch,
 	submitFormSessionSearch,
 	submitFormCreateGame,
 	submitFormCreateSession,
-	submitFormSessionAddPlayer
+	submitFormSessionAddPlayer,
+	submitFormUpdateSession
 };

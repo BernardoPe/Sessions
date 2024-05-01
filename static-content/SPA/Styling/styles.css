@@ -500,6 +500,17 @@ body {
                     }
                 }
 
+                .session__delete {
+                    font-size: 1.5em;
+                    font-weight: bold;
+                    margin: 15px;
+                    border-radius: 5px;
+                    background-color: #333333;
+                    width: fit-content;
+                    text-align: center;
+                    cursor: pointer;
+                }
+
                 .session__players {
                     font-size: 1.5em;
                     font-weight: bold;

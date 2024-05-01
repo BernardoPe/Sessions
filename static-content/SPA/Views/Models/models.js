@@ -133,6 +133,21 @@ function deleteSession(sid) {
 
 function sessionDetails(session) {
 	return div({class:"session-container"},
+		p({class: "session__update"},
+			form({onsubmit: `submitFormUpdateSession(event, ${session.sid})`},
+				formInputField(
+					"capacity",
+					"capacity",
+					"number",
+					"Session capacity"
+				),
+				errorMessage("err_message-capacity", "Capacity must be a number"),
+				dateTimeInput(),
+				errorMessage("err_message-date", "Invalid date to create a session"),
+
+				button({type: "submit"}, "Edit Session"),
+			)
+		),
 		p({class:"session__game"},
 			a(`#` + `${GAMES_URL}/` + `${session.gameSession.gid}`, null, session.gameSession.name)
 		),
@@ -144,7 +159,7 @@ function sessionDetails(session) {
 					div({class:"session__player"},
 						a(`#` + `${PLAYERS_URL}/` + `${player.pid}`, null, player.name),
 						button({
-							class: "session__player__delete__button",
+							class: "session__player__delete__button", // May not be needed
 							id: "remove_player",
 							type: "button",
 							onclick: `removePlayerFromSession(${session.sid}, ${player.pid})`
@@ -167,8 +182,6 @@ function sessionDetails(session) {
 		),
 		p({class: "session__delete"},
 			button({
-				class: "session__delete__button",
-				id: "delete_session",
 				type: "button",
 				onclick: `deleteSession(${session.sid})`
 			}, "Delete Session"),
