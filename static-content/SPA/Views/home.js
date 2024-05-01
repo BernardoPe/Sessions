@@ -10,7 +10,7 @@ import {a, div, h2, li, ol} from "../WebDSL/web_dsl.js";
 export function homeView (user) {
 	const welcome = user ? `Welcome to Sessions, ${user.name}` : "Welcome to Sessions";
 
-	const homeDiv = div(null,
+	const homeDiv = div({class:'fade-up'},
 		h2({class:'title'}, welcome),
 	);
 

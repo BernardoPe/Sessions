@@ -83,8 +83,10 @@ function getRequestParamsAndQuery(path) {
     const route = matchPathScheme(path)
     if (!route) return {params: {}, query: {}}
 
+    const decodedPath = decodeURIComponent(path)
+
     const routeParts = route.path.split("/");
-    const pathParts = path.split('?')[0].split("/");
+    const pathParts = decodedPath.split('?')[0].split("/");
 
     const params = {}
     for (let i = 0; i < routeParts.length; i++) {
@@ -95,9 +97,9 @@ function getRequestParamsAndQuery(path) {
     }
 
     const query = {}
-    const queryIndex = path.indexOf("?")
+    const queryIndex = decodedPath.indexOf("?")
     if (queryIndex !== -1) {
-        const queryString = path.substring(queryIndex + 1)
+        const queryString = decodedPath.substring(queryIndex + 1)
         const queryParts = queryString.split("&")
         queryParts.forEach(part => {
             const [key, value] = part.split("=")

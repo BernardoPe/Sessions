@@ -602,7 +602,7 @@ body {
                 justify-content: center;
                 padding: 15px 15px 50px;
                 position: relative;
-                font-weight: revert;
+                width: 100%;
                 .pagination-button {
                     padding: 0;
                     margin: 0;

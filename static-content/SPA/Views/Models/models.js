@@ -35,7 +35,7 @@ function formInputField(id, name, type, title) {
 
 function gameDetails(game) {
 	return div(null,
-		div({class:"game-container"},
+		div({class:"game-container fade-up"},
 			h1({class:"game__title"}, game.name),
 			p({class:"game__developer"}, "By " + game.developer),
 			p({class:"game__genres"}, "Genres: " + game.genres.join(', ')),
@@ -52,7 +52,7 @@ function gameDetails(game) {
 
 function playerDetails(player) {
 	return div(null,
-		div({class: "player-container"},
+		div({class: "player-container fade-up"},
 			p({class: "player__name"}, player.name),
 			p({class: "player__email"}, "Contact info: " + player.email)
 		),
@@ -65,7 +65,7 @@ function playerDetails(player) {
  * @param session - session object
  */
 function sessionDetails(session) {
-	return div({class:"session-container"},
+	return div({class:"session-container fade-up"},
 		p({class:"session__game"},
 			a(`#` + `${GAMES_URL}/` + `${session.gameSession.gid}`, null, session.gameSession.name)
 		),
