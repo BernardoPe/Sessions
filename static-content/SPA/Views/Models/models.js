@@ -84,7 +84,7 @@ function sessionDetails(session) {
  */
 function sessionDetailsAuthenticated(session) {
 	const sessionView = div({class:"session-container"},
-        p({class: "session__update"},
+		div({class: "session__update"},
             form({onsubmit: `submitFormUpdateSession(event, ${session.sid})`},
                 formInputField(
                     "capacity",
@@ -109,7 +109,7 @@ function sessionDetailsAuthenticated(session) {
 				player => sessionPlayer(session.sid, player, true)
 			)
 		),
-		p({class: "session__delete"},
+		div({class: "session__delete"},
 			button({
 				class: "session__delete__button",
 				id: "delete_session",
@@ -120,7 +120,7 @@ function sessionDetailsAuthenticated(session) {
 	)
 	if (new Date(session.date) > new Date())  {
 		sessionView.appendChild(
-			p({class: "session__add__player"},
+			div({class: "session__add__player"},
 				form({onsubmit: `submitFormSessionAddPlayer(event, ${session.sid})`},
 					formInputWithSearchResults(
 						"player",
