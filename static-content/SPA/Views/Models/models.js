@@ -275,7 +275,7 @@ function dateTimeInput() {
  */
 
 function errorMessage(id, msg) {
-	return div({id: id, class: "error-message-container fade-up"},
+	return div({id: id, class: "error-message-container fade-up", onclick: "this.style.display = 'none'"},
 		p({class: "error_message"}, msg)
 	)
 }

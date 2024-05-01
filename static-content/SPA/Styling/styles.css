@@ -41,6 +41,7 @@
 	padding: 0;
 
 	/* Variables */
+	/* Colors */
 	--color-primary: #6495ED;
 	--color-background-primary: #272626;
 	--color-background-secondary: #333333;
@@ -53,9 +54,17 @@
 	--color-error-border: #cc0033;
 	--color-error-text: var(--color-error-border);
 
+	/* Transitions */
 	--delay: 0.3s;
 
+	/* Font Sizes */
 	--font-size-common: 1.2em;
+
+	/* Sizes */
+	--size-common: 1em;
+	--size-large: 2em;
+	--size-small: 0.8em;
+	--size-nav: 10em;
 }
 
 html, body {
@@ -112,6 +121,12 @@ a:hover {
 
 /* Header Navigation */
 
+.nav-bar {
+	width: var(--size-nav);
+	height: 100%;
+	background: var(--color-background-primary);
+}
+
 nav {
 	flex: auto;
 	flex-direction: column;
@@ -122,7 +137,7 @@ nav {
 	justify-content: space-between;
 	align-items:flex-start;
 	padding: var(--nav-padding-top-bottom) 0;
-	width: 10em;
+	width: inherit;
 }
 
 nav div {
@@ -338,12 +353,14 @@ form {
 .search-results-container {
 	width: inherit;
 	margin: auto 5em;
+	margin-bottom: 10%;
 	height: inherit;
 	position: relative;
 	background: #333333;
 	color: #F5F5F5;
 	text-align: center;
 	/*border-bottom: #6495ED solid 2px;/**/
+	scroll-behavior: smooth;
 }
 
 .search_results {
@@ -563,14 +580,28 @@ button[type="button"]:hover {
 	transition: transform 0.3s ease;
 }
 
+.return_reference {
+	position: absolute;
+	background-color: var(--color-background-tertiary);
+	writing-mode: vertical-rl; 
+	border: none;
+	display: inline-block;
+	width: 1.5em;
+	height: 2em;
+	text-align: center;
+	line-height: 2em;
+	border-radius: 10px;
+	transform: rotate(180deg);
+}
+
 /* Session Containers */
 
 .session-container {
 	display: block;
-	max-width: 60em;
+	width: 60em;
 	height: fit-content;
 	margin: 2em auto;
-	padding: 1.5em;
+	padding: 1em;
 	background: var(--color-background-tertiary);
 	border-radius: 10px;
 	box-shadow: 0 6px 20px -5px rgba(0, 0, 0, 0.4);
@@ -613,6 +644,7 @@ button[type="button"]:hover {
 	font-size: 1.2em;
 	margin: auto;
 	position: relative;
+	background: var(--color-background-secondary);
 }
 
 .session__players a {
@@ -626,7 +658,7 @@ button[type="button"]:hover {
 .game-container {
 	display: block;
 	max-width: 60em;
-	height: 12em;
+	height: fit-content;
 	margin: 2em auto;
 	padding: 1em;
 	background: var(--color-background-tertiary);
@@ -735,17 +767,15 @@ button[type="button"]:hover {
 /* Pagination Info */
 
 .pagination-info {
-	position: relative;
+	position: absolute;
 	display: block;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	margin: 2em auto;
 	padding: 1em;
-	max-width: 60em;
-	background: var(--color-background-tertiary);
+	width: 60em;
+	background: var(--color-background-primary);
 	border-radius: 10px;
 	box-shadow: 0 6px 20px -5px rgba(0, 0, 0, 0.4);
+	bottom: 1em;
+	left: calc(25% + 4em);
 }
 
 .pagination-info p {
