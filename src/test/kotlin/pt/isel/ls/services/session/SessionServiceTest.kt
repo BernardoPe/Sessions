@@ -340,7 +340,6 @@ class SessionServiceTest {
             getSession,
         )
 
-        assertEquals("Session successfully updated", updatedSession)
     }
 
     @Test

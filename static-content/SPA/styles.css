@@ -21,8 +21,24 @@
 	src: local('Sans Medium'), url('Assets/fonts/ProductSans-Medium.woff') format('woff');
 }
 
+.red {
+	color: #ab0a0a;
+}
+
+.green {
+	color: #037903;
+}
+
 .fade-up {
 	animation: fade-up 0.3s ease;
+}
+
+.fade-in {
+	animation: fade-in 0.3s ease;
+}
+
+.split {
+	animation: split 0.3s ease;
 }
 
 @keyframes fade-up {
@@ -33,6 +49,26 @@
 	to {
 		opacity: 1;
 		transform: translateY(0);
+	}
+}
+
+@keyframes split {
+	from {
+		opacity: 0.01;
+		transform: translateX(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes fade-in {
+	from {
+		opacity: 0.01;
+	}
+	to {
+		opacity: 1;
 	}
 }
 
@@ -523,6 +559,12 @@ input[type="checkbox"]:hover + label::after {
 	box-shadow: none;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
 /* Date Picker */
 
 input[type="datetime-local"] {
@@ -577,6 +619,7 @@ button[type="button"]:hover {
 	border: 2px solid #6495ED;
 	box-shadow: none;
 }
+
 
 /* Search Results Refs */
 
@@ -652,7 +695,7 @@ button[type="button"]:hover {
 
 .session__players {
 	display: flex;
-	width: 75%;
+	min-width: 60%;
 	flex-direction: column;
 	font-size: 1.2em;
 	margin: auto;
@@ -728,6 +771,19 @@ button[type="button"]:hover {
 	margin: 0.5em 0.5em;
 	padding: 0;
 	text-align: center;
+}
+
+.session__player {
+	display: flex;
+	margin: 0 0 10px;
+	position: relative;
+	width: fit-content;
+	justify-content: start;
+}
+
+.session__player a {
+	margin:0;
+	padding: 0 20px 0 0;
 }
 
 .player__email {
@@ -833,4 +889,62 @@ button[type="button"]:hover {
 .pagination-spacer {
 	display: inline-block;
 	width: 1em;
+}
+
+
+i {
+	margin: 0 0.5em;
+	transition: transform 0.1s ease;
+}
+
+i:hover {
+	transform: scale(1.1);
+}
+
+
+.confirmation__buttons {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.confirmation__buttons button {
+	border: none;
+	transition: transform 0.3s ease;
+	justify-content: center;
+	background: none;
+	line-height: 2em;
+}
+
+.icon__button {
+	border: none;
+	display: flex;
+	justify-content: center;
+	transition: transform 0.3s ease;
+	margin: 0 auto;
+	background: none;
+	height: 40px;
+	line-height: 2em;
+}
+
+.session__add__player {
+	display: block;
+	width: fit-content;
+	margin: 0 auto;
+	position: relative;
+}
+
+.session__add__player .form__input {
+	margin-top: 20px;
+	margin-bottom: 0;
+}
+
+.session__add__player .search_results{
+	width: 100%;
+	font-size: 0.7em;
+}
+
+.session__add__player .error-message-container {
+	font-size: 0.8em;
+	margin-bottom: 5px;
 }

@@ -1,10 +1,5 @@
 let timer;
 
-window.handleSearch = handleSearch;
-window.showSearchResults = showSearchResults;
-window.resultsKeyPressHandler = resultsKeyHandler;
-window.hideSearchResults = hideSearchResults;
-
 /**
  * Handles API calls for search results and displays them in a container below the input field
  *

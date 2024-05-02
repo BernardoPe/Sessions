@@ -597,7 +597,7 @@ class ServerTest {
     @Test
     fun `update session no auth should give unauthorized`() {
         // Arrange
-        val request = Request(Method.PUT, "/sessions/1")
+        val request = Request(Method.PATCH, "/sessions/1")
             .header("Content-Type", "application/json")
             .body("""{"capacity":"200","date":"2030-05-01T00:00:00"}""")
         // Act
@@ -610,7 +610,7 @@ class ServerTest {
     @Test
     fun `update session session not found`() {
         // Arrange
-        val request = Request(Method.PUT, "/sessions/10")
+        val request = Request(Method.PATCH, "/sessions/10")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
             .body("""{"capacity":"100","date":"2030-05-01T00:00:00"}""")
@@ -624,7 +624,7 @@ class ServerTest {
     @Test
     fun `update session empty fields should give bad request`() {
         // Arrange
-        val request = Request(Method.PUT, "/sessions/1")
+        val request = Request(Method.PATCH, "/sessions/1")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
             .body("""{"capacity":"","date":""}""")
@@ -637,7 +637,7 @@ class ServerTest {
     @Test
     fun `update session invalid capacity should give bad request`() {
         // Arrange
-        val request = Request(Method.PUT, "/sessions/1")
+        val request = Request(Method.PATCH, "/sessions/1")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
             .body("""{"capacity":"200","date":"2030-05-01T00:00:00""")
@@ -651,7 +651,7 @@ class ServerTest {
     @Test
     fun `update session invalid date should give bad request`() {
         // Arrange
-        val request = Request(Method.PUT, "/sessions/1")
+        val request = Request(Method.PATCH, "/sessions/1")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
             .body("""{"capacity":"100","date":"2020-05-01T00:00:00"}""")
@@ -665,7 +665,7 @@ class ServerTest {
     @Test
     fun `update session, capacity less than current players size`() {
         // Arrange
-        val request = Request(Method.PUT, "/sessions/1")
+        val request = Request(Method.PATCH, "/sessions/1")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
             .body("""{"capacity":"1","date":"2030-05-01T00:00:00"}""")

@@ -62,5 +62,6 @@ function sessionSearchView() {
 	);
 }
 
+
 export { gameSearchView, sessionSearchView };
 

@@ -1,6 +1,7 @@
 import {API_URL, SESSIONS_URL} from "../../index.js";
 import {getPlayerData} from "./auth.js";
 import {sessionPlayer} from "../Views/Models/Players/players.js";
+import {formatDate} from "../Views/Models/Sessions/sessions.js";
 
 const SESSION_MAX_CAPACITY = 100;
 
@@ -274,11 +275,11 @@ async function submitFormSessionAddPlayer(event, sid) {
 	});
 	if (response.status === 201) {
 		const sessionPlayers = document.querySelector('.session__players');
-		const capacityElement = document.getElementById("capacity");
+		const capacityElement = document.getElementById("session-capacity");
 		const capacityValues = capacityElement.innerHTML.split("/"); // Players x/y
 		capacityElement.innerHTML = "Players " + (parseInt(capacityValues[0].split(" ")[1]) + 1) + "/" + capacityValues[1];
 		const player = sessionPlayer(sid, {pid, name: playerName}, true);
-		sessionPlayers.appendChild(player);
+		sessionPlayers.prepend(player);
 	} else {
 		const error = await response.json();
 		playerNameErr.innerHTML = error.errorCause;
@@ -296,34 +297,43 @@ async function submitFormUpdateSession(event, sid) {
 	capacityErr.style.display = 'none';
 	dateErr.style.display = 'none';
 
-	if (
-		!handleGameCapacity(capacity, capacityErr) ||
-		!handleDateInput(date, dateErr)
-	)
+	if (!handleGameCapacity(capacity, capacityErr))
 		return;
+
+	const reqBody = {};
+
+	date? reqBody.date = date : null;
+	capacity? reqBody.capacity = capacity : null;
 
 	fetch(API_URL + `sessions/${sid}`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({capacity, date})
+		body: JSON.stringify(reqBody)
 	})
-		.then(res => res.json())
-		.then(data => {
-			//window.location.href = `#sessions/${sid}`;
-			window.location.reload();
-		})
-		.catch(err => {
-			err.json().then(err => {
-				if (err.errorCause.toLowerCase().includes("date")) {
-					dateErr.innerHTML = err.errorCause
-					dateErr.style.display = "block"
-				} else {
-					capacityErr.innerHTML = err.errorCause
-					capacityErr.style.display = "block"
+		.then(res => {
+			if (res.ok) {
+				if (date) {
+					const dateElement = document.querySelector(".session__date")
+					dateElement.innerHTML = formatDate(date);
 				}
-			})
+				if (capacity) {
+					const capacityElement = document.getElementById("session-capacity");
+					const currentCapacity = capacityElement.innerHTML.split("/")[0].split(" ")[1];
+					capacityElement.innerHTML = "Players " + currentCapacity + "/" + capacity;
+				}
+			} else {
+				res.json().then(err => {
+					if (err.errorCause.toLowerCase().includes("date")) {
+						dateErr.innerHTML = err.errorCause
+						dateErr.style.display = "block"
+					} else {
+						capacityErr.innerHTML = err.errorCause
+						capacityErr.style.display = "block"
+					}
+				})
+			}
 		})
 }
 
@@ -343,8 +353,8 @@ function removePlayerFromSession(event, sid, pid) {
 	})
 	.then(res => {
 		if (res.ok) {
-			const playerDiv = document.querySelector(`.session__player_${pid}`);
-			const capacityElement = document.getElementById("capacity");
+			const playerDiv = document.getElementById(`player-${pid}`);
+			const capacityElement = document.getElementById("session-capacity");
 			const capacityValues = capacityElement.innerHTML.split("/"); // Players x/y
 			capacityElement.innerHTML = "Players " + (parseInt(capacityValues[0].split(" ")[1]) - 1) + "/" + capacityValues[1];
 			playerDiv.remove();

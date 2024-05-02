@@ -1,4 +1,12 @@
 import {div, input, label, ul} from "../../../WebDSL/web_dsl.js";
+import {resultsKeyHandler, handleSearch, showSearchResults, hideSearchResults} from "../../../Scripts/search.js";
+
+
+window.handleSearch = handleSearch;
+window.showSearchResults = showSearchResults;
+window.resultsKeyPressHandler = resultsKeyHandler;
+window.hideSearchResults = hideSearchResults;
+
 
 /**
  * Returns an HTML structure for a form input field

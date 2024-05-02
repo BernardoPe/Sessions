@@ -315,7 +315,7 @@ class SessionEndpointsTest {
     @Test
     fun `update session should update session`() {
         // Arrange
-        val request = Request(Method.PUT, "/sessions/1")
+        val request = Request(Method.PATCH, "/sessions/1")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
             .body("""{"capacity":"100","date":"2030-05-01T00:00:00"}""")
@@ -323,7 +323,7 @@ class SessionEndpointsTest {
         // Act
         val response = api.updateSession(routedRequest)
         //  Assert
-        assertEquals(response.status, Status.OK)
+        assertEquals(response.status, Status.NO_CONTENT)
     }
 
     @Test

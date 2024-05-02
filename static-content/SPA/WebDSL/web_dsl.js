@@ -66,6 +66,10 @@ function ul(props=null, ...children) {
     return createElement('ul', props, ...children);
 }
 
+function i(props=null, ...children) {
+    return createElement('i', props, ...children);
+}
+
 function li(props=null, ...children) {
     return createElement('li', props, ...children);
 }
@@ -178,4 +182,5 @@ export {
     legend,
     svg,
     nav,
+    i
 };

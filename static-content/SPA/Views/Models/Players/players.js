@@ -1,5 +1,5 @@
 
-import {a, button, div, p} from "../../../WebDSL/web_dsl.js";
+import {a, button, div, i, p} from "../../../WebDSL/web_dsl.js";
 import {PLAYERS_URL, SESSIONS_URL} from "../../../../index.js";
 
 /**
@@ -18,17 +18,18 @@ function playerDetails(player) {
 
 
 function sessionPlayer(sid, player, authenticated) {
-	const playerView = div({class:`session__player_${player.pid}`},
+	const playerView = div({class:`session__player`, id:`player-${player.pid}`},
 		a(`#` + `${PLAYERS_URL}/` + `${player.pid}`, null, player.name),
 	)
 	if (authenticated) {
 		playerView.appendChild(
 			button({
-				class: "session__delete__button",
-				id: "remove_player",
-				type: "button",
-				onclick: `removePlayerFromSession(event,${sid}, ${player.pid})`
-			}, "Remove Player"),
+					class: "icon__button",
+					id: "delete-player" + player.pid,
+					onclick: `handleConfirmation(event, id, function() { removePlayerFromSession(event, ${sid}, ${player.pid}) })`
+				},
+				i({class: "fas fa-solid fa-ban fa-2x red"}),
+			),
 		)
 	}
 	return playerView
