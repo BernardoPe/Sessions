@@ -96,6 +96,10 @@ function createPaginationItem(page, currentPage, generateUrl) {
 		divElement.classList.add("active");
 	} else {
 		divElement.addEventListener('click', () => {
+			document.getElementById("mainContent").scrollTo({
+				top: 0,
+				behavior: 'smooth'
+			});
 			window.location.href = generateUrl(page);
 		});
 	}
@@ -121,6 +125,10 @@ function createPaginationButton(page, generateUrl, next) {
 		)
 	);
 	buttonElement.addEventListener('click', () => {
+		document.getElementById("mainContent").scrollTo({
+			top: 0,
+			behavior: 'smooth'
+		});
 		window.location.href = generateUrl(page);
 	});
 	return buttonElement;

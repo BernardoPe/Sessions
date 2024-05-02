@@ -13,7 +13,7 @@ import {
 } from "./Scripts/formSubmit.js"; // do not remove, messes up the searches url for some reason
 import {API_URL, GAMES_URL} from "../index.js";
 
-export const RESULTS_PER_PAGE = 3;
+export const RESULTS_PER_PAGE = 10;
 
 /**
  * Handles the routing of the application to the home page

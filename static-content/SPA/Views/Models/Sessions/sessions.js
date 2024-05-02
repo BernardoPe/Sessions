@@ -14,7 +14,7 @@ function sessionDetails(session) {
 		p({class:"session__game"},
 			a(`#` + `${GAMES_URL}/` + `${session.gameSession.gid}`, null, session.gameSession.name)
 		),
-		p({class:"session__date"}, session.date),
+		p({class:"session__date"}, formatDate(session.date)),
 		fieldset({class:"session__players"},
 			legend({id:"capacity"}, "Players " + session.playersSession.length + "/" + session.capacity),
 			...session.playersSession.map(
@@ -47,7 +47,7 @@ function sessionDetailsAuthenticated(session) {
 		p({class:"session__game"},
 			a(`#` + `${GAMES_URL}/` + `${session.gameSession.gid}`, null, session.gameSession.name)
 		),
-		p({class:"session__date"}, session.date),
+		p({class:"session__date"}, formatDate(session.date)),
 		fieldset({class:"session__players"},
 			legend({id:"capacity"}, "Players " + session.playersSession.length + "/" + session.capacity),
 			...session.playersSession.map(
@@ -92,10 +92,21 @@ function sessionSearchResult(session) {
 		p({class: "session__game"},
 			a(`#games/${session.gameSession.gid}`, null, session.gameSession.name)
 		),
-		p({class: "session__date"}, session.date),
+		p({class: "session__date"}, formatDate(session.date)),
 		a(`#sessions/${session.sid}`, {class: "session__reference"}, "Get more details"),
 		br(null)
 	)
+}
+
+/**
+ * Formats the date to a presentable string
+ * @param date - date object
+ */
+
+function formatDate(date) {
+	const dateObject = new Date(date);
+	const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+	return dateObject.toLocaleDateString(undefined, options);
 }
 
 

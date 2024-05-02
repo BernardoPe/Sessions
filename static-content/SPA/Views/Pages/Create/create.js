@@ -2,6 +2,7 @@ import {button, div, form} from "../../../WebDSL/web_dsl.js";
 import {formInputField, formInputWithSearchResults} from "../../Models/Inputs/form.js";
 import {errorMessage} from "../../Models/Errors/error.js";
 import {dateTimeInput} from "../../Models/Inputs/date.js";
+import {genresInput} from "../../Models/Inputs/genres.js";
 
 /**
  * Creates the view for the game creation form
@@ -41,7 +42,7 @@ function gameCreateView() {
  * For details about the session creation operation, see [Session Creation]{@link submitFormCreateSession}
  */
 function sessionCreateView() {
-    return div({class: "form__group"},
+    return div({class: "form__group fade-up"},
         form({onsubmit: "submitFormCreateSession(event)"},
             formInputField(
                 "capacity",

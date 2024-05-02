@@ -110,8 +110,19 @@ a:hover {
 	color: var(--color-primary);
 }
 
-#mainContent::-webkit-scrollbar {
-	display: none;
+*::-webkit-scrollbar {
+	width: 6px;
+	height: 2px;
+}
+
+*::-webkit-scrollbar-thumb {
+	border-radius: 15px;
+	background-clip: padding-box;
+	border: 5px solid rgba(255, 255, 240, .25);
+}
+
+*::-webkit-scrollbar-track {
+	background: transparent;
 }
 
 /* Content */
@@ -823,7 +834,3 @@ button[type="button"]:hover {
 	display: inline-block;
 	width: 1em;
 }
-
-
-
-
