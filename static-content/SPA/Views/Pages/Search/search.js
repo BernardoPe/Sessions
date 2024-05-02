@@ -1,13 +1,9 @@
-import {button, div, form} from "../WebDSL/web_dsl.js";
-import {
-	dateTimeInput,
-	errorMessage,
-	formInputField,
-	formInputWithSearchResults,
-	genresInput,
-	sessionStateInput
-} from "./Models/models.js";
-
+import {button, div, form} from "../../../WebDSL/web_dsl.js";
+import {formInputField, formInputWithSearchResults} from "../../Models/Inputs/form.js";
+import {errorMessage} from "../../Models/Errors/error.js";
+import {genresInput} from "../../Models/Inputs/genres.js";
+import {dateTimeInput} from "../../Models/Inputs/date.js";
+import {sessionStateInput} from "../../Models/Inputs/state.js";
 /**
  * View for the game search form
  *

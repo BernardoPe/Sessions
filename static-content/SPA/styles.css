@@ -4,21 +4,21 @@
 	font-family: 'Sans Regular';
 	font-style: normal;
 	font-weight: normal;
-	src: local('Sans Regular'), url('fonts/ProductSans-Regular.woff') format('woff');
+	src: local('Sans Regular'), url('Assets/fonts/ProductSans-Regular.woff') format('woff');
 }
 
 @font-face {
 	font-family: 'Sans Bold';
 	font-style: normal;
 	font-weight: normal;
-	src: local('Sans Bold'), url('fonts/ProductSans-Bold.woff') format('woff');
+	src: local('Sans Bold'), url('Assets/fonts/ProductSans-Bold.woff') format('woff');
 }
 
 @font-face {
 	font-family: 'Sans Medium';
 	font-style: normal;
 	font-weight: normal;
-	src: local('Sans Medium'), url('fonts/ProductSans-Medium.woff') format('woff');
+	src: local('Sans Medium'), url('Assets/fonts/ProductSans-Medium.woff') format('woff');
 }
 
 .fade-up {
@@ -69,12 +69,14 @@
 
 html, body {
 	font-family: 'Sans Medium', sans-serif;
+	font-size: 19px;
 	margin: 0;
 	height: 100%;
 	width: 100%;
 	background: var(--color-background-primary);
 	overflow-x: hidden;
 }
+
 
 a {
 	padding: 0.8%;
@@ -521,9 +523,9 @@ input[type="datetime-local"] {
 	/* Styling the time part */
 	--webkit-time-slider-thumb-color: var(--color-primary);/* Time slider thumb color */
 	--webkit-time-slider-thumb-opacity: 1; /* Time slider thumb opacity */
-	
+
 	/* Styling the separator */
-	--webkit-datetime-edit-fields-wrapper, 
+	--webkit-datetime-edit-fields-wrapper,
 	--webkit-datetime-edit-text,
 	--webkit-datetime-edit-month-field,
 	--webkit-datetime-edit-day-field,
@@ -583,7 +585,7 @@ button[type="button"]:hover {
 .return_reference {
 	position: absolute;
 	background-color: var(--color-background-tertiary);
-	writing-mode: vertical-rl; 
+	writing-mode: vertical-rl;
 	border: none;
 	display: inline-block;
 	width: 1.5em;
@@ -767,7 +769,7 @@ button[type="button"]:hover {
 /* Pagination Info */
 
 .pagination-info {
-	position: absolute;
+	position: relative;
 	display: block;
 	padding: 1em;
 	width: 60em;
@@ -775,7 +777,7 @@ button[type="button"]:hover {
 	border-radius: 10px;
 	box-shadow: 0 6px 20px -5px rgba(0, 0, 0, 0.4);
 	bottom: 1em;
-	left: calc(25% + 4em);
+	margin: 1em auto;
 }
 
 .pagination-info p {

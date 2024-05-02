@@ -1,6 +1,6 @@
 import {API_URL, SESSIONS_URL} from "../../index.js";
 import {getPlayerData} from "./auth.js";
-import {sessionPlayer} from "../Views/Models/models.js";
+import {sessionPlayer} from "../Views/Models/Players/players.js";
 
 const SESSION_MAX_CAPACITY = 100;
 

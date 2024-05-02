@@ -1,11 +1,11 @@
-import {homeView} from './Views/home.js';
-import {gameSearchResultsView, sessionSearchResultsView} from "./Views/results.js";
-import {gameDetailsView, playerDetailsView, sessionDetailsView} from "./Views/details.js";
-import {gameSearchView, sessionSearchView} from "./Views/search.js";
-import {gameCreateView, sessionCreateView} from "./Views/create.js";
+import {homeView} from './Views/Pages/Home/home.js';
+import {gameSearchResultsView, sessionSearchResultsView} from "./Views/Pages/Results/results.js";
+import {gameDetailsView, playerDetailsView, sessionDetailsView} from "./Views/Pages/Details/details.js";
+import {gameSearchView, sessionSearchView} from "./Views/Pages/Search/search.js";
+import {gameCreateView, sessionCreateView} from "./Views/Pages/Create/create.js";
 import {handleGamePagination, handleSessionPagination} from "./Scripts/pagination.js";
-import {genericErrorView, notFoundView} from "./Views/error.js";
-import {loginView, registerView} from "./Views/auth.js";
+import {genericErrorView, notFoundView} from "./Views/Pages/Error/error.js";
+import {loginView, registerView} from "./Views/Pages/Auth/auth.js";
 import {authLogout, getPlayerData} from "./Scripts/auth.js";
 import {
     submitFormGameSearch,

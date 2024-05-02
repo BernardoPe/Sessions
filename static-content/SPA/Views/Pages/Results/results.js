@@ -1,5 +1,6 @@
-import {a, div, svg, path} from "../WebDSL/web_dsl.js";
-import {gameSearchResult, sessionSearchResult,} from "./Models/models.js";
+import {a, div, svg, path} from "../../../WebDSL/web_dsl.js";
+import {sessionSearchResult} from "../../Models/Sessions/sessions.js";
+import {gameSearchResult} from "../../Models/Games/games.js";
 
 /**
  * View for the search results of sessions

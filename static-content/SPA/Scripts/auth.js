@@ -66,6 +66,7 @@ function authRegister(event) {
 						document.getElementById('registerForm').style.display = "none"
 						document.getElementById('token-info').style.display = "block"
 						document.getElementById('token').innerHTML = "Your token is: " + data.token
+
 						return data
 					}
 					else {

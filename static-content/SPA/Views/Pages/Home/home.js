@@ -1,4 +1,4 @@
-import {a, div, h2, li, ol} from "../WebDSL/web_dsl.js";
+import {a, div, h2, li, ol} from "../../../WebDSL/web_dsl.js";
 
 /**
  * Home view for the Sessions app - displays a welcome message and links to other views
@@ -7,7 +7,7 @@ import {a, div, h2, li, ol} from "../WebDSL/web_dsl.js";
  *
  * @param user - the user currently logged in, null if no user is logged in
  */
-export function homeView (user) {
+function homeView (user) {
 	const welcome = user ? `Welcome to Sessions, ${user.name}` : "Welcome to Sessions";
 
 	const homeDiv = div({class:'fade-up'},
@@ -37,3 +37,5 @@ export function homeView (user) {
 
 	return homeDiv;
 }
+
+export {homeView}

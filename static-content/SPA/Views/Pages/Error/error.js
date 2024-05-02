@@ -1,4 +1,4 @@
-import {button, div, p} from "../WebDSL/web_dsl.js";
+import {button, div, p} from "../../../WebDSL/web_dsl.js";
 
 /**
  * A view that is shown when no results are found for a search
