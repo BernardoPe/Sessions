@@ -1,12 +1,3 @@
-/**
- * Represents the player currently logged in to the SPA
- *
- * Since the SPA does not send browser requests, cookies are not used to store the user's session.
- *
- * Instead, the user's data is stored in browser memory, and is lost when the browser is closed or refreshed.
- */
-let user = null
-
 window.authRegister = authRegister
 window.authLogin = authLogin
 
@@ -57,16 +48,13 @@ function authRegister(event) {
 			res.json()
 				.then(data => {
 					if (res.ok) {
-						user = data
-						user.name = name
-						user.email = email
 						document.getElementById('login').style.display = "none"
 						document.getElementById('register').style.display = "none"
 						document.getElementById('logout').style.display = "inline-block"
 						document.getElementById('registerForm').style.display = "none"
 						document.getElementById('token-info').style.display = "block"
 						document.getElementById('token').innerHTML = "Your token is: " + data.token
-
+						sessionStorage.setItem('user', JSON.stringify(data))
 						return data
 					}
 					else {
@@ -121,8 +109,7 @@ function authLogin(event) {
 			document.getElementById('login').style.display = "none"
 			document.getElementById('register').style.display = "none"
 			document.getElementById('logout').style.display = "inline-block"
-			user = data
-			user.token = token
+			sessionStorage.setItem('user', JSON.stringify(data))
 			window.location.href = "#home"
 			return data
 		}).catch(err => {
@@ -133,13 +120,38 @@ function authLogin(event) {
 }
 
 
+async function tryAuth() {
+	await fetch('/auth', {
+		method: 'GET',
+		credentials: 'same-origin',
+	})
+		.then(res => res.ok? res.json() : Promise.reject(res))
+		.then(data => {
+			document.getElementById('logout').style.display = "inline-block"
+			sessionStorage.setItem('user', JSON.stringify(data))
+			return data
+		}).catch(err => {
+			document.getElementById('login').style.display = "inline-block"
+			document.getElementById('register').style.display = "inline-block"
+			return null
+	})
+}
+
 /**
  * Handles the logout of a player
  *
  * When a user logs out, they are redirected to the home page and lose all access to authenticated features.
  */
 function authLogout() {
-	user = null
+	fetch('/logout', {
+		method: 'GET',
+		credentials: 'same-origin',
+	}).then(res => {
+		if (!res.ok) {
+			return Promise.reject(res)
+		}
+	})
+	sessionStorage.clear()
 	document.getElementById('login').style.display = "inline-block"
 	document.getElementById('register').style.display = "inline-block"
 	document.getElementById('logout').style.display = "none"
@@ -154,7 +166,7 @@ function authLogout() {
  * For details on how the SPA handles user sessions, see [user]{@link user}
  */
 function getPlayerData() {
-	return user
+	return JSON.parse(sessionStorage.getItem('user'))
 }
 
-export { authRegister, getPlayerData, authLogin, authLogout }
+export { authRegister, getPlayerData, authLogin, authLogout, tryAuth }

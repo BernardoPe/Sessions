@@ -93,7 +93,7 @@ class SessionsApi(
         Response(CREATED)
             .header("content-type", "application/json")
             .header("location", "/players/${res.first}")
-            .cookie(Cookie("Authorization", res.second.toString()).secure().httpOnly().sameSite(SameSite.Strict))
+            .cookie(createCookie(86400, res.second))
             .body(Json.encodeToString(res.toPlayerCreationDTO()))
     }
 
@@ -121,15 +121,22 @@ class SessionsApi(
      */
     fun authPlayer(request: Request) = processRequest(request) {
 
-        val token = request.header("Authorization")?.split(" ")?.get(1)?.let { UUID.fromString(it) }
-            ?: throw BadRequestException("No Authorization Token provided")
+        var token = request.header("Authorization")?.split(" ")?.get(1)?.let { UUID.fromString(it) }
+
+        if (token == null) {
+            if (request.cookie("Authorization") != null) {
+                token = parseCookie(request)
+            } else {
+                throw BadRequestException("No Authorization provided")
+            }
+        }
 
         val player = playerServices.authenticatePlayer(token)
 
         if (player != null) {
             Response(OK)
                 .header("content-type", "application/json")
-                .cookie(Cookie("Authorization", token.toString()).secure().httpOnly().sameSite(SameSite.Strict))
+                .cookie(createCookie(86400, token))
                 .body(Json.encodeToString(player.toPlayerInfoDTO()))
         } else {
             Response(UNAUTHORIZED)
@@ -139,6 +146,22 @@ class SessionsApi(
 
     }
 
+    /**
+     * Logs out a player
+     */
+    fun playerLogout(request: Request) = processRequest(request) {
+        if (request.cookie("Authorization") == null) {
+            throw BadRequestException("No Authorization provided")
+        }
+        val token = parseCookie(request)
+        if (playerServices.authenticatePlayer(token) == null) {
+            throw UnauthorizedException()
+        }
+        Response(OK)
+            .header("content-type", "application/json")
+            .cookie(createCookie(0, token))
+            .body(Json.encodeToString("Logged out"))
+    }
 
     /**
      * Gets a list of players
@@ -227,8 +250,6 @@ class SessionsApi(
 
         val developer = request.query("developer")?.parseURLEncodedString()
         val name = request.query("name")?.parseURLEncodedString()
-
-        println(name)
 
         val res = gameServices.searchGames(
             genres?.map { Genre(it) }?.toSet(),
@@ -442,6 +463,18 @@ class SessionsApi(
         }
 
         return res.also { logResponse(it) }
+    }
+
+    private fun parseCookie(request: Request): UUID {
+        return UUID.fromString(request.cookie("Authorization")?.value ?: throw BadRequestException("No Authorization provided"))
+    }
+
+    private fun createCookie(expiration: Long, token: UUID): Cookie {
+        return Cookie("Authorization", token.toString())
+            .secure()
+            .httpOnly()
+            .sameSite(SameSite.Strict)
+            .maxAge(expiration)
     }
 
     private fun verifyAuth(request: Request): Boolean {

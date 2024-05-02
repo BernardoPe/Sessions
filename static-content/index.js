@@ -1,5 +1,6 @@
 import router from "./SPA/router.js";
 import handlers from "./SPA/handlers.js";
+import {authLogin, tryAuth} from "./SPA/Scripts/auth.js";
 
 window.addEventListener('load', loadHandler)
 window.addEventListener('hashchange', hashChangeHandler)
@@ -27,7 +28,7 @@ const API_URL = 'http://localhost:8080/';
  *
  * Routes were defined using the express.js syntax, with the addition of the colon (:) character to indicate a parameter.
  */
-function loadHandler(){
+async function loadHandler(){
     // home page
     router.addRouteHandler(HOME_URL, handlers.getHome)
     // search bar page
@@ -56,7 +57,7 @@ function loadHandler(){
     router.addRouteHandler(LOGOUT_URL, handlers.logout)
 
     router.addDefaultNotFoundRouteHandler(() => window.location.hash = HOME_URL)
-
+    await tryAuth() // try to authenticate the user before loading the page
     hashChangeHandler()
 }
 
