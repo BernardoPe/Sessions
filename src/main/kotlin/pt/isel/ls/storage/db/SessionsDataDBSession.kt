@@ -172,22 +172,33 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
         res > 0.also { statement.close() }
     } as Boolean
 
-    override fun update(sid: UInt, capacity: UInt, date: LocalDateTime): Boolean = execQuery { connection ->
-        // Set the statement to update the session
-        val query = StringBuilder("UPDATE sessions SET capacity = ?, date = ? WHERE id = ?")
-        // Create a list to store the parameters
-        // Prepare the statement
+    override fun update(sid: UInt, capacity: UInt?, date: LocalDateTime?): Boolean = execQuery { connection ->
+        val query = StringBuilder("UPDATE sessions SET ")
+        val queryParams = mutableListOf<Any>()
+
+        if (capacity != null) {
+            query.append("capacity = ?, ")
+            queryParams.add(capacity.toInt())
+        }
+
+        if (date != null) {
+            query.append("date = ?, ")
+            queryParams.add(date.toTimestamp())
+        }
+
+        query.delete(query.length - 2, query.length)
+
+        query.append(" WHERE id = ?")
+        queryParams.add(sid.toInt())
+
         val statement = connection.prepareStatement(query.toString())
 
-        // Set the parameters
-        statement.setInt(1, capacity.toInt())
-        statement.setTimestamp(2, date.toTimestamp())
-        statement.setInt(3, sid.toInt())
+        for ((index, param) in queryParams.withIndex()) {
+            statement.setObject(index + 1, param)
+        }
 
-        // Execute the statement and get the result
         val res = statement.executeUpdate()
 
-        // Return the result of the operation
         res > 0.also { statement.close() }
     } as Boolean
 

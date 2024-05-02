@@ -113,15 +113,20 @@ class SessionsService(val storage: SessionsDataManager) {
      * @throws NotFoundException If the session is not found
      */
 
-    fun updateSession(sid: UInt, capacity: UInt, date: LocalDateTime): SessionOperationMessage {
-        if (date.isBefore(currentLocalTime())) {
-            throw BadRequestException("Session date must be in the future")
+    fun updateSession(sid: UInt, capacity: UInt?, date: LocalDateTime?): Boolean {
+
+        if (date != null) {
+            if (date.isBefore(currentLocalTime())) {
+                throw BadRequestException("Session date must be in the future")
+            }
         }
 
         val session = storage.session.getById(sid) ?: throw NotFoundException("Session not found")
 
-        if (session.playersSession.size > capacity.toInt()) {
-            throw BadRequestException("New session capacity must be greater or equal to the number of players in the session")
+        if (capacity != null) {
+            if (session.playersSession.size > capacity.toInt()) {
+                throw BadRequestException("New session capacity must be greater or equal to the number of players in the session")
+            }
         }
 
         if (capacity !in (1u..SESSION_MAX_CAPACITY)) {
@@ -129,7 +134,7 @@ class SessionsService(val storage: SessionsDataManager) {
         }
 
         storage.session.update(sid, capacity, date).also {
-            return "Session successfully updated"
+            return true
         }
     }
 

@@ -1,9 +1,9 @@
 package pt.isel.ls
 
+import org.http4k.core.Method.PATCH
 import org.http4k.core.Method.DELETE
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
-import org.http4k.core.Method.PUT
 import org.http4k.routing.ResourceLoader
 import org.http4k.routing.bind
 import org.http4k.routing.routes
@@ -65,7 +65,7 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
             SESSION_PLAYER_DETAILS_ROUTE bind DELETE to requestHandler::removePlayerFromSession,
             SESSION_DETAILS_ROUTE bind GET to requestHandler::getSessionById,
             SESSION_DETAILS_ROUTE bind DELETE to requestHandler::deleteSession,
-            SESSION_DETAILS_ROUTE bind PUT to requestHandler::updateSession,
+            SESSION_DETAILS_ROUTE bind PATCH to requestHandler::updateSession,
             SESSION_ROUTE bind GET to requestHandler::getSessionList,
         )
 

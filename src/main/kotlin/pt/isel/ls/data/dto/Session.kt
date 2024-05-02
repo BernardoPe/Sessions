@@ -51,8 +51,8 @@ data class SessionCreationOutputModel(
  */
 @Serializable
 data class SessionUpdateInputModel(
-    val capacity: UInt,
-    val date: String
+    val capacity: UInt? = null,
+    val date: String? = null
 )
 
 /**

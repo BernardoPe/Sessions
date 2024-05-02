@@ -139,6 +139,39 @@ class SessionsApi(
 
     }
 
+
+    /**
+     * Gets a list of players
+     *
+     * This operation has the following query parameters:
+     * - name: The player name
+     * - limit: The maximum number of players to return
+     * - skip: The number of players to skip
+     * @param request The HTTP request
+     * @return [OK] with the list of players or [NO_CONTENT] if the list is empty
+     * @throws BadRequestException If there are invalid parameters
+     *
+     */
+
+    fun getPlayerList(request: Request) = processRequest(request) {
+        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip")
+            ?: 0u)
+        val name = request.query("name")?.parseURLEncodedString()
+        val res = playerServices.getPlayerList(
+            name?.let { Name(it) },
+            limit,
+            skip
+        )
+        if (res.first.isEmpty())
+            Response(NO_CONTENT)
+        else {
+            Response(OK)
+                .header("content-type", "application/json")
+                .body(Json.encodeToString(res.toPlayerSearchDTO()))
+        }
+    }
+
+
     /**
      * Creates a game
      * @param request The HTTP request
@@ -277,12 +310,15 @@ class SessionsApi(
 
     fun updateSession(request: Request) = authHandler(request) {
         val session = parseJsonBody<SessionUpdateInputModel>(request)
-        val sessionId = request.path("sid")?.toUInt("Session Identifier") ?: throw BadRequestException("No Session Identifier provided")
-        val res = sessionServices.updateSession(sessionId, session.capacity, session.date.toLocalDateTime())
 
-        Response(OK)
-            .header("content-type", "application/json")
-            .body(Json.encodeToString(res.toSessionOperationMessage()))
+        if (session.capacity == null && session.date == null) {
+            Response(NO_CONTENT)
+        } else {
+            val sessionId = request.path("sid")?.toUInt("Session Identifier") ?: throw BadRequestException("No Session Identifier provided")
+            sessionServices.updateSession(sessionId, session.capacity, session.date?.toLocalDateTime())
+            Response(NO_CONTENT)
+        }
+
     }
 
     /**
@@ -316,39 +352,6 @@ class SessionsApi(
             .header("content-type", "application/json")
             .body(Json.encodeToString(res.toSessionInfoDTO()))
     }
-
-    /**
-     * Gets a list of players
-     *
-     * This operation has the following query parameters:
-     * - name: The player name
-     * - limit: The maximum number of players to return
-     * - skip: The number of players to skip
-     * @param request The HTTP request
-     * @return [OK] with the list of players or [NO_CONTENT] if the list is empty
-     * @throws BadRequestException If there are invalid parameters
-     *
-     */
-
-    fun getPlayerList(request: Request) = processRequest(request) {
-        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip")
-            ?: 0u)
-        val name = request.query("name")?.parseURLEncodedString()
-        val res = playerServices.getPlayerList(
-            name?.let { Name(it) },
-            limit,
-            skip
-        )
-        if (res.first.isEmpty())
-            Response(NO_CONTENT)
-        else {
-            Response(OK)
-                .header("content-type", "application/json")
-                .body(Json.encodeToString(res.toPlayerSearchDTO()))
-        }
-    }
-
-
 
     /**
      * Gets a list of sessions
@@ -441,17 +444,6 @@ class SessionsApi(
         return res.also { logResponse(it) }
     }
 
-    private inline fun <reified T> parseJsonBody(request: Request): T {
-        val body = request.bodyString()
-        return try {
-            Json.decodeFromString<T>(body)
-        } catch (e: SerializationException) {
-            throw BadRequestException("Invalid Body")
-        } catch (e: IllegalArgumentException) {
-            throw BadRequestException(e.message)
-        }
-    }
-
     private fun verifyAuth(request: Request): Boolean {
         return try {
 
@@ -472,9 +464,21 @@ class SessionsApi(
         }
     }
 
+    private inline fun <reified T> parseJsonBody(request: Request): T {
+        val body = request.bodyString()
+        return try {
+            Json.decodeFromString<T>(body)
+        } catch (e: SerializationException) {
+            throw BadRequestException("Invalid Body")
+        } catch (e: IllegalArgumentException) {
+            throw BadRequestException(e.message)
+        }
+    }
+
     private fun String.parseURLEncodedString(): String {
         return URLDecoder.decode(this, Charsets.UTF_8)
     }
+
 
     private fun logRequest(request: Request) {
         logger.info(

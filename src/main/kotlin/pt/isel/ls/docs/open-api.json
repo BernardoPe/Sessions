@@ -1055,7 +1055,7 @@
           }
         }
       },
-      "put": {
+      "patch": {
         "security": [
           {
             "bearerAuth": []
@@ -1166,7 +1166,23 @@
                 }
               }
             }
-          }
+          },
+            "204": {
+                "description": "No Content",
+                "content": {
+                "application/json": {
+                    "schema": {
+                    "type": "object",
+                    "properties": {
+                        "message": {
+                        "type": "string",
+                        "example": "Session updated successfully"
+                        }
+                    }
+                    }
+                }
+                }
+            }
         }
       },
       "delete": {
