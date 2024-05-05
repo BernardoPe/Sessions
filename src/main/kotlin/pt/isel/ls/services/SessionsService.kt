@@ -127,10 +127,9 @@ class SessionsService(val storage: SessionsDataManager) {
             if (session.playersSession.size > capacity.toInt()) {
                 throw BadRequestException("New session capacity must be greater or equal to the number of players in the session")
             }
-        }
-
-        if (capacity !in (1u..SESSION_MAX_CAPACITY)) {
-            throw BadRequestException("Session capacity must at least 1 and at most $SESSION_MAX_CAPACITY")
+            if (capacity !in (1u..SESSION_MAX_CAPACITY)) {
+                throw BadRequestException("Session capacity must at least 1 and at most $SESSION_MAX_CAPACITY")
+            }
         }
 
         storage.session.update(sid, capacity, date).also {

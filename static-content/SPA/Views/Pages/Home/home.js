@@ -1,4 +1,4 @@
-import {a, div, h2, li, ol} from "../../../WebDSL/web_dsl.js";
+import {a, div, h2, i, li, ol, p} from "../../../WebDSL/web_dsl.js";
 
 /**
  * Home view for the Sessions app - displays a welcome message and links to other views
@@ -28,7 +28,10 @@ function homeView (user) {
 		)
 		homeDiv.appendChild(
 			h2({class:'subtitle'},
-				a(`#players/${user.pid}`, null, "Your profile"),
+				a(`#players/${user.pid}`, {class:'icon-link'},
+					i({class:'fas fa-user'}),
+					p(null, "Profile")
+				),
 			),
 		)
 	}

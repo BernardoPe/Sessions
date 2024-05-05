@@ -24,7 +24,7 @@ function gameDetails(game) {
  */
 
 function gameSearchResult(game) {
-	return div({class: "game-container"},
+	return div({class: "game-container fade-in"},
 		p({class: "game__title"},
 			a(`#games/${game.gid}`, null, game.name)
 		),

@@ -161,9 +161,10 @@ function authLogout() {
 /**
  * Returns the data of player currently logged in
  *
+ * Stored data includes the player's name, email, and ID.
+ *
  * If no player is logged in, the function returns null.
  *
- * For details on how the SPA handles user sessions, see [user]{@link user}
  */
 function getPlayerData() {
 	return JSON.parse(sessionStorage.getItem('user'))

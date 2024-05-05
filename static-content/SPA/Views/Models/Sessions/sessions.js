@@ -37,6 +37,18 @@ function sessionDetailsAuthenticated(session) {
 				player => sessionPlayer(session.sid, player, true)
 			)
 		),
+		div({class: "session__add__player fade-in", style: "display: none"},
+			form({onsubmit: `submitFormSessionAddPlayer(event, ${session.sid})`},
+				formInputWithSearchResults(
+					"player",
+					"players",
+					"text",
+					"Player name"
+				),
+				errorMessage("err_message-player", "Player name must be at least 3 characters long"),
+				button({type: "submit"}, "Add Player"),
+			)
+		)
 	)
 	const sessionView = div({class:"session-container"},
 		p({class:"session__game"},
@@ -57,7 +69,7 @@ function sessionDetailsAuthenticated(session) {
 			button({
 					class: "icon__button",
 					id: "add-player",
-					onclick: `createPlayerAddForm(event, ${session.sid}, id)`
+					onclick: `showPlayerAddForm(event, ${session.sid}, id)`
 				},
 				i({class: "fas fa-plus fa-2x green"})
 			)
@@ -73,9 +85,12 @@ function sessionDetailsAuthenticated(session) {
 					"Session capacity"
 				),
 				errorMessage("err_message-capacity", "Capacity must be a number"),
+				button({type: "submit"}, "Update capacity"),
+			),
+			form({onsubmit: `submitFormUpdateSession(event, ${session.sid})`},
 				dateTimeInput(),
 				errorMessage("err_message-date", "Invalid date to create a session"),
-				button({type: "submit"}, "Edit Session"),
+				button({type: "submit"}, "Update date"),
 			)
 		)
 	)
@@ -106,27 +121,16 @@ function handleConfirmation(event, id, action) {
 	div.parentNode.insertBefore(confirmation, div)
 }
 
-function createPlayerAddForm(event, sid, id) {
+function showPlayerAddForm(event, sid, id) {
 	event.preventDefault()
 	const addBtn = document.getElementById(id)
+	const playerAddForm = document.querySelector(".session__add__player")
+	playerAddForm.style.display = "block"
 	addBtn.style.display = "none"
-	const playerAddForm = div({class: "session__add__player fade-in"},
-		form({onsubmit: `submitFormSessionAddPlayer(event, ${sid})`},
-			formInputWithSearchResults(
-				"player",
-				"players",
-				"text",
-				"Player name"
-			),
-			errorMessage("err_message-player", "Player name must be at least 3 characters long"),
-			button({type: "submit"}, "Add Player"),
-		)
-	)
-	addBtn.parentNode.insertBefore(playerAddForm, addBtn)
 }
 
 window.handleConfirmation = handleConfirmation
-window.createPlayerAddForm = createPlayerAddForm
+window.showPlayerAddForm = showPlayerAddForm
 
 /**
  * Formats the date to a presentable string

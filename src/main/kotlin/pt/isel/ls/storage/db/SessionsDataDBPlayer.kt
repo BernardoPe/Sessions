@@ -53,12 +53,11 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
 
     override fun isNameStored(name: Name): Boolean = execQuery { connection ->
         val statement = connection.prepareStatement(
-            "SELECT 1 FROM players WHERE name = ?",
+            "SELECT 1 FROM players WHERE lower(name) = ?",
         )
 
-        statement.setString(1, name.toString())
+        statement.setString(1, name.toString().lowercase())
         val resultSet = statement.executeQuery()
-
         resultSet.next().also { statement.close() }
     } as Boolean
 

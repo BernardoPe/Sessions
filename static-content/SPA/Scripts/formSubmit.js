@@ -1,5 +1,4 @@
 import {API_URL, SESSIONS_URL} from "../../index.js";
-import {getPlayerData} from "./auth.js";
 import {sessionPlayer} from "../Views/Models/Players/players.js";
 import {formatDate} from "../Views/Models/Sessions/sessions.js";
 
@@ -247,7 +246,6 @@ async function submitFormSessionAddPlayer(event, sid) {
 	event.preventDefault();
 	const playerName = document.getElementById('player').value;
 	const playerNameErr = document.getElementById('err_message-player');
-	const user = getPlayerData();
 
 	playerNameErr.style.display = 'none';
 
@@ -269,7 +267,6 @@ async function submitFormSessionAddPlayer(event, sid) {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			'Authorization': 'Bearer ' + user.token,
 		},
 		body: JSON.stringify({pid})
 	});
@@ -280,6 +277,11 @@ async function submitFormSessionAddPlayer(event, sid) {
 		capacityElement.innerHTML = "Players " + (parseInt(capacityValues[0].split(" ")[1]) + 1) + "/" + capacityValues[1];
 		const player = sessionPlayer(sid, {pid, name: playerName}, true);
 		sessionPlayers.prepend(player);
+		const form = document.querySelector('.session__add__player');
+		form.style.display = 'none';
+		document.getElementById('player').value = ''; // clear the input field
+		const addPlayerButton = document.querySelector('.session__players #add-player');
+		addPlayerButton.style.display = 'block';
 	} else {
 		const error = await response.json();
 		playerNameErr.innerHTML = error.errorCause;
@@ -297,7 +299,7 @@ async function submitFormUpdateSession(event, sid) {
 	capacityErr.style.display = 'none';
 	dateErr.style.display = 'none';
 
-	if (!handleGameCapacity(capacity, capacityErr))
+	if (!handleGameCapacity(parseInt(capacity), capacityErr))
 		return;
 
 	const reqBody = {};
@@ -305,8 +307,10 @@ async function submitFormUpdateSession(event, sid) {
 	date? reqBody.date = date : null;
 	capacity? reqBody.capacity = capacity : null;
 
+	console.log(reqBody)
+
 	fetch(API_URL + `sessions/${sid}`, {
-		method: 'PUT',
+		method: 'PATCH',
 		headers: {
 			'Content-Type': 'application/json'
 		},
@@ -344,12 +348,9 @@ async function submitFormUpdateSession(event, sid) {
  */
 function removePlayerFromSession(event, sid, pid) {
 	event.preventDefault();
-	const user = getPlayerData();
+
 	fetch(API_URL + SESSIONS_URL + `/${sid}/players/${pid}`, {
 		method: "DELETE",
-		headers: {
-			"Authorization": "Bearer " + user.token,
-		}
 	})
 	.then(res => {
 		if (res.ok) {
@@ -371,12 +372,8 @@ function removePlayerFromSession(event, sid, pid) {
  */
 function deleteSession(event, sid) {
 	event.preventDefault();
-	const user = getPlayerData();
 	fetch(API_URL + SESSIONS_URL + `/${sid}`, {
 		method: "DELETE",
-		headers: {
-			"Authorization": "Bearer " + user.token,
-		}
 	})
 	.then(res => {
 		if (res.ok) {
