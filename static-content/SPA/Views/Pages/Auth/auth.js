@@ -31,7 +31,7 @@ function loginView() {
  */
 function registerView() {
 	return (
-		div(null,
+		div({class: "center"},
 			div({class: "form__group fade-up", id: "registerForm"},
 				form({onsubmit: "authRegister(event)"},
                     formInputField(

@@ -30,12 +30,14 @@ class NotFoundException(item: String?) : SessionsExceptions(NOT_FOUND.code, "Not
 @Serializable
 class NotImplementedException : SessionsExceptions(NOT_IMPLEMENTED.code, "Not Implemented", null)
 
+
 /**
  * The [InternalServerErrorException] class is an exception that is thrown when the server has an internal error.
- * @param message The message of the exception
  */
-class InternalServerErrorException(message: String?) :
-    SessionsExceptions(Status.INTERNAL_SERVER_ERROR.code, "Internal Server Error", message)
+
+@Serializable
+class InternalServerErrorException() :
+    SessionsExceptions(Status.INTERNAL_SERVER_ERROR.code, "Internal Server Error", null)
 
 /**
  * The [UnsupportedMediaTypeException] class is an exception that is thrown when the media type is not supported.

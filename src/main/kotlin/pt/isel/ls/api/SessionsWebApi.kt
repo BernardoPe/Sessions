@@ -30,7 +30,6 @@ import pt.isel.ls.data.mapper.toPlayerInfoDTO
 import pt.isel.ls.data.mapper.toPlayerSearchDTO
 import pt.isel.ls.data.mapper.toSessionCreationDTO
 import pt.isel.ls.data.mapper.toSessionInfoDTO
-import pt.isel.ls.data.mapper.toSessionOperationMessage
 import pt.isel.ls.data.mapper.toSessionSearchDTO
 import pt.isel.ls.dto.SessionAddPlayerInputModel
 import pt.isel.ls.dto.SessionCreationInputModel
@@ -141,7 +140,7 @@ class SessionsApi(
         } else {
             Response(UNAUTHORIZED)
                 .header("content-type", "application/json")
-                .body(Json.encodeToString("Unauthorized"))
+                .body(Json.encodeToString(UnauthorizedException()))
         }
 
     }
@@ -160,7 +159,6 @@ class SessionsApi(
         Response(OK)
             .header("content-type", "application/json")
             .cookie(createCookie(0, token))
-            .body(Json.encodeToString("Logged out"))
     }
 
     /**
@@ -295,12 +293,11 @@ class SessionsApi(
     fun addPlayerToSession(request: Request) = authHandler(request) {
         val sid = request.path("sid")?.toUInt("Session Identifier") ?: throw BadRequestException("No Session Identifier provided")
         val player = parseJsonBody<SessionAddPlayerInputModel>(request)
-        val res = sessionServices.addPlayer(sid, player.pid)
+        sessionServices.addPlayer(sid, player.pid)
 
         Response(CREATED)
             .header("content-type", "application/json")
             .header("location", "/sessions/$sid/players/${player.pid}")
-            .body(Json.encodeToString(res.toSessionOperationMessage()))
     }
 
     /**
@@ -314,11 +311,10 @@ class SessionsApi(
     fun removePlayerFromSession(request: Request) = authHandler(request) {
         val sid = request.path("sid")?.toUInt("Session Identifier") ?: throw BadRequestException("No Session Identifier provided")
         val pid = request.path("pid")?.toUInt("Player Identifier") ?: throw BadRequestException("No Player Identifier provided")
-        val res = sessionServices.removePlayer(sid, pid)
+        sessionServices.removePlayer(sid, pid)
 
         Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(res.toSessionOperationMessage()))
     }
 
     /**
@@ -351,11 +347,11 @@ class SessionsApi(
      */
     fun deleteSession(request: Request): Response = authHandler(request) {
         val sid = request.path("sid")?.toUInt("Session Identifier") ?: throw BadRequestException("No Session Identifier provided")
-        val res = sessionServices.deleteSession(sid)
+
+        sessionServices.deleteSession(sid)
 
         Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(res.toSessionOperationMessage()))
     }
 
     /**
@@ -458,7 +454,7 @@ class SessionsApi(
         } catch (e: Exception) {
             logger.error(e.message, e)
             Response(INTERNAL_SERVER_ERROR).header("content-type", "application/json").body(
-                Json.encodeToString(InternalServerErrorException("Internal Server Error")),
+                Json.encodeToString(InternalServerErrorException()),
             )
         }
 

@@ -51,7 +51,6 @@ function sessionCreateView() {
                 "Session capacity"
             ),
             errorMessage("err_message-capacity", "Capacity must be a number"),
-            dateTimeInput(),
             errorMessage("err_message-date", "Invalid date to create a session"),
             formInputWithSearchResults(
                 "game_name",
@@ -59,6 +58,7 @@ function sessionCreateView() {
                 "text",
                 "Game name"
             ),
+            dateTimeInput(),
             errorMessage("err_message-game", "Game name must be at least 3 characters long"),
 
             button({type: "submit"}, "Create Session"),

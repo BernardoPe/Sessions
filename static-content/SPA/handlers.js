@@ -10,7 +10,7 @@ import {authLogout, getPlayerData} from "./Scripts/auth.js";
 import {
     submitFormGameSearch,
     submitFormSessionSearch
-} from "./Scripts/formSubmit.js"; // do not remove, messes up the searches url for some reason
+} from "./Scripts/formSubmit.js"; // do not remove, messes up the searches urls
 import {API_URL, GAMES_URL} from "../index.js";
 
 export const RESULTS_PER_PAGE = 10;

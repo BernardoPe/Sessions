@@ -18,7 +18,6 @@ import pt.isel.ls.storage.DataManagerType
 import pt.isel.ls.storage.SessionsDataManager
 import pt.isel.ls.utils.currentLocalTime
 import pt.isel.ls.utils.plus
-import pt.isel.ls.utils.toLocalDateTime
 import java.util.*
 import kotlin.math.abs
 import kotlin.random.Random
@@ -87,7 +86,7 @@ class SessionServiceTest {
 
         assertNotNull(player)
 
-        val addedPlayer = serviceSession.addPlayer(createdSession, player.first)
+        serviceSession.addPlayer(createdSession, player.first)
 
         val getSession = serviceSession.getSessionById(createdSession)
 
@@ -96,7 +95,6 @@ class SessionServiceTest {
             getSession.playersSession.first(),
         )
 
-        assertEquals("Player successfully added to session", addedPlayer)
     }
 
     @Test
@@ -246,13 +244,12 @@ class SessionServiceTest {
 
         serviceSession.addPlayer(createdSession, player.first)
 
-        val removedPlayer = serviceSession.removePlayer(createdSession, player.first)
+        serviceSession.removePlayer(createdSession, player.first)
 
         val getSession = serviceSession.getSessionById(createdSession)
 
         assertEquals(emptySet(), getSession.playersSession)
 
-        assertEquals("Player successfully removed from session", removedPlayer)
     }
 
     @Test
@@ -329,7 +326,7 @@ class SessionServiceTest {
         val newCapacity = newTestCapacity()
         val newDate = newTestDateTime()
 
-        val updatedSession = serviceSession.updateSession(createdSession, newCapacity, newDate)
+        serviceSession.updateSession(createdSession, newCapacity, newDate)
 
         val getSession = serviceSession.getSessionById(createdSession)
 
@@ -433,11 +430,10 @@ class SessionServiceTest {
 
         val createdSession = serviceSession.createSession(capacity, gid, date)
 
-        val deletedSession = serviceSession.deleteSession(createdSession)
+        serviceSession.deleteSession(createdSession)
 
         assertNull(storage.session.getById(createdSession))
 
-        assertEquals("Session successfully deleted", deletedSession)
     }
 
     @Test
@@ -555,7 +551,7 @@ class SessionServiceTest {
 
         private fun newTestEmail() = "email-${abs(Random.nextLong())}@test.com"
 
-        private fun newTestDateTime() = "2024-05-05T12:00:00".toLocalDateTime()
+        private fun newTestDateTime() = currentLocalTime() + Random.nextLong(1, 1000).milliseconds
 
         private fun UUID.testTokenHash() = mostSignificantBits xor leastSignificantBits
 

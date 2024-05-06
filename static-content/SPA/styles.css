@@ -37,6 +37,14 @@
 	animation: fade-in 0.3s ease;
 }
 
+.center {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	height: 100%;
+}
+
 .split {
 	animation: split 0.3s ease;
 }
@@ -287,18 +295,26 @@ nav a:hover::after {
 
 form {
 	width: 100%;
+	padding-top: 2em;
+	padding-bottom: 1em;
 	display: flex;
+	border: 2px solid var(--color-primary);
+	border-radius: 1em;
 	flex-direction: column;
+	justify-content: center;
 	align-items: center;
+	background-color: var(--color-background-primary);
 }
 
 .form__group {
-	width: 50em;
-	margin: auto;
+	width: 70%;
+	height: 100%;
 	display: flex;
 	flex-direction: column;
-	margin-bottom: 1em;
+	margin: 0 auto;
 	position: relative;
+	justify-content: center;
+	align-items: center;
 	/*background-color: var(--color-background-tertiary);
 	border-radius: 10px;
 	box-shadow: 0 6px 20px -5px rgba(0, 0, 0, 0.4);
@@ -308,7 +324,7 @@ form {
 /* Input Fields */
 
 .form__input {
-	margin: 3em 0;
+	margin: 1em 0;
 	position: relative;
 	width: 70%;
 	padding: 0 !important;
@@ -948,6 +964,11 @@ i:hover {
 	margin-bottom: 0;
 }
 
+.session__add__player form {
+	border: none;
+ 	background-color: var(--color-background-secondary);
+}
+
 .session__add__player .search_results{
 	width: 100%;
 	font-size: 0.7em;
@@ -960,6 +981,10 @@ i:hover {
 
 .session__update {
 	display: flex;
+}
+
+.session__update form {
+	border: none;
 }
 
 .session__update .form__input {

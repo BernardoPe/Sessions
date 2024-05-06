@@ -48,6 +48,7 @@ function handleSearch(event, id, searchType) {
  */
 function showSearchResults(id) {
     const searchResults = document.getElementById(`search_results_${id}`);
+    if (!searchResults) return;
     if (searchResults.children.length > 1 || searchResults.children.item(0).tagName === 'LI') {
         document.getElementById(`search_results_${id}`).style.display = 'block';
     }

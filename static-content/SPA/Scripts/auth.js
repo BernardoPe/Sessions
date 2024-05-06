@@ -54,7 +54,8 @@ function authRegister(event) {
 						document.getElementById('registerForm').style.display = "none"
 						document.getElementById('token-info').style.display = "block"
 						document.getElementById('token').innerHTML = "Your token is: " + data.token
-						sessionStorage.setItem('user', JSON.stringify(data))
+						const player = {pid: data.pid, name: name, email: email}
+						sessionStorage.setItem('user', JSON.stringify(player))
 						return data
 					}
 					else {

@@ -48,13 +48,12 @@ class SessionsService(val storage: SessionsDataManager) {
      *
      * @param sid The session identifier
      * @param pid The player identifier
-     * @return The [SessionOperationMessage]
      *
      * @throws NotFoundException If the session or player is not found
      * @throws BadRequestException If the player is already in the session, the session is full or closed
      */
 
-    fun addPlayer(sid: UInt, pid: UInt): SessionOperationMessage {
+    fun addPlayer(sid: UInt, pid: UInt) {
         val getSession = storage.session.getById(sid) ?: throw NotFoundException("Session not found")
 
         val getPlayer = storage.player.getById(pid) ?: throw NotFoundException("Player not found")
@@ -71,9 +70,8 @@ class SessionsService(val storage: SessionsDataManager) {
             throw BadRequestException("Session is closed")
         }
 
-        storage.session.addPlayer(sid, getPlayer).also {
-            return "Player successfully added to session"
-        }
+        storage.session.addPlayer(sid, getPlayer)
+
     }
 
     /**
@@ -81,11 +79,10 @@ class SessionsService(val storage: SessionsDataManager) {
      *
      * @param sid The session identifier
      * @param pid The player identifier
-     * @return The [SessionOperationMessage]
      *
      * @throws NotFoundException If the session or player is not found or the player is not in the session
      */
-    fun removePlayer(sid: UInt, pid: UInt): SessionOperationMessage {
+    fun removePlayer(sid: UInt, pid: UInt) {
         val getSession = storage.session.getById(sid) ?: throw NotFoundException("Session not found")
 
         val getPlayer = storage.player.getById(pid) ?: throw NotFoundException("Player not found")
@@ -94,9 +91,8 @@ class SessionsService(val storage: SessionsDataManager) {
             throw NotFoundException("Player not in session")
         }
 
-        storage.session.removePlayer(sid, getPlayer.id).also {
-            return "Player successfully removed from session"
-        }
+        storage.session.removePlayer(sid, getPlayer.id)
+
     }
 
 
@@ -107,7 +103,6 @@ class SessionsService(val storage: SessionsDataManager) {
      * @param sid The session identifier
      * @param capacity The session capacity
      * @param date The session date
-     * @return The [SessionOperationMessage]
      *
      * @throws BadRequestException If the session date is in the past, the new session capacity is less than the number of players in the session or the new session capacity is invalid
      * @throws NotFoundException If the session is not found
@@ -172,17 +167,14 @@ class SessionsService(val storage: SessionsDataManager) {
      * Deletes a session
      *
      * @param sid The session identifier
-     * @return The [SessionOperationMessage]
      *
      * @throws NotFoundException If the session is not found
      */
-    fun deleteSession(sid: UInt): SessionOperationMessage {
+    fun deleteSession(sid: UInt) {
         if (storage.session.getById(sid) == null) {
             throw NotFoundException("Session not found")
         }
-        storage.session.delete(sid).also {
-            return "Session successfully deleted"
-        }
+        storage.session.delete(sid)
     }
 }
 
@@ -190,4 +182,3 @@ typealias SessionIdentifier = UInt
 
 typealias SessionList = List<Session>
 
-typealias SessionOperationMessage = String

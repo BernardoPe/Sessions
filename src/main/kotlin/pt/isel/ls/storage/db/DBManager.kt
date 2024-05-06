@@ -40,7 +40,7 @@ open class DBManager(
             logger.error("Error while executing query", e)
             connection.rollback()
             // an error occurred that is not related to the request validation
-            throw InternalServerErrorException("There was a server error while processing the request. Please try again.")
+            throw InternalServerErrorException()
         }
         finally {
             connection.autoCommit = true
