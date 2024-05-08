@@ -1,5 +1,6 @@
 package pt.isel.ls.storage
 
+import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.mapper.toEmail
 import pt.isel.ls.data.mapper.toName
@@ -68,34 +69,11 @@ class SessionsDataPlayerTest {
     }
 
     @Test
-    fun isEmailStoredTest() {
-        // Create a player storage
-        val playerStorage = SessionsDataMemPlayer()
-        // Add a player to the storage
-        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), 0L))
-        // Check if the email is stored
-        assert(playerStorage.isEmailStored("testEmail@test.com".toEmail()))
-    }
-
-    @Test
-    fun isNameStoredTest() {
-        // Create a player storage
-        val playerStorage = SessionsDataMemPlayer()
-        // Add a player to the storage
-        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), 0L))
-        // Check if the name is stored
-        assert(playerStorage.isNameStored("testPlayer".toName()))
-    }
-
-    @Test
     fun testPlayerNameSearch() {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
         playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), 0L))
-        // Check if the name is stored
-        assert(playerStorage.isNameStored("testPlayer".toName()))
-
         val playerSearch = playerStorage.getPlayersSearch("tes".toName(), 10u, 0u)
         assertEquals(1, playerSearch.first.size)
         assertEquals(1, playerSearch.second)
@@ -109,8 +87,6 @@ class SessionsDataPlayerTest {
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
         playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), 0L))
-        // Check if the name is stored
-        assert(playerStorage.isNameStored("testPlayer".toName()))
         // Search by name, characters are contained in the name but not from the start
         val playerSearch = playerStorage.getPlayersSearch("play".toName(), 10u, 0u)
         assertEquals(0, playerSearch.first.size)
@@ -164,4 +140,10 @@ class SessionsDataPlayerTest {
         // Check if the player is null
         assertNull(player)
     }
+
+    @BeforeEach
+    fun clear() {
+        SessionsDataMemPlayer().clear()
+    }
+
 }

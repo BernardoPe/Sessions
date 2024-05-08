@@ -192,7 +192,7 @@ class GameEndpointsTest {
 
     @BeforeEach
     fun clear() {
-        storage = SessionsDataManager(DataManagerType.MEMORY)
+        storage.close()
         api = SessionsApi(PlayerService(storage), GameService(storage), SessionsService(storage))
         setup()
     }

@@ -64,28 +64,6 @@ class SessionsDataDBPlayerTest {
         // Assert
         assertNull(retrievedPlayer)
     }
-
-    @Test
-    fun `check email stored`() {
-        // Arrange
-        val player = Player(TEST_ID, Name(TEST_NAME), Email(TEST_EMAIL), TEST_TOKEN)
-        val (id) = sessionsDataDBPlayer.create(player)
-        // Act
-        val isStored = sessionsDataDBPlayer.isEmailStored(Email(TEST_EMAIL))
-        // Assert
-        assertEquals(true, isStored)
-        // Clean up
-        sessionsDataDBPlayer.delete(id)
-    }
-
-    @Test
-    fun `check email not stored`() {
-        // Act
-        val isStored = sessionsDataDBPlayer.isEmailStored(Email(NONEXISTENT_EMAIL))
-        // Assert
-        assertEquals(false, isStored)
-    }
-
     @Test
     fun `get all players`() {
         // Arrange

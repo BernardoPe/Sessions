@@ -132,7 +132,7 @@ class PlayerServiceTest {
 
     @BeforeEach
     fun clearStorage() {
-        storage = SessionsDataManager(DataManagerType.MEMORY)
+        storage.close()
         servicePlayer = PlayerService(storage)
     }
 

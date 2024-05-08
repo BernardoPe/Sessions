@@ -1,9 +1,11 @@
 package pt.isel.ls.storage
 
+import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.mapper.toGenre
 import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.storage.mem.SessionsDataMemGame
+import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -138,14 +140,8 @@ class SessionsDataGameTest {
         assertFalse { gameStorage.delete(0u) }
     }
 
-    @Test
-    fun isGameNameStoredTest() {
-        // Create a game storage
-        val gameStorage = SessionsDataMemGame()
-        // Create the game (add it to the storage)
-        val game = Game(0u, "game".toName(), "developer".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
-        gameStorage.create(game)
-        // Check if the game name is stored
-        assertTrue(gameStorage.isGameNameStored("game".toName()))
+    @BeforeEach
+    fun clear() {
+        SessionsDataMemGame().clear()
     }
 }

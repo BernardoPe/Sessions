@@ -12,10 +12,10 @@ CREATE TABLE games (
 );
 
 create table players (
-    id serial primary key,
-    name varchar(60) unique not null,
-    email varchar(40) unique not null check (email like '%_@_%.__%'),
-    token_hash int8 unique not null
+     id serial primary key,
+     name varchar(60) unique not null,
+     email varchar(40) unique not null check (email like '%_@_%.__%'),
+     token_hash int8 unique not null
 );
 
 
@@ -31,7 +31,38 @@ CREATE TABLE sessions (
   * N to N relationship between sessions and players must be represented by a separate table
  */
 CREATE TABLE sessions_players (
-     session_id INT REFERENCES sessions(id) ON DELETE CASCADE,
-     player_id INT REFERENCES players(id) ON DELETE CASCADE,
-     PRIMARY KEY (session_id, player_id)
+      session_id INT REFERENCES sessions(id) ON DELETE CASCADE,
+      player_id INT REFERENCES players(id) ON DELETE CASCADE,
+      PRIMARY KEY (session_id, player_id)
 );
+
+
+-- Trigger for sessions_players table
+CREATE OR REPLACE FUNCTION check_capacity_on_player_add() RETURNS TRIGGER AS $$
+BEGIN
+    PERFORM * FROM sessions_players WHERE session_id = NEW.session_id FOR UPDATE;
+    IF (SELECT COUNT(*) FROM sessions_players WHERE session_id = NEW.session_id) + 1 > (SELECT capacity FROM sessions WHERE id = NEW.session_id) THEN
+        RAISE EXCEPTION 'Session Full';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_capacity_on_player_add_trigger BEFORE INSERT ON sessions_players
+    FOR EACH ROW EXECUTE PROCEDURE check_capacity_on_player_add();
+
+-- Trigger for sessions table
+CREATE OR REPLACE FUNCTION check_capacity_on_session_update() RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.capacity < (SELECT COUNT(*) FROM sessions_players WHERE session_id = NEW.id) THEN
+        RAISE EXCEPTION 'Capacity cannot be less than the number of players in the session';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_capacity_on_session_update_trigger BEFORE UPDATE ON sessions
+    FOR EACH ROW EXECUTE PROCEDURE check_capacity_on_session_update();
+
+SELECT * FROM sessions_players where session_id = 1;
+

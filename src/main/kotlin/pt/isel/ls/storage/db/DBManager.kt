@@ -1,7 +1,10 @@
 package pt.isel.ls.storage.db
 
 import org.postgresql.ds.PGSimpleDataSource
+import org.postgresql.util.PSQLException
+import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.InternalServerErrorException
+import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.logger
 import java.sql.Connection
 
@@ -19,7 +22,7 @@ import java.sql.Connection
  * @property getConnection gets the connection for the current thread
 
  */
-open class DBManager(
+abstract class DBManager(
     private val dbUrl : String
 ) {
     /**
@@ -37,15 +40,54 @@ open class DBManager(
             ret = query(connection)
             connection.commit()
         } catch (e: Exception) {
-            logger.error("Error while executing query", e)
             connection.rollback()
-            // an error occurred that is not related to the request validation
-            throw InternalServerErrorException()
+            throw processError(e)
         }
         finally {
             connection.autoCommit = true
         }
         return ret
+    }
+
+    private fun processError(e: Exception) : Exception {
+        logger.error("Error while executing query", e)
+        when (e) {
+            is PSQLException -> {
+                val message = e.message?.lowercase()
+                return when (e.sqlState) {
+                    "23505" -> {
+                        // unique constraint violation
+                        when {
+                            message?.contains("players_name_key") == true -> BadRequestException("Player name already exists")
+                            message?.contains("players_email_key") == true -> BadRequestException("Player email already exists")
+                            message?.contains("games_name_key") == true -> BadRequestException("Game name already exists")
+                            message?.contains("sessions_players_pkey") == true -> BadRequestException("Player already in session")
+                            else -> InternalServerErrorException()
+                        }
+                    }
+                    "23503" -> {
+                        // foreign key violation
+                        when {
+                            message?.contains("fk_session_game") == true -> NotFoundException("Game not found")
+                            message?.contains("fk_session_player") == true -> NotFoundException("Player not found")
+                            message?.contains("sessions_players_player_id_fkey") == true -> NotFoundException("Player not found")
+                            message?.contains("sessions_players_session_id_fkey") == true -> NotFoundException("Session not found")
+                            else -> InternalServerErrorException()
+                        }
+                    }
+                    "P0001" -> {
+                        // check constraint violation
+                        when {
+                            message?.contains("capacity cannot be less than the number of players") == true -> BadRequestException("Capacity cannot be less than the number of players")
+                            message?.contains("session full") == true -> BadRequestException("Session full")
+                            else -> InternalServerErrorException()
+                        }
+                    }
+                    else -> InternalServerErrorException()
+                }
+            }
+            else -> return InternalServerErrorException()
+        }
     }
 
 

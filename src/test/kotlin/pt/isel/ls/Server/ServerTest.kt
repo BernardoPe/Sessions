@@ -151,7 +151,7 @@ class ServerTest {
         assertEquals("TestName", playerList.players[0].name)
         assertEquals("testemail@test.pt", playerList.players[0].email)
         assertEquals(3u, playerList.players[1].pid)
-        assertEquals("TestName", playerList.players[1].name)
+        assertEquals("TestName2", playerList.players[1].name)
         assertEquals("testemail2@test.pt", playerList.players[1].email)
     }
 
@@ -815,7 +815,7 @@ class ServerTest {
 
     @BeforeEach
     fun start() {
-        storage = SessionsDataManager(DataManagerType.MEMORY)
+        storage.close()
         api = SessionsApi(
             PlayerService(storage),
             GameService(storage),
@@ -851,19 +851,19 @@ class ServerTest {
             val mockSession2 = Session(2u, 100u, "2030-06-01T00:00:00".toLocalDateTime(), mockGame2, setOf())
 
             val mockPlayer = Player(2u, "TestName".toName(), "testemail@test.pt".toEmail(), 0L)
-            val mockPlayer2 = Player(3u, "TestName".toName(), "testemail2@test.pt".toEmail(), 0L)
+            val mockPlayer2 = Player(3u, "TestName2".toName(), "testemail2@test.pt".toEmail(), 0L)
 
             storage.game.create(mockGame)
             storage.game.create(mockGame2)
 
-            storage.session.create(mockSession)
-            storage.session.create(mockSession2)
+            storage.session.create(mockSession.capacity, mockSession.date, mockSession.gameSession.id)
+            storage.session.create(mockSession2.capacity, mockSession2.date, mockSession2.gameSession.id)
 
             storage.player.create(mockPlayer)
             storage.player.create(mockPlayer2)
 
-            storage.session.addPlayer(mockSession.id, mockPlayer)
-            storage.session.addPlayer(mockSession.id, mockPlayer2)
+            storage.session.addPlayer(mockSession.id, mockPlayer.id)
+            storage.session.addPlayer(mockSession.id, mockPlayer2.id)
         }
     }
 }

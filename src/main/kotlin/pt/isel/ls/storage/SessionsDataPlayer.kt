@@ -46,22 +46,6 @@ interface SessionsDataPlayer {
      */
     fun getPlayersSearch(name: Name?, limit: UInt, skip: UInt): Pair<List<Player>, Int>
 
-    /**
-     * Checks the player's email on the database
-     *
-     *
-     * @param email The player email to be checked
-     * @return A boolean indicating if the player email exists in the database mock
-     */
-    fun isEmailStored(email: Email): Boolean
-
-    /**
-     * Checks the player's name on the database
-     *
-     * @param name The player name to be checked
-     * @return A boolean indicating if the player name exists in the database mock
-     */
-    fun isNameStored(name: Name): Boolean
 
     /**
      * Read all players from the database

@@ -24,17 +24,6 @@ class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
         generatedKeys.getInt(1).toUInt().also { statement.close() }
     } as UInt
 
-    override fun isGameNameStored(name: Name): Boolean = execQuery { connection ->
-        val statement = connection.prepareStatement(
-            "SELECT 1 FROM games WHERE name = ?",
-        )
-
-        statement.setString(1, name.toString())
-        val resultSet = statement.executeQuery()
-
-        resultSet.next().also { statement.close() }
-    } as Boolean
-
     @Suppress("UNCHECKED_CAST")
     override fun getGamesSearch(
         genres: Set<Genre>?,

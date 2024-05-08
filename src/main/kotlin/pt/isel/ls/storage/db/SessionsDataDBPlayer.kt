@@ -40,27 +40,6 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         resultSet.getPlayers().firstOrNull().also { statement.close() }
     } as Player?
 
-    override fun isEmailStored(email: Email): Boolean = execQuery { connection ->
-        val statement = connection.prepareStatement(
-            "SELECT 1 FROM players WHERE email = ?",
-        )
-
-        statement.setString(1, email.toString())
-        val resultSet = statement.executeQuery()
-
-        resultSet.next().also { statement.close() }
-    } as Boolean
-
-    override fun isNameStored(name: Name): Boolean = execQuery { connection ->
-        val statement = connection.prepareStatement(
-            "SELECT 1 FROM players WHERE lower(name) = ?",
-        )
-
-        statement.setString(1, name.toString().lowercase())
-        val resultSet = statement.executeQuery()
-        resultSet.next().also { statement.close() }
-    } as Boolean
-
     @Suppress("UNCHECKED_CAST")
     override fun getAll(): List<Player> = execQuery { connection ->
         val statement = connection.prepareStatement(

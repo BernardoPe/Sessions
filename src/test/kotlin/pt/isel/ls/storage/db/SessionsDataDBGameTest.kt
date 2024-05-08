@@ -31,27 +31,6 @@ class SessionsDataDBGameTest {
     }
 
     @Test
-    fun `game name is stored`() {
-        // Arrange
-        val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
-        val id = sessionsDataDBGame.create(game)
-        // Act
-        val isStored = sessionsDataDBGame.isGameNameStored(TEST_NAME)
-        // Assert
-        assertTrue(isStored)
-        // Clean up
-        sessionsDataDBGame.delete(id)
-    }
-
-    @Test
-    fun `game name is not stored`() {
-        // Act
-        val isStored = sessionsDataDBGame.isGameNameStored(Name("Nonexistent Game"))
-        // Assert
-        assertFalse(isStored)
-    }
-
-    @Test
     fun `get games search returns correct results`() {
         // Arrange
         val game = Game(0u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
@@ -252,7 +231,6 @@ class SessionsDataDBGameTest {
         val isDeleted = sessionsDataDBGame.delete(id)
         // Assert
         assertTrue(isDeleted)
-        assertFalse(sessionsDataDBGame.isGameNameStored(TEST_NAME))
         // Clean up
         sessionsDataDBGame.delete(id)
     }

@@ -24,10 +24,12 @@ interface SessionsDataSession {
      *
      * This function creates a session object and adds it to the database
      *
-     * @param session The [Session] object
+     * @param capacity The session capacity
+     * @param date The session date
+     * @param gid The game identifier
      * @return The session identifier
      */
-    fun create(session: Session): UInt
+    fun create(capacity: UInt, date: LocalDateTime, gid: UInt): UInt
 
     /**
      * Read a session from the database
@@ -61,9 +63,9 @@ interface SessionsDataSession {
      * This function adds a player object to the session object in the database with the given id
      *
      * @param sid The session identifier
-     * @param player The player object
+     * @param pid The player identifier
      */
-    fun addPlayer(sid: UInt, player: Player): Boolean
+    fun addPlayer(sid: UInt, pid: UInt): Boolean
 
     /**
      * Remove a player from a session in the database

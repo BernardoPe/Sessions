@@ -41,17 +41,22 @@ class SessionsDataManager(
 
     /**
      * Closes all the data managers.
-     * This function has no effect on the data managers if they are not DB data managers.
      */
     override fun close() {
         if (game is SessionsDataDBGame) {
             game.closeAll()
+        } else {
+            (game as SessionsDataMemGame).clear()
         }
         if (player is SessionsDataDBPlayer) {
             player.closeAll()
+        } else {
+            (player as SessionsDataMemPlayer).clear()
         }
         if (session is SessionsDataDBSession) {
             session.closeAll()
+        } else {
+            (session as SessionsDataMemSession).clear()
         }
     }
 }

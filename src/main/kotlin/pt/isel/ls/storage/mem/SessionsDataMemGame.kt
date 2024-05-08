@@ -3,6 +3,7 @@ package pt.isel.ls.storage.mem
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.primitives.Genre
 import pt.isel.ls.data.domain.primitives.Name
+import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.storage.SessionsDataGame
 
 /**
@@ -13,49 +14,29 @@ import pt.isel.ls.storage.SessionsDataGame
  *  Uses the [SessionsDataMemGame] class to manage the game data
  */
 
-class SessionsDataMemGame : SessionsDataGame {
-
-    /**
-     * Database Mock
-     *
-     * This is a mockup of the database, used for testing purposes.
-     *
-     * @property db The database.
-     */
-    private var db: MutableList<Game> = mutableListOf()
-
-    /**
-     * Last Identifier
-     *
-     * The last identifier is used to keep track of the last identifier used in the database mock
-     * When a new game instance is added to the database mock, the last identifier is incremented
-     *
-     * @property lastId The last identifier.
-     */
-    private var lastId = 1u
+class SessionsDataMemGame : SessionsDataGame, MemManager() {
 
     override fun create(game: Game): UInt {
+        // Check if the game name already exists in the database mock
+        if (gameDB.any { it.name == game.name }) {
+            throw BadRequestException("Game name already exists")
+        }
         // Add the game object to the database mock
-        db.add(
+        gameDB.add(
             Game(
-                lastId,
+                gid,
                 game.name,
                 game.developer,
                 game.genres,
             ),
         )
         // Return the last identifier
-        return lastId++
-    }
-
-    override fun isGameNameStored(name: Name): Boolean {
-        // Check if the game name already exists in the database mock
-        return db.any { it.name == name }
+        return gid - 1u
     }
 
     override fun getById(id: UInt): Game? {
         // Read the game object from the database mock
-        db.forEach {
+        gameDB.forEach {
             // search for the game with the given id
             if (it.id == id) {
                 // if found
@@ -75,7 +56,7 @@ class SessionsDataMemGame : SessionsDataGame {
     ): Pair<List<Game>, Int> {
         // Read all the game objects from the database mock that match the given genres and developer
         // Start by checking the genres
-        var games = db.filter { game ->
+        var games = gameDB.filter { game ->
             // check if the game genres match the given genres
             genres?.all { game.genres.contains(it) } ?: true
         }
@@ -98,19 +79,19 @@ class SessionsDataMemGame : SessionsDataGame {
     }
 
     override fun getAllGames(): List<Game> {
-        return db
+        return gameDB
     }
 
     override fun update(value: Game): Boolean {
         // Uses the SessionsDataMemGame class to manage the game object in the database mock
-        db.forEach {
+        gameDB.forEachIndexed { index, it ->
             // search for the game with the given id
             if (it.id == value.id) {
                 // if found
                 // remove the game from the database mock
-                db.remove(it)
+                gameDB.removeAt(index)
                 // add the new game to the database mock
-                db.add(value)
+                gameDB.add(value)
                 return true
             }
         }
@@ -120,15 +101,20 @@ class SessionsDataMemGame : SessionsDataGame {
 
     override fun delete(id: UInt): Boolean {
         // Delete the game object from the database mock
-        db.forEach {
+        gameDB.forEachIndexed { index, it ->
             // search for the game with the given id
             if (it.id == id) {
                 // if found
                 // remove the game from the database mock
-                db.remove(it)
+                gameDB.removeAt(index)
                 return true
             }
         }
         return false
     }
+
+    override fun clear() {
+        gameDB.clear()
+    }
+
 }

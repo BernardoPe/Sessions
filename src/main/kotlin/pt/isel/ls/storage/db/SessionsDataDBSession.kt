@@ -16,16 +16,16 @@ import java.sql.Statement
 
 class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbURL) {
 
-    override fun create(session: Session): UInt = execQuery { connection ->
+    override fun create(capacity: UInt, date: LocalDateTime, gid: UInt): UInt = execQuery { connection ->
 
         val statement = connection.prepareStatement(
             "INSERT INTO sessions (game_id, capacity, date) VALUES (?, ?, ?)",
             Statement.RETURN_GENERATED_KEYS,
         )
 
-        statement.setInt(1, session.gameSession.id.toInt())
-        statement.setInt(2, session.capacity.toInt())
-        statement.setTimestamp(3, session.date.toTimestamp())
+        statement.setInt(1, gid.toInt())
+        statement.setInt(2, capacity.toInt())
+        statement.setTimestamp(3, date.toTimestamp())
         statement.executeUpdate()
 
         val generatedKeys = statement.generatedKeys
@@ -137,7 +137,7 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
             resultSessions to total.also { statement.close(); countStatement.close(); sessionStmt.close() }
         } as Pair<List<Session>, Int>
 
-    override fun addPlayer(sid: UInt, player: Player): Boolean = execQuery { connection ->
+    override fun addPlayer(sid: UInt, pid: UInt): Boolean = execQuery { connection ->
         // Check if the player is already in the session
         // Set the statement to insert a new player in the session
         val statement = connection.prepareStatement(
@@ -146,7 +146,7 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
 
         // Set the parameters
         statement.setInt(1, sid.toInt())
-        statement.setInt(2, player.id.toInt())
+        statement.setInt(2, pid.toInt())
         // Execute the statement and get the result
         val res = statement.executeUpdate()
 
@@ -160,13 +160,11 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
         val statement = connection.prepareStatement(
             "DELETE FROM sessions_players WHERE session_id = ? AND player_id = ?",
         )
-
         // Set the parameters
         statement.setInt(1, sid.toInt())
         statement.setInt(2, pid.toInt())
         // Execute the statement and get the result
         val res = statement.executeUpdate()
-
         // Return the result of the operation
         // It returns true if the player was removed from the session
         res > 0.also { statement.close() }

@@ -296,7 +296,6 @@ class SessionsApi(
         sessionServices.addPlayer(sid, player.pid)
 
         Response(CREATED)
-            .header("content-type", "application/json")
             .header("location", "/sessions/$sid/players/${player.pid}")
     }
 
@@ -314,7 +313,6 @@ class SessionsApi(
         sessionServices.removePlayer(sid, pid)
 
         Response(OK)
-            .header("content-type", "application/json")
     }
 
     /**
@@ -351,7 +349,6 @@ class SessionsApi(
         sessionServices.deleteSession(sid)
 
         Response(OK)
-            .header("content-type", "application/json")
     }
 
     /**

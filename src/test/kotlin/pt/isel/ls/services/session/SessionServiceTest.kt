@@ -532,7 +532,7 @@ class SessionServiceTest {
 
     @BeforeEach
     fun clearStorage() {
-        storage = SessionsDataManager(DataManagerType.MEMORY)
+        storage.close()
         serviceSession = SessionsService(storage)
         serviceGame = GameService(storage)
         servicePlayer = PlayerService(storage)

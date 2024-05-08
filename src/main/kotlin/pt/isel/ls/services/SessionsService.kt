@@ -35,12 +35,7 @@ class SessionsService(val storage: SessionsDataManager) {
         if (date.isBefore(currentLocalTime())) {
             throw BadRequestException("Session date must be in the future")
         }
-
-        val getGame = storage.game.getById(gid) ?: throw NotFoundException("Game not found")
-
-        val session = Session(0u, capacity, date, getGame, emptySet())
-
-        return storage.session.create(session)
+        return storage.session.create(capacity, date, gid)
     }
 
     /**
@@ -54,24 +49,7 @@ class SessionsService(val storage: SessionsDataManager) {
      */
 
     fun addPlayer(sid: UInt, pid: UInt) {
-        val getSession = storage.session.getById(sid) ?: throw NotFoundException("Session not found")
-
-        val getPlayer = storage.player.getById(pid) ?: throw NotFoundException("Player not found")
-
-        if (getSession.playersSession.any { it.id == getPlayer.id }) {
-            throw BadRequestException("Player already in session")
-        }
-
-        if (getSession.capacity == getSession.playersSession.size.toUInt()) {
-            throw BadRequestException("Session is full")
-        }
-
-        if (getSession.state == State.CLOSE) {
-            throw BadRequestException("Session is closed")
-        }
-
-        storage.session.addPlayer(sid, getPlayer)
-
+        storage.session.addPlayer(sid, pid)
     }
 
     /**
@@ -83,16 +61,12 @@ class SessionsService(val storage: SessionsDataManager) {
      * @throws NotFoundException If the session or player is not found or the player is not in the session
      */
     fun removePlayer(sid: UInt, pid: UInt) {
-        val getSession = storage.session.getById(sid) ?: throw NotFoundException("Session not found")
-
-        val getPlayer = storage.player.getById(pid) ?: throw NotFoundException("Player not found")
-
-        if (!getSession.playersSession.any { it.id == getPlayer.id }) {
-            throw NotFoundException("Player not in session")
+        if (!storage.session.removePlayer(sid, pid)) {
+            if (storage.session.getById(sid) == null) {
+                throw NotFoundException("Session not found")
+            }
+            throw NotFoundException("Player not found")
         }
-
-        storage.session.removePlayer(sid, getPlayer.id)
-
     }
 
 
@@ -116,20 +90,17 @@ class SessionsService(val storage: SessionsDataManager) {
             }
         }
 
-        val session = storage.session.getById(sid) ?: throw NotFoundException("Session not found")
-
         if (capacity != null) {
-            if (session.playersSession.size > capacity.toInt()) {
-                throw BadRequestException("New session capacity must be greater or equal to the number of players in the session")
-            }
             if (capacity !in (1u..SESSION_MAX_CAPACITY)) {
                 throw BadRequestException("Session capacity must at least 1 and at most $SESSION_MAX_CAPACITY")
             }
         }
 
-        storage.session.update(sid, capacity, date).also {
-            return true
+        if (!storage.session.update(sid, capacity, date)) {
+            throw NotFoundException("Session not found")
         }
+
+        return true
     }
 
     /**
@@ -144,8 +115,7 @@ class SessionsService(val storage: SessionsDataManager) {
      * @return The [SessionList] and the total number of sessions
      */
     fun listSessions(gid: UInt?, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): Pair<SessionList, Int> {
-        val sessionsSearch = storage.session.getSessionsSearch(gid, date, state, pid, limit, skip)
-        return sessionsSearch.first to sessionsSearch.second
+        return storage.session.getSessionsSearch(gid, date, state, pid, limit, skip)
     }
 
 
@@ -171,10 +141,9 @@ class SessionsService(val storage: SessionsDataManager) {
      * @throws NotFoundException If the session is not found
      */
     fun deleteSession(sid: UInt) {
-        if (storage.session.getById(sid) == null) {
+        if (!storage.session.delete(sid)) {
             throw NotFoundException("Session not found")
         }
-        storage.session.delete(sid)
     }
 }
 

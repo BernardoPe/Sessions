@@ -30,14 +30,6 @@ interface SessionsDataGame {
      */
     fun create(game: Game): UInt
 
-    /**
-     * Checks for the name of a game in the database
-     *
-     * This function uses the [isGameNameStored] function from the [SessionsDataMemGame] class
-     *
-     * @param name The game name to be checked
-     */
-    fun isGameNameStored(name: Name): Boolean
 
     /**
      * Read games from the database
