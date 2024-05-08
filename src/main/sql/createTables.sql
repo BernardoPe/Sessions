@@ -38,8 +38,16 @@ CREATE TABLE sessions_players (
 
 
 -- Trigger for sessions_players table
-CREATE OR REPLACE FUNCTION check_capacity_on_player_add() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION check_on_player_add() RETURNS TRIGGER AS $$
+
+DECLARE
+    session_date TIMESTAMP;
 BEGIN
+    SELECT date INTO session_date FROM sessions WHERE id = NEW.session_id;
+    IF session_date < CURRENT_TIMESTAMP THEN
+        RAISE EXCEPTION 'Session is closed';
+    END IF;
+
     PERFORM * FROM sessions_players WHERE session_id = NEW.session_id FOR UPDATE;
     IF (SELECT COUNT(*) FROM sessions_players WHERE session_id = NEW.session_id) + 1 > (SELECT capacity FROM sessions WHERE id = NEW.session_id) THEN
         RAISE EXCEPTION 'Session Full';
@@ -48,8 +56,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER check_capacity_on_player_add_trigger BEFORE INSERT ON sessions_players
-    FOR EACH ROW EXECUTE PROCEDURE check_capacity_on_player_add();
+CREATE TRIGGER check_on_player_add_trigger BEFORE INSERT ON sessions_players
+    FOR EACH ROW EXECUTE PROCEDURE check_on_player_add();
 
 -- Trigger for sessions table
 CREATE OR REPLACE FUNCTION check_capacity_on_session_update() RETURNS TRIGGER AS $$
