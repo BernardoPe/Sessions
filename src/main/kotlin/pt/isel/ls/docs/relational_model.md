@@ -31,6 +31,15 @@ AK: email, token_hash
 
 ### Sessions
 
+- id
+- capacity
+- date
+- gameSession
+- playersSession
+
 PK: id
+
+FK: gameSession -> Games.id
+    playersSession -> Players.id
 
 
