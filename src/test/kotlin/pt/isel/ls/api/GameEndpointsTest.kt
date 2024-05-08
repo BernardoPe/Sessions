@@ -1,3 +1,4 @@
+package pt.isel.ls.api
 
 import kotlinx.serialization.json.Json
 import org.http4k.core.Method
@@ -6,7 +7,6 @@ import org.http4k.core.Status
 import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeEach
-import pt.isel.ls.api.SessionsApi
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.dto.GameInfoOutputModel
