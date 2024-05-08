@@ -92,7 +92,7 @@ class SessionsApi(
         Response(CREATED)
             .header("content-type", "application/json")
             .header("location", "/players/${res.first}")
-            .cookie(createCookie(86400, res.second))
+            .cookie(createCookie(null, res.second))
             .body(Json.encodeToString(res.toPlayerCreationDTO()))
     }
 
@@ -135,7 +135,7 @@ class SessionsApi(
         if (player != null) {
             Response(OK)
                 .header("content-type", "application/json")
-                .cookie(createCookie(86400, token))
+                .cookie(createCookie(null, token))
                 .body(Json.encodeToString(player.toPlayerInfoDTO()))
         } else {
             Response(UNAUTHORIZED)
@@ -462,12 +462,15 @@ class SessionsApi(
         return UUID.fromString(request.cookie("Authorization")?.value ?: throw BadRequestException("No Authorization provided"))
     }
 
-    private fun createCookie(expiration: Long, token: UUID): Cookie {
-        return Cookie("Authorization", token.toString())
-            .secure()
-            .httpOnly()
-            .sameSite(SameSite.Strict)
-            .maxAge(expiration)
+    private fun createCookie(expiration: Long?, token: UUID): Cookie {
+        return Cookie(
+            "Authorization",
+            token.toString(),
+            maxAge = expiration,
+            sameSite = SameSite.Strict,
+            secure = true,
+            httpOnly = true,
+        )
     }
 
     private fun verifyAuth(request: Request): Boolean {
