@@ -1,16 +1,15 @@
 ## Introduction
 
-The project consists of the development of an information system
-to manage multiplayer game sessions.
+The project consists of the development of an application that allows management of multiplayer game sessions.
 
-We implemented the backend of the project with `kotlin`,
-`HTTP4K` library for the web server and the `kotlinx.serialization` library for JSON serialization.  
+We implemented the backend of the application with `kotlin`,
+`HTTP4K` library for the server and the `kotlinx.serialization` library for JSON serialization.  
 We covered the implemented features with unit tests using the `JUnit` library.  
 The database is managed by `PostgreSQL` and the connections are made using the `JDBC` library.
 
 On the frontend side, we used Javascript modules to manage the user interface of the website.
 The web application loads only a single web page document and updates its content via JavaScript making by HTTP requests to the server and 
-replacing the body content with the content of the 'rendered' view.
+replacing the page content with the content of the response.
 
 This technique is called Single Page Application (SPA).
 
@@ -20,7 +19,6 @@ This technique is called Single Page Application (SPA).
 
 #### Conceptual model ###
 The following diagram holds the Entity-Relationship model for the information managed by the system.
-
 
 ![ER Diagram](ea_model_new.png)
 
@@ -193,8 +191,8 @@ The types of request methods the api supports are :
 - GET
 - POST
 - DELETE
-- PUT
-
+- PATCH
+- 
 The Games group has 3 endpoints:
 - Game Creation : POST /games
 - Game Search : GET /games
@@ -205,10 +203,11 @@ The Players group has 3 endpoints:
 - Player Creation : POST /players
 - Player Details : GET /players/{id}
 - Player Search : GET /players
+- Authenticate player : POST /players/auth
 
 The Sessions group has 7 endpoints:
 - Create Session : POST /sessions
-- Update session : PUT /sessions/{id}
+- Update session : PATCH /sessions/{id}
 - Delete session : DELETE /sessions/{id}
 - Session Search : GET /sessions/{gid}/list
 - Session Search by id : GET /sessions/{id}
@@ -220,7 +219,7 @@ Response codes are:
 
 | Response Code           | Description           | Examples                           |
 |-------------------------|-----------------------|------------------------------------|
-| 200                     | OK                    | Got a Player                       |
+| 200                     | OK                    | Player details returned            |
 | 201                     | Created               | Create a Game                      |
 | 204                     | No Content            | No results found for search        |
 | 400                     | Bad Request           | Missing a parameter on the request |
@@ -248,12 +247,21 @@ The SPA offers the following operations to the user:
 
 ![SPA Navigation Graph](spa_views.png)
 
+### SPA Authentication
+
+For registering, the SPA sends a request to the API to create a player with a name and email. 
+The API returns a token that is stored in the browser's session storage.
+
+For logging in, the SPA sends a request to the API to get the player details by token.
+The API returns the player details (email, name, id) and a token cookie if the token is valid.
+
+For logging out, the SPA sends a request to the API to erase the token cookie.
 
 ## Critical Evaluation
 
-As of the moment this report was written, the application is able to create, search, and add players to games and sessions.
+No major defects were detected as of the time of writing this report.
 
-No major defects were detected as of the time of writing this report, but some improvements can be made in the future:
+In the next phase of the project, we plan to refactor the authentication approach to use passwords instead of tokens,
+and to implement the remaining features of the application.
 
-The currently planned changes are to increase the API test coverage with more edge cases, and improve the project documentation at the 
-code level.
+We also plan to increase test coverage by adding more unit tests to the application.
