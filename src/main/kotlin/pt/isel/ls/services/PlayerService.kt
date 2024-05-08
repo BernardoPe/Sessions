@@ -36,6 +36,27 @@ class PlayerService(val storage: SessionsDataManager) {
         return storagePlayer.create(player)
     }
 
+    fun loginPlayer(name: Name?, email: Email?, password: String): PlayerCredentials {
+        val storagePlayer = storage.player
+
+        if (name == null && email == null) {
+            throw BadRequestException("Name or email must be provided")
+        }
+
+        val player = if (name != null) storagePlayer.getPlayersSearch(name=name, 1u, 0u).first.first()
+        else storagePlayer.getPlayersSearch(email=email!!, 1u, 0u).first.first(
+
+        if (player.name != name) {
+            throw BadRequestException("Given Player name does not match the email")
+        }
+
+        if (player.password != password) {
+            throw BadRequestException("Given Player password does not match the email")
+        }
+
+        return Pair(player.id, player.token)
+    }
+
     /**
      * Authenticates a player
      *

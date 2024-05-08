@@ -12,12 +12,26 @@ function loginView() {
 		div({class: "form__group fade-up"},
 			form({onsubmit: "authLogin(event)"},
                 formInputField(
-                    "token",
-                    "Token",
-                    "password",
-                    "Token"
+                    "name",
+                    "Name",
+                    "text",
+                    "Name"
 				),
-                errorMessage("error-token", ""),
+				errorMessage("error-name", ""),
+				formInputField(
+					"email",
+					"Email",
+					"email",
+					"Email"
+				),
+				errorMessage("error-email", ""),
+				formInputField(
+					"password",
+					"Password",
+					"password",
+					"Password"
+				),
+                errorMessage("error-password", ""),
 				button({type: "submit"}, "Login")
 			),
 		)

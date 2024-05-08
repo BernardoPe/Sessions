@@ -87,37 +87,54 @@ function authRegister(event) {
 function authLogin(event) {
 
 	event.preventDefault()
-	const token = document.getElementById('token').value
-	const tokenErr = document.getElementById('error-token')
+	const name = document.getElementById('name').value
+	const email = document.getElementById('email').value
+	const password = document.getElementById('password').value
+	const nameErr = document.getElementById('error-name')
+	const emailErr = document.getElementById('error-email')
+	const passErr = document.getElementById('error-password')
 
-	tokenErr.style.display = "none"
+	nameErr.style.display = "none"
+	emailErr.style.display = "none"
+	passErr.style.display = "none"
 
-	if (token === "") {
-		const tokenErr = document.getElementById('error-token')
-		tokenErr.innerHTML = "Please enter a token"
-		tokenErr.style.display = "block"
+	if (name === "" && email === "") {
+		emailErr.innerHTML = "Please enter a valid name or email"
+		emailErr.style.display = "block"
+		if (password === "") {
+			passErr.innerHTML = "Please enter a password"
+			passErr.style.display = "block"
+		}
 		return
 	}
 
-	fetch('/auth', {
-		method: 'GET',
-		headers: {
-			'Authorization': 'Bearer ' + token,
-		},
-	})
-		.then(res => res.ok? res.json() : Promise.reject(res))
-		.then(data => {
-			document.getElementById('login').style.display = "none"
-			document.getElementById('register').style.display = "none"
-			document.getElementById('logout').style.display = "inline-block"
-			sessionStorage.setItem('user', JSON.stringify(data))
-			window.location.href = "#home"
-			return data
-		}).catch(err => {
-			const tokenErr = document.getElementById('error-token')
-			tokenErr.innerHTML = "Invalid token"
-			tokenErr.style.display = "block"
-		})
+	if (password === "") {
+		passErr.innerHTML = "Please enter a password"
+		passErr.style.display = "block"
+		return
+	}
+
+	// TODO:Handle login, translating name or email to a token
+
+	// fetch('/auth', {
+	// 	method: 'GET',
+	// 	headers: {
+	// 		'Authorization': 'Bearer ' + token,
+	// 	},
+	// })
+	// 	.then(res => res.ok? res.json() : Promise.reject(res))
+	// 	.then(data => {
+	// 		document.getElementById('login').style.display = "none"
+	// 		document.getElementById('register').style.display = "none"
+	// 		document.getElementById('logout').style.display = "inline-block"
+	// 		sessionStorage.setItem('user', JSON.stringify(data))
+	// 		window.location.href = "#home"
+	// 		return data
+	// 	}).catch(err => {
+	// 		const tokenErr = document.getElementById('error-token')
+	// 		tokenErr.innerHTML = "Invalid token"
+	// 		tokenErr.style.display = "block"
+	// 	})
 }
 
 

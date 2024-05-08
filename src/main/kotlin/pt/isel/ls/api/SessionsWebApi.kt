@@ -22,6 +22,7 @@ import pt.isel.ls.data.domain.primitives.Name
 import pt.isel.ls.data.domain.session.toState
 import pt.isel.ls.data.dto.GameCreationInputModel
 import pt.isel.ls.data.dto.PlayerCreationInputModel
+import pt.isel.ls.data.dto.PlayerLoginInputModel
 import pt.isel.ls.data.mapper.toGameCreationDTO
 import pt.isel.ls.data.mapper.toGameInfoDTO
 import pt.isel.ls.data.mapper.toGameSearchDTO
@@ -110,6 +111,16 @@ class SessionsApi(
         Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(res.toPlayerInfoDTO()))
+    }
+
+    fun loginPlayer(request: Request) = processRequest(request) {
+        val player = parseJsonBody<PlayerLoginInputModel>(request)
+        val res = playerServices.getToken(Name(player.name), Email(player.email), player.password)
+
+        Response(OK)
+            .header("content-type", "application/json")
+            .cookie(createCookie(86400, res.second))
+            .body(Json.encodeToString(res.toPlayerCreationDTO()))
     }
 
     /**
