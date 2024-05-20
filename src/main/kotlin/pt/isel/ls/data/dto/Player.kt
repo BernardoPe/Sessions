@@ -12,7 +12,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PlayerCreationInputModel(
     val name: String,
-    val email: String
+    val email: String,
+    val password: String
 )
 
 /**
@@ -36,12 +37,12 @@ data class PlayerCreationOutputModel(
  * @param password The player password
  *
  */
-@Serializable
-data class PlayerLoginInputModel(
-    val name: String,
-    val email: String,
-    val password: String
-)
+//@Serializable
+//data class PlayerLoginInputModel(
+//    val name: String,
+//    val email: String,
+//    val password: String
+//)
 
 /**
  * The [PlayerInfoOutputModel] class is used to represent the response body of the player details

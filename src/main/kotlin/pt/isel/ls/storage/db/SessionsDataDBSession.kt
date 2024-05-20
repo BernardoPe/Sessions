@@ -9,6 +9,7 @@ import pt.isel.ls.data.domain.session.State
 import pt.isel.ls.data.domain.primitives.Genre
 import pt.isel.ls.data.mapper.toEmail
 import pt.isel.ls.data.mapper.toName
+import pt.isel.ls.data.mapper.toPasswordHash
 import pt.isel.ls.storage.SessionsDataSession
 import pt.isel.ls.utils.toTimestamp
 import java.sql.ResultSet
@@ -252,6 +253,7 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
             this.getString("pname").toName(),
             this.getString("email").toEmail(),
             this.getLong("token_hash"),
+            this.getString("password_hash").toPasswordHash()
         )
     }
 

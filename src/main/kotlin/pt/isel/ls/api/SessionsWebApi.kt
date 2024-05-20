@@ -19,6 +19,7 @@ import org.http4k.routing.path
 import pt.isel.ls.data.domain.primitives.Email
 import pt.isel.ls.data.domain.primitives.Genre
 import pt.isel.ls.data.domain.primitives.Name
+import pt.isel.ls.data.domain.primitives.Password
 import pt.isel.ls.data.domain.session.toState
 import pt.isel.ls.data.dto.GameCreationInputModel
 import pt.isel.ls.data.dto.PlayerCreationInputModel
@@ -88,7 +89,7 @@ class SessionsApi(
 
     fun createPlayer(request: Request): Response = processRequest(request) {
         val player = parseJsonBody<PlayerCreationInputModel>(request)
-        val res = playerServices.createPlayer(Name(player.name), Email(player.email))
+        val res = playerServices.createPlayer(Name(player.name), Email(player.email), Password(player.password))
 
         Response(CREATED)
             .header("content-type", "application/json")
@@ -113,15 +114,15 @@ class SessionsApi(
             .body(Json.encodeToString(res.toPlayerInfoDTO()))
     }
 
-    fun loginPlayer(request: Request) = processRequest(request) {
-        val player = parseJsonBody<PlayerLoginInputModel>(request)
-        val res = playerServices.getToken(Name(player.name), Email(player.email), player.password)
-
-        Response(OK)
-            .header("content-type", "application/json")
-            .cookie(createCookie(86400, res.second))
-            .body(Json.encodeToString(res.toPlayerCreationDTO()))
-    }
+//    fun loginPlayer(request: Request) = processRequest(request) {
+//        val player = parseJsonBody<PlayerLoginInputModel>(request)
+//        val res = playerServices.getToken(Name(player.name), Email(player.email), player.password)
+//
+//        Response(OK)
+//            .header("content-type", "application/json")
+//            .cookie(createCookie(86400, res.second))
+//            .body(Json.encodeToString(res.toPlayerCreationDTO()))
+//    }
 
     /**
      * Authenticates a player

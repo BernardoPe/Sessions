@@ -3,6 +3,7 @@ package pt.isel.ls.storage.db
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.primitives.Email
 import pt.isel.ls.data.domain.primitives.Name
+import pt.isel.ls.data.domain.primitives.PasswordHash
 import pt.isel.ls.storage.SessionsDataPlayer
 import java.sql.ResultSet
 import java.sql.Statement
@@ -12,8 +13,10 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
 
     @Suppress("UNCHECKED_CAST")
     override fun create(player: Player): Pair<UInt, UUID> = execQuery { connection ->
+
+
         val statement = connection.prepareStatement(
-            "INSERT INTO players (name, email,token_hash) VALUES (?, ?, ?)",
+            "INSERT INTO players (name, email,token_hash, password_hash) VALUES (?, ?, ?, ?)",
             Statement.RETURN_GENERATED_KEYS,
         )
 
@@ -22,6 +25,7 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         statement.setString(1, player.name.toString())
         statement.setString(2, player.email.toString())
         statement.setLong(3, token.hash())
+        statement.setString(4, player.password.toString())
         statement.executeUpdate()
 
         val generatedKeys = statement.generatedKeys
@@ -144,6 +148,7 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
                 Name(this.getString("name")),
                 Email(this.getString("email")),
                 this.getString("token_hash").toLong(),
+                PasswordHash(this.getString("password_hash"))
             )
         }
         return players

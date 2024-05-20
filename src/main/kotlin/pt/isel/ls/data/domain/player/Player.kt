@@ -2,6 +2,7 @@ package pt.isel.ls.data.domain.player
 
 import pt.isel.ls.data.domain.primitives.Email
 import pt.isel.ls.data.domain.primitives.Name
+import pt.isel.ls.data.domain.primitives.PasswordHash
 
 /**
  *  Player
@@ -18,4 +19,5 @@ data class Player(
     val name: Name,
     val email: Email,
     val token: Long,
+    val password: PasswordHash
 )

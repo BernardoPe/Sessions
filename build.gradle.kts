@@ -24,6 +24,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.+")
     implementation("org.slf4j:slf4j-simple:2.0.9") // for logging
     implementation("org.postgresql:postgresql:42.+")
+    implementation("org.mindrot:jbcrypt:0.4")
 }
 
 
