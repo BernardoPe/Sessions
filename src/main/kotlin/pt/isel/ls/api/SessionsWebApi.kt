@@ -23,7 +23,7 @@ import pt.isel.ls.data.domain.primitives.Password
 import pt.isel.ls.data.domain.session.toState
 import pt.isel.ls.data.dto.GameCreationInputModel
 import pt.isel.ls.data.dto.PlayerCreationInputModel
-import pt.isel.ls.data.dto.PlayerLoginInputModel
+//import pt.isel.ls.data.dto.PlayerLoginInputModel
 import pt.isel.ls.data.mapper.toGameCreationDTO
 import pt.isel.ls.data.mapper.toGameInfoDTO
 import pt.isel.ls.data.mapper.toGameSearchDTO
@@ -168,6 +168,7 @@ class SessionsApi(
         if (playerServices.authenticatePlayer(token) == null) {
             throw UnauthorizedException()
         }
+
         Response(OK)
             .header("content-type", "application/json")
             .cookie(createCookie(0, token))

@@ -80,4 +80,8 @@ interface SessionsDataPlayer {
      * @return A boolean indicating if the player token exists in the database mock
      */
     fun getByToken(token: UUID): Player?
+
+//    fun getByEmail(email: Email): Player?
+//
+//    fun getByName(name: Name): Player?
 }

@@ -3,6 +3,7 @@ package pt.isel.ls.storage.mem
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.primitives.Email
 import pt.isel.ls.data.domain.primitives.Name
+import pt.isel.ls.data.domain.primitives.PasswordHash
 import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.storage.SessionsDataPlayer
 import java.util.*
@@ -41,6 +42,7 @@ class SessionsDataMemPlayer : SessionsDataPlayer, MemManager() {
                 player.name,
                 player.email,
                 playerToken.hash(),
+                player.password
             ),
         )
         // Return the last identifier and a new UUID
@@ -110,7 +112,15 @@ class SessionsDataMemPlayer : SessionsDataPlayer, MemManager() {
 
     override fun clear() {
         playerDB.clear()
-        playerDB.add(Player(1u, Name("John Doe"), Email("testemail@a.pt"), 0L)) // for tests
+        playerDB.add(
+            Player(
+                1u,
+                Name("John Doe"),
+                Email("testemail@a.pt"),
+                0L,
+                PasswordHash("\$2a\$10\$e0NRHJk/WZz4o6sW0IKZxeQJX5X/0y5Q7HRUBqKEXzSo1QzDOOXSi")
+            )
+        ) // for tests
     }
 
 }
