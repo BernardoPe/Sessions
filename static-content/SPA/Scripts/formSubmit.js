@@ -467,7 +467,7 @@ function getUniquePlayerId(playerName) {
 function handleGameCapacity(capacity, errMessage) {
 	if (capacity < 1 || capacity > SESSION_MAX_CAPACITY) {
 		errMessage.style.display = 'block';
-		errMessage.innerHTML = 'Capacity must be between 1 and 100';
+		errMessage.innerHTML = `Capacity must be between 1 and ${SESSION_MAX_CAPACITY}`;
 		return false;
 	} else {
 		errMessage.style.display = 'none';

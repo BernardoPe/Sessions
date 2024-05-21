@@ -70,6 +70,7 @@ abstract class DBManager(
                         when {
                             message?.contains("fk_session_game") == true -> NotFoundException("Game not found")
                             message?.contains("fk_session_player") == true -> NotFoundException("Player not found")
+                            message?.contains("sessions_game_id_fkey") == true -> NotFoundException("Game not found")
                             message?.contains("sessions_players_player_id_fkey") == true -> NotFoundException("Player not found")
                             message?.contains("sessions_players_session_id_fkey") == true -> NotFoundException("Session not found")
                             else -> InternalServerErrorException()
@@ -80,6 +81,7 @@ abstract class DBManager(
                         when {
                             message?.contains("capacity cannot be less than the number of players") == true -> BadRequestException("Capacity cannot be less than the number of players")
                             message?.contains("session full") == true -> BadRequestException("Session full")
+                            message?.contains("session is closed") == true -> BadRequestException("Session closed")
                             else -> InternalServerErrorException()
                         }
                     }

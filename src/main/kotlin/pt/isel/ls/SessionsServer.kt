@@ -49,7 +49,7 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
             PLAYER_ROUTE bind POST to requestHandler::createPlayer,
             PLAYER_ROUTE bind GET to requestHandler::getPlayerList,
             PLAYER_DETAILS_ROUTE bind GET to requestHandler::getPlayerDetails,
-            AUTH_ROUTE bind GET to requestHandler::authPlayer,
+            AUTH_ROUTE bind POST to requestHandler::authPlayer,
             LOGOUT_ROUTE bind GET to requestHandler::playerLogout,
         )
 

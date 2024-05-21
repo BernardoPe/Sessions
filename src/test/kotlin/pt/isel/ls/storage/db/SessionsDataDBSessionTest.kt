@@ -1,5 +1,6 @@
+package pt.isel.ls.storage.db
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.toKotlinLocalDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -10,20 +11,17 @@ import pt.isel.ls.data.domain.primitives.Genre
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.mapper.toEmail
 import pt.isel.ls.data.mapper.toName
-import pt.isel.ls.storage.db.SessionsDataDBGame
-import pt.isel.ls.storage.db.SessionsDataDBPlayer
-import pt.isel.ls.storage.db.SessionsDataDBSession
-import java.util.*
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 class SessionsDataDBSessionTest {
 
-    private val TEST_EMAIL = "test@test.com".toEmail()
-    private val TEST_NAME = "Test Name".toName()
-    private val TEST_NAME_2 = "Test Name 2".toName()
-    private val TEST_DEVELOPER = "Test Dev".toName()
-    private val TEST_DEVELOPER_2 = "Test Dev 2".toName()
-    private val TEST_DATE = LocalDateTime(2025, 1, 1, 0, 0)
-
+    private val testEmail = "test@test.com".toEmail()
+    private val testName = "Test Name".toName()
+    private val testName2 = "Test Name 2".toName()
+    private val testDeveloper = "Test Dev".toName()
+    private val testDeveloper2 = "Test Dev 2".toName()
+    private val testDate = LocalDateTime.now().plusHours(1).truncatedTo(ChronoUnit.SECONDS).toKotlinLocalDateTime()
     private val dbURL = System.getenv("JDBC_DEVELOPMENT_DATABASE_URL")
 
     @Test
@@ -31,10 +29,10 @@ class SessionsDataDBSessionTest {
         // Arrange
         val gameDB = SessionsDataDBGame(dbURL)
         val sessionDB = SessionsDataDBSession(dbURL)
-        var game = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
+        var game = Game(1u, testName, testDeveloper, setOf(Genre("RPG")))
         val gid = gameDB.create(game)
         game = game.copy(id = gid)
-        val session = Session(0u, 10u, TEST_DATE, game, emptySet())
+        val session = Session(0u, 10u, testDate, game, emptySet())
         // Act
         val sid = sessionDB.create(session.capacity, session.date, session.gameSession.id)
         val retrievedSession = sessionDB.getById(sid)
@@ -51,11 +49,11 @@ class SessionsDataDBSessionTest {
         val gameDB = SessionsDataDBGame(dbURL)
         val sessionDB = SessionsDataDBSession(dbURL)
         // Game
-        var game = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
+        var game = Game(1u, testName, testDeveloper, setOf(Genre("RPG")))
         val gid = gameDB.create(game)
         game = game.copy(id = gid)
         // Session
-        var session = Session(0u, 10u, TEST_DATE, game, emptySet())
+        var session = Session(0u, 10u, testDate, game, emptySet())
         val sid = sessionDB.create(session.capacity, session.date, session.gameSession.id)
         session = session.copy(id = sid)
         // Act
@@ -82,10 +80,10 @@ class SessionsDataDBSessionTest {
         // Arrange
         val gameDB = SessionsDataDBGame(dbURL)
         val sessionDB = SessionsDataDBSession(dbURL)
-        var game = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
+        var game = Game(1u, testName, testDeveloper, setOf(Genre("RPG")))
         val gid = gameDB.create(game)
         game = game.copy(id = gid)
-        val session = Session(0u, 10u, TEST_DATE, game, emptySet())
+        val session = Session(0u, 10u, testDate, game, emptySet())
         val sid = sessionDB.create(session.capacity, session.date, session.gameSession.id)
         // Act
         sessionDB.delete(sid)
@@ -103,18 +101,18 @@ class SessionsDataDBSessionTest {
         val gameDB = SessionsDataDBGame(dbURL)
         val sessionDB = SessionsDataDBSession(dbURL)
         // Game
-        var game = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
+        var game = Game(1u, testName, testDeveloper, setOf(Genre("RPG")))
         val gid = gameDB.create(game)
         game = game.copy(id = gid)
         // Session
-        var session = Session(0u, 10u, TEST_DATE, game, emptySet())
+        var session = Session(0u, 10u, testDate, game, emptySet())
         val sid = sessionDB.create(session.capacity, session.date, session.gameSession.id)
         session = session.copy(id = sid)
         // Act
-        sessionDB.update(sid, capacity = 20u, date = TEST_DATE)
+        sessionDB.update(sid, capacity = 20u, date = testDate)
         val retrievedSession = sessionDB.getById(sid)
         // Assert
-        assertEquals(session.copy(id = sid, capacity = 20u, date = TEST_DATE), retrievedSession)
+        assertEquals(session.copy(id = sid, capacity = 20u, date = testDate), retrievedSession)
         // Clean up
         gameDB.delete(gid)
         sessionDB.delete(sid)
@@ -125,7 +123,7 @@ class SessionsDataDBSessionTest {
         // Arrange
         val sessionDB = SessionsDataDBSession(dbURL)
         // Act
-        val isUpdated = sessionDB.update(999u, capacity = 20u, date = TEST_DATE)
+        val isUpdated = sessionDB.update(999u, capacity = 20u, date = testDate)
         // Assert
         assertFalse(isUpdated)
     }
@@ -136,15 +134,15 @@ class SessionsDataDBSessionTest {
         val gameDB = SessionsDataDBGame(dbURL)
         val sessionDB = SessionsDataDBSession(dbURL)
         // Game
-        var game = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
+        var game = Game(1u, testName, testDeveloper, setOf(Genre("RPG")))
         val gid = gameDB.create(game)
         game = game.copy(id = gid)
         // Session1
-        var session1 = Session(0u, 10u, TEST_DATE, game, emptySet())
+        var session1 = Session(0u, 10u, testDate, game, emptySet())
         val sid1 = sessionDB.create(session1.capacity, session1.date, session1.gameSession.id)
         session1 = session1.copy(id = sid1)
         // Session2
-        var session2 = Session(0u, 10u, TEST_DATE, game, emptySet())
+        var session2 = Session(0u, 10u, testDate, game, emptySet())
         val sid2 = sessionDB.create(session2.capacity, session2.date, session2.gameSession.id)
         session2 = session2.copy(id = sid2)
         // Act
@@ -163,15 +161,15 @@ class SessionsDataDBSessionTest {
         val gameDB = SessionsDataDBGame(dbURL)
         val sessionDB = SessionsDataDBSession(dbURL)
         // Game
-        var game = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
+        var game = Game(1u, testName, testDeveloper, setOf(Genre("RPG")))
         val gid = gameDB.create(game)
         game = game.copy(id = gid)
         // Session1
-        var session1 = Session(0u, 10u, TEST_DATE, game, emptySet())
+        var session1 = Session(0u, 10u, testDate, game, emptySet())
         val sid1 = sessionDB.create(session1.capacity, session1.date, session1.gameSession.id)
         session1 = session1.copy(id = sid1)
         // Session2
-        val session2 = Session(0u, 10u, TEST_DATE, game, emptySet())
+        val session2 = Session(0u, 10u, testDate, game, emptySet())
         val sid2 = sessionDB.create(session2.capacity, session2.date, session2.gameSession.id)
         // Act
         val retrievedSessions = sessionDB.getSessionsSearch(null, null, null, null, limit = 1u, skip = 0u).first
@@ -188,11 +186,11 @@ class SessionsDataDBSessionTest {
         // Arrange
         val gameDB = SessionsDataDBGame(dbURL)
         val sessionDB = SessionsDataDBSession(dbURL)
-        var game = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
+        var game = Game(1u, testName, testDeveloper, setOf(Genre("RPG")))
         val gid = gameDB.create(game)
         game = game.copy(id = gid)
-        val session1 = Session(0u, 10u, TEST_DATE, game, emptySet())
-        val session2 = Session(0u, 10u, TEST_DATE, game, emptySet())
+        val session1 = Session(0u, 10u, testDate, game, emptySet())
+        val session2 = Session(0u, 10u, testDate, game, emptySet())
         val sid1 = sessionDB.create(session1.capacity, session1.date, session1.gameSession.id)
         val sid2 = sessionDB.create(session2.capacity, session2.date, session2.gameSession.id)
         // Act
@@ -211,18 +209,18 @@ class SessionsDataDBSessionTest {
         val gameDB = SessionsDataDBGame(dbURL)
         val sessionDB = SessionsDataDBSession(dbURL)
         // Game 1
-        var game1 = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
+        var game1 = Game(1u, testName, testDeveloper, setOf(Genre("RPG")))
         val gid1 = gameDB.create(game1)
         game1 = game1.copy(id = gid1)
         // Game2
-        var game2 = Game(2u, TEST_NAME_2, TEST_DEVELOPER_2, setOf(Genre("RPG")))
+        var game2 = Game(2u, testName2, testDeveloper2, setOf(Genre("RPG")))
         val gid2 = gameDB.create(game2)
         game2 = game2.copy(id = gid2)
         // Session 1
-        var session1 = Session(0u, 10u, TEST_DATE, game1, emptySet())
+        var session1 = Session(0u, 10u, testDate, game1, emptySet())
         val sid1 = sessionDB.create(session1.capacity, session1.date, session1.gameSession.id)
         session1 = session1.copy(id = sid1)
-        var session2 = Session(0u, 10u, TEST_DATE, game2, emptySet())
+        var session2 = Session(0u, 10u, testDate, game2, emptySet())
         val sid2 = sessionDB.create(session2.capacity, session2.date, session2.gameSession.id)
         session2 = session2.copy(id = sid2)
         // Act
@@ -241,14 +239,14 @@ class SessionsDataDBSessionTest {
         // Arrange
         val gameDB = SessionsDataDBGame(dbURL)
         val sessionDB = SessionsDataDBSession(dbURL)
-        var game1 = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
-        var game2 = Game(2u, TEST_NAME_2, TEST_DEVELOPER_2, setOf(Genre("RPG")))
+        var game1 = Game(1u, testName, testDeveloper, setOf(Genre("RPG")))
+        var game2 = Game(2u, testName2, testDeveloper2, setOf(Genre("RPG")))
         val gid1 = gameDB.create(game1)
         val gid2 = gameDB.create(game2)
         game1 = game1.copy(id = gid1)
         game2 = game2.copy(id = gid2)
-        val session1 = Session(0u, 10u, TEST_DATE, game1, emptySet())
-        val session2 = Session(0u, 10u, TEST_DATE, game2, emptySet())
+        val session1 = Session(0u, 10u, testDate, game1, emptySet())
+        val session2 = Session(0u, 10u, testDate, game2, emptySet())
         val sid1 = sessionDB.create(session1.capacity, session1.date, session1.gameSession.id)
         val sid2 = sessionDB.create(session2.capacity, session2.date, session2.gameSession.id)
         // Act
@@ -267,14 +265,14 @@ class SessionsDataDBSessionTest {
         // Arrange
         val gameDB = SessionsDataDBGame(dbURL)
         val sessionDB = SessionsDataDBSession(dbURL)
-        var game1 = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
-        var game2 = Game(2u, TEST_NAME_2, TEST_DEVELOPER_2, setOf(Genre("RPG")))
+        var game1 = Game(1u, testName, testDeveloper, setOf(Genre("RPG")))
+        var game2 = Game(2u, testName2, testDeveloper2, setOf(Genre("RPG")))
         val gid1 = gameDB.create(game1)
         val gid2 = gameDB.create(game2)
         game1 = game1.copy(id = gid1)
         game2 = game2.copy(id = gid2)
-        val session1 = Session(0u, 10u, TEST_DATE, game1, emptySet())
-        val session2 = Session(0u, 10u, TEST_DATE, game2, emptySet())
+        val session1 = Session(0u, 10u, testDate, game1, emptySet())
+        val session2 = Session(0u, 10u, testDate, game2, emptySet())
         val sid1 = sessionDB.create(session1.capacity, session1.date, session1.gameSession.id)
         val sid2 = sessionDB.create(session2.capacity, session2.date, session2.gameSession.id)
         // Act
@@ -293,14 +291,14 @@ class SessionsDataDBSessionTest {
         // Arrange
         val gameDB = SessionsDataDBGame(dbURL)
         val sessionDB = SessionsDataDBSession(dbURL)
-        var game1 = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
-        var game2 = Game(2u, TEST_NAME_2, TEST_DEVELOPER_2, setOf(Genre("RPG")))
+        var game1 = Game(1u, testName, testDeveloper, setOf(Genre("RPG")))
+        var game2 = Game(2u, testName2, testDeveloper2, setOf(Genre("RPG")))
         val gid1 = gameDB.create(game1)
         val gid2 = gameDB.create(game2)
         game1 = game1.copy(id = gid1)
         game2 = game2.copy(id = gid2)
-        val session1 = Session(0u, 10u, TEST_DATE, game1, emptySet())
-        val session2 = Session(0u, 10u, TEST_DATE, game2, emptySet())
+        val session1 = Session(0u, 10u, testDate, game1, emptySet())
+        val session2 = Session(0u, 10u, testDate, game2, emptySet())
         val sid1 = sessionDB.create(session1.capacity, session1.date, session1.gameSession.id)
         val sid2 = sessionDB.create(session2.capacity, session2.date, session2.gameSession.id)
         // Act
@@ -322,15 +320,15 @@ class SessionsDataDBSessionTest {
         val sessionDB = SessionsDataDBSession(dbURL)
         val playerDB = SessionsDataDBPlayer(dbURL)
         // Game
-        var game = Game(1u, TEST_NAME, TEST_DEVELOPER, setOf(Genre("RPG")))
+        var game = Game(1u, testName, testDeveloper, setOf(Genre("RPG")))
         val gid = gameDB.create(game)
         game = game.copy(id = gid)
         // Session
-        var session = Session(0u, 10u, TEST_DATE, game, emptySet())
+        var session = Session(0u, 10u, testDate, game, emptySet())
         val sid = sessionDB.create(session.capacity, session.date, session.gameSession.id)
         session = session.copy(id = sid)
         // Player
-        var player = Player(0u, TEST_NAME, TEST_EMAIL, 10L)
+        var player = Player(0u, testName, testEmail, 10L)
         val pid = playerDB.create(player)
         player = player.copy(id = pid.first)
         // Add player to session
@@ -346,5 +344,4 @@ class SessionsDataDBSessionTest {
         playerDB.delete(pid.first)
     }
 
-    private fun UUID.hash() = leastSignificantBits xor mostSignificantBits
 }

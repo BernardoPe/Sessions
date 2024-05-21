@@ -1,4 +1,4 @@
-package pt.isel.ls.Server
+package pt.isel.ls.server
 
 import kotlinx.serialization.json.Json
 import org.http4k.core.Method
@@ -27,10 +27,9 @@ import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
 import pt.isel.ls.storage.DataManagerType
 import pt.isel.ls.storage.SessionsDataManager
-import pt.isel.ls.storage.mem.SessionsDataMemGame
-import pt.isel.ls.storage.mem.SessionsDataMemPlayer
-import pt.isel.ls.storage.mem.SessionsDataMemSession
-import pt.isel.ls.utils.toLocalDateTime
+import pt.isel.ls.utils.currentLocalTime
+import pt.isel.ls.utils.plus
+import kotlin.time.Duration
 
 class ServerTest {
 
@@ -349,7 +348,7 @@ class ServerTest {
         val request = Request(Method.POST, "/sessions")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
-            .body("""{"gid":1,"capacity":"100","date":"2030-05-01T00:00:00"}""")
+            .body("""{"gid":1,"capacity":"100","date":"${newDate()}"}""")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
@@ -362,7 +361,7 @@ class ServerTest {
         val request = Request(Method.POST, "/sessions")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
-            .body("""{"gid":1,"capacity":"1000","date":"2030-05-01T00:00:00"}""")
+            .body("""{"gid":1,"capacity":"1000","date":"${newDate()}"}""")
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
@@ -389,7 +388,7 @@ class ServerTest {
         // Arrange
         val request = Request(Method.POST, "/sessions")
             .header("Content-Type", "application/json")
-            .body("""{"gid":1,"capacity":"100","date":"2030-05-01T00:00:00"}""")
+            .body("""{"gid":1,"capacity":"100","date":"${newDate()}"}""")
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
@@ -403,7 +402,7 @@ class ServerTest {
         val request = Request(Method.POST, "/sessions")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
-            .body("""{"gid":10,"capacity":"100","date":"2030-05-01T00:00:00"}""")
+            .body("""{"gid":10,"capacity":"100","date":"${newDate()}"}""")
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
@@ -584,14 +583,14 @@ class ServerTest {
     @Test
     fun `update session should update session`() {
         // Arrange
-        val request = Request(Method.PUT, "/sessions/1")
+        val request = Request(Method.PATCH, "/sessions/1")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
-            .body("""{"capacity":"100","date":"2030-05-01T00:00:00"}""")
+            .body("""{"capacity":"100","date":"${newDate()}"}""")
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.status, Status.OK)
+        assertEquals(response.status, Status.NO_CONTENT)
     }
 
     @Test
@@ -599,7 +598,7 @@ class ServerTest {
         // Arrange
         val request = Request(Method.PATCH, "/sessions/1")
             .header("Content-Type", "application/json")
-            .body("""{"capacity":"200","date":"2030-05-01T00:00:00"}""")
+            .body("""{"capacity":"200","date":"${newDate()}"}""")
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
@@ -613,7 +612,7 @@ class ServerTest {
         val request = Request(Method.PATCH, "/sessions/10")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
-            .body("""{"capacity":"100","date":"2030-05-01T00:00:00"}""")
+            .body("""{"capacity":"100","date":"${newDate()}"}""")
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
@@ -640,7 +639,7 @@ class ServerTest {
         val request = Request(Method.PATCH, "/sessions/1")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
-            .body("""{"capacity":"200","date":"2030-05-01T00:00:00""")
+            .body("""{"capacity":"200","date":"${newDate()}""")
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
@@ -668,7 +667,7 @@ class ServerTest {
         val request = Request(Method.PATCH, "/sessions/1")
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer 00000000-0000-0000-0000-000000000000")
-            .body("""{"capacity":"1","date":"2030-05-01T00:00:00"}""")
+            .body("""{"capacity":"1","date":"${newDate()}"}""")
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
@@ -710,7 +709,6 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assertEquals(response.header("Content-Type"), "application/json")
         assertEquals(response.status, Status.OK)
     }
 
@@ -755,7 +753,7 @@ class ServerTest {
         assertEquals(response.header("Content-Type"), "application/json")
         assertEquals(session.gameSession.gid, 2u)
         assertEquals(session.capacity, 100u)
-        assertEquals(session.date, "2030-05-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(session.date, testDate1.toString())
         assertEquals(session.sid, 1u)
     }
 
@@ -785,11 +783,11 @@ class ServerTest {
         assertEquals(sessionList.sessions.size, 2)
         assertEquals(sessionList.sessions[0].gameSession.gid, 2u)
         assertEquals(sessionList.sessions[0].capacity, 100u)
-        assertEquals(sessionList.sessions[0].date, "2030-05-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList.sessions[0].date, testDate1.toString())
         assertEquals(sessionList.sessions[0].sid, 1u)
         assertEquals(sessionList.sessions[1].gameSession.gid, 2u)
         assertEquals(sessionList.sessions[1].capacity, 100u)
-        assertEquals(sessionList.sessions[1].date, "2030-06-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList.sessions[1].date, testDate2.toString())
         assertEquals(sessionList.sessions[1].sid, 2u)
         assertEquals(sessionList.total, 2)
     }
@@ -808,7 +806,7 @@ class ServerTest {
         assertEquals(sessionList.sessions.size, 1)
         assertEquals(sessionList.sessions[0].gameSession.gid, 2u)
         assertEquals(sessionList.sessions[0].capacity, 100u)
-        assertEquals(sessionList.sessions[0].date, "2030-06-01T00:00:00".toLocalDateTime().toString())
+        assertEquals(sessionList.sessions[0].date, testDate2.toString())
         assertEquals(sessionList.sessions[0].sid, 2u)
         assertEquals(sessionList.total, 2)
     }
@@ -843,12 +841,17 @@ class ServerTest {
 
         private var server = SessionsServer(api)
 
+        private val testDate1 = currentLocalTime() + Duration.parse("PT1H")
+        private val testDate2 = currentLocalTime() + Duration.parse("PT2H")
+
+        fun newDate() = currentLocalTime() + Duration.parse("PT1H")
+
         fun setup() {
             val mockGame = Game(1u, "TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre()))
             val mockGame2 = Game(2u, "TestName123".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
 
-            val mockSession = Session(1u, 100u, "2030-05-01T00:00:00".toLocalDateTime(), mockGame2, setOf())
-            val mockSession2 = Session(2u, 100u, "2030-06-01T00:00:00".toLocalDateTime(), mockGame2, setOf())
+            val mockSession = Session(1u, 100u, testDate1, mockGame2, setOf())
+            val mockSession2 = Session(2u, 100u, testDate2, mockGame2, setOf())
 
             val mockPlayer = Player(2u, "TestName".toName(), "testemail@test.pt".toEmail(), 0L)
             val mockPlayer2 = Player(3u, "TestName2".toName(), "testemail2@test.pt".toEmail(), 0L)

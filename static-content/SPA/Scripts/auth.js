@@ -117,7 +117,7 @@ function authLogin(event) {
 	// TODO:Handle login, translating name or email to a token
 
 	// fetch('/auth', {
-	// 	method: 'GET',
+	// 	method: 'POST',
 	// 	headers: {
 	// 		'Authorization': 'Bearer ' + token,
 	// 	},
@@ -130,7 +130,7 @@ function authLogin(event) {
 	// 		sessionStorage.setItem('user', JSON.stringify(data))
 	// 		window.location.href = "#home"
 	// 		return data
-	// 	}).catch(err => {
+	// 	}).catch(() => {
 	// 		const tokenErr = document.getElementById('error-token')
 	// 		tokenErr.innerHTML = "Invalid token"
 	// 		tokenErr.style.display = "block"
@@ -140,7 +140,7 @@ function authLogin(event) {
 
 async function tryAuth() {
 	await fetch('/auth', {
-		method: 'GET',
+		method: 'POST',
 		credentials: 'same-origin',
 	})
 		.then(res => res.ok? res.json() : Promise.reject(res))
@@ -148,7 +148,7 @@ async function tryAuth() {
 			document.getElementById('logout').style.display = "inline-block"
 			sessionStorage.setItem('user', JSON.stringify(data))
 			return data
-		}).catch(err => {
+		}).catch(() => {
 			document.getElementById('login').style.display = "inline-block"
 			document.getElementById('register').style.display = "inline-block"
 			return null

@@ -73,6 +73,9 @@ import java.util.*
  *
  */
 
+const val DEFAULT_LIMIT = 5u
+const val DEFAULT_SKIP = 0u
+
 class SessionsApi(
     private val playerServices: PlayerService,
     private val gameServices: GameService,
@@ -94,7 +97,7 @@ class SessionsApi(
         Response(CREATED)
             .header("content-type", "application/json")
             .header("location", "/players/${res.first}")
-            .cookie(createCookie(86400, res.second))
+            .cookie(createCookie(null, res.second))
             .body(Json.encodeToString(res.toPlayerCreationDTO()))
     }
 
@@ -147,7 +150,7 @@ class SessionsApi(
         if (player != null) {
             Response(OK)
                 .header("content-type", "application/json")
-                .cookie(createCookie(86400, token))
+                .cookie(createCookie(null, token))
                 .body(Json.encodeToString(player.toPlayerInfoDTO()))
         } else {
             Response(UNAUTHORIZED)
@@ -188,8 +191,9 @@ class SessionsApi(
      */
 
     fun getPlayerList(request: Request) = processRequest(request) {
-        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip")
-            ?: 0u)
+        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: DEFAULT_LIMIT) to (request.query("skip")
+            ?.toUInt("Skip")
+            ?: DEFAULT_SKIP)
         val name = request.query("name")?.parseURLEncodedString()
         val res = playerServices.getPlayerList(
             name?.let { Name(it) },
@@ -253,7 +257,8 @@ class SessionsApi(
      * @throws BadRequestException If there are invalid parameters
      */
     fun getGameList(request: Request) = processRequest(request) {
-        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip") ?: 0u)
+        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: DEFAULT_LIMIT) to (request.query("skip")
+            ?.toUInt("Skip") ?: DEFAULT_SKIP)
 
         val genres = request.query("genres")?.parseURLEncodedString()
                                                   ?.split(',')
@@ -396,7 +401,8 @@ class SessionsApi(
      */
 
     fun getSessionList(request: Request) = processRequest(request) {
-        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip") ?: 0u)
+        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: DEFAULT_LIMIT) to (request.query("skip")
+            ?.toUInt("Skip") ?: DEFAULT_SKIP)
 
         val res = sessionServices.listSessions(
             request.query("gid")?.toUInt("Game Identifier"),
@@ -475,12 +481,15 @@ class SessionsApi(
         return UUID.fromString(request.cookie("Authorization")?.value ?: throw BadRequestException("No Authorization provided"))
     }
 
-    private fun createCookie(expiration: Long, token: UUID): Cookie {
-        return Cookie("Authorization", token.toString())
-            .secure()
-            .httpOnly()
-            .sameSite(SameSite.Strict)
-            .maxAge(expiration)
+    private fun createCookie(expiration: Long?, token: UUID): Cookie {
+        return Cookie(
+            "Authorization",
+            token.toString(),
+            maxAge = expiration,
+            sameSite = SameSite.Strict,
+            secure = true,
+            httpOnly = true,
+        )
     }
 
     private fun verifyAuth(request: Request): Boolean {
@@ -531,9 +540,10 @@ class SessionsApi(
 
     private fun logResponse(response: Response) {
         logger.info(
-            "outgoing response: status={}, content-type={}",
+            "outgoing response: status={}, content-type={}, body={}",
             response.status,
             response.header("content-type"),
+            response.bodyString(),
         )
     }
 
