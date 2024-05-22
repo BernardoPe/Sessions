@@ -19,7 +19,6 @@ const SESSION_CREATION_URL = 'sessions/create'
 const LOGIN_URL = 'login'
 const REGISTER_URL = 'register'
 const LOGOUT_URL = 'logout'
-const API_URL = 'http://localhost:8080/';
 
 
 /**
@@ -74,7 +73,6 @@ function hashChangeHandler(){
 }
 
 export {
-    API_URL,
     HOME_URL,
     GAMES_URL,
     SESSIONS_URL,

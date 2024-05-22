@@ -7,7 +7,7 @@ import {handleGamePagination, handleSessionPagination} from "./Scripts/paginatio
 import {genericErrorView, notFoundView} from "./Views/Pages/Error/error.js";
 import {loginView, registerView} from "./Views/Pages/Auth/auth.js";
 import {authLogout, getPlayerData} from "./Scripts/auth.js";
-import {API_URL, GAMES_URL} from "../index.js";
+import {GAMES_URL} from "../index.js";
 
 export const RESULTS_PER_PAGE = 10;
 
@@ -62,7 +62,7 @@ function getGameSearchResults(mainContent, req) {
         mainContent.replaceChildren(errView)
         return
     }
-    fetchWithHandling(API_URL + GAMES_URL + `?${queryStr}`, mainContent, (searchResult) => {
+    fetchWithHandling( GAMES_URL + `?${queryStr}`, mainContent, (searchResult) => {
         const gameResultsView = gameSearchResultsView(searchResult.games);
         gameResultsView.appendChild(handleGamePagination(queries, page, searchResult.total));
         mainContent.replaceChildren(gameResultsView);
@@ -111,7 +111,7 @@ function getSessionSearchResults(mainContent, req) {
         return
     }
 
-    fetchWithHandling(API_URL + `sessions?${queryStr}`, mainContent, (searchResults) => {
+    fetchWithHandling(`sessions?${queryStr}`, mainContent, (searchResults) => {
         const searchResultsView = sessionSearchResultsView(searchResults.sessions);
         searchResultsView.appendChild(handleSessionPagination(queries, page, searchResults.total));
         mainContent.replaceChildren(searchResultsView);
@@ -124,7 +124,7 @@ function getSessionSearchResults(mainContent, req) {
  */
 function getGameDetails(mainContent, req) {
     const gameId = req.params.gid
-    fetchWithHandling(API_URL + `games/${gameId}`, mainContent, (game) => {
+    fetchWithHandling(`games/${gameId}`, mainContent, (game) => {
         const gameView = gameDetailsView(game)
         mainContent.replaceChildren(gameView)
     })
@@ -136,7 +136,7 @@ function getGameDetails(mainContent, req) {
 function getSessionDetails(mainContent, req) {
     const sessionId = req.params.sid
     const authenticated = getPlayerData()
-    fetchWithHandling(API_URL + `sessions/${sessionId}`, mainContent, (session) => {
+    fetchWithHandling(`sessions/${sessionId}`, mainContent, (session) => {
         const sessionView = sessionDetailsView(session, authenticated)
         mainContent.replaceChildren(sessionView)
     })
@@ -147,7 +147,7 @@ function getSessionDetails(mainContent, req) {
  */
 function getPlayerDetails(mainContent, req) {
     const playerId = req.params.pid
-    fetchWithHandling(API_URL + `players/${playerId}`, mainContent, (player) => {
+    fetchWithHandling(`players/${playerId}`, mainContent, (player) => {
         const playerView = playerDetailsView(player)
         mainContent.replaceChildren(playerView)
     })
