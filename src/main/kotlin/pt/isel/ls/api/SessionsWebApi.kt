@@ -173,9 +173,13 @@ class SessionsApi(
             throw UnauthorizedException()
         }
 
+        if (!playerServices.logoutPlayer(token)) {
+            throw InternalServerErrorException()
+        }
+
         Response(OK)
             .header("content-type", "application/json")
-            .cookie(createCookie(0, token))
+            .cookie(createCookie(0, null))
     }
 
     /**
@@ -482,7 +486,7 @@ class SessionsApi(
         return UUID.fromString(request.cookie("Authorization")?.value ?: throw BadRequestException("No Authorization provided"))
     }
 
-    private fun createCookie(expiration: Long?, token: UUID): Cookie {
+    private fun createCookie(expiration: Long?, token: UUID?): Cookie {
         return Cookie(
             "Authorization",
             token.toString(),

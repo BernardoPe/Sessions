@@ -89,4 +89,6 @@ interface SessionsDataPlayer {
      * @return A pair with the player identifier and a new UUID
      */
     fun login(id: UInt): Pair<UInt, UUID>
+
+    fun revokeToken(token: UUID): Boolean
 }

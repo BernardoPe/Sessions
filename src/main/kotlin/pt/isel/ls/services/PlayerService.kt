@@ -41,6 +41,16 @@ class PlayerService(val storage: SessionsDataManager) {
         return storagePlayer.create(player)
     }
 
+    /**
+     * Logs in a player
+     *
+     * @param name The player name
+     * @param password The player password
+     * @return The [PlayerCredentials]
+     *
+     * @throws NotFoundException If the player is not found
+     * @throws BadRequestException If the player password is incorrect
+     */
     fun loginPlayer(name: Name, password: Password): PlayerCredentials {
         val playerStorage = storage.player
 
@@ -59,6 +69,16 @@ class PlayerService(val storage: SessionsDataManager) {
         }
 
         return playerStorage.login(player.id)
+    }
+
+    /**
+     * Logs out a player
+     *
+     * @param token The player token
+     * @return True if the player was successfully logged out, false otherwise
+     */
+    fun logoutPlayer(token: UUID): Boolean {
+        return storage.player.revokeToken(token)
     }
 
     /**

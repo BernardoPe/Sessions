@@ -18,6 +18,6 @@ data class Player(
     val id: UInt,
     val name: Name,
     val email: Email,
-    val token: Long,
+    val token: Long?,
     val password: PasswordHash
 )

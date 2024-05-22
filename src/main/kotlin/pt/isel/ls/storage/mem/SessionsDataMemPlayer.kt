@@ -23,6 +23,21 @@ class SessionsDataMemPlayer : SessionsDataPlayer, MemManager() {
         return playerDB.find { it.token == token.hash() }
     }
 
+    override fun revokeToken(token: UUID): Boolean {
+        val player = playerDB.find { it.token == token.hash() } ?: return false
+        playerDB.remove(player)
+        playerDB.add(
+            Player(
+                player.id,
+                player.name,
+                player.email,
+                null,
+                player.password
+            )
+        )
+        return true
+    }
+
     override fun create(player: Player): Pair<UInt, UUID> {
 
         if (playerDB.any { it.email == player.email }) {

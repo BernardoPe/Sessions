@@ -16,7 +16,7 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
 
 
         val statement = connection.prepareStatement(
-            "INSERT INTO players (name, email,token_hash, password_hash) VALUES (?, ?, ?, ?)",
+            "INSERT INTO players (name, email, token_hash, password_hash) VALUES (?, ?, ?, ?)",
             Statement.RETURN_GENERATED_KEYS,
         )
 
@@ -149,6 +149,19 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
 
         resultSet.getPlayers().firstOrNull().also { statement.close() }
     } as Player?
+
+    override fun revokeToken(token: UUID): Boolean {
+        return execQuery { connection ->
+            val statement = connection.prepareStatement(
+                "UPDATE players SET token_hash = NULL WHERE token_hash = ?",
+            )
+
+            statement.setLong(1, token.hash())
+            val updated = statement.executeUpdate()
+
+            updated > 0
+        } as Boolean
+    }
 
     private fun UUID.hash(): Long {
         return leastSignificantBits xor mostSignificantBits
