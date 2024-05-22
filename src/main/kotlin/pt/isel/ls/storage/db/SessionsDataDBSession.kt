@@ -31,7 +31,7 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
         val generatedKeys = statement.generatedKeys
         generatedKeys.next()
         generatedKeys.getInt(1).toUInt().also { statement.close() }
-    } as UInt
+    }
 
     override fun getById(id: UInt): Session? = execQuery { connection ->
         val statement = connection.prepareStatement(
@@ -46,9 +46,8 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
         val resultSet = statement.executeQuery()
 
         resultSet.getSessions().firstOrNull().also { statement.close() }
-    } as Session?
+    }
 
-    @Suppress("UNCHECKED_CAST")
     override fun getSessionsSearch(
         gid: UInt?,
         date: LocalDateTime?,
@@ -135,7 +134,7 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
             val total = countResultSet.getInt(1)
 
             resultSessions to total.also { statement.close(); countStatement.close(); sessionStmt.close() }
-        } as Pair<List<Session>, Int>
+        }
 
     override fun addPlayer(sid: UInt, pid: UInt): Boolean = execQuery { connection ->
         // Check if the player is already in the session
@@ -153,7 +152,7 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
         // Return the result of the operation
         // It returns true if the player was added to the session
         res > 0.also { statement.close() }
-    } as Boolean
+    }
 
     override fun removePlayer(sid: UInt, pid: UInt): Boolean = execQuery { connection ->
         // Set the statement to remove a player from the session
@@ -168,7 +167,7 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
         // Return the result of the operation
         // It returns true if the player was removed from the session
         res > 0.also { statement.close() }
-    } as Boolean
+    }
 
     override fun update(sid: UInt, capacity: UInt?, date: LocalDateTime?): Boolean = execQuery { connection ->
         val query = StringBuilder("UPDATE sessions SET ")
@@ -198,7 +197,7 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
         val res = statement.executeUpdate()
 
         res > 0.also { statement.close() }
-    } as Boolean
+    }
 
     override fun delete(id: UInt): Boolean = execQuery { connection ->
         val statement = connection.prepareStatement(
@@ -209,7 +208,7 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
         val res = statement.executeUpdate()
 
         res > 0.also { statement.close() }
-    } as Boolean
+    }
 
     private fun ResultSet.getSessions(): List<Session> {
         if (!next()) return emptyList()

@@ -10,7 +10,6 @@ import java.util.*
 
 class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL) {
 
-    @Suppress("UNCHECKED_CAST")
     override fun create(player: Player): Pair<UInt, UUID> = execQuery { connection ->
         val statement = connection.prepareStatement(
             "INSERT INTO players (name, email,token_hash) VALUES (?, ?, ?)",
@@ -28,7 +27,7 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         generatedKeys.next()
         Pair(generatedKeys.getInt(1).toUInt(), token)
 
-    } as Pair<UInt, UUID>
+    }
 
     override fun getById(id: UInt): Player? = execQuery { connection ->
         val statement = connection.prepareStatement(
@@ -38,9 +37,8 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         val resultSet = statement.executeQuery()
 
         resultSet.getPlayers().firstOrNull().also { statement.close() }
-    } as Player?
+    }
 
-    @Suppress("UNCHECKED_CAST")
     override fun getAll(): List<Player> = execQuery { connection ->
         val statement = connection.prepareStatement(
             "SELECT * FROM players",
@@ -49,9 +47,8 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         val resultSet = statement.executeQuery()
 
         resultSet.getPlayers().also { statement.close() }
-    } as List<Player>
+    }
 
-    @Suppress("UNCHECKED_CAST")
     override fun getPlayersSearch(name: Name?, limit: UInt, skip: UInt): Pair<List<Player>, Int> =
         execQuery { connection ->
 
@@ -94,7 +91,7 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
 
             Pair(players, total)
 
-        } as Pair<List<Player>, Int>
+        }
 
     override fun update(id: UInt, value: Player): Boolean = execQuery { connection ->
         val statement = connection.prepareStatement(
@@ -107,7 +104,7 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         val updated = statement.executeUpdate()
 
         updated > 0
-    } as Boolean
+    }
 
     override fun delete(id: UInt): Boolean = execQuery { connection ->
 
@@ -119,7 +116,7 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         val deleted = statement.executeUpdate()
 
         deleted > 0
-    } as Boolean
+    }
 
     override fun getByToken(token: UUID): Player? = execQuery { connection ->
         val statement = connection.prepareStatement(
@@ -130,7 +127,7 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         val resultSet = statement.executeQuery()
 
         resultSet.getPlayers().firstOrNull().also { statement.close() }
-    } as Player?
+    }
 
     private fun UUID.hash(): Long {
         return leastSignificantBits xor mostSignificantBits

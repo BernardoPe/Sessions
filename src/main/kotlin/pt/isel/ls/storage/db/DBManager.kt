@@ -32,10 +32,10 @@ abstract class DBManager(
      * @throws InternalServerErrorException If an error occurs while executing the query. Since data integrity restrictions and
      * business logic are expected to be validated before calling this method, this exception is thrown when an unexpected error occurs.
      */
-    fun execQuery(query: (Connection) -> Any?) : Any? {
+    fun <T> execQuery(query: (Connection) -> T) : T {
         val connection = getConnection()
         connection.autoCommit = false
-        val ret : Any?
+        val ret : T
         try {
             ret = query(connection)
             connection.commit()
@@ -50,7 +50,7 @@ abstract class DBManager(
     }
 
     private fun processError(e: Exception) : Exception {
-        logger.error("Error while executing query", e)
+        //logger.error("Error while executing query", e)
         when (e) {
             is PSQLException -> {
                 val message = e.message?.lowercase()

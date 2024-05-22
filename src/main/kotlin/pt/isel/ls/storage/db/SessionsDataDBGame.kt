@@ -22,9 +22,8 @@ class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
         val generatedKeys = statement.generatedKeys
         generatedKeys.next()
         generatedKeys.getInt(1).toUInt().also { statement.close() }
-    } as UInt
+    }
 
-    @Suppress("UNCHECKED_CAST")
     override fun getGamesSearch(
         genres: Set<Genre>?,
         developer: Name?,
@@ -83,10 +82,9 @@ class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
 
             Pair(resultSet.getGames(), total).also { statement.close(); countStatement.close() }
 
-        } as Pair<List<Game>, Int>
+        }
 
 
-    @Suppress("UNCHECKED_CAST")
     override fun getAllGames(): List<Game> = execQuery { connection ->
         val statement = connection.prepareStatement(
             "SELECT * FROM games",
@@ -94,7 +92,7 @@ class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
         val resultSet = statement.executeQuery()
 
         resultSet.getGames().also { statement.close() }
-    } as List<Game>
+    }
 
     override fun getById(id: UInt): Game? = execQuery { connection ->
         val statement = connection.prepareStatement(
@@ -106,7 +104,7 @@ class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
 
         resultSet.getGames().firstOrNull().also { statement.close() }
 
-    } as Game?
+    }
 
     override fun update(value: Game): Boolean = execQuery { connection ->
         val statement = connection.prepareStatement(
@@ -120,7 +118,7 @@ class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
         val updated = statement.executeUpdate()
 
         updated > 0.also { statement.close() }
-    } as Boolean
+    }
 
     override fun delete(id: UInt): Boolean = execQuery { connection ->
         val statement = connection.prepareStatement(
@@ -131,7 +129,7 @@ class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
         val deleted = statement.executeUpdate()
 
         deleted > 0.also { statement.close() }
-    } as Boolean
+    }
 
     private fun ResultSet.getGames(): List<Game> {
         val games = mutableListOf<Game>()
