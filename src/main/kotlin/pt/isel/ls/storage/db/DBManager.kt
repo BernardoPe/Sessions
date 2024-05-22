@@ -5,7 +5,6 @@ import org.postgresql.util.PSQLException
 import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.InternalServerErrorException
 import pt.isel.ls.exceptions.NotFoundException
-import pt.isel.ls.logger
 import java.sql.Connection
 
 /**

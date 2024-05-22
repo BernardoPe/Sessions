@@ -83,10 +83,16 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
 
     /**
      * The method that starts the server
+     * This method starts the server and adds a shutdown hook to stop the server when the application is closed
+     *
      */
     fun start() {
         jettyServer.start()
         logger.info("Server started listening")
+        Runtime.getRuntime().addShutdownHook(Thread{
+            logger.info("Shutting down server")
+            stop()
+        })
     }
 
     /**
@@ -94,8 +100,15 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
      */
     fun stop() {
         jettyServer.stop()
-        logger.info("Server stopped listening")
     }
+
+    /**
+     * The method that blocks the current thread until the server stops
+     */
+    fun join() {
+        jettyServer.block()
+    }
+
 }
 
 fun main() {
@@ -113,8 +126,7 @@ fun main() {
             ),
         )
         server.start()
-        readln()
-        server.stop()
+        server.join()
     }
 
 }
