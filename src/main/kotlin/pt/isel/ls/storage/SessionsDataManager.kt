@@ -1,5 +1,7 @@
 package pt.isel.ls.storage
 
+import org.postgresql.util.PSQLException
+import pt.isel.ls.storage.db.TransactionManager
 import pt.isel.ls.storage.db.SessionsDataDBGame
 import pt.isel.ls.storage.db.SessionsDataDBPlayer
 import pt.isel.ls.storage.db.SessionsDataDBSession
@@ -19,8 +21,8 @@ import java.io.Closeable
  *
  */
 class SessionsDataManager(
-    type: DataManagerType,
-    dbURL: String? = null,
+    private val type: DataManagerType,
+    private val dbURL: String? = null,
 ) : Closeable {
 
     val game : SessionsDataGame
@@ -40,22 +42,57 @@ class SessionsDataManager(
     }
 
     /**
+     * Executes a transaction.
+     * @param query transaction to execute.
+     * @return the result of the transaction.
+     *
+     * If the transaction fails, it aborts the transaction and throws an exception.
+     */
+
+    fun <T> executeTransaction(query: (SessionsDataManager) -> T) : T {
+        beginTransaction()
+        val ret : T
+        try {
+            ret = query(this)
+        } catch (e: Exception) {
+            abortTransaction()
+            if (e is PSQLException) {
+                throw TransactionManager.handlePSQLException(e)
+            } else {
+                throw e
+            }
+        }
+        finishTransaction()
+        return ret
+    }
+
+    private fun beginTransaction() {
+        if (type == DataManagerType.DATABASE) {
+            TransactionManager.begin(dbURL!!)
+        }
+    }
+
+    private fun finishTransaction() {
+        if (type == DataManagerType.DATABASE) {
+            TransactionManager.finish(dbURL!!)
+        }
+    }
+
+    private fun abortTransaction() {
+        if (type == DataManagerType.DATABASE) {
+            TransactionManager.abort(dbURL!!)
+        }
+    }
+
+    /**
      * Closes all the data managers.
      */
     override fun close() {
-        if (game is SessionsDataDBGame) {
-            game.closeAll()
+        if (type == DataManagerType.DATABASE) {
+            TransactionManager.closeAll()
         } else {
             (game as SessionsDataMemGame).clear()
-        }
-        if (player is SessionsDataDBPlayer) {
-            player.closeAll()
-        } else {
             (player as SessionsDataMemPlayer).clear()
-        }
-        if (session is SessionsDataDBSession) {
-            session.closeAll()
-        } else {
             (session as SessionsDataMemSession).clear()
         }
     }

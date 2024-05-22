@@ -7,10 +7,6 @@ import {handleGamePagination, handleSessionPagination} from "./Scripts/paginatio
 import {genericErrorView, notFoundView} from "./Views/Pages/Error/error.js";
 import {loginView, registerView} from "./Views/Pages/Auth/auth.js";
 import {authLogout, getPlayerData} from "./Scripts/auth.js";
-import {
-    submitFormGameSearch,
-    submitFormSessionSearch
-} from "./Scripts/formSubmit.js"; // do not remove, messes up the searches urls
 import {API_URL, GAMES_URL} from "../index.js";
 
 export const RESULTS_PER_PAGE = 10;

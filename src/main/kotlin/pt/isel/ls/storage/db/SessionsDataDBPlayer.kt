@@ -8,9 +8,10 @@ import java.sql.ResultSet
 import java.sql.Statement
 import java.util.*
 
-class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL) {
+class SessionsDataDBPlayer(private val dbURL: String) : SessionsDataPlayer {
 
-    override fun create(player: Player): Pair<UInt, UUID> = execQuery { connection ->
+    private val connection get() = TransactionManager.getConnection(dbURL)
+    override fun create(player: Player): Pair<UInt, UUID> {
         val statement = connection.prepareStatement(
             "INSERT INTO players (name, email,token_hash) VALUES (?, ?, ?)",
             Statement.RETURN_GENERATED_KEYS,
@@ -25,32 +26,30 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
 
         val generatedKeys = statement.generatedKeys
         generatedKeys.next()
-        Pair(generatedKeys.getInt(1).toUInt(), token)
-
+        return Pair(generatedKeys.getInt(1).toUInt(), token)
     }
 
-    override fun getById(id: UInt): Player? = execQuery { connection ->
+    override fun getById(id: UInt): Player? {
         val statement = connection.prepareStatement(
             "SELECT * FROM players WHERE id = ?",
         )
         statement.setInt(1, id.toInt())
         val resultSet = statement.executeQuery()
 
-        resultSet.getPlayers().firstOrNull().also { statement.close() }
+        return resultSet.getPlayers().firstOrNull().also { statement.close() }
     }
 
-    override fun getAll(): List<Player> = execQuery { connection ->
+    override fun getAll(): List<Player> {
         val statement = connection.prepareStatement(
             "SELECT * FROM players",
         )
 
         val resultSet = statement.executeQuery()
 
-        resultSet.getPlayers().also { statement.close() }
+        return resultSet.getPlayers().also { statement.close() }
     }
 
-    override fun getPlayersSearch(name: Name?, limit: UInt, skip: UInt): Pair<List<Player>, Int> =
-        execQuery { connection ->
+    override fun getPlayersSearch(name: Name?, limit: UInt, skip: UInt): Pair<List<Player>, Int> {
 
             val searchQuery = StringBuilder(
                 "SELECT * FROM players ",
@@ -89,11 +88,11 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
             val total = countResult.getInt(1)
             val players = playersResult.getPlayers()
 
-            Pair(players, total)
+            return Pair(players, total)
 
         }
 
-    override fun update(id: UInt, value: Player): Boolean = execQuery { connection ->
+    override fun update(id: UInt, value: Player): Boolean {
         val statement = connection.prepareStatement(
             "UPDATE players SET name = ?, email = ? WHERE id = ?",
         )
@@ -103,10 +102,10 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         statement.setInt(3, id.toInt())
         val updated = statement.executeUpdate()
 
-        updated > 0
+        return updated > 0
     }
 
-    override fun delete(id: UInt): Boolean = execQuery { connection ->
+    override fun delete(id: UInt): Boolean {
 
         val statement = connection.prepareStatement(
             "DELETE FROM players WHERE id = ?",
@@ -115,10 +114,10 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         statement.setInt(1, id.toInt())
         val deleted = statement.executeUpdate()
 
-        deleted > 0
+        return deleted > 0
     }
 
-    override fun getByToken(token: UUID): Player? = execQuery { connection ->
+    override fun getByToken(token: UUID): Player? {
         val statement = connection.prepareStatement(
             "SELECT * FROM players WHERE token_hash = ?",
         )
@@ -126,7 +125,29 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         statement.setLong(1, token.hash())
         val resultSet = statement.executeQuery()
 
-        resultSet.getPlayers().firstOrNull().also { statement.close() }
+        return resultSet.getPlayers().firstOrNull().also { statement.close() }
+    }
+
+    override fun isEmailStored(email: Email): Boolean {
+        val statement = connection.prepareStatement(
+            "SELECT 1 FROM players WHERE email = ?",
+        )
+
+        statement.setString(1, email.toString())
+        val resultSet = statement.executeQuery()
+
+        return resultSet.next().also { statement.close() }
+    }
+
+    override fun isNameStored(name: Name): Boolean {
+        val statement = connection.prepareStatement(
+            "SELECT 1 FROM players WHERE name = ?",
+        )
+
+        statement.setString(1, name.toString())
+        val resultSet = statement.executeQuery()
+
+        return resultSet.next().also { statement.close() }
     }
 
     private fun UUID.hash(): Long {

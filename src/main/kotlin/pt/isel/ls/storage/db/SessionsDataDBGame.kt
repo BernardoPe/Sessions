@@ -7,8 +7,11 @@ import pt.isel.ls.storage.SessionsDataGame
 import java.sql.ResultSet
 import java.sql.Statement
 
-class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
-    override fun create(game: Game): UInt = execQuery { connection ->
+class SessionsDataDBGame(private val dbURL: String) : SessionsDataGame {
+
+    private val connection get() = TransactionManager.getConnection(dbURL)
+
+    override fun create(game: Game): UInt {
         val statement = connection.prepareStatement(
             "INSERT INTO games (name, developer, genres) VALUES (?, ?, ?)",
             Statement.RETURN_GENERATED_KEYS,
@@ -21,7 +24,7 @@ class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
 
         val generatedKeys = statement.generatedKeys
         generatedKeys.next()
-        generatedKeys.getInt(1).toUInt().also { statement.close() }
+        return generatedKeys.getInt(1).toUInt().also { statement.close() }
     }
 
     override fun getGamesSearch(
@@ -30,9 +33,7 @@ class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
         name: Name?,
         limit: UInt,
         skip: UInt
-    ): Pair<List<Game>, Int> =
-        execQuery { connection ->
-
+    ): Pair<List<Game>, Int> {
             var resQuery = "SELECT * FROM games "
             var countQuery = "SELECT COUNT(*) FROM games "
             val params = mutableListOf<Any>()
@@ -80,21 +81,31 @@ class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
             countResultSet.next()
             val total = countResultSet.getInt(1)
 
-            Pair(resultSet.getGames(), total).also { statement.close(); countStatement.close() }
-
+            return Pair(resultSet.getGames(), total).also { statement.close(); countStatement.close() }
         }
 
+    override fun isGameNameStored(name: Name): Boolean {
+        val statement = connection.prepareStatement(
+            "SELECT 1 FROM games WHERE name = ?",
+        )
 
-    override fun getAllGames(): List<Game> = execQuery { connection ->
+        statement.setString(1, name.toString())
+        val resultSet = statement.executeQuery()
+
+        return resultSet.next().also { statement.close() }
+    }
+
+
+    override fun getAllGames(): List<Game> {
         val statement = connection.prepareStatement(
             "SELECT * FROM games",
         )
         val resultSet = statement.executeQuery()
 
-        resultSet.getGames().also { statement.close() }
+        return resultSet.getGames().also { statement.close() }
     }
 
-    override fun getById(id: UInt): Game? = execQuery { connection ->
+    override fun getById(id: UInt): Game? {
         val statement = connection.prepareStatement(
             "SELECT * FROM games WHERE id = ?",
         )
@@ -102,11 +113,10 @@ class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
         statement.setInt(1, id.toInt())
         val resultSet = statement.executeQuery()
 
-        resultSet.getGames().firstOrNull().also { statement.close() }
-
+        return resultSet.getGames().firstOrNull().also { statement.close() }
     }
 
-    override fun update(value: Game): Boolean = execQuery { connection ->
+    override fun update(value: Game): Boolean {
         val statement = connection.prepareStatement(
             "UPDATE games SET name = ?, developer = ?, genres = ? WHERE id = ?",
         )
@@ -117,10 +127,10 @@ class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
         statement.setInt(4, value.id.toInt())
         val updated = statement.executeUpdate()
 
-        updated > 0.also { statement.close() }
+        return updated > 0.also { statement.close() }
     }
 
-    override fun delete(id: UInt): Boolean = execQuery { connection ->
+    override fun delete(id: UInt): Boolean {
         val statement = connection.prepareStatement(
             "DELETE FROM games WHERE id = ?",
         )
@@ -128,7 +138,7 @@ class SessionsDataDBGame(dbURL: String) : SessionsDataGame, DBManager(dbURL) {
         statement.setInt(1, id.toInt())
         val deleted = statement.executeUpdate()
 
-        deleted > 0.also { statement.close() }
+        return deleted > 0.also { statement.close() }
     }
 
     private fun ResultSet.getGames(): List<Game> {

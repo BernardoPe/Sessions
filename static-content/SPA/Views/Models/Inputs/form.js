@@ -2,12 +2,6 @@ import {div, input, label, ul} from "../../../WebDSL/web_dsl.js";
 import {resultsKeyHandler, handleSearch, showSearchResults, hideSearchResults} from "../../../Scripts/search.js";
 
 
-window.handleSearch = handleSearch;
-window.showSearchResults = showSearchResults;
-window.resultsKeyPressHandler = resultsKeyHandler;
-window.hideSearchResults = hideSearchResults;
-
-
 /**
  * Returns an HTML structure for a form input field
  * @param id - id of the input field
@@ -51,12 +45,12 @@ function formInputWithSearchResults(id, searchType, fieldType, title) {
 			placeholder: "",
 			name: searchType,
 			autocomplete: "off",
-			oninput: "handleSearch(event, id, name)",
-			oncut: "handleSearch(event, id, name)",
-			onpaste: "handleSearch(event, id, name)",
-			onfocus: "showSearchResults(id); handleSearch(event, id, name)",
-			onblur: "setTimeout(() => hideSearchResults(id), 100)", // delay to allow click on search result
-			onkeydown: "resultsKeyPressHandler(event, id)",
+			oninput: (event) => { handleSearch(event, id, event.currentTarget.name) },
+			oncut: (event) => { handleSearch(event, id, event.currentTarget.name) },
+			onpaste: (event) => { handleSearch(event, id, event.currentTarget.name) },
+			onfocus: (event) => { showSearchResults(id); handleSearch(event, id, event.currentTarget.name)},
+			onblur: () => { setTimeout(() => hideSearchResults(id), 100) }, // delay to allow click on search result
+			onkeydown: (event) => { resultsKeyHandler(event, id) },
 		}),
 		label(id, {class: "form__label"}, title),
 		ul({class: "search_results", id: "search_results_" + id }, div({class: "search-results"})),

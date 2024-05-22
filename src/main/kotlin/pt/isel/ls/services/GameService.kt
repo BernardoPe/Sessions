@@ -13,11 +13,13 @@ import pt.isel.ls.storage.SessionsDataManager
  *
  * Responsible for handling the business logic of the Game entity
  *
- * @property storage [SessionsDataManager] instance to access the data storage
+ * @property dataManager [SessionsDataManager] instance to access the data storage
  *
  */
 
-class GameService(val storage: SessionsDataManager) {
+class GameService(private val dataManager: SessionsDataManager) {
+
+    private val gameStorage = dataManager.game
 
     /**
      * Creates a new game
@@ -30,11 +32,13 @@ class GameService(val storage: SessionsDataManager) {
      * @throws BadRequestException If the game name already exists in the system
      */
     fun createGame(name: Name, developer: Name, genres: Set<Genre>): GameIdentifier {
-        val storageGame = storage.game
-
-        val game = Game(0u, name, developer, genres)
-
-        return storageGame.create(game)
+        return dataManager.executeTransaction {
+            if (gameStorage.isGameNameStored(name) ) {
+                throw BadRequestException("Game name already in use")
+            }
+            val game = Game(0u, name, developer, genres)
+            gameStorage.create(game)
+        }
     }
 
     /**
@@ -46,7 +50,7 @@ class GameService(val storage: SessionsDataManager) {
      * @throws NotFoundException If the game is not found
      */
     fun getGameById(id: UInt): Game {
-        return storage.game.getById(id) ?: throw NotFoundException("Game not found")
+        return gameStorage.getById(id) ?: throw NotFoundException("Game not found")
     }
 
     /**
@@ -61,7 +65,7 @@ class GameService(val storage: SessionsDataManager) {
      */
 
     fun searchGames(genres: Set<Genre>?, developer: Name?, name: Name?, limit: UInt, skip: UInt): Pair<GameList, Int> {
-        return storage.game.getGamesSearch(genres, developer, name, limit, skip)
+        return dataManager.game.getGamesSearch(genres, developer, name, limit, skip)
     }
 }
 

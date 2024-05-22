@@ -370,7 +370,7 @@ function removePlayerFromSession(event, sid, pid) {
  * Sends a DELETE request to the server to delete a session
  * and redirects the user to the home page
  */
-function deleteSession(event, sid) {
+export function deleteSession(event, sid) {
 	event.preventDefault();
 	fetch(API_URL + SESSIONS_URL + `/${sid}`, {
 		method: "DELETE",
@@ -500,16 +500,6 @@ function handleDateInput(date, errMessage) {
 	errMessage.style.display = 'none';
 	return true;
 }
-
-
-window.removePlayerFromSession = removePlayerFromSession;
-window.deleteSession = deleteSession;
-window.submitFormGameSearch = submitFormGameSearch;
-window.submitFormSessionSearch = submitFormSessionSearch;
-window.submitFormCreateGame = submitFormCreateGame;
-window.submitFormCreateSession = submitFormCreateSession;
-window.submitFormSessionAddPlayer = submitFormSessionAddPlayer;
-window.submitFormUpdateSession = submitFormUpdateSession;
 
 export {
 	submitFormGameSearch,
