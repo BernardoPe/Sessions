@@ -4,6 +4,7 @@ import {sessionPlayer} from "../Players/players.js";
 import {errorMessage} from "../Errors/error.js";
 import {dateTimeInput} from "../Inputs/date.js";
 import {formInputField, formInputWithSearchResults} from "../Inputs/form.js";
+import {submitFormSessionAddPlayer, deleteSession, submitFormUpdateSession} from "../../../Scripts/formSubmit.js";
 import {confirmationDiv} from "../Inputs/confirm.js";
 
 /**
@@ -38,7 +39,7 @@ function sessionDetailsAuthenticated(session) {
 			)
 		),
 		div({class: "session__add__player fade-in", style: "display: none"},
-			form({onsubmit: `submitFormSessionAddPlayer(event, ${session.sid})`},
+			form({onsubmit: (event) => { submitFormSessionAddPlayer(event, session.sid) } },
 				formInputWithSearchResults(
 					"player",
 					"players",
@@ -50,34 +51,37 @@ function sessionDetailsAuthenticated(session) {
 			)
 		)
 	)
+
 	const sessionView = div({class:"session-container"},
 		p({class:"session__game"},
 			a(`#` + `${GAMES_URL}/` + `${session.gameSession.gid}`, null, session.gameSession.name)
 		),
 		p({class:"session__date"}, formatDate(session.date)),
-		button({
+		button ({
 				class: "icon__button",
 				id: "delete-session",
-				onclick: `handleConfirmation(event, id, function() { deleteSession(event, ${session.sid}) })`
+				onclick: (event) => { handleConfirmation(event, event.currentTarget.id, () => { deleteSession(event, session.sid) }) }
 			},
 			i({class: "fas fa-solid fa-trash fa-2x red"}),
 		),
 		sessionPlayers
 	)
+
 	if (new Date(session.date) > new Date())  {
 		sessionPlayers.appendChild(
 			button({
 					class: "icon__button",
 					id: "add-player",
-					onclick: `showPlayerAddForm(event, ${session.sid}, id)`
+					onclick: (event) => { showPlayerAddForm(event, session.sid, event.currentTarget.id) }
 				},
 				i({class: "fas fa-plus fa-2x green"})
 			)
 		)
 	}
+
 	sessionView.appendChild(
 		div({class: "session__update"},
-			form({onsubmit: `submitFormUpdateSession(event, ${session.sid})`},
+			form({onsubmit: (event) => { submitFormUpdateSession(event, session.sid) } },
 				formInputField(
 					"capacity",
 					"capacity",
@@ -87,7 +91,7 @@ function sessionDetailsAuthenticated(session) {
 				errorMessage("err_message-capacity", "Capacity must be a number"),
 				button({type: "submit"}, "Update capacity"),
 			),
-			form({onsubmit: `submitFormUpdateSession(event, ${session.sid})`},
+			form({onsubmit: (event) => { submitFormUpdateSession(event, session.sid) } },
 				dateTimeInput(),
 				errorMessage("err_message-date", "Invalid date to create a session"),
 				button({type: "submit"}, "Update date"),
@@ -129,8 +133,6 @@ function showPlayerAddForm(event, sid, id) {
 	addBtn.style.display = "none"
 }
 
-window.handleConfirmation = handleConfirmation
-window.showPlayerAddForm = showPlayerAddForm
 
 /**
  * Formats the date to a presentable string
@@ -144,4 +146,4 @@ function formatDate(date) {
 }
 
 
-export {sessionDetails, sessionDetailsAuthenticated, sessionSearchResult, formatDate}
+export {sessionDetails, sessionDetailsAuthenticated, sessionSearchResult, formatDate, handleConfirmation}

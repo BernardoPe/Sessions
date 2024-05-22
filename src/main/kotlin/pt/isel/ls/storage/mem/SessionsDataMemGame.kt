@@ -47,6 +47,11 @@ class SessionsDataMemGame : SessionsDataGame, MemManager() {
         return null
     }
 
+    override fun isGameNameStored(name: Name): Boolean {
+        // Check if the game name already exists in the database mock
+        return gameDB.any { it.name == name }
+    }
+
     override fun getGamesSearch(
         genres: Set<Genre>?,
         developer: Name?,

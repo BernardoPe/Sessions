@@ -15,10 +15,13 @@ import pt.isel.ls.utils.isBefore
  *
  * Responsible for handling the business logic of the Session entity
  *
- * @property storage [SessionsDataManager] instance to access the data storage
+ * @property dataManager [SessionsDataManager] instance to access the data storage
  *
  */
-class SessionsService(val storage: SessionsDataManager) {
+class SessionsService(private val dataManager: SessionsDataManager) {
+
+    val sessionStorage = dataManager.session
+    val gameStorage = dataManager.game
 
     /**
      * Creates a new session
@@ -32,10 +35,18 @@ class SessionsService(val storage: SessionsDataManager) {
      * @throws NotFoundException If the game is not found
      */
     fun createSession(capacity: UInt, gid: UInt, date: LocalDateTime): UInt {
+
         if (date.isBefore(currentLocalTime())) {
             throw BadRequestException("Session date must be in the future")
         }
-        return storage.session.create(capacity, date, gid)
+
+        return dataManager.executeTransaction {
+            if (gameStorage.getById(gid) == null) {
+                throw NotFoundException("Game not found")
+            }
+            sessionStorage.create(capacity, date, gid)
+        }
+
     }
 
     /**
@@ -49,7 +60,28 @@ class SessionsService(val storage: SessionsDataManager) {
      */
 
     fun addPlayer(sid: UInt, pid: UInt) {
-        storage.session.addPlayer(sid, pid)
+        dataManager.executeTransaction {
+
+            if (dataManager.player.getById(pid) == null) {
+                throw NotFoundException("Player not found")
+            }
+
+            val session = sessionStorage.getById(sid) ?: throw NotFoundException("Session not found")
+
+            if (session.playersSession.any { it.id == pid }) {
+                throw BadRequestException("Player already in session")
+            }
+
+            if (session.playersSession.size.toUInt() == session.capacity) {
+                throw BadRequestException("Session is full")
+            }
+
+            if (session.state == State.CLOSE) {
+                throw BadRequestException("Session is closed")
+            }
+
+            sessionStorage.addPlayer(sid, pid)
+        }
     }
 
     /**
@@ -61,12 +93,17 @@ class SessionsService(val storage: SessionsDataManager) {
      * @throws NotFoundException If the session or player is not found or the player is not in the session
      */
     fun removePlayer(sid: UInt, pid: UInt) {
-        if (!storage.session.removePlayer(sid, pid)) {
-            if (storage.session.getById(sid) == null) {
-                throw NotFoundException("Session not found")
+
+        return dataManager.executeTransaction {
+            val session = sessionStorage.getById(sid) ?: throw NotFoundException("Session not found")
+
+            if (session.playersSession.none { it.id == pid }) {
+                throw NotFoundException("Player not in session")
             }
-            throw NotFoundException("Player not found")
+
+            sessionStorage.removePlayer(sid, pid)
         }
+
     }
 
 
@@ -96,11 +133,19 @@ class SessionsService(val storage: SessionsDataManager) {
             }
         }
 
-        if (!storage.session.update(sid, capacity, date)) {
-            throw NotFoundException("Session not found")
+        return dataManager.executeTransaction {
+
+            val session = sessionStorage.getById(sid) ?: throw NotFoundException("Session not found")
+
+            if (capacity != null) {
+                if (session.playersSession.size.toUInt() > capacity) {
+                    throw BadRequestException("New session capacity must be greater or equal to the number of players in the session")
+                }
+            }
+
+            sessionStorage.update(sid, capacity, date)
         }
 
-        return true
     }
 
     /**
@@ -115,7 +160,7 @@ class SessionsService(val storage: SessionsDataManager) {
      * @return The [SessionList] and the total number of sessions
      */
     fun listSessions(gid: UInt?, date: LocalDateTime?, state: State?, pid: UInt?, limit: UInt, skip: UInt): Pair<SessionList, Int> {
-        return storage.session.getSessionsSearch(gid, date, state, pid, limit, skip)
+        return dataManager.session.getSessionsSearch(gid, date, state, pid, limit, skip)
     }
 
 
@@ -129,7 +174,7 @@ class SessionsService(val storage: SessionsDataManager) {
      */
 
     fun getSessionById(sid: UInt): Session {
-        return storage.session.getById(sid) ?: throw NotFoundException("Session not found")
+        return dataManager.session.getById(sid) ?: throw NotFoundException("Session not found")
     }
 
 
@@ -141,7 +186,7 @@ class SessionsService(val storage: SessionsDataManager) {
      * @throws NotFoundException If the session is not found
      */
     fun deleteSession(sid: UInt) {
-        if (!storage.session.delete(sid)) {
+        if (!dataManager.session.delete(sid)) {
             throw NotFoundException("Session not found")
         }
     }

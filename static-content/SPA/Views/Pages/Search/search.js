@@ -4,6 +4,8 @@ import {errorMessage} from "../../Models/Errors/error.js";
 import {genresInput} from "../../Models/Inputs/genres.js";
 import {dateTimeInput} from "../../Models/Inputs/date.js";
 import {sessionStateInput} from "../../Models/Inputs/state.js";
+import {submitFormGameSearch, submitFormSessionSearch} from "../../../Scripts/formSubmit.js"
+
 /**
  * View for the game search form
  *
@@ -11,7 +13,7 @@ import {sessionStateInput} from "../../Models/Inputs/state.js";
  */
 function gameSearchView() {
 	return div({class: "form__group fade-up"},
-		form({onsubmit: "submitFormGameSearch(event)"},
+		form({onsubmit: (event) => { submitFormGameSearch(event) }},
 			formInputField(
 				"developer",
 				"developer",
@@ -40,7 +42,7 @@ function gameSearchView() {
  */
 function sessionSearchView() {
 	return div({class: "form__group fade-up"},
-		form({onsubmit: "submitFormSessionSearch(event)"},
+		form({onsubmit: (event) => { submitFormSessionSearch(event) }},
 			formInputWithSearchResults(
 				"game",
 				"games",

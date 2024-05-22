@@ -47,7 +47,7 @@ class GameServiceTest {
         }
 
         assertEquals("Bad Request", exception.description)
-        assertEquals("Game name already exists", exception.errorCause)
+        assertEquals("Game name already in use", exception.errorCause)
     }
 
     @Test

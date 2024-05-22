@@ -1,7 +1,7 @@
 import {div, form, button, p} from "../../../WebDSL/web_dsl.js";
 import {formInputField} from "../../Models/Inputs/form.js";
 import {errorMessage} from "../../Models/Errors/error.js";
-
+import {authLogin, authRegister} from "../../../Scripts/auth.js";
 /**
  * Creates the HTML login page view.
  *
@@ -10,7 +10,7 @@ import {errorMessage} from "../../Models/Errors/error.js";
 function loginView() {
 	return (
 		div({class: "form__group fade-up"},
-			form({onsubmit: "authLogin(event)"},
+			form({onsubmit: (event) => { authLogin(event) }},
                 formInputField(
                     "token",
                     "Token",
@@ -33,7 +33,7 @@ function registerView() {
 	return (
 		div({class: "center"},
 			div({class: "form__group fade-up", id: "registerForm"},
-				form({onsubmit: "authRegister(event)"},
+				form({onsubmit: (event) => { authRegister(event) }},
                     formInputField(
                         "username",
                         "Username",
@@ -53,7 +53,7 @@ function registerView() {
 			),
 			div({class: "subtitle", id: "token-info", style: "display: none"},
 				p({id: "token"}, ""),
-                button({type: "submit", onclick: "window.location.href = '#home'"}, "Go to home page")
+                button({type: "submit", onclick: () => { window.location.href = '#home' } }, "Go to home page")
 			)
 		)
 	)

@@ -29,6 +29,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class SessionServiceTest {
     @Test
@@ -283,7 +284,7 @@ class SessionServiceTest {
         }
 
         assertEquals("Not Found", exception.description)
-        assertEquals("Player not found", exception.errorCause)
+        assertEquals("Player not in session", exception.errorCause)
     }
 
     @Test
@@ -551,7 +552,7 @@ class SessionServiceTest {
 
         private fun newTestEmail() = "email-${abs(Random.nextLong())}@test.com"
 
-        private fun newTestDateTime() = currentLocalTime() + Random.nextLong(1, 1000).milliseconds
+        private fun newTestDateTime() = currentLocalTime() + Random.nextLong(10, 1000).seconds
 
         private fun UUID.testTokenHash() = mostSignificantBits xor leastSignificantBits
 

@@ -22,6 +22,14 @@ class SessionsDataMemPlayer : SessionsDataPlayer, MemManager() {
         return playerDB.find { it.token == token.hash() }
     }
 
+    override fun isEmailStored(email: Email): Boolean {
+       return playerDB.any { it.email == email }
+    }
+
+    override fun isNameStored(name: Name): Boolean {
+        return playerDB.any { it.name == name }
+    }
+
     override fun create(player: Player): Pair<UInt, UUID> {
 
         if (playerDB.any { it.email == player.email }) {

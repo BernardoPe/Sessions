@@ -14,10 +14,12 @@ import java.util.*
  *
  * Responsible for handling the business logic of the Player entity
  *
- * @property storage [SessionsDataManager] instance to access the data storage
+ * @property dataManager [SessionsDataManager] instance to access the data storage
  *
  */
-class PlayerService(val storage: SessionsDataManager) {
+class PlayerService(private val dataManager: SessionsDataManager) {
+
+    private val playerStorage = dataManager.player
 
     /**
      * Creates a new player
@@ -29,11 +31,22 @@ class PlayerService(val storage: SessionsDataManager) {
      * @throws BadRequestException If the player name or email already exists in the system
      */
     fun createPlayer(name: Name, email: Email): PlayerCredentials {
-        val storagePlayer = storage.player
 
-        val player = Player(0u, name, email,0L)
+        return dataManager.executeTransaction {
 
-        return storagePlayer.create(player)
+            if (playerStorage.isEmailStored(email)) {
+                throw BadRequestException("Given Player email already exists")
+            }
+
+            if (playerStorage.isNameStored(name)) {
+                throw BadRequestException("Given Player name already exists")
+            }
+
+            val player = Player(0u, name, email,0L)
+
+            playerStorage.create(player)
+        }
+
     }
 
     /**
@@ -43,7 +56,7 @@ class PlayerService(val storage: SessionsDataManager) {
      * @return The [Player] instance
      */
     fun authenticatePlayer(token: UUID): Player? {
-        return storage.player.getByToken(token)
+        return playerStorage.getByToken(token)
     }
 
     /**
@@ -55,7 +68,7 @@ class PlayerService(val storage: SessionsDataManager) {
      * @throws NotFoundException If the player is not found
      */
     fun getPlayerDetails(pid: UInt): Player {
-        return storage.player.getById(pid) ?: throw NotFoundException("Player not found")
+        return playerStorage.getById(pid) ?: throw NotFoundException("Player not found")
     }
 
     /**
@@ -67,7 +80,7 @@ class PlayerService(val storage: SessionsDataManager) {
      * @return The [PlayerList] and the total number of players
      */
     fun getPlayerList(name: Name?, limit: UInt, skip: UInt): Pair<PlayerList, Int> {
-        return storage.player.getPlayersSearch(name, limit, skip)
+        return dataManager.player.getPlayersSearch(name, limit, skip)
     }
 
 }

@@ -85,4 +85,9 @@ interface SessionsDataGame {
      * @param id The game identifier
      */
     fun delete(id: UInt): Boolean
+
+    /**
+     * Verify if a game name is already stored on the database
+     */
+    fun isGameNameStored(name: Name): Boolean
 }

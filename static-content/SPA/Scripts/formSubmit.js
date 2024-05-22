@@ -1,4 +1,4 @@
-import {API_URL, SESSIONS_URL} from "../../index.js";
+import {SESSIONS_URL} from "../../index.js";
 import {sessionPlayer} from "../Views/Models/Players/players.js";
 import {formatDate} from "../Views/Models/Sessions/sessions.js";
 
@@ -150,7 +150,7 @@ function submitFormCreateGame(event) {
 		!handleNameInput(developer, developerErr)
 	) return;
 
-	fetch(API_URL + `games`, {
+	fetch(`games`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -212,7 +212,7 @@ async function submitFormCreateSession(event) {
 		return
 	}
 
-	fetch(API_URL + `sessions`, {
+	fetch( `sessions`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -263,7 +263,7 @@ async function submitFormSessionAddPlayer(event, sid) {
 		return
 	}
 
-	const response = await fetch(API_URL + `sessions/${sid}/players`, {
+	const response = await fetch( `sessions/${sid}/players`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -309,7 +309,7 @@ async function submitFormUpdateSession(event, sid) {
 
 	console.log(reqBody)
 
-	fetch(API_URL + `sessions/${sid}`, {
+	fetch(`sessions/${sid}`, {
 		method: 'PATCH',
 		headers: {
 			'Content-Type': 'application/json'
@@ -349,7 +349,7 @@ async function submitFormUpdateSession(event, sid) {
 function removePlayerFromSession(event, sid, pid) {
 	event.preventDefault();
 
-	fetch(API_URL + SESSIONS_URL + `/${sid}/players/${pid}`, {
+	fetch(SESSIONS_URL + `/${sid}/players/${pid}`, {
 		method: "DELETE",
 	})
 	.then(res => {
@@ -370,9 +370,9 @@ function removePlayerFromSession(event, sid, pid) {
  * Sends a DELETE request to the server to delete a session
  * and redirects the user to the home page
  */
-function deleteSession(event, sid) {
+export function deleteSession(event, sid) {
 	event.preventDefault();
-	fetch(API_URL + SESSIONS_URL + `/${sid}`, {
+	fetch( SESSIONS_URL + `/${sid}`, {
 		method: "DELETE",
 	})
 	.then(res => {
@@ -427,7 +427,7 @@ function isInputNotInserted(input, type, err) {
  */
 function getUniqueGameId(gameName) {
 	console.log(gameName)
-	return fetch(API_URL + `games?name=${gameName}`)
+	return fetch(`games?name=${gameName}`)
 		.then(response => response.status === 200 ? response.json() : Promise.reject(response))
 		.then(res => {
 			const games = res.games
@@ -446,7 +446,7 @@ function getUniqueGameId(gameName) {
  * @param playerName
  */
 function getUniquePlayerId(playerName) {
-	return fetch(API_URL + `players?name=${playerName}`)
+	return fetch(`players?name=${playerName}`)
 		.then(response => response.status === 200 ? response.json() : Promise.reject(response))
 		.then(res => {
 			const players = res.players;
@@ -500,16 +500,6 @@ function handleDateInput(date, errMessage) {
 	errMessage.style.display = 'none';
 	return true;
 }
-
-
-window.removePlayerFromSession = removePlayerFromSession;
-window.deleteSession = deleteSession;
-window.submitFormGameSearch = submitFormGameSearch;
-window.submitFormSessionSearch = submitFormSessionSearch;
-window.submitFormCreateGame = submitFormCreateGame;
-window.submitFormCreateSession = submitFormCreateSession;
-window.submitFormSessionAddPlayer = submitFormSessionAddPlayer;
-window.submitFormUpdateSession = submitFormUpdateSession;
 
 export {
 	submitFormGameSearch,
