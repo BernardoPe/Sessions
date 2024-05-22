@@ -29,6 +29,7 @@ const val SESSION_PLAYER_ROUTE = "/sessions/{sid}/players"
 const val SESSION_PLAYER_DETAILS_ROUTE = "/sessions/{sid}/players/{pid}"
 const val SESSION_ROUTE = "/sessions"
 const val AUTH_ROUTE = "/auth"
+const val PLAYER_LOGIN_ROUTE = "/players/login"
 const val LOGOUT_ROUTE = "/logout"
 
 /**
@@ -50,6 +51,7 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
             PLAYER_ROUTE bind GET to requestHandler::getPlayerList,
             PLAYER_DETAILS_ROUTE bind GET to requestHandler::getPlayerDetails,
             AUTH_ROUTE bind POST to requestHandler::authPlayer,
+            PLAYER_LOGIN_ROUTE bind POST to requestHandler::loginPlayer,
             LOGOUT_ROUTE bind GET to requestHandler::playerLogout,
         )
 

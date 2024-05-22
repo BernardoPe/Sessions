@@ -34,6 +34,20 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
 
     } as Pair<UInt, UUID>
 
+    @Suppress("UNCHECKED_CAST")
+    override fun login(id: UInt): Pair<UInt, UUID> = execQuery { connection ->
+        val token = UUID.randomUUID()
+
+        val updateStatement = connection.prepareStatement(
+            "UPDATE players SET token_hash = ? WHERE id = ?",
+        )
+        updateStatement.setLong(1, token.hash())
+        updateStatement.setInt(2, id.toInt())
+        updateStatement.executeUpdate()
+
+        Pair(id, token)
+    } as Pair<UInt, UUID>
+
     override fun getById(id: UInt): Player? = execQuery { connection ->
         val statement = connection.prepareStatement(
             "SELECT * FROM players WHERE id = ?",

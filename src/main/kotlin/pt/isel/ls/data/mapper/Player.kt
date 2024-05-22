@@ -1,7 +1,7 @@
 package pt.isel.ls.data.mapper
 
 import pt.isel.ls.data.domain.player.Player
-import pt.isel.ls.data.dto.PlayerCreationOutputModel
+import pt.isel.ls.data.dto.PlayerCredentialsOutputModel
 import pt.isel.ls.data.dto.PlayerInfoOutputModel
 import pt.isel.ls.data.dto.PlayerSearchOutputModel
 import pt.isel.ls.services.PlayerCredentials
@@ -17,7 +17,7 @@ fun Player.toPlayerInfoDTO() = PlayerInfoOutputModel(id, name.toString(), email.
  * Converts [PlayerCredentials] to [PlayerInfoOutputModel]
  * @return The player creation DTO
  */
-fun PlayerCredentials.toPlayerCreationDTO() = PlayerCreationOutputModel(first, second.toString())
+fun PlayerCredentials.toPlayerCredentialsDTO() = PlayerCredentialsOutputModel(first, second.toString())
 
 /**
  * Converts [Pair] of [PlayerList] and [Int] to [PlayerSearchOutputModel]

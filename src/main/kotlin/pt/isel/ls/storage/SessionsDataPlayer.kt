@@ -81,7 +81,12 @@ interface SessionsDataPlayer {
      */
     fun getByToken(token: UUID): Player?
 
-//    fun getByEmail(email: Email): Player?
-//
-//    fun getByName(name: Name): Player?
+    /**
+     * Login a player
+     *
+     * @param name The player name
+     * @param password The player password
+     * @return A pair with the player identifier and a new UUID
+     */
+    fun login(id: UInt): Pair<UInt, UUID>
 }

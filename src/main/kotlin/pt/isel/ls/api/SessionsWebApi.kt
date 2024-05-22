@@ -23,11 +23,12 @@ import pt.isel.ls.data.domain.primitives.Password
 import pt.isel.ls.data.domain.session.toState
 import pt.isel.ls.data.dto.GameCreationInputModel
 import pt.isel.ls.data.dto.PlayerCreationInputModel
+import pt.isel.ls.data.dto.PlayerLoginInputModel
 //import pt.isel.ls.data.dto.PlayerLoginInputModel
 import pt.isel.ls.data.mapper.toGameCreationDTO
 import pt.isel.ls.data.mapper.toGameInfoDTO
 import pt.isel.ls.data.mapper.toGameSearchDTO
-import pt.isel.ls.data.mapper.toPlayerCreationDTO
+import pt.isel.ls.data.mapper.toPlayerCredentialsDTO
 import pt.isel.ls.data.mapper.toPlayerInfoDTO
 import pt.isel.ls.data.mapper.toPlayerSearchDTO
 import pt.isel.ls.data.mapper.toSessionCreationDTO
@@ -98,7 +99,7 @@ class SessionsApi(
             .header("content-type", "application/json")
             .header("location", "/players/${res.first}")
             .cookie(createCookie(null, res.second))
-            .body(Json.encodeToString(res.toPlayerCreationDTO()))
+            .body(Json.encodeToString(res.toPlayerCredentialsDTO()))
     }
 
     /**
@@ -117,15 +118,15 @@ class SessionsApi(
             .body(Json.encodeToString(res.toPlayerInfoDTO()))
     }
 
-//    fun loginPlayer(request: Request) = processRequest(request) {
-//        val player = parseJsonBody<PlayerLoginInputModel>(request)
-//        val res = playerServices.getToken(Name(player.name), Email(player.email), player.password)
-//
-//        Response(OK)
-//            .header("content-type", "application/json")
-//            .cookie(createCookie(86400, res.second))
-//            .body(Json.encodeToString(res.toPlayerCreationDTO()))
-//    }
+    fun loginPlayer(request: Request) = processRequest(request) {
+        val player = parseJsonBody<PlayerLoginInputModel>(request)
+        val res = playerServices.loginPlayer(Name(player.name), Password(player.password))
+
+        Response(OK)
+            .header("content-type", "application/json")
+            .cookie(createCookie(null, res.second))
+            .body(Json.encodeToString(res.toPlayerCredentialsDTO()))
+    }
 
     /**
      * Authenticates a player
@@ -133,6 +134,7 @@ class SessionsApi(
      * @return [OK] if the player is authenticated
      * @throws BadRequestException If the request is invalid
      */
+
     fun authPlayer(request: Request) = processRequest(request) {
 
         var token = request.header("Authorization")?.split(" ")?.get(1)?.let { UUID.fromString(it) }
@@ -157,7 +159,6 @@ class SessionsApi(
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(UnauthorizedException()))
         }
-
     }
 
     /**

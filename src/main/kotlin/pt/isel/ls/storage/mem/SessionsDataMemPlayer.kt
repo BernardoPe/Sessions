@@ -49,6 +49,29 @@ class SessionsDataMemPlayer : SessionsDataPlayer, MemManager() {
         return Pair(pid - 1u, playerToken)
     }
 
+    override fun login(id: UInt): Pair<UInt, UUID> {
+        // Get the player object from the database mock
+        val player = playerDB.find { it.id == id } ?: throw BadRequestException("Given Player id not Found")
+
+        // Generate a new token
+        val playerToken = UUID.randomUUID()
+
+        // Update the player object in the database mock
+        playerDB.remove(player)
+        playerDB.add(
+            Player(
+                player.id,
+                player.name,
+                player.email,
+                playerToken.hash(),
+                player.password
+            )
+        )
+
+        // Return the player id and the new token
+        return Pair(player.id, playerToken)
+    }
+
     override fun getPlayersSearch(name: Name?, limit: UInt, skip: UInt): Pair<List<Player>, Int> {
 
         var players = playerDB.toList()

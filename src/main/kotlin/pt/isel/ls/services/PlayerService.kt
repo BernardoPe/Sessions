@@ -12,11 +12,6 @@ import pt.isel.ls.storage.SessionsDataManager
 import java.util.*
 
 /**
- * The salt value for the password hashing
- */
-const val SALT = 12
-
-/**
  * Service Handler for Player related operations
  *
  * Responsible for handling the business logic of the Player entity
@@ -39,33 +34,32 @@ class PlayerService(val storage: SessionsDataManager) {
         val storagePlayer = storage.player
 
         // This is line of code uses the JBCrypt library to hash the password
-        val hashedPassword = BCrypt.hashpw(password.toString(), BCrypt.gensalt(SALT))
+        val hashedPassword = BCrypt.hashpw(password.toString(), BCrypt.gensalt(12))
 
         val player = Player(0u, name, email, 0L, PasswordHash(hashedPassword))
 
         return storagePlayer.create(player)
     }
 
-//    fun loginPlayer(name: Name?, email: Email?, password: String): PlayerCredentials {
-//        val storagePlayer = storage.player
-//
-//        if (name == null && email == null) {
-//            throw BadRequestException("Name or email must be provided")
+    fun loginPlayer(name: Name, password: Password): PlayerCredentials {
+        val playerStorage = storage.player
+
+//        if (name == null) {
+//            throw BadRequestException("Name must be provided")
 //        }
-//
-//        val player = if (name != null) storagePlayer.getPlayersSearch(name=name, 1u, 0u).first.first()
-//        else storagePlayer.getPlayersSearch(email=email!!, 1u, 0u).first.first(
-//
-//        if (player.name != name) {
-//            throw BadRequestException("Given Player name does not match the email")
-//        }
-//
-//        if (player.password != password) {
-//            throw BadRequestException("Given Player password does not match the email")
-//        }
-//
-//        return Pair(player.id, player.token)
-//    }
+
+        val player = playerStorage.getPlayersSearch(name = name, 1u, 0u).first.first()
+
+        if (player.name != name) {
+            throw NotFoundException("Given player name not Found")
+        }
+
+        if (BCrypt.checkpw(password.toString(), player.password.toString())) {
+            throw BadRequestException("Given Player password is incorrect")
+        }
+
+        return playerStorage.login(player.id)
+    }
 
     /**
      * Authenticates a player

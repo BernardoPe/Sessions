@@ -17,14 +17,14 @@ data class PlayerCreationInputModel(
 )
 
 /**
- * The [PlayerCreationOutputModel] class is used to represent the response body of player creation
+ * The [PlayerCredentialsOutputModel] class is used to represent the response body of player creation or player login
  *
  * @param pid The player identifier
  * @param token The player token in UUID type
  *
  */
 @Serializable
-data class PlayerCreationOutputModel(
+data class PlayerCredentialsOutputModel(
     val pid: UInt,
     val token: String,
 )
@@ -33,16 +33,14 @@ data class PlayerCreationOutputModel(
  * The [PlayerLoginInputModel] class is used to represent the request body of player login
  *
  * @param name The player name
- * @param email The player email
  * @param password The player password
  *
  */
-//@Serializable
-//data class PlayerLoginInputModel(
-//    val name: String,
-//    val email: String,
-//    val password: String
-//)
+@Serializable
+data class PlayerLoginInputModel(
+    val name: String,
+    val password: String
+)
 
 /**
  * The [PlayerInfoOutputModel] class is used to represent the response body of the player details

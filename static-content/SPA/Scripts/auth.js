@@ -16,11 +16,14 @@ function authRegister(event) {
 	event.preventDefault()
 	const name = document.getElementById('username').value
 	const email = document.getElementById('email').value
+	const password = document.getElementById('password').value
 	const nameErr = document.getElementById('error-username')
 	const emailErr = document.getElementById('error-email')
+	const passErr = document.getElementById('error-password')
 
 	nameErr.style.display = "none"
 	emailErr.style.display = "none"
+	passErr.style.display = "none"
 
 	if (name === "") {
 		nameErr.innerHTML = "Please enter a name"
@@ -38,12 +41,18 @@ function authRegister(event) {
 		return
 	}
 
+	if (password === "") {
+		passErr.innerHTML = "Please enter a password"
+		passErr.style.display = "block"
+		return
+	}
+
 	fetch('/players', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({ name, email })
+		body: JSON.stringify({name, email, password})
 	}).then(res => {
 			res.json()
 				.then(data => {
@@ -88,24 +97,16 @@ function authLogin(event) {
 
 	event.preventDefault()
 	const name = document.getElementById('name').value
-	const email = document.getElementById('email').value
 	const password = document.getElementById('password').value
 	const nameErr = document.getElementById('error-name')
-	const emailErr = document.getElementById('error-email')
 	const passErr = document.getElementById('error-password')
 
 	nameErr.style.display = "none"
-	emailErr.style.display = "none"
 	passErr.style.display = "none"
 
-	if (name === "" && email === "") {
-		emailErr.innerHTML = "Please enter a valid name or email"
-		emailErr.style.display = "block"
-		if (password === "") {
-			passErr.innerHTML = "Please enter a password"
-			passErr.style.display = "block"
-		}
-		return
+	if (name === "") {
+		nameErr.innerHTML = "Please enter a valid name"
+		nameErr.style.display = "block"
 	}
 
 	if (password === "") {
@@ -114,27 +115,34 @@ function authLogin(event) {
 		return
 	}
 
-	// TODO:Handle login, translating name or email to a token
-
-	// fetch('/auth', {
-	// 	method: 'POST',
-	// 	headers: {
-	// 		'Authorization': 'Bearer ' + token,
-	// 	},
-	// })
-	// 	.then(res => res.ok? res.json() : Promise.reject(res))
-	// 	.then(data => {
-	// 		document.getElementById('login').style.display = "none"
-	// 		document.getElementById('register').style.display = "none"
-	// 		document.getElementById('logout').style.display = "inline-block"
-	// 		sessionStorage.setItem('user', JSON.stringify(data))
-	// 		window.location.href = "#home"
-	// 		return data
-	// 	}).catch(() => {
-	// 		const tokenErr = document.getElementById('error-token')
-	// 		tokenErr.innerHTML = "Invalid token"
-	// 		tokenErr.style.display = "block"
-	// 	})
+	fetch('/players/login', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({name, password})
+	})
+		.then(res => res.ok ? res.json() : Promise.reject(res))
+		.then(data => {
+			document.getElementById('login').style.display = "none"
+			document.getElementById('register').style.display = "none"
+			document.getElementById('logout').style.display = "inline-block"
+			document.getElementById('registerForm').style.display = "none"
+			document.getElementById('token-info').style.display = "block"
+			document.getElementById('token').innerHTML = "Your token is: " + data.token
+			const player = {pid: data.pid, name: name}
+			sessionStorage.setItem('userLogin', JSON.stringify(player)) // changed from user to userLogin for tests purposes
+			window.location.href = "#home"
+			return data
+		}).catch(() => {
+		if (err.errorCause.toLowerCase().includes("name")) {
+			nameErr.innerHTML = err.errorCause
+			nameErr.style.display = "block"
+		} else {
+			passErr.innerHTML = err.errorCause
+			passErr.style.display = "block"
+		}
+	})
 }
 
 
