@@ -71,6 +71,9 @@ import java.util.*
  *
  */
 
+const val DEFAULT_LIMIT = 5u
+const val DEFAULT_SKIP = 0u
+
 class SessionsApi(
     private val playerServices: PlayerService,
     private val gameServices: GameService,
@@ -175,8 +178,9 @@ class SessionsApi(
      */
 
     fun getPlayerList(request: Request) = processRequest(request) {
-        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip")
-            ?: 0u)
+        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: DEFAULT_LIMIT) to (request.query("skip")
+            ?.toUInt("Skip")
+            ?: DEFAULT_SKIP)
         val name = request.query("name")?.parseURLEncodedString()
         val res = playerServices.getPlayerList(
             name?.let { Name(it) },
@@ -240,7 +244,8 @@ class SessionsApi(
      * @throws BadRequestException If there are invalid parameters
      */
     fun getGameList(request: Request) = processRequest(request) {
-        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip") ?: 0u)
+        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: DEFAULT_LIMIT) to (request.query("skip")
+            ?.toUInt("Skip") ?: DEFAULT_SKIP)
 
         val genres = request.query("genres")?.parseURLEncodedString()
                                                   ?.split(',')
@@ -383,7 +388,8 @@ class SessionsApi(
      */
 
     fun getSessionList(request: Request) = processRequest(request) {
-        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: 5u) to (request.query("skip")?.toUInt("Skip") ?: 0u)
+        val (limit, skip) = (request.query("limit")?.toUInt("Limit") ?: DEFAULT_LIMIT) to (request.query("skip")
+            ?.toUInt("Skip") ?: DEFAULT_SKIP)
 
         val res = sessionServices.listSessions(
             request.query("gid")?.toUInt("Game Identifier"),
@@ -521,9 +527,10 @@ class SessionsApi(
 
     private fun logResponse(response: Response) {
         logger.info(
-            "outgoing response: status={}, content-type={}",
+            "outgoing response: status={}, content-type={}, body={}",
             response.status,
             response.header("content-type"),
+            response.bodyString(),
         )
     }
 
