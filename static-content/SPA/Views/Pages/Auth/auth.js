@@ -19,13 +19,6 @@ function loginView() {
 				),
 				errorMessage("error-name", ""),
 				formInputField(
-					"email",
-					"Email",
-					"email",
-					"Email"
-				),
-				errorMessage("error-email", ""),
-				formInputField(
 					"password",
 					"Password",
 					"password",
@@ -62,6 +55,13 @@ function registerView() {
                         "Email"
 					),
                     errorMessage("error-email", ""),
+					formInputField(
+						"password",
+						"Password",
+						"password",
+						"Password"
+					),
+					errorMessage("error-password", ""),
 					button({type: "submit"}, "Register")
 				),
 			),
