@@ -7,7 +7,6 @@ import pt.isel.ls.storage.mem.SessionsDataMemGame
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import pt.isel.ls.storage.mem.SessionsDataMemSession
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class DataManagerTest {

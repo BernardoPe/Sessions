@@ -62,29 +62,29 @@ class SessionsService(private val dataManager: SessionsDataManager) {
 
     fun addPlayer(sid: UInt, pid: UInt) {
 
-                dataManager.executeTransaction({
+        dataManager.executeTransaction({
 
-                    if (dataManager.player.getById(pid) == null) {
-                        throw NotFoundException("Player not found")
-                    }
+            if (dataManager.player.getById(pid) == null) {
+                throw NotFoundException("Player not found")
+            }
 
-                    val session = sessionStorage.getById(sid) ?: throw NotFoundException("Session not found")
+            val session = sessionStorage.getById(sid) ?: throw NotFoundException("Session not found")
 
-                    if (session.playersSession.any { it.id == pid }) {
-                        throw BadRequestException("Player already in session")
-                    }
+            if (session.playersSession.any { it.id == pid }) {
+                throw BadRequestException("Player already in session")
+            }
 
-                    if (session.playersSession.size.toUInt() == session.capacity) {
-                        throw BadRequestException("Session is full")
-                    }
+            if (session.playersSession.size.toUInt() == session.capacity) {
+                throw BadRequestException("Session is full")
+            }
 
-                    if (session.state == State.CLOSE) {
-                        throw BadRequestException("Session is closed")
-                    }
+            if (session.state == State.CLOSE) {
+                throw BadRequestException("Session is closed")
+            }
 
-                    sessionStorage.addPlayer(sid, pid)
+            sessionStorage.addPlayer(sid, pid)
 
-                }, Connection.TRANSACTION_SERIALIZABLE) // avoid write-skew anomaly
+        }, Connection.TRANSACTION_SERIALIZABLE) // avoid reading a session before it is updated with more players
 
     }
 

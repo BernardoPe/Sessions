@@ -82,7 +82,6 @@ class DBManager(
                     if (e.sqlState == "40001") {
                         // serialization failure
                         retries++
-                        continue
                     } else {
                         throw TransactionManager.handlePSQLException(e)
                     }

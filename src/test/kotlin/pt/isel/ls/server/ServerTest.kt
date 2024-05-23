@@ -26,7 +26,6 @@ import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
 import pt.isel.ls.storage.MemManager
-import pt.isel.ls.storage.SessionsDataManager
 import pt.isel.ls.utils.currentLocalTime
 import pt.isel.ls.utils.plus
 import kotlin.time.Duration
