@@ -57,7 +57,7 @@ class SessionTest {
         val exception = assertFailsWith<IllegalArgumentException> {
             Session(1u, 5u, "2030-03-01T15:00:00".toLocalDateTime(), newGameTest(), newPlayersTest())
         }
-        assertEquals("Session players must be less than or equal to capacity", exception.message)
+        assertEquals("Session capacity must not be less than the number of players", exception.message)
     }
 
    @Test

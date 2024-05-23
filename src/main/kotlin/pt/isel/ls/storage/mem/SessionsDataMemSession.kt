@@ -18,13 +18,8 @@ import pt.isel.ls.storage.SessionsDataSession
 
 class SessionsDataMemSession : SessionsDataSession, MemoryStorage() {
 
-    override fun create(capacity: UInt, date: LocalDateTime, gid: UInt): UInt {
-
-        // Get the game object from the database mock
-        val game = gameDB.find { it.id == gid } ?: throw NotFoundException("Game not found")
-
+    override fun create(session: Session): UInt {
         // Add the session object to the database mock
-        // Add the updated session object to the database mock
         sessionDB.add(
             // The session object to be added to the database mock
             // The only fields that are changed are:
@@ -32,9 +27,9 @@ class SessionsDataMemSession : SessionsDataSession, MemoryStorage() {
             // - playersSession: An empty set. This is because the session is created with no players by default
             Session(
                 sid,
-                capacity,
-                date,
-                game,
+                session.capacity,
+                session.date,
+                session.gameSession,
                 emptySet()
             ),
         )
@@ -129,15 +124,11 @@ class SessionsDataMemSession : SessionsDataSession, MemoryStorage() {
         return false
     }
 
-    override fun update(sid: UInt, capacity: UInt?, date: LocalDateTime?): Boolean {
+    override fun update(value: Session): Boolean {
         // Update the session object in the database mock
         sessionDB.forEachIndexed { index, session ->
             // search for the session with the given id
-            if (session.id == sid) {
-
-                if (session.playersSession.size.toUInt() > (capacity ?: session.capacity)) {
-                    throw BadRequestException("New session capacity must be greater or equal to the number of players in the session")
-                }
+            if (session.id == value.id) {
                 // if found
                 // remove the session from the database mock
                 sessionDB.removeAt(index)
@@ -147,8 +138,8 @@ class SessionsDataMemSession : SessionsDataSession, MemoryStorage() {
                 sessionDB.add(
                     Session(
                         session.id,
-                        capacity ?: session.capacity,
-                        date ?: session.date,
+                        value.capacity,
+                        value.date,
                         session.gameSession,
                         session.playersSession,
                     ),

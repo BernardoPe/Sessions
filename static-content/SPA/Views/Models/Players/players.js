@@ -2,7 +2,7 @@
 import {a, button, div, i, p} from "../../../WebDSL/web_dsl.js";
 import {PLAYERS_URL, SESSIONS_URL} from "../../../../index.js";
 import {handleConfirmation} from "../Sessions/sessions.js";
-
+import {removePlayerFromSession} from "../../../Scripts/formSubmit.js"
 /**
  * Returns an HTML structure for a player's details
  * @param player - player object
@@ -13,7 +13,7 @@ function playerDetails(player) {
 			p({class: "player__name"}, player.name),
 			p({class: "player__email"}, "Contact info: " + player.email)
 		),
-		a(`#` + SESSIONS_URL + `?pid=${player.pid}`, {class: "search-ref"}, "Your sessions")
+		a(`#` + SESSIONS_URL + `?pid=${player.pid}`, {class: "search-ref"}, `Sessions with ${player.name}`),
 	)
 }
 

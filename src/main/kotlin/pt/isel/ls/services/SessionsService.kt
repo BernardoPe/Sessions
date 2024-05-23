@@ -42,10 +42,13 @@ class SessionsService(private val dataManager: SessionsDataManager) {
         }
 
         return dataManager.executeTransaction {
-            if (gameStorage.getById(gid) == null) {
-                throw NotFoundException("Game not found")
-            }
-            sessionStorage.create(capacity, date, gid)
+
+            val game = gameStorage.getById(gid) ?: throw NotFoundException("Game not found")
+
+            val newSession = Session(0u, capacity, date, game, emptySet())
+
+            sessionStorage.create(newSession)
+
         }
 
     }
@@ -84,7 +87,7 @@ class SessionsService(private val dataManager: SessionsDataManager) {
 
             sessionStorage.addPlayer(sid, pid)
 
-        }, Connection.TRANSACTION_SERIALIZABLE) // avoid reading a session before it is updated with more players
+        }, Connection.TRANSACTION_SERIALIZABLE)
 
     }
 
@@ -123,29 +126,18 @@ class SessionsService(private val dataManager: SessionsDataManager) {
 
     fun updateSession(sid: UInt, capacity: UInt?, date: LocalDateTime?): Boolean {
 
-        if (date != null) {
-            if (date.isBefore(currentLocalTime())) {
-                throw BadRequestException("Session date must be in the future")
-            }
-        }
-
-        if (capacity != null) {
-            if (capacity !in (1u..SESSION_MAX_CAPACITY)) {
-                throw BadRequestException("Session capacity must at least 1 and at most $SESSION_MAX_CAPACITY")
-            }
+        if (date != null && date.isBefore(currentLocalTime())) {
+            throw BadRequestException("Session date must be in the future")
         }
 
         return dataManager.executeTransaction {
 
             val session = sessionStorage.getById(sid) ?: throw NotFoundException("Session not found")
 
-            if (capacity != null) {
-                if (session.playersSession.size.toUInt() > capacity) {
-                    throw BadRequestException("New session capacity must be greater or equal to the number of players in the session")
-                }
-            }
+            val updatedSession = session.copy(capacity = capacity ?: session.capacity, date = date ?: session.date)
 
-            sessionStorage.update(sid, capacity, date)
+            sessionStorage.update(updatedSession)
+
         }
 
     }

@@ -507,5 +507,6 @@ export {
 	submitFormCreateGame,
 	submitFormCreateSession,
 	submitFormSessionAddPlayer,
-	submitFormUpdateSession
+	submitFormUpdateSession,
+	removePlayerFromSession
 };

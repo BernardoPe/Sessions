@@ -356,12 +356,11 @@ class SessionServiceTest {
         val newCapacity = 1u
         val newDate = newTestDateTime()
 
-        val updatedSession = assertFailsWith<BadRequestException> {
+        val updatedSession = assertFailsWith<IllegalArgumentException> {
             serviceSession.updateSession(createdSession, newCapacity, newDate)
         }
 
-        assertEquals("Bad Request", updatedSession.description)
-        assertEquals("New session capacity must be greater or equal to the number of players in the session", updatedSession.errorCause)
+        assertEquals("Session capacity must not be less than the number of players", updatedSession.message)
     }
 
     @Test
@@ -402,12 +401,11 @@ class SessionServiceTest {
         val newCapacity = 0u
         val newDate = newTestDateTime()
 
-        val updatedSession = assertFailsWith<BadRequestException> {
+        val updatedSession = assertFailsWith<IllegalArgumentException> {
             serviceSession.updateSession(createdSession, newCapacity, newDate)
         }
 
-        assertEquals("Bad Request", updatedSession.description)
-        assertEquals("Session capacity must at least 1 and at most $SESSION_MAX_CAPACITY", updatedSession.errorCause)
+        assertEquals("Session capacity must be at least 1 and at most $SESSION_MAX_CAPACITY", updatedSession.message)
     }
 
     @Test

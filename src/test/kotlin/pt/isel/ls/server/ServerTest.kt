@@ -858,8 +858,8 @@ class ServerTest {
             storage.game.create(mockGame)
             storage.game.create(mockGame2)
 
-            storage.session.create(mockSession.capacity, mockSession.date, mockSession.gameSession.id)
-            storage.session.create(mockSession2.capacity, mockSession2.date, mockSession2.gameSession.id)
+            storage.session.create(mockSession)
+            storage.session.create(mockSession2)
 
             storage.player.create(mockPlayer)
             storage.player.create(mockPlayer2)

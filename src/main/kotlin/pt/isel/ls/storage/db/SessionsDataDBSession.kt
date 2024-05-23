@@ -17,16 +17,17 @@ import java.sql.Statement
 class SessionsDataDBSession(private val dbURL: String) : SessionsDataSession {
 
     private val connection get() = TransactionManager.getConnection(dbURL)
-    override fun create(capacity: UInt, date: LocalDateTime, gid: UInt): UInt {
+
+    override fun create(session: Session): UInt {
 
         val statement = connection.prepareStatement(
             "INSERT INTO sessions (game_id, capacity, date) VALUES (?, ?, ?)",
             Statement.RETURN_GENERATED_KEYS,
         )
 
-        statement.setInt(1, gid.toInt())
-        statement.setInt(2, capacity.toInt())
-        statement.setTimestamp(3, date.toTimestamp())
+        statement.setInt(1, session.gameSession.id.toInt())
+        statement.setInt(2, session.capacity.toInt())
+        statement.setTimestamp(3, session.date.toTimestamp())
         statement.executeUpdate()
 
         val generatedKeys = statement.generatedKeys
@@ -169,31 +170,13 @@ class SessionsDataDBSession(private val dbURL: String) : SessionsDataSession {
         return res > 0.also { statement.close() }
     }
 
-    override fun update(sid: UInt, capacity: UInt?, date: LocalDateTime?): Boolean {
-        val query = StringBuilder("UPDATE sessions SET ")
-        val queryParams = mutableListOf<Any>()
-
-        if (capacity != null) {
-            query.append("capacity = ?, ")
-            queryParams.add(capacity.toInt())
-        }
-
-        if (date != null) {
-            query.append("date = ?, ")
-            queryParams.add(date.toTimestamp())
-        }
-
-        query.delete(query.length - 2, query.length)
-
-        query.append(" WHERE id = ?")
-        queryParams.add(sid.toInt())
+    override fun update(value: Session): Boolean {
+        val query = StringBuilder("UPDATE sessions SET CAPACITY = ?, DATE = ? WHERE ID = ?")
 
         val statement = connection.prepareStatement(query.toString())
-
-        for ((index, param) in queryParams.withIndex()) {
-            statement.setObject(index + 1, param)
-        }
-
+        statement.setInt(1, value.capacity.toInt())
+        statement.setTimestamp(2, value.date.toTimestamp())
+        statement.setInt(3, value.id.toInt())
         val res = statement.executeUpdate()
 
         return res > 0.also { statement.close() }

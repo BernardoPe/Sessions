@@ -32,12 +32,17 @@ class GameService(private val dataManager: SessionsDataManager) {
      * @throws BadRequestException If the game name already exists in the system
      */
     fun createGame(name: Name, developer: Name, genres: Set<Genre>): GameIdentifier {
+
         return dataManager.executeTransaction {
+
             if (gameStorage.isGameNameStored(name) ) {
                 throw BadRequestException("Game name already in use")
             }
+
             val game = Game(0u, name, developer, genres)
+
             gameStorage.create(game)
+
         }
     }
 
