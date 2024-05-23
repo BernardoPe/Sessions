@@ -1,7 +1,6 @@
 package pt.isel.ls.storage.mem
 
 import kotlinx.datetime.LocalDateTime
-import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
 import pt.isel.ls.exceptions.BadRequestException
@@ -17,7 +16,7 @@ import pt.isel.ls.storage.SessionsDataSession
  *
  */
 
-class SessionsDataMemSession : SessionsDataSession, MemManager() {
+class SessionsDataMemSession : SessionsDataSession, MemoryStorage() {
 
     override fun create(capacity: UInt, date: LocalDateTime, gid: UInt): UInt {
 
@@ -79,21 +78,7 @@ class SessionsDataMemSession : SessionsDataSession, MemManager() {
 
     override fun addPlayer(sid: UInt, pid: UInt): Boolean {
 
-        val session = sessionDB.find { it.id == sid  } ?: throw NotFoundException("Session not found")
-
         val player = playerDB.find { it.id == pid } ?: throw NotFoundException("Player not found")
-
-        if (session.playersSession.any { it.id == player.id }) {
-            throw BadRequestException("Player already in session")
-        }
-
-        if (session.capacity == session.playersSession.size.toUInt()) {
-            throw BadRequestException("Session is full")
-        }
-
-        if (session.state == State.CLOSE) {
-            throw BadRequestException("Session is closed")
-        }
 
         // Update the session object in the database mock
         sessionDB.forEachIndexed { index, session ->
@@ -125,9 +110,6 @@ class SessionsDataMemSession : SessionsDataSession, MemManager() {
         sessionDB.forEachIndexed { index, session ->
             // search for the session with the given id
             if (session.id == sid) {
-                if (!session.playersSession.any { it.id == getPlayer.id }) {
-                    throw NotFoundException("Player not in session")
-                }
                 // if found
                 // remove the session from the database mock
                 sessionDB.removeAt(index)

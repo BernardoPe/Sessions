@@ -9,6 +9,7 @@ import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.storage.SessionsDataManager
 import pt.isel.ls.utils.currentLocalTime
 import pt.isel.ls.utils.isBefore
+import java.sql.Connection
 
 /**
  * Service Handler for Session related operations
@@ -60,28 +61,31 @@ class SessionsService(private val dataManager: SessionsDataManager) {
      */
 
     fun addPlayer(sid: UInt, pid: UInt) {
-        dataManager.executeTransaction {
 
-            if (dataManager.player.getById(pid) == null) {
-                throw NotFoundException("Player not found")
-            }
+                dataManager.executeTransaction({
 
-            val session = sessionStorage.getById(sid) ?: throw NotFoundException("Session not found")
+                    if (dataManager.player.getById(pid) == null) {
+                        throw NotFoundException("Player not found")
+                    }
 
-            if (session.playersSession.any { it.id == pid }) {
-                throw BadRequestException("Player already in session")
-            }
+                    val session = sessionStorage.getById(sid) ?: throw NotFoundException("Session not found")
 
-            if (session.playersSession.size.toUInt() == session.capacity) {
-                throw BadRequestException("Session is full")
-            }
+                    if (session.playersSession.any { it.id == pid }) {
+                        throw BadRequestException("Player already in session")
+                    }
 
-            if (session.state == State.CLOSE) {
-                throw BadRequestException("Session is closed")
-            }
+                    if (session.playersSession.size.toUInt() == session.capacity) {
+                        throw BadRequestException("Session is full")
+                    }
 
-            sessionStorage.addPlayer(sid, pid)
-        }
+                    if (session.state == State.CLOSE) {
+                        throw BadRequestException("Session is closed")
+                    }
+
+                    sessionStorage.addPlayer(sid, pid)
+
+                }, Connection.TRANSACTION_SERIALIZABLE) // avoid write-skew anomaly
+
     }
 
     /**
@@ -105,8 +109,6 @@ class SessionsService(private val dataManager: SessionsDataManager) {
         }
 
     }
-
-
 
     /**
      * Updates a session
@@ -172,7 +174,6 @@ class SessionsService(private val dataManager: SessionsDataManager) {
      *
      * @throws NotFoundException If the session is not found
      */
-
     fun getSessionById(sid: UInt): Session {
         return dataManager.session.getById(sid) ?: throw NotFoundException("Session not found")
     }

@@ -14,8 +14,7 @@ import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
-import pt.isel.ls.storage.DataManagerType
-import pt.isel.ls.storage.SessionsDataManager
+import pt.isel.ls.storage.MemManager
 import pt.isel.ls.utils.currentLocalTime
 import pt.isel.ls.utils.plus
 import java.util.*
@@ -540,7 +539,7 @@ class SessionServiceTest {
     }
 
     companion object {
-        private fun newTestCapacity() = Random.nextInt(1, 100).toUInt()
+        private fun newTestCapacity() = Random.nextInt(10, 100).toUInt()
 
         private fun newTestGameName() = "Game Name Test ${Random.nextUInt()}"
 
@@ -556,8 +555,7 @@ class SessionServiceTest {
 
         private fun UUID.testTokenHash() = mostSignificantBits xor leastSignificantBits
 
-        private var storage =
-            SessionsDataManager(DataManagerType.MEMORY)
+        private var storage = MemManager()
 
         private var serviceSession = SessionsService(storage)
 

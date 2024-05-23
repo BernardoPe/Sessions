@@ -8,11 +8,21 @@ import pt.isel.ls.exceptions.NotFoundException
 import java.sql.Connection
 
 /**
- * Handles DB connections for multiple threads
+ * Handles DB connections and transactions for multiple threads
  *
  *
  * This class internally uses a [MutableMap] to store the connections for each thread
  * When a thread requests a connection, it will either return the existing connection or create a new one.
+ *
+ * The [setIsolationLevel] method is used to set the isolation level for the current connection
+ *
+ * The [begin] method is used to start a transaction for the current thread.
+ *
+ * The [abort] method is used to abort a transaction for the current thread.
+ *
+ * The [finish] method is used to finish a transaction for the current thread.
+ *
+ * The [handlePSQLException] method is used to handle a [PSQLException] and return the appropriate exception.
  *
  * The [closeAll] method is used to close all connections currently stored.
  *
@@ -62,10 +72,15 @@ object TransactionManager {
             connection.beginRequest()
         }
 
-    /**
-     * Aborts a transaction for the current thread
-     *
-     */
+        fun setIsolationLevel(dbUrl: String, isolationLevel: Int) {
+            val connection = getConnection(dbUrl)
+            connection.transactionIsolation = isolationLevel
+        }
+
+        /**
+         * Aborts a transaction for the current thread
+         *
+         */
 
         fun abort(dbUrl: String) {
                 val connection = getConnection(dbUrl)

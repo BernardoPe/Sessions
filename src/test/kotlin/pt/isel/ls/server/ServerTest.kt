@@ -25,7 +25,7 @@ import pt.isel.ls.dto.SessionSearchResultOutputModel
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
-import pt.isel.ls.storage.DataManagerType
+import pt.isel.ls.storage.MemManager
 import pt.isel.ls.storage.SessionsDataManager
 import pt.isel.ls.utils.currentLocalTime
 import pt.isel.ls.utils.plus
@@ -831,7 +831,7 @@ class ServerTest {
 
     companion object {
 
-        private var storage = SessionsDataManager(DataManagerType.MEMORY)
+        private var storage = MemManager()
 
         private var api = SessionsApi(
             PlayerService(storage),

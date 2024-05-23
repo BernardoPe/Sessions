@@ -3,7 +3,6 @@ package pt.isel.ls.storage.mem
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.primitives.Email
 import pt.isel.ls.data.domain.primitives.Name
-import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.storage.SessionsDataPlayer
 import java.util.*
 
@@ -12,7 +11,7 @@ import java.util.*
  *
  *  Player Data management class for the in-memory database
 */
-class SessionsDataMemPlayer : SessionsDataPlayer, MemManager() {
+class SessionsDataMemPlayer : SessionsDataPlayer, MemoryStorage() {
 
     private fun UUID.hash(): Long {
         return mostSignificantBits xor leastSignificantBits
@@ -31,15 +30,6 @@ class SessionsDataMemPlayer : SessionsDataPlayer, MemManager() {
     }
 
     override fun create(player: Player): Pair<UInt, UUID> {
-
-        if (playerDB.any { it.email == player.email }) {
-            throw BadRequestException("Given Player email already exists")
-        }
-
-        if (playerDB.any { it.name == player.name }) {
-            throw BadRequestException("Given Player name already exists")
-        }
-
         // Add the player object to the database mock
         val playerToken = UUID.randomUUID()
 

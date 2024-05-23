@@ -17,8 +17,7 @@ import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
-import pt.isel.ls.storage.DataManagerType
-import pt.isel.ls.storage.SessionsDataManager
+import pt.isel.ls.storage.MemManager
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -199,7 +198,7 @@ class GameEndpointsTest {
 
     companion object {
 
-        private var storage = SessionsDataManager(DataManagerType.MEMORY)
+        private var storage = MemManager()
 
         private var api = SessionsApi(PlayerService(storage), GameService(storage), SessionsService(storage))
 
