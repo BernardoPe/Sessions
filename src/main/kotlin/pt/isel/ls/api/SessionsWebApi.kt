@@ -98,7 +98,7 @@ class SessionsApi(
         Response(CREATED)
             .header("content-type", "application/json")
             .header("location", "/players/${res.first}")
-            .cookie(createCookie(null, res.second))
+            .cookie(createCookie(null, res.second.token))
             .body(Json.encodeToString(res.toPlayerCredentialsDTO()))
     }
 
@@ -124,7 +124,7 @@ class SessionsApi(
 
         Response(OK)
             .header("content-type", "application/json")
-            .cookie(createCookie(null, res.second))
+            .cookie(createCookie(null, res.second.token))
             .body(Json.encodeToString(res.toPlayerCredentialsDTO()))
     }
 

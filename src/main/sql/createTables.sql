@@ -15,8 +15,15 @@ create table players (
      id serial primary key,
      name varchar(60) unique not null,
      email varchar(40) unique not null check (email like '%_@_%.__%'),
-     token_hash int8 unique,
      password_hash varchar(60) unique not null
+);
+
+create table tokens
+(
+    token          VARCHAR(256) primary key,
+    player_id      int references players (id) on delete cascade not null,
+    timeCreation   timestamp                                     not null,
+    timeExpiration timestamp                                     not null
 );
 
 

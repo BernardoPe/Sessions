@@ -1,10 +1,13 @@
 package pt.isel.ls.storage.db
 
 import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.domain.player.Token
 import pt.isel.ls.data.domain.primitives.Email
 import pt.isel.ls.data.domain.primitives.Name
 import pt.isel.ls.data.domain.primitives.PasswordHash
 import pt.isel.ls.storage.SessionsDataPlayer
+import pt.isel.ls.utils.toTimestamp
+import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Statement
 import java.util.*
@@ -12,41 +15,32 @@ import java.util.*
 class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL) {
 
     @Suppress("UNCHECKED_CAST")
-    override fun create(player: Player): Pair<UInt, UUID> = execQuery { connection ->
+    override fun create(player: Player): Pair<UInt, Token> = execQuery { connection ->
 
 
         val statement = connection.prepareStatement(
-            "INSERT INTO players (name, email, token_hash, password_hash) VALUES (?, ?, ?, ?)",
+            "INSERT INTO players (name, email, password_hash) VALUES (?, ?, ?)",
             Statement.RETURN_GENERATED_KEYS,
         )
 
-        val token = UUID.randomUUID()
-
         statement.setString(1, player.name.toString())
         statement.setString(2, player.email.toString())
-        statement.setLong(3, token.hash())
-        statement.setString(4, player.password.toString())
+        statement.setString(3, player.password.toString())
         statement.executeUpdate()
 
         val generatedKeys = statement.generatedKeys
         generatedKeys.next()
-        Pair(generatedKeys.getInt(1).toUInt(), token)
 
-    } as Pair<UInt, UUID>
+        val playerId = generatedKeys.getInt(1).toUInt()
+
+        Pair(playerId, tokenCreation(connection, generatedKeys.getInt(1).toUInt()))
+
+    } as Pair<UInt, Token>
 
     @Suppress("UNCHECKED_CAST")
-    override fun login(id: UInt): Pair<UInt, UUID> = execQuery { connection ->
-        val token = UUID.randomUUID()
-
-        val updateStatement = connection.prepareStatement(
-            "UPDATE players SET token_hash = ? WHERE id = ?",
-        )
-        updateStatement.setLong(1, token.hash())
-        updateStatement.setInt(2, id.toInt())
-        updateStatement.executeUpdate()
-
-        Pair(id, token)
-    } as Pair<UInt, UUID>
+    override fun login(id: UInt): Pair<UInt, Token> = execQuery { connection ->
+        Pair(id, tokenCreation(connection, id))
+    } as Pair<UInt, Token>
 
     override fun getById(id: UInt): Player? = execQuery { connection ->
         val statement = connection.prepareStatement(
@@ -114,6 +108,7 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
 
         } as Pair<List<Player>, Int>
 
+    // Redundant query
     override fun update(id: UInt, value: Player): Boolean = execQuery { connection ->
         val statement = connection.prepareStatement(
             "UPDATE players SET name = ?, email = ? WHERE id = ?",
@@ -127,6 +122,7 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         updated > 0
     } as Boolean
 
+    // Redundant query
     override fun delete(id: UInt): Boolean = execQuery { connection ->
 
         val statement = connection.prepareStatement(
@@ -141,31 +137,28 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
 
     override fun getByToken(token: UUID): Player? = execQuery { connection ->
         val statement = connection.prepareStatement(
-            "SELECT * FROM players WHERE token_hash = ?",
+            "SELECT players.* " +
+                    "FROM players " +
+                    "JOIN tokens ON players.id = tokens.player_id " +
+                    "WHERE tokens.token = ?;",
         )
 
-        statement.setLong(1, token.hash())
+        statement.setString(1, token.toString())
         val resultSet = statement.executeQuery()
 
         resultSet.getPlayers().firstOrNull().also { statement.close() }
     } as Player?
 
-    override fun revokeToken(token: UUID): Boolean {
-        return execQuery { connection ->
-            val statement = connection.prepareStatement(
-                "UPDATE players SET token_hash = NULL WHERE token_hash = ?",
-            )
+    override fun revokeToken(token: UUID): Boolean = execQuery { connection ->
+        val statement = connection.prepareStatement(
+            "DELETE FROM tokens WHERE token = ?",
+        )
 
-            statement.setLong(1, token.hash())
-            val updated = statement.executeUpdate()
+        statement.setString(1, token.toString())
+        val updated = statement.executeUpdate()
 
-            updated > 0
-        } as Boolean
-    }
-
-    private fun UUID.hash(): Long {
-        return leastSignificantBits xor mostSignificantBits
-    }
+        updated > 0
+    } as Boolean
 
     private fun ResultSet.getPlayers(): List<Player> {
         val players = mutableListOf<Player>()
@@ -174,11 +167,26 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
                 this.getInt("id").toUInt(),
                 Name(this.getString("name")),
                 Email(this.getString("email")),
-                this.getString("token_hash").toLong(),
                 PasswordHash(this.getString("password_hash"))
             )
         }
         return players
+    }
+
+    private fun tokenCreation(connection: Connection, playerId: UInt): Token {
+        val statement = connection.prepareStatement(
+            "INSERT INTO tokens (token, player_id, timeCreation, timeExpiration) VALUES (?, ?, ?, ?)",
+        )
+
+        val token = Token(UUID.randomUUID(), playerId)
+
+        statement.setString(1, token.token.toString())
+        statement.setInt(2, token.playerId.toInt())
+        statement.setTimestamp(3, token.timeCreation.toTimestamp())
+        statement.setTimestamp(3, token.timeExpiration.toTimestamp())
+        statement.executeUpdate()
+
+        return token
     }
 
 }

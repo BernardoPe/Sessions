@@ -2,6 +2,7 @@ package pt.isel.ls.services
 
 import org.mindrot.jbcrypt.BCrypt
 import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.domain.player.Token
 import pt.isel.ls.data.domain.primitives.Email
 import pt.isel.ls.data.domain.primitives.Name
 import pt.isel.ls.data.domain.primitives.Password
@@ -36,7 +37,7 @@ class PlayerService(val storage: SessionsDataManager) {
         // This is line of code uses the JBCrypt library to hash the password
         val hashedPassword = BCrypt.hashpw(password.toString(), BCrypt.gensalt(12))
 
-        val player = Player(0u, name, email, 0L, PasswordHash(hashedPassword))
+        val player = Player(0u, name, email, PasswordHash(hashedPassword))
 
         return storagePlayer.create(player)
     }
@@ -52,11 +53,12 @@ class PlayerService(val storage: SessionsDataManager) {
      * @throws BadRequestException If the player password is incorrect
      */
     fun loginPlayer(name: Name, password: Password): PlayerCredentials {
+
         val playerStorage = storage.player
 
-//        if (name == null) {
-//            throw BadRequestException("Name must be provided")
-//        }
+        if (name.toString() == "") {
+            throw BadRequestException("Name must be provided")
+        }
 
         val player = playerStorage.getPlayersSearch(name = name, 1u, 0u).first.first()
 
@@ -64,6 +66,8 @@ class PlayerService(val storage: SessionsDataManager) {
             throw NotFoundException("Given player name not Found")
         }
 
+        /* This line of code uses the JBCrypt library to match the password
+            and the hashed password that was stored on the database */
         if (BCrypt.checkpw(password.toString(), player.password.toString())) {
             throw BadRequestException("Given Player password is incorrect")
         }
@@ -119,4 +123,4 @@ class PlayerService(val storage: SessionsDataManager) {
 
 typealias PlayerList = List<Player>
 
-typealias PlayerCredentials = Pair<UInt, UUID>
+typealias PlayerCredentials = Pair<UInt, Token>

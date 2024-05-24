@@ -1,6 +1,7 @@
 package pt.isel.ls.storage
 
 import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.domain.player.Token
 import pt.isel.ls.data.domain.primitives.Email
 import pt.isel.ls.data.domain.primitives.Name
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
@@ -25,7 +26,7 @@ interface SessionsDataPlayer {
      * @param player The [Player] object to be created
      * @return A pair with the last identifier and a new UUID
      */
-    fun create(player: Player): Pair<UInt, UUID>
+    fun create(player: Player): Pair<UInt, Token>
 
     /**
      * Read a player from the database
@@ -88,7 +89,21 @@ interface SessionsDataPlayer {
      * @param password The player password
      * @return A pair with the player identifier and a new UUID
      */
-    fun login(id: UInt): Pair<UInt, UUID>
+    fun login(id: UInt): Pair<UInt, Token>
 
+    /**
+     * Revoke a player token
+     *
+     * @param token The player token to be revoked
+     * @return A boolean indicating if the player token was revoked
+     */
     fun revokeToken(token: UUID): Boolean
+
+    /**
+     * Fun to update the player token
+     *
+     * @param token The player token to be updated
+     * @return A new UUID
+     */
+    //fun renovateToken(token: Token): UUID
 }

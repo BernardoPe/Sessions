@@ -36,7 +36,7 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
 
     override fun getById(id: UInt): Session? = execQuery { connection ->
         val statement = connection.prepareStatement(
-            "SELECT sessions.id as sid, sessions.game_id as gid, date, capacity, games.name as gname, genres, developer, players.id as pid, players.name as pname, email, token_hash FROM sessions " +
+            "SELECT sessions.id as sid, sessions.game_id as gid, date, capacity, games.name as gname, genres, developer, players.id as pid, players.name as pname, email, password_hash FROM sessions " +
                 "JOIN games ON sessions.game_id = games.id " +
                 "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
                 "LEFT JOIN players ON sessions_players.player_id = players.id " +
@@ -119,7 +119,7 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
             val resultSet = statement.executeQuery()
             val countResultSet = countStatement.executeQuery()
             val sessionStmt = connection.prepareStatement(
-                "SELECT sessions.id as sid, sessions.game_id as gid, date, capacity, games.name as gname, genres, developer, players.id as pid, players.name as pname, email, token_hash FROM sessions " +
+                "SELECT sessions.id as sid, sessions.game_id as gid, date, capacity, games.name as gname, genres, developer, players.id as pid, players.name as pname, email, password_hash FROM sessions " +
                         "JOIN games ON sessions.game_id = games.id " +
                         "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
                         "LEFT JOIN players ON sessions_players.player_id = players.id " +
@@ -252,7 +252,6 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
             this.getInt("pid").toUInt(),
             this.getString("pname").toName(),
             this.getString("email").toEmail(),
-            this.getLong("token_hash"),
             this.getString("password_hash").toPasswordHash()
         )
     }
