@@ -15,7 +15,7 @@ import java.util.*
  *  Player Data management class for the in-memory database
 */
 class SessionsDataMemPlayer : SessionsDataPlayer, MemManager() {
-    override fun getPlayerByToken(token: UUID): Player? {
+    override fun getPlayerAndToken(token: UUID): Player? {
         return tokenDB.find { tokens -> tokens.token == token }?.let {
             playerDB.find { player -> player.id == it.playerId }
         }

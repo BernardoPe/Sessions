@@ -148,20 +148,15 @@ class SessionsApi(
             }
         }
 
-        val player = playerServices.authenticatePlayer(token)
+        val playerAndToken = playerServices.authenticatePlayer(token)
 
-        if (player != null) {
-            // Always renew the token
-            val newToken = playerServices.renovateToken(token)
-            // Replace the old token with the new one in the request or the same token if it was not expired
-            request.header("Authorization", "Bearer ${newToken.token}")
-
-            return Response(OK)
+        return if (playerAndToken != null) {
+            Response(OK)
                 .header("content-type", "application/json")
-                .cookie(createCookie(null, token))
-                .body(Json.encodeToString(player.toPlayerInfoDTO()))
+                .cookie(createCookie(null, playerAndToken.second.token))
+                .body(Json.encodeToString(playerAndToken.first.toPlayerInfoDTO()))
         } else {
-            return Response(UNAUTHORIZED)
+            Response(UNAUTHORIZED)
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(UnauthorizedException()))
         }

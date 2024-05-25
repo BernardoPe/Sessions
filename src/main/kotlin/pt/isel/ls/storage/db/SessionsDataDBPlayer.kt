@@ -136,9 +136,10 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         deleted > 0
     } as Boolean
 
-    override fun getPlayerByToken(token: UUID): Player? = execQuery { connection ->
+    @Suppress("UNCHECKED_CAST")
+    override fun getPlayerAndToken(token: UUID): Pair<Player, Token>? = execQuery { connection ->
         val statement = connection.prepareStatement(
-            "SELECT players.* " +
+            "SELECT * " +
                     "FROM players " +
                     "JOIN tokens ON players.id = tokens.player_id " +
                     "WHERE tokens.token = ?;",
@@ -147,30 +148,26 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         statement.setString(1, token.toString())
         val resultSet = statement.executeQuery()
 
-        resultSet.getPlayers().firstOrNull().also { statement.close() }
-    } as Player?
+        if (resultSet.next()) {
+            val playerObj = Player(
+                resultSet.getInt("id").toUInt(),
+                Name(resultSet.getString("name")),
+                Email(resultSet.getString("email")),
+                PasswordHash(resultSet.getString("password_hash"))
+            )
 
-    override fun getToken(token: UUID): Token? = execQuery { connection ->
-        val statement = connection.prepareStatement(
-            "SELECT * FROM tokens WHERE token = ?",
-        )
-
-        statement.setString(1, token.toString())
-        val resultSet = statement.executeQuery()
-
-        val resultToken = if (resultSet.next()) {
-            Token(
+            val tokenObj = Token(
                 UUID.fromString(resultSet.getString("token")),
                 resultSet.getInt("player_id").toUInt(),
                 resultSet.getTimestamp("timeCreation").toLocalDateTime().toKotlinLocalDateTime(),
                 resultSet.getTimestamp("timeExpiration").toLocalDateTime().toKotlinLocalDateTime()
             )
+            Pair(playerObj, tokenObj).also { statement.close() }
         } else {
+            statement.close()
             null
         }
-        statement.close()
-        resultToken
-    } as Token?
+    } as Pair<Player, Token>?
 
     override fun revokeToken(token: UUID): Boolean = execQuery { connection ->
         val statement = connection.prepareStatement(

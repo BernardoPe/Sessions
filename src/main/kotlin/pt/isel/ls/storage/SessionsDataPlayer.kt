@@ -74,20 +74,12 @@ interface SessionsDataPlayer {
     fun delete(id: UInt): Boolean
 
     /**
-     * Checks the player's token on the database
+     * Get a player and its token object
      *
-     * @param token The player token to be checked
-     * @return A boolean indicating if the player token exists in the database mock
+     * @param token The player token identifier
+     * @return A pair with the player and its token objects
      */
-    fun getPlayerByToken(token: UUID): Player?
-
-    /**
-     * Get the player token object by the actual token
-     *
-     * @param token The player token
-     * @return The player token object
-     */
-    fun getToken(token: UUID): Token?
+    fun getPlayerAndToken(token: UUID): Pair<Player, Token>?
 
     /**
      * Login a player
