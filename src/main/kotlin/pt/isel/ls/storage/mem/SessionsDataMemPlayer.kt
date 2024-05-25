@@ -15,15 +15,14 @@ import java.util.*
  *  Player Data management class for the in-memory database
 */
 class SessionsDataMemPlayer : SessionsDataPlayer, MemManager() {
-
-    private fun UUID.hash(): Long {
-        return mostSignificantBits xor leastSignificantBits
-    }
-
-    override fun getByToken(token: UUID): Player? {
+    override fun getPlayerByToken(token: UUID): Player? {
         return tokenDB.find { tokens -> tokens.token == token }?.let {
             playerDB.find { player -> player.id == it.playerId }
         }
+    }
+
+    override fun getToken(token: UUID): Token? {
+        return tokenDB.find { it.token == token }
     }
 
     override fun revokeToken(token: UUID): Boolean {

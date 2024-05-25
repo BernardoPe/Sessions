@@ -2,7 +2,6 @@ package pt.isel.ls.storage
 
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.player.Token
-import pt.isel.ls.data.domain.primitives.Email
 import pt.isel.ls.data.domain.primitives.Name
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import java.util.*
@@ -80,7 +79,15 @@ interface SessionsDataPlayer {
      * @param token The player token to be checked
      * @return A boolean indicating if the player token exists in the database mock
      */
-    fun getByToken(token: UUID): Player?
+    fun getPlayerByToken(token: UUID): Player?
+
+    /**
+     * Get the player token object by the actual token
+     *
+     * @param token The player token
+     * @return The player token object
+     */
+    fun getToken(token: UUID): Token?
 
     /**
      * Login a player
@@ -98,12 +105,4 @@ interface SessionsDataPlayer {
      * @return A boolean indicating if the player token was revoked
      */
     fun revokeToken(token: UUID): Boolean
-
-    /**
-     * Fun to update the player token
-     *
-     * @param token The player token to be updated
-     * @return A new UUID
-     */
-    //fun renovateToken(token: Token): UUID
 }

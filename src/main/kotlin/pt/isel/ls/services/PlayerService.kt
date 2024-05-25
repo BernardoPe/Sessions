@@ -86,13 +86,41 @@ class PlayerService(val storage: SessionsDataManager) {
     }
 
     /**
+     * Renovates a player token
+     *
+     * @param token The player token
+     * @return The new [Token] object
+     *
+     * @throws NotFoundException If the token is not found
+     */
+    fun renovateToken(token: UUID): Token {
+        // Retrieve the token from the database
+        val existingToken = storage.player.getToken(token)
+
+        // Check if the token is expired
+        if (existingToken?.isExpired() == true) {
+            // Delete the expired token from the database
+            storage.player.revokeToken(token)
+
+            // Create a new token for the same player
+            val newToken = storage.player.login(existingToken.playerId)
+
+            // Return the new token
+            return newToken.second
+        }
+
+        // If the token is not expired, return the existing token
+        return existingToken ?: throw NotFoundException("Token not found")
+    }
+
+    /**
      * Authenticates a player
      *
      * @param token The player token
      * @return The [Player] instance
      */
     fun authenticatePlayer(token: UUID): Player? {
-        return storage.player.getByToken(token)
+        return storage.player.getPlayerByToken(token)
     }
 
     /**

@@ -63,3 +63,16 @@ fun LocalDateTime.isBefore(other: LocalDateTime) = this < other
  * @return True if the [LocalDateTime] is after the other [LocalDateTime], false otherwise
  */
 fun LocalDateTime.isAfter(other: LocalDateTime) = this > other
+
+/**
+ * Calculates the difference between two [LocalDateTime] instances.
+ *
+ * @param start The start [LocalDateTime]
+ * @param end The end [LocalDateTime]
+ * @return The [Duration] between the two [LocalDateTime] instances
+ */
+fun between(start: LocalDateTime, end: LocalDateTime): Duration {
+    val startInstant = start.toInstant(TimeZone.currentSystemDefault())
+    val endInstant = end.toInstant(TimeZone.currentSystemDefault())
+    return endInstant - startInstant
+}

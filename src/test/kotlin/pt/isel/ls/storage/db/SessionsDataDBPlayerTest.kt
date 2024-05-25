@@ -145,7 +145,7 @@ class SessionsDataDBPlayerTest {
         val player = Player(0u, Name(testName), Email(testEmail), testToken)
         val (id, token) = sessionsDataDBPlayer.create(player)
         // Act
-        val retrievedPlayer = sessionsDataDBPlayer.getByToken(token)
+        val retrievedPlayer = sessionsDataDBPlayer.getPlayerByToken(token)
         // Assert
         assertNotNull(retrievedPlayer)
         assertEquals(player.name, retrievedPlayer?.name)
@@ -157,7 +157,7 @@ class SessionsDataDBPlayerTest {
     @Test
     fun `get non-existent player by token`() {
         // Act
-        val retrievedPlayer = sessionsDataDBPlayer.getByToken(UUID.randomUUID())
+        val retrievedPlayer = sessionsDataDBPlayer.getPlayerByToken(UUID.randomUUID())
         // Assert
         assertNull(retrievedPlayer)
     }
@@ -168,7 +168,7 @@ class SessionsDataDBPlayerTest {
         val player = Player(0u, Name(testName), Email(testEmail), testToken)
         val (id) = sessionsDataDBPlayer.create(player)
         // Act
-        val retrievedPlayer = sessionsDataDBPlayer.getByToken(UUID.randomUUID())
+        val retrievedPlayer = sessionsDataDBPlayer.getPlayerByToken(UUID.randomUUID())
         // Assert
         assertNull(retrievedPlayer)
         // Clean up
@@ -178,7 +178,7 @@ class SessionsDataDBPlayerTest {
     @Test
     fun `get player by non-existent token and non-existent player`() {
         // Act
-        val retrievedPlayer = sessionsDataDBPlayer.getByToken(UUID.randomUUID())
+        val retrievedPlayer = sessionsDataDBPlayer.getPlayerByToken(UUID.randomUUID())
         // Assert
         assertNull(retrievedPlayer)
     }
@@ -192,7 +192,7 @@ class SessionsDataDBPlayerTest {
         sessionsDataDBPlayer.update(player.id, updatedPlayer)
         sessionsDataDBPlayer.delete(id)
         // Act
-        val retrievedPlayer = sessionsDataDBPlayer.getByToken(token)
+        val retrievedPlayer = sessionsDataDBPlayer.getPlayerByToken(token)
         // Assert
         assertNull(retrievedPlayer)
     }

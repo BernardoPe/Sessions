@@ -1,5 +1,6 @@
 package pt.isel.ls.storage.db
 
+import kotlinx.datetime.toKotlinLocalDateTime
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.player.Token
 import pt.isel.ls.data.domain.primitives.Email
@@ -135,7 +136,7 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         deleted > 0
     } as Boolean
 
-    override fun getByToken(token: UUID): Player? = execQuery { connection ->
+    override fun getPlayerByToken(token: UUID): Player? = execQuery { connection ->
         val statement = connection.prepareStatement(
             "SELECT players.* " +
                     "FROM players " +
@@ -148,6 +149,28 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
 
         resultSet.getPlayers().firstOrNull().also { statement.close() }
     } as Player?
+
+    override fun getToken(token: UUID): Token? = execQuery { connection ->
+        val statement = connection.prepareStatement(
+            "SELECT * FROM tokens WHERE token = ?",
+        )
+
+        statement.setString(1, token.toString())
+        val resultSet = statement.executeQuery()
+
+        val resultToken = if (resultSet.next()) {
+            Token(
+                UUID.fromString(resultSet.getString("token")),
+                resultSet.getInt("player_id").toUInt(),
+                resultSet.getTimestamp("timeCreation").toLocalDateTime().toKotlinLocalDateTime(),
+                resultSet.getTimestamp("timeExpiration").toLocalDateTime().toKotlinLocalDateTime()
+            )
+        } else {
+            null
+        }
+        statement.close()
+        resultToken
+    } as Token?
 
     override fun revokeToken(token: UUID): Boolean = execQuery { connection ->
         val statement = connection.prepareStatement(

@@ -22,6 +22,8 @@ import kotlin.time.Duration.Companion.days
 data class Token(
     val token: UUID,
     val playerId: UInt,
-    val timeCreation: LocalDateTime = currentLocalTime(),
+    val timeCreation: LocalDateTime = currentLocalTime(), // This property may be redundant
     val timeExpiration: LocalDateTime = timeCreation + 1.days // Can be changed for any expiration time
-)
+) {
+    fun isExpired(): Boolean = timeExpiration < currentLocalTime()
+}

@@ -47,6 +47,8 @@ import pt.isel.ls.logger
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
+import pt.isel.ls.utils.between
+import pt.isel.ls.utils.currentLocalTime
 import pt.isel.ls.utils.toLocalDateTime
 import pt.isel.ls.utils.toUInt
 import java.net.URLDecoder
@@ -135,8 +137,7 @@ class SessionsApi(
      * @throws BadRequestException If the request is invalid
      */
 
-    fun authPlayer(request: Request) = processRequest(request) {
-
+    fun authPlayer(request: Request): Response {
         var token = request.header("Authorization")?.split(" ")?.get(1)?.let { UUID.fromString(it) }
 
         if (token == null) {
@@ -150,12 +151,17 @@ class SessionsApi(
         val player = playerServices.authenticatePlayer(token)
 
         if (player != null) {
-            Response(OK)
+            // Always renew the token
+            val newToken = playerServices.renovateToken(token)
+            // Replace the old token with the new one in the request or the same token if it was not expired
+            request.header("Authorization", "Bearer ${newToken.token}")
+
+            return Response(OK)
                 .header("content-type", "application/json")
                 .cookie(createCookie(null, token))
                 .body(Json.encodeToString(player.toPlayerInfoDTO()))
         } else {
-            Response(UNAUTHORIZED)
+            return Response(UNAUTHORIZED)
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(UnauthorizedException()))
         }
