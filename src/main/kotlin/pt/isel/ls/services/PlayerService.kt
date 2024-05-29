@@ -75,7 +75,7 @@ class PlayerService(private val dataManager: SessionsDataManager) {
 
         /* This line of code uses the JBCrypt library to match the password
             and the hashed password that was stored on the database */
-        if (BCrypt.checkpw(password.toString(), player.password.toString())) {
+        if (!BCrypt.checkpw(password.toString(), player.password.toString())) {
             throw BadRequestException("Given Player password is incorrect")
         }
 
