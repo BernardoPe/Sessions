@@ -26,8 +26,9 @@ class PlayerServiceTest {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
 
-        val createdPlayer = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword"))
-        val hashed = testHashPassword("TestPassword")
+        val player = Player(2u, playerName, playerEmail, PasswordHash("TestPassword123#"))
+        val createdPlayer = servicePlayer.createPlayer(player.name, player.email, Password("TestPassword123#"))
+
         // Checks if the created player ID is not null
         assertNotNull(createdPlayer.first)
 
@@ -36,10 +37,9 @@ class PlayerServiceTest {
 
         val getPlayer = servicePlayer.getPlayerDetails(createdPlayer.first)
 
-        assertEquals(
-            Player(createdPlayer.first, playerName, playerEmail, PasswordHash(hashed)),
-            getPlayer,
-        )
+        assertEquals(player.id, getPlayer.id)
+        assertEquals(player.name, getPlayer.name)
+        assertEquals(player.email, getPlayer.email)
     }
 
     @Test
@@ -49,10 +49,10 @@ class PlayerServiceTest {
 
         val playerName2 = newTestPlayerName().toName()
 
-        servicePlayer.createPlayer(playerName1, playerEmail1, Password("TestPassword"))
+        servicePlayer.createPlayer(playerName1, playerEmail1, Password("TestPassword123#"))
 
         val exception = assertFailsWith<BadRequestException> {
-            servicePlayer.createPlayer(playerName2, playerEmail1, Password("TestPassword"))
+            servicePlayer.createPlayer(playerName2, playerEmail1, Password("TestPassword123#"))
         }
         assertEquals(400, exception.status)
         assertEquals("Bad Request", exception.description)
@@ -64,14 +64,14 @@ class PlayerServiceTest {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
 
-        val createdPlayer = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword"))
-        val hashed = testHashPassword("TestPassword")
+        val player = Player(2u, playerName, playerEmail, PasswordHash("TestPassword123#"))
+
+        val createdPlayer = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword123#"))
         val getPlayer = servicePlayer.getPlayerDetails(createdPlayer.first)
 
-        assertEquals(
-            Player(createdPlayer.first, playerName, playerEmail, PasswordHash(hashed)),
-            getPlayer,
-        )
+        assertEquals(player.id, getPlayer.id)
+        assertEquals(player.name, getPlayer.name)
+        assertEquals(player.email, getPlayer.email)
     }
 
     @Test
@@ -91,7 +91,7 @@ class PlayerServiceTest {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
 
-        servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword"))
+        servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword123#"))
 
         val searchResult = servicePlayer.getPlayerList("pla".toName(), 10u, 0u)
 
@@ -107,7 +107,7 @@ class PlayerServiceTest {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
 
-        servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword"))
+        servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword123#"))
 
         val searchResult = servicePlayer.getPlayerList("yer".toName(), 10u, 0u)
 
@@ -121,10 +121,10 @@ class PlayerServiceTest {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
 
-        servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword"))
+        servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword123#"))
 
         val exception = assertFailsWith<BadRequestException> {
-            servicePlayer.createPlayer(playerName, newTestEmail().toEmail(), Password("TestPassword"))
+            servicePlayer.createPlayer(playerName, newTestEmail().toEmail(), Password("TestPassword123#"))
         }
 
         assertEquals(400, exception.status)

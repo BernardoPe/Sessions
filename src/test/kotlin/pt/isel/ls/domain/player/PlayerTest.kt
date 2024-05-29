@@ -12,23 +12,24 @@ class PlayerTest {
 
     @Test
     fun `Player creation should succeed when all parameters are valid`() {
-        val player = Player(1u, "Test Player".toName(), "testplayer@example.com".toEmail(), PasswordHash("TestPassword"))
+        val player = Player(1u, "Test Player".toName(), "testplayer@example.com".toEmail(), PasswordHash("TestPassword123#"))
         assertEquals(1u, player.id)
         assertEquals("Test Player".toName(), player.name)
         assertEquals("testplayer@example.com".toEmail(), player.email)
+        assertEquals(PasswordHash("TestPassword123#"), player.password)
     }
 
     @Test
     fun `Player creation should fail when name is empty`() {
         assertFailsWith<IllegalArgumentException> {
-            Player(1u, "".toName(), "testplayer@example.com".toEmail(), PasswordHash("TestPassword"))
+            Player(1u, "".toName(), "testplayer@example.com".toEmail(), PasswordHash("TestPassword123#"))
         }
     }
 
     @Test
     fun `Player creation should fail when email is empty`() {
         assertFailsWith<IllegalArgumentException> {
-            Player(1u, "Test Player".toName(), "".toEmail(), PasswordHash("TestPassword"))
+            Player(1u, "Test Player".toName(), "".toEmail(), PasswordHash("TestPassword123#"))
         }
     }
 }

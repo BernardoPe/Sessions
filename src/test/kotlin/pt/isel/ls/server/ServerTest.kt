@@ -38,7 +38,7 @@ class ServerTest {
         // Arrange
         val request = Request(Method.POST, "/players")
             .header("Content-Type", "application/json")
-            .body("""{"name":"Test","email":"Testemail@test.pt"}""")
+            .body("""{"name":"Test","email":"Testemail@test.pt","password":"TestPassword123#"}""")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
@@ -46,11 +46,11 @@ class ServerTest {
     }
 
     @Test
-    fun `test create player name taken`() {
+    fun `test create player credentials taken`() {
         // Arrange
         val request = Request(Method.POST, "/players")
             .header("Content-Type", "application/json")
-            .body("""{"name":"Test","email":"Testemail@test.pt"}""")
+            .body("""{"name":"Test","email":"Testemail@test.pt","password":"TestPassword123#"}""")
         // Act
         server.sessionsHandler(request)
         val response = server.sessionsHandler(request)
@@ -63,7 +63,7 @@ class ServerTest {
         // Arrange
         val request = Request(Method.POST, "/players")
             .header("Content-Type", "application/json")
-            .body("""{"name":"TestName","email":"Test.com"}""")
+            .body("""{"name":"TestName","email":"Test.com"},"password":"TestPassword123#"}""")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
@@ -75,7 +75,7 @@ class ServerTest {
         // Arrange
         val request = Request(Method.POST, "/players")
             .header("Content-Type", "application/json")
-            .body("""{"name":"TestName","email":"testemail@test.pt"}""")
+            .body("""{"name":"TestName","email":"testemail@test.pt","password":"TestPassword123#"}""")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
@@ -87,7 +87,7 @@ class ServerTest {
         // Arrange
         val request = Request(Method.POST, "/players")
             .header("Content-Type", "application/json")
-            .body("""{"name":"","email":""}""")
+            .body("""{"name":"","email":"","password":""}""")
         // Act
         val response = server.sessionsHandler(request)
         // Assert
@@ -853,8 +853,8 @@ class ServerTest {
             val mockSession = Session(1u, 100u, testDate1, mockGame2, setOf())
             val mockSession2 = Session(2u, 100u, testDate2, mockGame2, setOf())
 
-            val mockPlayer = Player(2u, "TestName".toName(), "testemail@test.pt".toEmail(), PasswordHash("TestPassword"))
-            val mockPlayer2 = Player(3u, "TestName2".toName(), "testemail2@test.pt".toEmail(), PasswordHash("TestPassword"))
+            val mockPlayer = Player(2u, "TestName".toName(), "testemail@test.pt".toEmail(), PasswordHash("TestPassword123#"))
+            val mockPlayer2 = Player(3u, "TestName2".toName(), "testemail2@test.pt".toEmail(), PasswordHash("TestPassword123#"))
 
             storage.game.create(mockGame)
             storage.game.create(mockGame2)

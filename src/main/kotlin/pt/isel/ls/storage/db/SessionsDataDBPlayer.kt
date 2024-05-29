@@ -218,7 +218,7 @@ class SessionsDataDBPlayer(private val dbURL: String) : SessionsDataPlayer {
         statement.setString(1, token.token.toString())
         statement.setInt(2, token.playerId.toInt())
         statement.setTimestamp(3, token.timeCreation.toTimestamp())
-        statement.setTimestamp(3, token.timeExpiration.toTimestamp())
+        statement.setTimestamp(4, token.timeExpiration.toTimestamp())
         statement.executeUpdate()
 
         return token

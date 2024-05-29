@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.primitives.Genre
+import pt.isel.ls.data.domain.primitives.PasswordHash
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.mapper.toEmail
 import pt.isel.ls.data.mapper.toName
@@ -332,7 +333,7 @@ class SessionsDataDBSessionTest {
         val sid = sessionDB.create(session)
         session = session.copy(id = sid)
         // Player
-        var player = Player(0u, testName, testEmail, 10L)
+        var player = Player(0u, testName, testEmail, PasswordHash("testPassword"))
         val pid = playerDB.create(player)
         player = player.copy(id = pid.first)
         // Add player to session
