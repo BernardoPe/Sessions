@@ -15,7 +15,7 @@ data class Password(val password: String) {
         require(password.any { it.isDigit() }) {
             "The password must contain at least one digit"
         }
-        require(password.any { it.isWhitespace() }) {
+        require(password.none { it.isWhitespace() }) {
             "The password must not contain any whitespace"
         }
         require(password.any { !it.isLetterOrDigit() }) {
