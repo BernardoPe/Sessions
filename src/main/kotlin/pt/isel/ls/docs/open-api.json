@@ -1583,7 +1583,7 @@
       }
     },
     "/logout": {
-      "post": {
+      "get": {
         "summary": "Logout user",
         "security": [
           {
@@ -1608,7 +1608,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Invalid Auth",
             "content": {
               "application/json": {
                 "schema": {
@@ -1624,7 +1624,31 @@
                     },
                     "errorCause": {
                       "type": "string",
-                      "example": "Invalid token"
+                      "example": "Invalid Auth"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No Authorization provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Bad Request"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "No Authorization provided"
                     }
                   }
                 }
