@@ -147,6 +147,43 @@ class PlayerEndpointsTest {
         assertEquals(2, playerSearch.total)
     }
 
+    @Test
+    fun `test authPlayer should give unauthorized`() {
+        // Arrange
+        val request = Request(Method.POST, "/auth")
+            .header("Content-Type", "application/json")
+            .body("""{"email":"test@test.com","password":"TestPassword1!"}""")
+        // Act
+        val response = api.authPlayer(request)
+        // Assert
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.UNAUTHORIZED)
+    }
+
+    @Test
+    fun `test authPlayer should give bad request`() {
+        // Arrange
+        val request = Request(Method.POST, "/auth")
+            .header("Content-Type", "application/json")
+            .body("""{"email":"test@etst.com"}""")
+        // Act
+        val response = api.authPlayer(request)
+        // Assert
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.UNAUTHORIZED)
+    }
+
+    @Test
+    fun `test playerLogout should give unauthorized`() {
+        // Arrange
+        val request = Request(Method.POST, "/logout")
+        // Act
+        val response = api.playerLogout(request)
+        // Assert
+        assertEquals(response.header("Content-Type"), "application/json")
+        assertEquals(response.status, Status.UNAUTHORIZED)
+    }
+
     @BeforeEach
     fun clear() {
         storage.close()
