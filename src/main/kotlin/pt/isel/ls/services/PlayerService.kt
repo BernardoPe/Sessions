@@ -34,6 +34,13 @@ class PlayerService(private val dataManager: SessionsDataManager) {
      * @throws BadRequestException If the player name or email already exists in the system
      */
     fun createPlayer(name: Name, email: Email, password: Password): PlayerCredentials {
+        if (playerStorage.isEmailStored(email)) {
+            throw BadRequestException("Given Player email already exists")
+        }
+
+        if (playerStorage.isNameStored(name)) {
+            throw BadRequestException("Given Player name already exists")
+        }
 
         // This is line of code uses the JBCrypt library to hash the password
         val hashedPassword = BCrypt.hashpw(password.toString(), BCrypt.gensalt(12))
