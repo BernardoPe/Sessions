@@ -36,7 +36,7 @@ class NotImplementedException : SessionsExceptions(NOT_IMPLEMENTED.code, "Not Im
  */
 
 @Serializable
-class InternalServerErrorException() :
+class InternalServerErrorException :
     SessionsExceptions(Status.INTERNAL_SERVER_ERROR.code, "Internal Server Error", null)
 
 /**

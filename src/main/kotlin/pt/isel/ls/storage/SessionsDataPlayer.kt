@@ -91,10 +91,15 @@ interface SessionsDataPlayer {
     fun login(id: UInt): Pair<UInt, Token>
 
     /**
-     * Revoke a player token
-     *
-     * @param token The player token to be revoked
-     * @return A boolean indicating if the player token was revoked
+     * Checks if the player's email is stored in the database
      */
+    fun isEmailStored(email: Email): Boolean
+
+    /**
+     * Checks if the player's name is stored in the database
+     */
+    fun isNameStored(name: Name): Boolean
+
+
     fun revokeToken(token: UUID): Boolean
 }

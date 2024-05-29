@@ -7,7 +7,6 @@ import pt.isel.ls.storage.mem.SessionsDataMemGame
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import pt.isel.ls.storage.mem.SessionsDataMemSession
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class DataManagerTest {
@@ -15,25 +14,16 @@ class DataManagerTest {
     @Test
     fun `test create memory data manager`() {
         // Arrange
-        val dataManager = SessionsDataManager(DataManagerType.MEMORY)
+        val dataManager = MemManager()
         assertTrue { dataManager.game is SessionsDataMemGame }
         assertTrue { dataManager.player is SessionsDataMemPlayer }
         assertTrue { dataManager.session is SessionsDataMemSession }
     }
 
     @Test
-    fun `test create database memory manager, invalid URL`() {
-        // Arrange
-        val exception = assertFailsWith<IllegalArgumentException> {
-            SessionsDataManager(DataManagerType.DATABASE)
-        }
-        assertTrue { exception.message == "No Database URL provided." }
-    }
-
-    @Test
     fun `test create database memory manager`() {
         // Arrange
-        val dataManager = SessionsDataManager(DataManagerType.DATABASE, "url")
+        val dataManager = DBManager("url")
         assertTrue { dataManager.game is SessionsDataDBGame }
         assertTrue { dataManager.player is SessionsDataDBPlayer }
         assertTrue { dataManager.session is SessionsDataDBSession }

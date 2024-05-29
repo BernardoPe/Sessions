@@ -14,7 +14,8 @@ import java.util.*
  *
  *  Player Data management class for the in-memory database
 */
-class SessionsDataMemPlayer : SessionsDataPlayer, MemManager() {
+class SessionsDataMemPlayer : SessionsDataPlayer, MemoryStorage() {
+
     override fun getPlayerAndToken(token: UUID): Pair<Player, Token>? {
         val tok = tokenDB.find { it.token == token } ?: return null
         val player = playerDB.find { it.id == tok.playerId } ?: return null
@@ -25,6 +26,14 @@ class SessionsDataMemPlayer : SessionsDataPlayer, MemManager() {
         val tok = tokenDB.find { it.token == token } ?: return false
         tokenDB.remove(tok)
         return true
+    }
+
+    override fun isEmailStored(email: Email): Boolean {
+        return playerDB.any { it.email == email }
+    }
+
+    override fun isNameStored(name: Name): Boolean {
+        return playerDB.any { it.name == name }
     }
 
     override fun create(player: Player): Pair<UInt, Token> {

@@ -15,26 +15,28 @@ import pt.isel.ls.utils.toTimestamp
 import java.sql.ResultSet
 import java.sql.Statement
 
-class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbURL) {
+class SessionsDataDBSession(private val dbURL: String) : SessionsDataSession {
 
-    override fun create(capacity: UInt, date: LocalDateTime, gid: UInt): UInt = execQuery { connection ->
+    private val connection get() = TransactionManager.getConnection(dbURL)
+
+    override fun create(session: Session): UInt {
 
         val statement = connection.prepareStatement(
             "INSERT INTO sessions (game_id, capacity, date) VALUES (?, ?, ?)",
             Statement.RETURN_GENERATED_KEYS,
         )
 
-        statement.setInt(1, gid.toInt())
-        statement.setInt(2, capacity.toInt())
-        statement.setTimestamp(3, date.toTimestamp())
+        statement.setInt(1, session.gameSession.id.toInt())
+        statement.setInt(2, session.capacity.toInt())
+        statement.setTimestamp(3, session.date.toTimestamp())
         statement.executeUpdate()
 
         val generatedKeys = statement.generatedKeys
         generatedKeys.next()
-        generatedKeys.getInt(1).toUInt().also { statement.close() }
-    } as UInt
+        return generatedKeys.getInt(1).toUInt().also { statement.close() }
+    }
 
-    override fun getById(id: UInt): Session? = execQuery { connection ->
+    override fun getById(id: UInt): Session? {
         val statement = connection.prepareStatement(
             "SELECT sessions.id as sid, sessions.game_id as gid, date, capacity, games.name as gname, genres, developer, players.id as pid, players.name as pname, email, password_hash FROM sessions " +
                 "JOIN games ON sessions.game_id = games.id " +
@@ -46,10 +48,9 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
         statement.setInt(1, id.toInt())
         val resultSet = statement.executeQuery()
 
-        resultSet.getSessions().firstOrNull().also { statement.close() }
-    } as Session?
+        return resultSet.getSessions().firstOrNull().also { statement.close() }
+    }
 
-    @Suppress("UNCHECKED_CAST")
     override fun getSessionsSearch(
         gid: UInt?,
         date: LocalDateTime?,
@@ -57,8 +58,7 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
         pid: UInt?,
         limit: UInt,
         skip: UInt
-    ): Pair<List<Session>, Int> =
-        execQuery { connection ->
+    ): Pair<List<Session>, Int> {
             val resQuery = StringBuilder(
                 "SELECT DISTINCT sessions.id FROM sessions "
             )
@@ -135,10 +135,10 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
 
             val total = countResultSet.getInt(1)
 
-            resultSessions to total.also { statement.close(); countStatement.close(); sessionStmt.close() }
-        } as Pair<List<Session>, Int>
+            return resultSessions to total.also { statement.close(); countStatement.close(); sessionStmt.close() }
+        }
 
-    override fun addPlayer(sid: UInt, pid: UInt): Boolean = execQuery { connection ->
+    override fun addPlayer(sid: UInt, pid: UInt): Boolean {
         // Check if the player is already in the session
         // Set the statement to insert a new player in the session
         val statement = connection.prepareStatement(
@@ -153,10 +153,10 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
 
         // Return the result of the operation
         // It returns true if the player was added to the session
-        res > 0.also { statement.close() }
-    } as Boolean
+        return res > 0.also { statement.close() }
+    }
 
-    override fun removePlayer(sid: UInt, pid: UInt): Boolean = execQuery { connection ->
+    override fun removePlayer(sid: UInt, pid: UInt): Boolean {
         // Set the statement to remove a player from the session
         val statement = connection.prepareStatement(
             "DELETE FROM sessions_players WHERE session_id = ? AND player_id = ?",
@@ -168,40 +168,22 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
         val res = statement.executeUpdate()
         // Return the result of the operation
         // It returns true if the player was removed from the session
-        res > 0.also { statement.close() }
-    } as Boolean
+        return res > 0.also { statement.close() }
+    }
 
-    override fun update(sid: UInt, capacity: UInt?, date: LocalDateTime?): Boolean = execQuery { connection ->
-        val query = StringBuilder("UPDATE sessions SET ")
-        val queryParams = mutableListOf<Any>()
-
-        if (capacity != null) {
-            query.append("capacity = ?, ")
-            queryParams.add(capacity.toInt())
-        }
-
-        if (date != null) {
-            query.append("date = ?, ")
-            queryParams.add(date.toTimestamp())
-        }
-
-        query.delete(query.length - 2, query.length)
-
-        query.append(" WHERE id = ?")
-        queryParams.add(sid.toInt())
+    override fun update(value: Session): Boolean {
+        val query = StringBuilder("UPDATE sessions SET CAPACITY = ?, DATE = ? WHERE ID = ?")
 
         val statement = connection.prepareStatement(query.toString())
-
-        for ((index, param) in queryParams.withIndex()) {
-            statement.setObject(index + 1, param)
-        }
-
+        statement.setInt(1, value.capacity.toInt())
+        statement.setTimestamp(2, value.date.toTimestamp())
+        statement.setInt(3, value.id.toInt())
         val res = statement.executeUpdate()
 
-        res > 0.also { statement.close() }
-    } as Boolean
+        return res > 0.also { statement.close() }
+    }
 
-    override fun delete(id: UInt): Boolean = execQuery { connection ->
+    override fun delete(id: UInt): Boolean {
         val statement = connection.prepareStatement(
             "DELETE FROM sessions WHERE id = ?",
         )
@@ -209,8 +191,8 @@ class SessionsDataDBSession(dbURL: String) : SessionsDataSession, DBManager(dbUR
         statement.setInt(1, id.toInt())
         val res = statement.executeUpdate()
 
-        res > 0.also { statement.close() }
-    } as Boolean
+        return res > 0.also { statement.close() }
+    }
 
     private fun ResultSet.getSessions(): List<Session> {
         if (!next()) return emptyList()

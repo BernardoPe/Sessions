@@ -1,4 +1,4 @@
-import {API_URL, GAMES_URL, SESSIONS_URL} from "../../index.js";
+import {GAMES_URL, SESSIONS_URL} from "../../index.js";
 import {RESULTS_PER_PAGE} from "../handlers.js";
 import {createPaginationNav} from "../Views/Layouts/Nav/pagination.js";
 
@@ -14,7 +14,7 @@ import {createPaginationNav} from "../Views/Layouts/Nav/pagination.js";
  * @returns {any}
  */
 function handleGamePagination(queries, page, total) {
-	return handlePagination(API_URL + "#" +  GAMES_URL + `?${queries}`, page, (page) => {
+	return handlePagination( "#" +  GAMES_URL + `?${queries}`, page, (page) => {
 		if (queries.toString().length > 0) {
 			return `#` + GAMES_URL + `?${queries}&page=${page}`;
 		} else {
@@ -36,7 +36,7 @@ function handleGamePagination(queries, page, total) {
  */
 
 function handleSessionPagination(queries, page, total) {
-	return handlePagination(API_URL + "#" + SESSIONS_URL + `?${queries}`, page, (page) => {
+	return handlePagination( "#" + SESSIONS_URL + `?${queries}`, page, (page) => {
 		if (queries.toString().length > 0) {
 			return `#` + SESSIONS_URL + `?${queries}&page=${page}`;
 		} else {

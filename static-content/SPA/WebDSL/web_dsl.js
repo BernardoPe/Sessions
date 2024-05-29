@@ -6,7 +6,12 @@ function createElement(tagName, props, ...children) {
     // Set the properties
     if (props !== null && props !== undefined) {
         for (const key in props) {
-            element.setAttribute(key, props[key])
+            if (key.startsWith('on')) {
+                const eventName = key.slice(2); // remove 'on' prefix
+                element.addEventListener(eventName, props[key]);
+            } else {
+                element.setAttribute(key, props[key]);
+            }
         }
     }
 

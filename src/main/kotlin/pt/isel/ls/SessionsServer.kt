@@ -15,8 +15,7 @@ import pt.isel.ls.api.SessionsApi
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
-import pt.isel.ls.storage.DataManagerType
-import pt.isel.ls.storage.SessionsDataManager
+import pt.isel.ls.storage.DBManager
 
 val logger = LoggerFactory.getLogger("pt.isel.ls.http.HTTPServer")
 
@@ -85,10 +84,16 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
 
     /**
      * The method that starts the server
+     * This method starts the server and adds a shutdown hook to stop the server when the application is closed
+     *
      */
     fun start() {
         jettyServer.start()
         logger.info("Server started listening")
+        Runtime.getRuntime().addShutdownHook(Thread{
+            logger.info("Shutting down server")
+            stop()
+        })
     }
 
     /**
@@ -96,15 +101,22 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
      */
     fun stop() {
         jettyServer.stop()
-        logger.info("Server stopped listening")
     }
+
+    /**
+     * The method that blocks the current thread until the server stops
+     */
+    fun join() {
+        jettyServer.block()
+    }
+
 }
 
 fun main() {
 
     val databaseURL = System.getenv("JDBC_PRODUCTION_DATABASE_URL")
 
-    val storage = SessionsDataManager(DataManagerType.DATABASE, databaseURL)
+    val storage = DBManager(databaseURL)
 
     storage.use {
         val server = SessionsServer(
@@ -115,8 +127,7 @@ fun main() {
             ),
         )
         server.start()
-        readln()
-        server.stop()
+        server.join()
     }
 
 }

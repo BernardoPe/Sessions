@@ -1,5 +1,3 @@
-window.authRegister = authRegister
-window.authLogin = authLogin
 
 /**
  * Handles the registration of a new player

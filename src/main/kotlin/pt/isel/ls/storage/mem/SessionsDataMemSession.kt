@@ -1,7 +1,6 @@
 package pt.isel.ls.storage.mem
 
 import kotlinx.datetime.LocalDateTime
-import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
 import pt.isel.ls.exceptions.BadRequestException
@@ -17,15 +16,10 @@ import pt.isel.ls.storage.SessionsDataSession
  *
  */
 
-class SessionsDataMemSession : SessionsDataSession, MemManager() {
+class SessionsDataMemSession : SessionsDataSession, MemoryStorage() {
 
-    override fun create(capacity: UInt, date: LocalDateTime, gid: UInt): UInt {
-
-        // Get the game object from the database mock
-        val game = gameDB.find { it.id == gid } ?: throw NotFoundException("Game not found")
-
+    override fun create(session: Session): UInt {
         // Add the session object to the database mock
-        // Add the updated session object to the database mock
         sessionDB.add(
             // The session object to be added to the database mock
             // The only fields that are changed are:
@@ -33,9 +27,9 @@ class SessionsDataMemSession : SessionsDataSession, MemManager() {
             // - playersSession: An empty set. This is because the session is created with no players by default
             Session(
                 sid,
-                capacity,
-                date,
-                game,
+                session.capacity,
+                session.date,
+                session.gameSession,
                 emptySet()
             ),
         )
@@ -79,21 +73,7 @@ class SessionsDataMemSession : SessionsDataSession, MemManager() {
 
     override fun addPlayer(sid: UInt, pid: UInt): Boolean {
 
-        val session = sessionDB.find { it.id == sid  } ?: throw NotFoundException("Session not found")
-
         val player = playerDB.find { it.id == pid } ?: throw NotFoundException("Player not found")
-
-        if (session.playersSession.any { it.id == player.id }) {
-            throw BadRequestException("Player already in session")
-        }
-
-        if (session.capacity == session.playersSession.size.toUInt()) {
-            throw BadRequestException("Session is full")
-        }
-
-        if (session.state == State.CLOSE) {
-            throw BadRequestException("Session is closed")
-        }
 
         // Update the session object in the database mock
         sessionDB.forEachIndexed { index, session ->
@@ -125,9 +105,6 @@ class SessionsDataMemSession : SessionsDataSession, MemManager() {
         sessionDB.forEachIndexed { index, session ->
             // search for the session with the given id
             if (session.id == sid) {
-                if (!session.playersSession.any { it.id == getPlayer.id }) {
-                    throw NotFoundException("Player not in session")
-                }
                 // if found
                 // remove the session from the database mock
                 sessionDB.removeAt(index)
@@ -147,15 +124,11 @@ class SessionsDataMemSession : SessionsDataSession, MemManager() {
         return false
     }
 
-    override fun update(sid: UInt, capacity: UInt?, date: LocalDateTime?): Boolean {
+    override fun update(value: Session): Boolean {
         // Update the session object in the database mock
         sessionDB.forEachIndexed { index, session ->
             // search for the session with the given id
-            if (session.id == sid) {
-
-                if (session.playersSession.size.toUInt() > (capacity ?: session.capacity)) {
-                    throw BadRequestException("New session capacity must be greater or equal to the number of players in the session")
-                }
+            if (session.id == value.id) {
                 // if found
                 // remove the session from the database mock
                 sessionDB.removeAt(index)
@@ -165,8 +138,8 @@ class SessionsDataMemSession : SessionsDataSession, MemManager() {
                 sessionDB.add(
                     Session(
                         session.id,
-                        capacity ?: session.capacity,
-                        date ?: session.date,
+                        value.capacity,
+                        value.date,
                         session.gameSession,
                         session.playersSession,
                     ),

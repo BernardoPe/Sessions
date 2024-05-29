@@ -3,7 +3,6 @@ package pt.isel.ls.storage.mem
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.primitives.Genre
 import pt.isel.ls.data.domain.primitives.Name
-import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.storage.SessionsDataGame
 
 /**
@@ -14,13 +13,10 @@ import pt.isel.ls.storage.SessionsDataGame
  *  Uses the [SessionsDataMemGame] class to manage the game data
  */
 
-class SessionsDataMemGame : SessionsDataGame, MemManager() {
+class SessionsDataMemGame : SessionsDataGame, MemoryStorage() {
 
     override fun create(game: Game): UInt {
         // Check if the game name already exists in the database mock
-        if (gameDB.any { it.name == game.name }) {
-            throw BadRequestException("Game name already exists")
-        }
         // Add the game object to the database mock
         gameDB.add(
             Game(
@@ -45,6 +41,11 @@ class SessionsDataMemGame : SessionsDataGame, MemManager() {
             }
         }
         return null
+    }
+
+    override fun isGameNameStored(name: Name): Boolean {
+        // Check if the game name already exists in the database mock
+        return gameDB.any { it.name == name }
     }
 
     override fun getGamesSearch(

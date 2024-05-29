@@ -14,8 +14,7 @@ import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
-import pt.isel.ls.storage.DataManagerType
-import pt.isel.ls.storage.SessionsDataManager
+import pt.isel.ls.storage.MemManager
 import pt.isel.ls.utils.currentLocalTime
 import pt.isel.ls.utils.plus
 import java.util.*
@@ -29,6 +28,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class SessionServiceTest {
     @Test
@@ -283,7 +283,7 @@ class SessionServiceTest {
         }
 
         assertEquals("Not Found", exception.description)
-        assertEquals("Player not found", exception.errorCause)
+        assertEquals("Player not in session", exception.errorCause)
     }
 
     @Test
@@ -356,12 +356,11 @@ class SessionServiceTest {
         val newCapacity = 1u
         val newDate = newTestDateTime()
 
-        val updatedSession = assertFailsWith<BadRequestException> {
+        val updatedSession = assertFailsWith<IllegalArgumentException> {
             serviceSession.updateSession(createdSession, newCapacity, newDate)
         }
 
-        assertEquals("Bad Request", updatedSession.description)
-        assertEquals("New session capacity must be greater or equal to the number of players in the session", updatedSession.errorCause)
+        assertEquals("Session capacity must not be less than the number of players", updatedSession.message)
     }
 
     @Test
@@ -402,12 +401,11 @@ class SessionServiceTest {
         val newCapacity = 0u
         val newDate = newTestDateTime()
 
-        val updatedSession = assertFailsWith<BadRequestException> {
+        val updatedSession = assertFailsWith<IllegalArgumentException> {
             serviceSession.updateSession(createdSession, newCapacity, newDate)
         }
 
-        assertEquals("Bad Request", updatedSession.description)
-        assertEquals("Session capacity must at least 1 and at most $SESSION_MAX_CAPACITY", updatedSession.errorCause)
+        assertEquals("Session capacity must be at least 1 and at most $SESSION_MAX_CAPACITY", updatedSession.message)
     }
 
     @Test
@@ -539,7 +537,7 @@ class SessionServiceTest {
     }
 
     companion object {
-        private fun newTestCapacity() = Random.nextInt(1, 100).toUInt()
+        private fun newTestCapacity() = Random.nextInt(10, 100).toUInt()
 
         private fun newTestGameName() = "Game Name Test ${Random.nextUInt()}"
 
@@ -551,12 +549,11 @@ class SessionServiceTest {
 
         private fun newTestEmail() = "email-${abs(Random.nextLong())}@test.com"
 
-        private fun newTestDateTime() = currentLocalTime() + Random.nextLong(1, 1000).milliseconds
+        private fun newTestDateTime() = currentLocalTime() + Random.nextLong(10, 1000).seconds
 
         private fun UUID.testTokenHash() = mostSignificantBits xor leastSignificantBits
 
-        private var storage =
-            SessionsDataManager(DataManagerType.MEMORY)
+        private var storage = MemManager()
 
         private var serviceSession = SessionsService(storage)
 

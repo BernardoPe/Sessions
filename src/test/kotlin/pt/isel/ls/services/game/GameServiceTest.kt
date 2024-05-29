@@ -8,8 +8,7 @@ import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.services.GameService
-import pt.isel.ls.storage.DataManagerType
-import pt.isel.ls.storage.SessionsDataManager
+import pt.isel.ls.storage.MemManager
 import kotlin.random.Random
 import kotlin.random.nextUInt
 import kotlin.test.assertEquals
@@ -47,7 +46,7 @@ class GameServiceTest {
         }
 
         assertEquals("Bad Request", exception.description)
-        assertEquals("Game name already exists", exception.errorCause)
+        assertEquals("Game name already in use", exception.errorCause)
     }
 
     @Test
@@ -139,8 +138,7 @@ class GameServiceTest {
 
         private fun newTestGenres() = setOf(Genre("RPG"), Genre("Adventure"))
 
-        private var storage =
-            SessionsDataManager(DataManagerType.MEMORY)
+        private var storage = MemManager()
 
         private var serviceGame = GameService(storage)
     }

@@ -3,6 +3,7 @@ import {formInputField, formInputWithSearchResults} from "../../Models/Inputs/fo
 import {errorMessage} from "../../Models/Errors/error.js";
 import {dateTimeInput} from "../../Models/Inputs/date.js";
 import {genresInput} from "../../Models/Inputs/genres.js";
+import {submitFormCreateGame, submitFormCreateSession} from "../../../Scripts/formSubmit.js"
 
 /**
  * Creates the view for the game creation form
@@ -11,7 +12,7 @@ import {genresInput} from "../../Models/Inputs/genres.js";
  */
 function gameCreateView() {
     return div({class: "form__group fade-up"},
-        form({onsubmit: "submitFormCreateGame(event)"},
+        form({onsubmit: (event) => { submitFormCreateGame(event) } },
             formInputField(
                 "game_name",
                 "game_name",
@@ -43,7 +44,7 @@ function gameCreateView() {
  */
 function sessionCreateView() {
     return div({class: "form__group fade-up"},
-        form({onsubmit: "submitFormCreateSession(event)"},
+        form({onsubmit: (event) => { submitFormCreateSession(event) } },
             formInputField(
                 "capacity",
                 "capacity",
@@ -51,16 +52,15 @@ function sessionCreateView() {
                 "Session capacity"
             ),
             errorMessage("err_message-capacity", "Capacity must be a number"),
-            errorMessage("err_message-date", "Invalid date to create a session"),
             formInputWithSearchResults(
                 "game_name",
                 "games",
                 "text",
                 "Game name"
             ),
-            dateTimeInput(),
             errorMessage("err_message-game", "Game name must be at least 3 characters long"),
-
+            dateTimeInput(),
+            errorMessage("err_message-date", "Invalid date to create a session"),
             button({type: "submit"}, "Create Session"),
         ),
     );

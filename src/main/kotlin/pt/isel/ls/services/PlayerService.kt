@@ -17,10 +17,12 @@ import java.util.*
  *
  * Responsible for handling the business logic of the Player entity
  *
- * @property storage [SessionsDataManager] instance to access the data storage
+ * @property dataManager [SessionsDataManager] instance to access the data storage
  *
  */
-class PlayerService(val storage: SessionsDataManager) {
+class PlayerService(private val dataManager: SessionsDataManager) {
+
+    private val playerStorage = dataManager.player
 
     /**
      * Creates a new player
@@ -39,7 +41,9 @@ class PlayerService(val storage: SessionsDataManager) {
 
         val player = Player(0u, name, email, PasswordHash(hashedPassword))
 
-        return storagePlayer.create(player)
+            playerStorage.create(player)
+        }
+
     }
 
     /**
@@ -120,7 +124,7 @@ class PlayerService(val storage: SessionsDataManager) {
      * @throws NotFoundException If the player is not found
      */
     fun getPlayerDetails(pid: UInt): Player {
-        return storage.player.getById(pid) ?: throw NotFoundException("Player not found")
+        return playerStorage.getById(pid) ?: throw NotFoundException("Player not found")
     }
 
     /**
@@ -132,7 +136,7 @@ class PlayerService(val storage: SessionsDataManager) {
      * @return The [PlayerList] and the total number of players
      */
     fun getPlayerList(name: Name?, limit: UInt, skip: UInt): Pair<PlayerList, Int> {
-        return storage.player.getPlayersSearch(name, limit, skip)
+        return dataManager.player.getPlayersSearch(name, limit, skip)
     }
 
 }

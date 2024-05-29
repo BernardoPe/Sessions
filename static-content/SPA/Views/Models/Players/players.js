@@ -1,7 +1,8 @@
 
 import {a, button, div, i, p} from "../../../WebDSL/web_dsl.js";
 import {PLAYERS_URL, SESSIONS_URL} from "../../../../index.js";
-
+import {handleConfirmation} from "../Sessions/sessions.js";
+import {removePlayerFromSession} from "../../../Scripts/formSubmit.js"
 /**
  * Returns an HTML structure for a player's details
  * @param player - player object
@@ -12,7 +13,7 @@ function playerDetails(player) {
 			p({class: "player__name"}, player.name),
 			p({class: "player__email"}, "Contact info: " + player.email)
 		),
-		a(`#` + SESSIONS_URL + `?pid=${player.pid}`, {class: "search-ref"}, "Your sessions")
+		a(`#` + SESSIONS_URL + `?pid=${player.pid}`, {class: "search-ref"}, `Sessions with ${player.name}`),
 	)
 }
 
@@ -26,7 +27,7 @@ function sessionPlayer(sid, player, authenticated) {
 			button({
 					class: "icon__button",
 					id: "delete-player" + player.pid,
-					onclick: `handleConfirmation(event, id, function() { removePlayerFromSession(event, ${sid}, ${player.pid}) })`
+					onclick: (event) => { handleConfirmation(event, event.currentTarget.id, function() { removePlayerFromSession(event, sid, player.pid) }) }
 				},
 				i({class: "fas fa-solid fa-ban fa-2x red"}),
 			),

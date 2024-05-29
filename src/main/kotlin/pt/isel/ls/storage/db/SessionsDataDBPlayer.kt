@@ -1,24 +1,17 @@
 package pt.isel.ls.storage.db
 
-import kotlinx.datetime.toKotlinLocalDateTime
 import pt.isel.ls.data.domain.player.Player
-import pt.isel.ls.data.domain.player.Token
 import pt.isel.ls.data.domain.primitives.Email
 import pt.isel.ls.data.domain.primitives.Name
-import pt.isel.ls.data.domain.primitives.PasswordHash
 import pt.isel.ls.storage.SessionsDataPlayer
-import pt.isel.ls.utils.toTimestamp
-import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Statement
 import java.util.*
 
-class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL) {
+class SessionsDataDBPlayer(private val dbURL: String) : SessionsDataPlayer {
 
-    @Suppress("UNCHECKED_CAST")
-    override fun create(player: Player): Pair<UInt, Token> = execQuery { connection ->
-
-
+    private val connection get() = TransactionManager.getConnection(dbURL)
+    override fun create(player: Player): Pair<UInt, UUID> {
         val statement = connection.prepareStatement(
             "INSERT INTO players (name, email, password_hash) VALUES (?, ?, ?)",
             Statement.RETURN_GENERATED_KEYS,
@@ -36,7 +29,7 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
 
         Pair(playerId, tokenCreation(connection, generatedKeys.getInt(1).toUInt()))
 
-    } as Pair<UInt, Token>
+    }
 
     @Suppress("UNCHECKED_CAST")
     override fun login(id: UInt): Pair<UInt, Token> = execQuery { connection ->
@@ -50,23 +43,20 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         statement.setInt(1, id.toInt())
         val resultSet = statement.executeQuery()
 
-        resultSet.getPlayers().firstOrNull().also { statement.close() }
-    } as Player?
+        return resultSet.getPlayers().firstOrNull().also { statement.close() }
+    }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun getAll(): List<Player> = execQuery { connection ->
+    override fun getAll(): List<Player> {
         val statement = connection.prepareStatement(
             "SELECT * FROM players",
         )
 
         val resultSet = statement.executeQuery()
 
-        resultSet.getPlayers().also { statement.close() }
-    } as List<Player>
+        return resultSet.getPlayers().also { statement.close() }
+    }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun getPlayersSearch(name: Name?, limit: UInt, skip: UInt): Pair<List<Player>, Int> =
-        execQuery { connection ->
+    override fun getPlayersSearch(name: Name?, limit: UInt, skip: UInt): Pair<List<Player>, Int> {
 
             val searchQuery = StringBuilder(
                 "SELECT * FROM players ",
@@ -105,12 +95,11 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
             val total = countResult.getInt(1)
             val players = playersResult.getPlayers()
 
-            Pair(players, total)
+            return Pair(players, total)
 
-        } as Pair<List<Player>, Int>
+        }
 
-    // Redundant query
-    override fun update(id: UInt, value: Player): Boolean = execQuery { connection ->
+    override fun update(id: UInt, value: Player): Boolean {
         val statement = connection.prepareStatement(
             "UPDATE players SET name = ?, email = ? WHERE id = ?",
         )
@@ -120,11 +109,10 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         statement.setInt(3, id.toInt())
         val updated = statement.executeUpdate()
 
-        updated > 0
-    } as Boolean
+        return updated > 0
+    }
 
-    // Redundant query
-    override fun delete(id: UInt): Boolean = execQuery { connection ->
+    override fun delete(id: UInt): Boolean {
 
         val statement = connection.prepareStatement(
             "DELETE FROM players WHERE id = ?",
@@ -133,10 +121,10 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         statement.setInt(1, id.toInt())
         val deleted = statement.executeUpdate()
 
-        deleted > 0
-    } as Boolean
+        return deleted > 0
+    }
 
-    @Suppress("UNCHECKED_CAST")
+
     override fun getPlayerAndToken(token: UUID): Pair<Player, Token>? = execQuery { connection ->
         val statement = connection.prepareStatement(
             "SELECT * " +
@@ -169,6 +157,28 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
         }
     } as Pair<Player, Token>?
 
+    override fun isEmailStored(email: Email): Boolean {
+        val statement = connection.prepareStatement(
+            "SELECT 1 FROM players WHERE email = ?",
+        )
+
+        statement.setString(1, email.toString())
+        val resultSet = statement.executeQuery()
+
+        return resultSet.next().also { statement.close() }
+    }
+
+    override fun isNameStored(name: Name): Boolean {
+        val statement = connection.prepareStatement(
+            "SELECT 1 FROM players WHERE name = ?",
+        )
+
+        statement.setString(1, name.toString())
+        val resultSet = statement.executeQuery()
+
+        return resultSet.next().also { statement.close() }
+    }
+
     override fun revokeToken(token: UUID): Boolean = execQuery { connection ->
         val statement = connection.prepareStatement(
             "DELETE FROM tokens WHERE token = ?",
@@ -179,6 +189,10 @@ class SessionsDataDBPlayer(dbURL: String) : SessionsDataPlayer, DBManager(dbURL)
 
         updated > 0
     } as Boolean
+
+    private fun UUID.hash(): Long {
+        return leastSignificantBits xor mostSignificantBits
+    }
 
     private fun ResultSet.getPlayers(): List<Player> {
         val players = mutableListOf<Player>()

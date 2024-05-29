@@ -9,19 +9,20 @@ import pt.isel.ls.data.domain.primitives.PasswordHash
 import pt.isel.ls.data.domain.session.Session
 
 /**
- * MemManager
+ * MemoryStorage
  *
  * Abstract class to manage the in-memory database
  *
  * This storage is persistent only during the application runtime
 
  */
-abstract class MemManager {
+abstract class MemoryStorage {
 
     val playerDB get() = players
     val sessionDB get() = sessions
     val gameDB get() = games
     val tokenDB get() = tokens
+
     val pid get() = players.size.toUInt() + 1u
     val sid get() = sessions.size.toUInt() + 1u
     val gid get() = games.size.toUInt() + 1u
