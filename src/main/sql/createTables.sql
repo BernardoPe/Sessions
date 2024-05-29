@@ -1,6 +1,7 @@
 drop table if exists sessions_players;
 drop table if exists sessions;
 drop table if exists games;
+drop table if exists tokens;
 drop table if exists players;
 
 CREATE TABLE games (

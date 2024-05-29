@@ -3,7 +3,7 @@ package pt.isel.ls.data.domain.primitives
 data class Password(val password: String) {
     init {
         require(password.isNotBlank()) { "An password is needed to create a player" }
-        require(password.length < 8) {
+        require(password.length >= 8) {
             "The password must at least have 8 characters"
         }
         require(password.any { it.isLowerCase() }) {
