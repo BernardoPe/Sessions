@@ -160,10 +160,9 @@ class SessionsApi(
      * Logs out a player
      */
     fun playerLogout(request: Request) = processRequest(request) {
-        if (request.cookie("Authorization") == null) {
-            throw BadRequestException("No Authorization provided")
-        }
+
         val token = parseCookie(request)
+
         if (playerServices.authenticatePlayer(token) == null) {
             throw UnauthorizedException()
         }
