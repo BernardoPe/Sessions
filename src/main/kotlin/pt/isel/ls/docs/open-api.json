@@ -447,7 +447,9 @@
                         "gid": 1,
                         "name": "Chess",
                         "developer": "Chess.com",
-                        "genres": ["Turn-Based"]
+                        "genres": [
+                          "Turn-Based"
+                        ]
                       }
                     ],
                     "total": 1
@@ -493,7 +495,7 @@
             }
           }
         }
-          }
+      }
     },
     "/games/{gid}": {
       "get": {
@@ -814,29 +816,29 @@
             "content": {
               "application/json": {
                 "example": {
-                    "sessions": [
-                      {
-                        "sid": 1,
-                        "capacity": 2,
-                        "date": "2030-12-31T23:59:59",
-                        "gameSession": {
-                          "gid": 1,
-                          "name": "Chess",
-                          "developer": "Chess.com",
-                          "genres": [
-                            "Turn-Based"
-                          ]
-                        },
-                        "playersSession": [
-                          {
-                            "pid": 1,
-                            "name": "John Doe",
-                            "email": "testemail@isel.pt"
-                          }
+                  "sessions": [
+                    {
+                      "sid": 1,
+                      "capacity": 2,
+                      "date": "2030-12-31T23:59:59",
+                      "gameSession": {
+                        "gid": 1,
+                        "name": "Chess",
+                        "developer": "Chess.com",
+                        "genres": [
+                          "Turn-Based"
                         ]
-                      }
-                      ],
-                        "total": 1
+                      },
+                      "playersSession": [
+                        {
+                          "pid": 1,
+                          "name": "John Doe",
+                          "email": "testemail@isel.pt"
+                        }
+                      ]
+                    }
+                  ],
+                  "total": 1
                 },
                 "schema": {
                   "type": "object",
@@ -1167,22 +1169,22 @@
               }
             }
           },
-            "204": {
-                "description": "No Content",
-                "content": {
-                "application/json": {
-                    "schema": {
-                    "type": "object",
-                    "properties": {
-                        "message": {
-                        "type": "string",
-                        "example": "Session updated successfully"
-                        }
+          "204": {
+            "description": "No Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Session updated successfully"
                     }
-                    }
+                  }
                 }
-                }
+              }
             }
+          }
         }
       },
       "delete": {
@@ -1497,7 +1499,7 @@
         }
       }
     },
-    "/auth" : {
+    "/auth": {
       "post": {
         "summary": "Authenticate user",
         "security": [
@@ -1571,6 +1573,82 @@
                     "errorCause": {
                       "type": "string",
                       "example": "Invalid token"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/logout": {
+      "get": {
+        "summary": "Logout user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User logged out successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User logged out successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid Auth",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 401
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "Invalid Auth"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No Authorization provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Bad Request"
+                    },
+                    "errorCause": {
+                      "type": "string",
+                      "example": "No Authorization provided"
                     }
                   }
                 }
