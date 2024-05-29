@@ -15,42 +15,31 @@ function authRegister(event) {
 	const name = document.getElementById('username').value
 	const email = document.getElementById('email').value
 	const password = document.getElementById('password').value
-	const confirmPass = document.getElementById('confirm-password').value
-	const nameErr = document.getElementById('error-username')
-	const emailErr = document.getElementById('error-email')
-	const passErr = document.getElementById('error-password')
-	const confirmPassErr = document.getElementById('error-confirm-password')
+	const confirmPassword = document.getElementById('password2').value
 
-	nameErr.style.display = "none"
-	emailErr.style.display = "none"
-	passErr.style.display = "none"
-	confirmPassErr.style.display = "none"
+	const registerErr = document.getElementById('error-register')
 
 	if (name === "") {
-		nameErr.innerHTML = "Please enter a name"
-		nameErr.style.display = "block"
-		if (email === "") {
-			emailErr.innerHTML = "Please enter an email"
-			emailErr.style.display = "block"
-		}
+		registerErr.style.display = "block"
+		registerErr.innerHTML = "Please enter a name"
 		return
 	}
 
 	if (email === "") {
-		emailErr.innerHTML = "Please enter an email"
-		emailErr.style.display = "block"
+		registerErr.style.display = "block"
+		registerErr.innerHTML = "Please enter an email"
 		return
 	}
 
 	if (password === "") {
-		passErr.innerHTML = "Please enter a password"
-		passErr.style.display = "block"
+		registerErr.style.display = "block"
+		registerErr.innerHTML = "Please enter a password"
 		return
 	}
 
-	if (confirmPass === "" || confirmPass !== password) {
-		confirmPassErr.innerHTML = "Passwords do not match"
-		confirmPassErr.style.display = "block"
+	if (password !== confirmPassword) {
+		registerErr.style.display = "block"
+		registerErr.innerHTML = "Passwords do not match"
 		return
 	}
 
@@ -60,38 +49,23 @@ function authRegister(event) {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({name, email, password})
-	}).then(res => {
-			res.json()
-				.then(data => {
-					if (res.ok) {
-						document.getElementById('login').style.display = "none"
-						document.getElementById('register').style.display = "none"
-						document.getElementById('logout').style.display = "inline-block"
-						document.getElementById('registerForm').style.display = "none"
-						document.getElementById('token-info').style.display = "block"
-						document.getElementById('token').innerHTML = "Your token is: " + data.token
-						const player = {pid: data.pid, name: name, email: email}
-						sessionStorage.setItem('user', JSON.stringify(player))
-						return data
-					}
-					else {
-						return Promise.reject(data)
-					}
-				})
-				.catch(err => {
-					if (err.errorCause.toLowerCase().includes("email")) {
-						emailErr.innerHTML = err.errorCause
-						emailErr.style.display = "block"
-					}
-					else if (err.errorCause.toLowerCase().includes("password")) {
-						passErr.innerHTML = err.errorCause
-						passErr.style.display = "block"
-					} else {
-						nameErr.innerHTML = err.errorCause
-						nameErr.style.display = "block"
-					}
-				})
+	}).then(res => res.ok ? res.json() : Promise.reject(res))
+		.then(data => {
+			document.getElementById('login').style.display = "none"
+			document.getElementById('register').style.display = "none"
+			document.getElementById('logout').style.display = "inline-block"
+			window.location.href = "#home"
+			const player = {pid: data.pid, name: name, email: email}
+			sessionStorage.setItem('user', JSON.stringify(player))
+			return data
 		})
+		.catch(err => {
+			err.json().then(errBody => {
+				registerErr.innerHTML = errBody.errorCause
+				registerErr.style.display = "block"
+			})
+		})
+
 }
 
 
@@ -108,20 +82,20 @@ function authLogin(event) {
 	event.preventDefault()
 	const name = document.getElementById('name').value
 	const password = document.getElementById('password').value
-	const nameErr = document.getElementById('error-name')
-	const passErr = document.getElementById('error-password')
 
-	nameErr.style.display = "none"
-	passErr.style.display = "none"
+	const loginErr = document.getElementById('error-login')
+
+	loginErr.style.display = "none"
 
 	if (name === "") {
-		nameErr.innerHTML = "Please enter a valid name"
-		nameErr.style.display = "block"
+		loginErr.innerHTML = "Please enter a name"
+		loginErr.style.display = "block"
+		return
 	}
 
 	if (password === "") {
-		passErr.innerHTML = "Please enter a password"
-		passErr.style.display = "block"
+		loginErr.innerHTML = "Please enter a password"
+		loginErr.style.display = "block"
 		return
 	}
 
@@ -137,25 +111,13 @@ function authLogin(event) {
 			document.getElementById('login').style.display = "none"
 			document.getElementById('register').style.display = "none"
 			document.getElementById('logout').style.display = "inline-block"
-			document.getElementById('registerForm').style.display = "none"
-			document.getElementById('token-info').style.display = "block"
-			document.getElementById('token').innerHTML = "Your token is: " + data.token
 			const player = {pid: data.pid, name: name}
-			sessionStorage.setItem('userLogin', JSON.stringify(player)) // changed from user to userLogin for tests purposes
+			sessionStorage.setItem('user', JSON.stringify(player))
 			window.location.href = "#home"
 			return data
-		}).catch(err => {
-			if (err.errorCause.toLowerCase().includes("name")) {
-				nameErr.innerHTML = err.errorCause
-				nameErr.style.display = "block"
-			} else if (err.errorCause.toLowerCase().includes("password")) {
-				console.log(err.errorCause)
-				passErr.innerHTML = err.errorCause
-				passErr.style.display = "block"
-			} else {
-				passErr.innerHTML = err.errorCause
-				passErr.style.display = "block"
-			}
+		}).catch(() => {
+			loginErr.innerHTML = "Invalid credentials"
+			loginErr.style.display = "block"
 		})
 }
 

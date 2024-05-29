@@ -47,16 +47,17 @@ CREATE TABLE sessions_players (
 );
 
 
-create or replace function removeOldTokens()
-returns trigger as $$
-begin
-    delete from tokens where timeExpiration < now();
-    return new;
-end;
-$$ language plpgsql;
+CREATE OR REPLACE FUNCTION removeOldTokens()
+RETURNS TRIGGER AS $$
+BEGIN
+    DELETE FROM tokens WHERE timeExpiration < CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
-
-create trigger removeOldTokensTrigger
-before insert or update or delete on tokens
+create or replace trigger removeOldTokensTrigger
+after insert or update or delete on tokens
 for each row
 execute procedure removeOldTokens();
+
+select * from tokens;

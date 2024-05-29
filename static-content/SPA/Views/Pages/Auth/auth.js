@@ -17,14 +17,13 @@ function loginView() {
                     "text",
                     "Name"
 				),
-				errorMessage("error-name", ""),
 				formInputField(
 					"password",
 					"Password",
 					"password",
 					"Password"
 				),
-                errorMessage("error-password", ""),
+                errorMessage("error-login", ""),
 				button({type: "submit"}, "Login")
 			),
 		)
@@ -47,21 +46,25 @@ function registerView() {
                         "text",
                         "Username"
 					),
-                    errorMessage("error-username", ""),
                     formInputField(
                         "email",
                         "Email",
                         "text",
                         "Email"
 					),
-                    errorMessage("error-email", ""),
 					formInputField(
 						"password",
 						"Password",
 						"password",
 						"Password"
 					),
-					errorMessage("error-password", ""),
+					formInputField(
+						"password2",
+						"Confirm Password",
+						"password",
+						"Confirm Password"
+					),
+					errorMessage("error-register", ""),
 					formInputField(
 						"confirm-password",
 						"Confirm Password",

@@ -17,7 +17,7 @@ fun Player.toPlayerInfoDTO() = PlayerInfoOutputModel(id, name.toString(), email.
  * Converts [PlayerCredentials] to [PlayerInfoOutputModel]
  * @return The player creation DTO
  */
-fun PlayerCredentials.toPlayerCredentialsDTO() = PlayerCredentialsOutputModel(first, second.toString())
+fun PlayerCredentials.toPlayerCredentialsDTO() = PlayerCredentialsOutputModel(first, second.token.toString())
 
 /**
  * Converts [Pair] of [PlayerList] and [Int] to [PlayerSearchOutputModel]

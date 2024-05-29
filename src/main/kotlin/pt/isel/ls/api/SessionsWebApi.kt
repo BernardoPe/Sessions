@@ -489,6 +489,7 @@ class SessionsApi(
             sameSite = SameSite.Strict,
             secure = true,
             httpOnly = true,
+            path = "/",
         )
     }
 
@@ -502,7 +503,7 @@ class SessionsApi(
             }
 
             val token = UUID.fromString(
-                request.header("Authorization")?.split(" ")?.get(1) ?: return false,
+                request.header("Authorization")?.removePrefix("Bearer ") ?: return false,
             )
 
             playerServices.authenticatePlayer(token) != null

@@ -70,13 +70,13 @@ class PlayerService(private val dataManager: SessionsDataManager) {
         val player = playerStorage.getPlayersSearch(name = name, 1u, 0u).first.first()
 
         if (player.name != name) {
-            throw NotFoundException("Given player name not Found")
+            throw NotFoundException("Invalid credentials")
         }
 
         /* This line of code uses the JBCrypt library to match the password
             and the hashed password that was stored on the database */
         if (!BCrypt.checkpw(password.toString(), player.password.toString())) {
-            throw BadRequestException("Given Player password is incorrect")
+            throw BadRequestException("Invalid credentials")
         }
 
         return playerStorage.login(player.id)

@@ -16,6 +16,7 @@ export const RESULTS_PER_PAGE = 10;
  */
 function getHome(mainContent, req) {
     const user = getPlayerData()
+    console.log(user)
     mainContent.replaceChildren(homeView(user));
 }
 
