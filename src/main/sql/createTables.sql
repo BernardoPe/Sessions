@@ -2,6 +2,7 @@ drop table if exists sessions_players;
 drop table if exists sessions;
 drop table if exists games;
 drop table if exists players;
+drop table if exists tokens;
 
 CREATE TABLE games (
    id SERIAL PRIMARY KEY,
