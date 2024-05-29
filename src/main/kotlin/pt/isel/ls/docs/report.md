@@ -192,7 +192,7 @@ The types of request methods the api supports are :
 - POST
 - DELETE
 - PATCH
-- 
+
 The Games group has 3 endpoints:
 - Game Creation : POST /games
 - Game Search : GET /games
@@ -203,7 +203,8 @@ The Players group has 3 endpoints:
 - Player Creation : POST /players
 - Player Details : GET /players/{id}
 - Player Search : GET /players
-- Authenticate player : POST /players/auth
+- Authenticate player : POST /auth
+- Logout player : GET /logout
 
 The Sessions group has 7 endpoints:
 - Create Session : POST /sessions
@@ -215,7 +216,7 @@ The Sessions group has 7 endpoints:
 - Remove player from session : DELETE /sessions/{id}/players/{pid}
 
 
-Response codes are:
+We use the following response codes in the API:
 
 | Response Code           | Description           | Examples                           |
 |-------------------------|-----------------------|------------------------------------|
@@ -242,6 +243,8 @@ The SPA offers the following operations to the user:
 - See the details of a player
 - Add a player to a session
 - Remove a player from a session
+- Authenticate a player (login and register)
+- Logout a player
 
 ### SPA Navigation 
 

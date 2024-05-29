@@ -41,5 +41,3 @@ PK: id
 
 FK: gameSession -> Games.id
     playersSession -> Players.id
-
-
