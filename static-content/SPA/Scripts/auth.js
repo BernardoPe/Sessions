@@ -15,13 +15,16 @@ function authRegister(event) {
 	const name = document.getElementById('username').value
 	const email = document.getElementById('email').value
 	const password = document.getElementById('password').value
+	const confirmPass = document.getElementById('confirm-password').value
 	const nameErr = document.getElementById('error-username')
 	const emailErr = document.getElementById('error-email')
 	const passErr = document.getElementById('error-password')
+	const confirmPassErr = document.getElementById('error-confirm-password')
 
 	nameErr.style.display = "none"
 	emailErr.style.display = "none"
 	passErr.style.display = "none"
+	confirmPassErr.style.display = "none"
 
 	if (name === "") {
 		nameErr.innerHTML = "Please enter a name"
@@ -42,6 +45,12 @@ function authRegister(event) {
 	if (password === "") {
 		passErr.innerHTML = "Please enter a password"
 		passErr.style.display = "block"
+		return
+	}
+
+	if (confirmPass === "" || confirmPass !== password) {
+		confirmPassErr.innerHTML = "Passwords do not match"
+		confirmPassErr.style.display = "block"
 		return
 	}
 
@@ -74,7 +83,10 @@ function authRegister(event) {
 						emailErr.innerHTML = err.errorCause
 						emailErr.style.display = "block"
 					}
-					else {
+					else if (err.errorCause.toLowerCase().includes("password")) {
+						passErr.innerHTML = err.errorCause
+						passErr.style.display = "block"
+					} else {
 						nameErr.innerHTML = err.errorCause
 						nameErr.style.display = "block"
 					}
@@ -132,15 +144,19 @@ function authLogin(event) {
 			sessionStorage.setItem('userLogin', JSON.stringify(player)) // changed from user to userLogin for tests purposes
 			window.location.href = "#home"
 			return data
-		}).catch(() => {
-		if (err.errorCause.toLowerCase().includes("name")) {
-			nameErr.innerHTML = err.errorCause
-			nameErr.style.display = "block"
-		} else {
-			passErr.innerHTML = err.errorCause
-			passErr.style.display = "block"
-		}
-	})
+		}).catch(err => {
+			if (err.errorCause.toLowerCase().includes("name")) {
+				nameErr.innerHTML = err.errorCause
+				nameErr.style.display = "block"
+			} else if (err.errorCause.toLowerCase().includes("password")) {
+				console.log(err.errorCause)
+				passErr.innerHTML = err.errorCause
+				passErr.style.display = "block"
+			} else {
+				passErr.innerHTML = err.errorCause
+				passErr.style.display = "block"
+			}
+		})
 }
 
 
