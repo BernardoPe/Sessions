@@ -27,7 +27,7 @@ class PlayerEndpointsTest {
         // Arrange
         val request = Request(Method.POST, "/players")
             .header("Content-Type", "application/json")
-            .body("""{"name":"Test","email":"Testemail@test.pt"}""")
+            .body("""{"name":"Test","email":"Testemail@test.pt","password":"TestPassword#123"}""")
         // Act
         val response = api.createPlayer(request)
         // Assert
@@ -35,11 +35,11 @@ class PlayerEndpointsTest {
     }
 
     @Test
-    fun `test create player name taken`() {
+    fun `test create player credentials taken`() {
         // Arrange
         val request = Request(Method.POST, "/players")
             .header("Content-Type", "application/json")
-            .body("""{"name":"Test","email":"Testemail@test.pt"}""")
+            .body("""{"name":"Test","email":"Testemail@test.pt","password":"TestPassword#123"}""")
         // Act
         api.createPlayer(request)
         val response = api.createPlayer(request)
@@ -52,7 +52,7 @@ class PlayerEndpointsTest {
         // Arrange
         val request = Request(Method.POST, "/players")
             .header("Content-Type", "application/json")
-            .body("""{"name":"TestName","email":"Test.com"}""")
+            .body("""{"name":"TestName","email":"Test.com","password":"TestPassword"}""")
         // Act
         val response = api.createPlayer(request)
         // Assert
@@ -145,7 +145,6 @@ class PlayerEndpointsTest {
         assertEquals(players[0].email, "TestEmail@test.pt")
 
         assertEquals(2, playerSearch.total)
-
     }
 
     @BeforeEach

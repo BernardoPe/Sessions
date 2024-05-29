@@ -2,6 +2,7 @@ package pt.isel.ls.storage
 
 import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.domain.primitives.PasswordHash
 import pt.isel.ls.data.mapper.toEmail
 import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.storage.mem.SessionsDataMemPlayer
@@ -16,7 +17,7 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), 0L))
+        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), PasswordHash("testPassword")))
         // Check if the player was added
         // Start by getting the player
         val player = playerStorage.getById(2u)
@@ -29,6 +30,8 @@ class SessionsDataPlayerTest {
         assertEquals("testPlayer".toName(), player.name)
         // Check the email
         assertEquals("testEmail@test.com".toEmail(), player.email)
+        // Check the password
+        assertEquals(PasswordHash("testPassword"), player.password)
     }
 
     @Test
@@ -36,9 +39,9 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), 0L))
+        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), PasswordHash("testPassword")))
         // Update the player
-        playerStorage.update(2u, Player(2u, "newName".toName(), "newEmail@test.com".toEmail(), 0L))
+        playerStorage.update(2u, Player(2u, "newName".toName(), "newEmail@test.com".toEmail(),  PasswordHash("testPassword")))
         // Check if the player was updated
         // Start by getting the player
         val player = playerStorage.getById(2u)
@@ -51,6 +54,8 @@ class SessionsDataPlayerTest {
         assertEquals("newName".toName(), player.name)
         // Check the email
         assertEquals("newEmail@test.com".toEmail(), player.email)
+        // Check the password
+        assertEquals(PasswordHash("testPassword"), player.password)
     }
 
     @Test
@@ -58,7 +63,7 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), 0L))
+        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), PasswordHash("testPassword")))
         // Delete the player
         playerStorage.delete(2u)
         // Check if the player was deleted
@@ -73,7 +78,7 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), 0L))
+        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), PasswordHash("testPassword")))
         val playerSearch = playerStorage.getPlayersSearch("tes".toName(), 10u, 0u)
         assertEquals(1, playerSearch.first.size)
         assertEquals(1, playerSearch.second)
@@ -86,7 +91,7 @@ class SessionsDataPlayerTest {
     fun testPlayerNameSearchNotFound() {
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), 0L))
+        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), PasswordHash("testPassword")))
         // Search by name, characters are contained in the name but not from the start
         val playerSearch = playerStorage.getPlayersSearch("play".toName(), 10u, 0u)
         assertEquals(0, playerSearch.first.size)
@@ -98,7 +103,7 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), 0L))
+        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), PasswordHash("testPassword")))
         // Get all players
         val players = playerStorage.getAll()
         // Check if the player is the same
@@ -117,7 +122,7 @@ class SessionsDataPlayerTest {
         // Create a player storage
         val playerStorage = SessionsDataMemPlayer()
         // Add a player to the storage
-        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), 0L))
+        playerStorage.create(Player(0u, "testPlayer".toName(), "testEmail@test.com".toEmail(), PasswordHash("testPassword")))
         // Get the player
         val player = playerStorage.getById(2u)
         // Check if the player is the same

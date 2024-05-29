@@ -71,10 +71,6 @@ class SessionServiceTest {
         assertEquals("Game not found", exception.errorCause)
     }
 
-    private fun testHashPassword(s: String): String {
-        return BCrypt.hashpw(s, BCrypt.gensalt(12))
-    }
-
     @Test
     fun testAddPlayer_Success() {
         val capacity = newTestCapacity()
@@ -89,8 +85,7 @@ class SessionServiceTest {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
 
-        val player = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword"))
-        val hashed = testHashPassword("TestPassword")
+        val player = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword123#"))
 
         assertNotNull(player)
 
@@ -98,11 +93,11 @@ class SessionServiceTest {
 
         val getSession = serviceSession.getSessionById(createdSession)
 
-        assertEquals(
-            Player(player.first, playerName, playerEmail, PasswordHash(hashed)),
-            getSession.playersSession.first(),
-        )
+        val sessionPlayer = getSession.playersSession.first()
 
+        assertEquals(player.first, sessionPlayer.id)
+        assertEquals(playerName, sessionPlayer.name)
+        assertEquals(playerEmail, sessionPlayer.email)
     }
 
     @Test
@@ -110,7 +105,7 @@ class SessionServiceTest {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
 
-        val player = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword"))
+        val player = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword123#"))
 
         val exception = assertFailsWith<NotFoundException> {
             serviceSession.addPlayer(Random.nextUInt(), player.first)
@@ -153,7 +148,7 @@ class SessionServiceTest {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
 
-        val player = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword"))
+        val player = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword123#"))
 
         assertNotNull(player)
 
@@ -188,9 +183,9 @@ class SessionServiceTest {
         val playerName3 = newTestPlayerName().toName()
         val playerEmail3 = newTestEmail().toEmail()
 
-        val player1 = servicePlayer.createPlayer(playerName1, playerEmail1, Password("TestPassword"))
-        val player2 = servicePlayer.createPlayer(playerName2, playerEmail2, Password("TestPassword"))
-        val player3 = servicePlayer.createPlayer(playerName3, playerEmail3, Password("TestPassword"))
+        val player1 = servicePlayer.createPlayer(playerName1, playerEmail1, Password("TestPassword123#"))
+        val player2 = servicePlayer.createPlayer(playerName2, playerEmail2, Password("TestPassword123#"))
+        val player3 = servicePlayer.createPlayer(playerName3, playerEmail3, Password("TestPassword123#"))
 
         assertNotNull(player1)
         assertNotNull(player2)
@@ -218,7 +213,7 @@ class SessionServiceTest {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
 
-        val player = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword"))
+        val player = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword123#"))
 
         assertNotNull(player)
 
@@ -246,7 +241,7 @@ class SessionServiceTest {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
 
-        val player = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword"))
+        val player = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword123#"))
 
         assertNotNull(player)
 
@@ -265,7 +260,7 @@ class SessionServiceTest {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
 
-        val player = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword"))
+        val player = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword123#"))
 
         val exception = assertFailsWith<NotFoundException> {
             serviceSession.removePlayer(Random.nextUInt(), player.first)
@@ -308,7 +303,7 @@ class SessionServiceTest {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
 
-        val player = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword"))
+        val player = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword123#"))
 
         assertNotNull(player)
 
@@ -358,8 +353,8 @@ class SessionServiceTest {
 
         val createdSession = serviceSession.createSession(capacity, gid, date)
 
-        val player1 = servicePlayer.createPlayer(newTestPlayerName().toName(), newTestEmail().toEmail(), Password("TestPassword")).first
-        val player2 = servicePlayer.createPlayer(newTestPlayerName().toName(), newTestEmail().toEmail(), Password("TestPassword")).first
+        val player1 = servicePlayer.createPlayer(newTestPlayerName().toName(), newTestEmail().toEmail(), Password("TestPassword123#")).first
+        val player2 = servicePlayer.createPlayer(newTestPlayerName().toName(), newTestEmail().toEmail(), Password("TestPassword123#")).first
 
         serviceSession.addPlayer(createdSession, player1)
         serviceSession.addPlayer(createdSession, player2)

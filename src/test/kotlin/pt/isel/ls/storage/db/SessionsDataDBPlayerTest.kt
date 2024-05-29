@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.primitives.Email
 import pt.isel.ls.data.domain.primitives.Name
+import pt.isel.ls.data.domain.primitives.PasswordHash
 import java.util.*
 
 class SessionsDataDBPlayerTest {
@@ -19,16 +20,16 @@ class SessionsDataDBPlayerTest {
     // Constants
     private val testEmail = "testEmailthatnooneelsewilluse@dont.com"
     private val testName = "Test Name that no one else will use"
-    private val testToken = 1L
+    private val testPassword = "PasswordTest"
     private val testUpdatedName = "Updated Name that no one else will use"
     private val testUpdatedEmail = "updatedtestthatnooneelsewilluse@dont.com"
-    private val testUpdatedToken = 2L
+    private val testUpdatedPassword = "UpdatedPasswordTest"
     private val nonExistentID = 9999u
 
     @Test
     fun `create player and verify by id`() {
         // Arrange
-        val player = Player(0u, Name(testName), Email(testEmail), testToken)
+        val player = Player(0u, Name(testName), Email(testEmail), PasswordHash(testPassword))
         // Act
         val (id, _) = sessionsDataDBPlayer.create(player)
         // Assert
@@ -43,7 +44,7 @@ class SessionsDataDBPlayerTest {
     @Test
     fun `get existent player by id`() {
         // Arrange
-        val player = Player(0u, Name(testName), Email(testEmail), testToken)
+        val player = Player(0u, Name(testName), Email(testEmail), PasswordHash(testPassword))
         val (id, _) = sessionsDataDBPlayer.create(player)
         // Act
         val retrievedPlayer = sessionsDataDBPlayer.getById(id)
@@ -65,8 +66,8 @@ class SessionsDataDBPlayerTest {
     @Test
     fun `get all players`() {
         // Arrange
-        val player1 = Player(0u, Name(testName), Email(testEmail), testToken)
-        val player2 = Player(0u, Name(testUpdatedName), Email(testUpdatedEmail), testUpdatedToken)
+        val player1 = Player(0u, Name(testName), Email(testEmail), PasswordHash(testPassword))
+        val player2 = Player(0u, Name(testUpdatedName), Email(testUpdatedEmail), PasswordHash(testUpdatedPassword))
         val (id1, _) = sessionsDataDBPlayer.create(player1)
         val (id2, _) = sessionsDataDBPlayer.create(player2)
         // Act
@@ -81,7 +82,7 @@ class SessionsDataDBPlayerTest {
     @Test
     fun `get all players empty after delete`() {
         // Arrange
-        val player = Player(0u, Name(testName), Email(testEmail), testToken)
+        val player = Player(0u, Name(testName), Email(testEmail), PasswordHash(testPassword))
         val (id, _) = sessionsDataDBPlayer.create(player)
         sessionsDataDBPlayer.delete(id)
         // Act
@@ -93,9 +94,9 @@ class SessionsDataDBPlayerTest {
     @Test
     fun `update player`() {
         // Arrange
-        val player = Player(0u, Name(testName), Email(testEmail), testToken)
+        val player = Player(0u, Name(testName), Email(testEmail), PasswordHash(testPassword))
         val (id, _) = sessionsDataDBPlayer.create(player)
-        val updatedPlayer = Player(id, Name(testUpdatedName), Email(testUpdatedEmail), testUpdatedToken)
+        val updatedPlayer = Player(id, Name(testUpdatedName), Email(testUpdatedEmail), PasswordHash(testUpdatedPassword))
         // Act
         val isUpdated = sessionsDataDBPlayer.update(id, updatedPlayer)
         // Assert
@@ -110,8 +111,8 @@ class SessionsDataDBPlayerTest {
     @Test
     fun `update non-existent player`() {
         // Arrange
-        Player(0u, Name(testName), Email(testEmail), testToken)
-        val updatedPlayer = Player(nonExistentID, Name(testUpdatedName), Email(testUpdatedEmail), testUpdatedToken)
+        Player(0u, Name(testName), Email(testEmail), PasswordHash(testPassword))
+        val updatedPlayer = Player(nonExistentID, Name(testUpdatedName), Email(testUpdatedEmail), PasswordHash(testUpdatedPassword))
         // Act
         val isUpdated = sessionsDataDBPlayer.update(nonExistentID, updatedPlayer)
         // Assert
@@ -121,7 +122,7 @@ class SessionsDataDBPlayerTest {
     @Test
     fun `delete player`() {
         // Arrange
-        val player = Player(0u, Name(testName), Email(testEmail), testToken)
+        val player = Player(0u, Name(testName), Email(testEmail), PasswordHash(testPassword))
         val (id, _) = sessionsDataDBPlayer.create(player)
         // Act
         val isDeleted = sessionsDataDBPlayer.delete(id)
@@ -142,14 +143,14 @@ class SessionsDataDBPlayerTest {
     @Test
     fun `get player by token`() {
         // Arrange
-        val player = Player(0u, Name(testName), Email(testEmail), testToken)
+        val player = Player(0u, Name(testName), Email(testEmail), PasswordHash(testPassword))
         val (id, token) = sessionsDataDBPlayer.create(player)
         // Act
-        val retrievedPlayer = sessionsDataDBPlayer.getPlayerAndToken(token)
+        val retrievedPlayer = sessionsDataDBPlayer.getPlayerAndToken(token.token)
         // Assert
         assertNotNull(retrievedPlayer)
-        assertEquals(player.name, retrievedPlayer?.name)
-        assertEquals(player.email, retrievedPlayer?.email)
+        assertEquals(player.name, retrievedPlayer?.first!!.name)
+        assertEquals(player.email, retrievedPlayer.first.email)
         // Clean up
         sessionsDataDBPlayer.delete(id)
     }
@@ -165,7 +166,7 @@ class SessionsDataDBPlayerTest {
     @Test
     fun `get player by non-existent token`() {
         // Arrange
-        val player = Player(0u, Name(testName), Email(testEmail), testToken)
+        val player = Player(0u, Name(testName), Email(testEmail), PasswordHash(testPassword))
         val (id) = sessionsDataDBPlayer.create(player)
         // Act
         val retrievedPlayer = sessionsDataDBPlayer.getPlayerAndToken(UUID.randomUUID())
@@ -186,13 +187,13 @@ class SessionsDataDBPlayerTest {
     @Test
     fun `get player by token after update and delete`() {
         // Arrange
-        val player = Player(0u, Name(testName), Email(testEmail), testToken)
+        val player = Player(0u, Name(testName), Email(testEmail), PasswordHash(testPassword))
         val (id, token) = sessionsDataDBPlayer.create(player)
-        val updatedPlayer = Player(player.id, Name(testUpdatedName), Email(testUpdatedEmail), testUpdatedToken)
+        val updatedPlayer = Player(player.id, Name(testUpdatedName), Email(testUpdatedEmail), PasswordHash(testUpdatedPassword))
         sessionsDataDBPlayer.update(player.id, updatedPlayer)
         sessionsDataDBPlayer.delete(id)
         // Act
-        val retrievedPlayer = sessionsDataDBPlayer.getPlayerAndToken(token)
+        val retrievedPlayer = sessionsDataDBPlayer.getPlayerAndToken(token.token)
         // Assert
         assertNull(retrievedPlayer)
     }

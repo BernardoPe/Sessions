@@ -3,6 +3,7 @@ drop table if exists sessions;
 drop table if exists games;
 drop table if exists tokens;
 drop table if exists players;
+drop function if exists removeOldTokens CASCADE;
 
 CREATE TABLE games (
    id SERIAL PRIMARY KEY,
@@ -46,13 +47,13 @@ CREATE TABLE sessions_players (
 );
 
 
-create or replace procedure removeOldTokens()
-language plpgsql
-as $$
+create or replace function removeOldTokens()
+returns trigger as $$
 begin
-    delete from tokens where timeExpiration < current_timestamp;
+    delete from tokens where timeExpiration < now();
+    return new;
 end;
-$$;
+$$ language plpgsql;
 
 
 create trigger removeOldTokensTrigger
