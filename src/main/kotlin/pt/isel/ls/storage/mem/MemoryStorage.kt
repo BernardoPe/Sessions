@@ -46,7 +46,7 @@ abstract class MemoryStorage {
                 UUID.fromString("00000000-0000-0000-0000-000000000000"),
                 mockPlayer.id,
                 currentLocalTime(),
-                currentLocalTime().plus(Duration.parse("PT1H")) // Token expires 1 hour later
+                currentLocalTime().plus(Duration.parse("PT1H")) // for tests
             )
         )
     }
