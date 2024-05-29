@@ -1,7 +1,10 @@
 package pt.isel.ls.services.player
 
 import org.junit.jupiter.api.BeforeEach
+import org.mindrot.jbcrypt.BCrypt
 import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.domain.primitives.Password
+import pt.isel.ls.data.domain.primitives.PasswordHash
 import pt.isel.ls.data.mapper.toEmail
 import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.exceptions.BadRequestException
@@ -23,8 +26,8 @@ class PlayerServiceTest {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
 
-        val createdPlayer = servicePlayer.createPlayer(playerName, playerEmail)
-
+        val createdPlayer = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword"))
+        val hashed = testHashPassword("TestPassword")
         // Checks if the created player ID is not null
         assertNotNull(createdPlayer.first)
 
@@ -34,7 +37,7 @@ class PlayerServiceTest {
         val getPlayer = servicePlayer.getPlayerDetails(createdPlayer.first)
 
         assertEquals(
-            Player(createdPlayer.first, playerName, playerEmail, createdPlayer.second.testTokenHash()),
+            Player(createdPlayer.first, playerName, playerEmail, PasswordHash(hashed)),
             getPlayer,
         )
     }
@@ -46,10 +49,10 @@ class PlayerServiceTest {
 
         val playerName2 = newTestPlayerName().toName()
 
-        servicePlayer.createPlayer(playerName1, playerEmail1)
+        servicePlayer.createPlayer(playerName1, playerEmail1, Password("TestPassword"))
 
         val exception = assertFailsWith<BadRequestException> {
-            servicePlayer.createPlayer(playerName2, playerEmail1)
+            servicePlayer.createPlayer(playerName2, playerEmail1, Password("TestPassword"))
         }
         assertEquals(400, exception.status)
         assertEquals("Bad Request", exception.description)
@@ -61,12 +64,12 @@ class PlayerServiceTest {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
 
-        val createdPlayer = servicePlayer.createPlayer(playerName, playerEmail)
-
+        val createdPlayer = servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword"))
+        val hashed = testHashPassword("TestPassword")
         val getPlayer = servicePlayer.getPlayerDetails(createdPlayer.first)
 
         assertEquals(
-            Player(createdPlayer.first, playerName, playerEmail, createdPlayer.second.testTokenHash()),
+            Player(createdPlayer.first, playerName, playerEmail, PasswordHash(hashed)),
             getPlayer,
         )
     }
@@ -88,7 +91,7 @@ class PlayerServiceTest {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
 
-        servicePlayer.createPlayer(playerName, playerEmail)
+        servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword"))
 
         val searchResult = servicePlayer.getPlayerList("pla".toName(), 10u, 0u)
 
@@ -104,7 +107,7 @@ class PlayerServiceTest {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
 
-        servicePlayer.createPlayer(playerName, playerEmail)
+        servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword"))
 
         val searchResult = servicePlayer.getPlayerList("yer".toName(), 10u, 0u)
 
@@ -118,10 +121,10 @@ class PlayerServiceTest {
         val playerName = newTestPlayerName().toName()
         val playerEmail = newTestEmail().toEmail()
 
-        servicePlayer.createPlayer(playerName, playerEmail)
+        servicePlayer.createPlayer(playerName, playerEmail, Password("TestPassword"))
 
         val exception = assertFailsWith<BadRequestException> {
-            servicePlayer.createPlayer(playerName, newTestEmail().toEmail())
+            servicePlayer.createPlayer(playerName, newTestEmail().toEmail(), Password("TestPassword"))
         }
 
         assertEquals(400, exception.status)
@@ -144,6 +147,9 @@ class PlayerServiceTest {
 
         private var servicePlayer = PlayerService(storage)
 
-        private fun UUID.testTokenHash() = mostSignificantBits xor leastSignificantBits
+        private fun testHashPassword(password: String): String {
+            return BCrypt.hashpw(password, BCrypt.gensalt(12))
+        }
+
     }
 }

@@ -34,15 +34,13 @@ class PlayerService(private val dataManager: SessionsDataManager) {
      * @throws BadRequestException If the player name or email already exists in the system
      */
     fun createPlayer(name: Name, email: Email, password: Password): PlayerCredentials {
-        val storagePlayer = storage.player
 
         // This is line of code uses the JBCrypt library to hash the password
         val hashedPassword = BCrypt.hashpw(password.toString(), BCrypt.gensalt(12))
 
         val player = Player(0u, name, email, PasswordHash(hashedPassword))
 
-            playerStorage.create(player)
-        }
+        return playerStorage.create(player)
 
     }
 
@@ -57,8 +55,6 @@ class PlayerService(private val dataManager: SessionsDataManager) {
      * @throws BadRequestException If the player password is incorrect
      */
     fun loginPlayer(name: Name, password: Password): PlayerCredentials {
-
-        val playerStorage = storage.player
 
         if (name.toString() == "") {
             throw BadRequestException("Name must be provided")
@@ -86,7 +82,7 @@ class PlayerService(private val dataManager: SessionsDataManager) {
      * @return True if the player was successfully logged out, false otherwise
      */
     fun logoutPlayer(token: UUID): Boolean {
-        return storage.player.revokeToken(token)
+        return playerStorage.revokeToken(token)
     }
 
     /**
@@ -97,22 +93,7 @@ class PlayerService(private val dataManager: SessionsDataManager) {
      */
     fun authenticatePlayer(token: UUID): Pair<Player, Token>? {
         // Retrieve the token from the database
-        val playerAndToken: Pair<Player, Token> = storage.player.getPlayerAndToken(token) ?: return null
-        val playerObj = playerAndToken.first
-        var tokenObj = playerAndToken.second
-
-        // Check if the token is expired
-        if (tokenObj.isExpired()) {
-            // Delete the expired token from the database
-            storage.player.revokeToken(tokenObj.token)
-
-            // Create a new token for the same player
-            tokenObj = storage.player.login(tokenObj.playerId).second
-        }
-
-        val tokenResult = tokenObj
-
-        return Pair(playerObj, tokenResult)
+        return playerStorage.getPlayerAndToken(token)
     }
 
     /**

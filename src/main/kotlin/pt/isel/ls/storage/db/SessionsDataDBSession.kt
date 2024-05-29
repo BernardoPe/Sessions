@@ -59,84 +59,84 @@ class SessionsDataDBSession(private val dbURL: String) : SessionsDataSession {
         limit: UInt,
         skip: UInt
     ): Pair<List<Session>, Int> {
-            val resQuery = StringBuilder(
-                "SELECT DISTINCT sessions.id FROM sessions "
-            )
-            val countQuery = StringBuilder("SELECT COUNT(*) FROM (SELECT DISTINCT sessions.id FROM sessions ")
-            val queryParams = mutableListOf<Any>()
+        val resQuery = StringBuilder(
+            "SELECT DISTINCT sessions.id FROM sessions "
+        )
+        val countQuery = StringBuilder("SELECT COUNT(*) FROM (SELECT DISTINCT sessions.id FROM sessions ")
+        val queryParams = mutableListOf<Any>()
 
-            val searchQuery = StringBuilder()
+        val searchQuery = StringBuilder()
 
-            searchQuery.append(
-                "JOIN games ON sessions.game_id = games.id " +
-                        "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
-                        "LEFT JOIN players ON sessions_players.player_id = players.id "
-            )
+        searchQuery.append(
+            "JOIN games ON sessions.game_id = games.id " +
+                    "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
+                    "LEFT JOIN players ON sessions_players.player_id = players.id "
+        )
 
-            var firstCondition = true
+        var firstCondition = true
 
-            if (gid != null) {
-                searchQuery.append("WHERE games.id = ? ")
-                queryParams.add(gid.toInt())
-                firstCondition = false
-            }
-
-            if (date != null) {
-                searchQuery.append(if (firstCondition) "WHERE date = ? " else "AND date = ? ")
-                queryParams.add(date.toTimestamp())
-                firstCondition = false
-            }
-
-            if (state != null) {
-                val cond = if (state == State.OPEN) "date >= now()" else "date < now()"
-                searchQuery.append(if (firstCondition) "WHERE $cond " else "AND $cond ")
-                firstCondition = false
-            }
-
-            if (pid != null) {
-                searchQuery.append(if (firstCondition) "WHERE players.id = ? " else "AND players.id = ? ")
-                queryParams.add(pid.toInt())
-            }
-
-            resQuery.append(searchQuery)
-            countQuery.append(searchQuery)
-
-            countQuery.append(") as sessions ")
-            resQuery.append("ORDER BY sessions.id LIMIT ? OFFSET ?")
-
-            queryParams.add(limit.toInt())
-            queryParams.add(skip.toInt())
-
-            val statement = connection.prepareStatement(resQuery.toString())
-            val countStatement = connection.prepareStatement(countQuery.toString())
-
-            for ((index, param) in queryParams.withIndex()) {
-                statement.setObject(index + 1, param)
-                if (index < queryParams.size - 2) // dont add limit and skip to count query
-                    countStatement.setObject(index + 1, param)
-            }
-
-            val resultSet = statement.executeQuery()
-            val countResultSet = countStatement.executeQuery()
-            val sessionStmt = connection.prepareStatement(
-                "SELECT sessions.id as sid, sessions.game_id as gid, date, capacity, games.name as gname, genres, developer, players.id as pid, players.name as pname, email, password_hash FROM sessions " +
-                        "JOIN games ON sessions.game_id = games.id " +
-                        "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
-                        "LEFT JOIN players ON sessions_players.player_id = players.id " +
-                        "WHERE sessions.id = ?",
-            )
-            val resultSessions = mutableListOf<Session>()
-            while (resultSet.next()) {
-                sessionStmt.setInt(1, resultSet.getInt("id"))
-                val sessionResultSet = sessionStmt.executeQuery()
-                resultSessions.add(sessionResultSet.getSessions().first())
-            }
-            countResultSet.next()
-
-            val total = countResultSet.getInt(1)
-
-            return resultSessions to total.also { statement.close(); countStatement.close(); sessionStmt.close() }
+        if (gid != null) {
+            searchQuery.append("WHERE games.id = ? ")
+            queryParams.add(gid.toInt())
+            firstCondition = false
         }
+
+        if (date != null) {
+            searchQuery.append(if (firstCondition) "WHERE date = ? " else "AND date = ? ")
+            queryParams.add(date.toTimestamp())
+            firstCondition = false
+        }
+
+        if (state != null) {
+            val cond = if (state == State.OPEN) "date >= now()" else "date < now()"
+            searchQuery.append(if (firstCondition) "WHERE $cond " else "AND $cond ")
+            firstCondition = false
+        }
+
+        if (pid != null) {
+            searchQuery.append(if (firstCondition) "WHERE players.id = ? " else "AND players.id = ? ")
+            queryParams.add(pid.toInt())
+        }
+
+        resQuery.append(searchQuery)
+        countQuery.append(searchQuery)
+
+        countQuery.append(") as sessions ")
+        resQuery.append("ORDER BY sessions.id LIMIT ? OFFSET ?")
+
+        queryParams.add(limit.toInt())
+        queryParams.add(skip.toInt())
+
+        val statement = connection.prepareStatement(resQuery.toString())
+        val countStatement = connection.prepareStatement(countQuery.toString())
+
+        for ((index, param) in queryParams.withIndex()) {
+            statement.setObject(index + 1, param)
+            if (index < queryParams.size - 2) // dont add limit and skip to count query
+                countStatement.setObject(index + 1, param)
+        }
+
+        val resultSet = statement.executeQuery()
+        val countResultSet = countStatement.executeQuery()
+        val sessionStmt = connection.prepareStatement(
+            "SELECT sessions.id as sid, sessions.game_id as gid, date, capacity, games.name as gname, genres, developer, players.id as pid, players.name as pname, email, password_hash FROM sessions " +
+                    "JOIN games ON sessions.game_id = games.id " +
+                    "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
+                    "LEFT JOIN players ON sessions_players.player_id = players.id " +
+                    "WHERE sessions.id = ?",
+        )
+        val resultSessions = mutableListOf<Session>()
+        while (resultSet.next()) {
+            sessionStmt.setInt(1, resultSet.getInt("id"))
+            val sessionResultSet = sessionStmt.executeQuery()
+            resultSessions.add(sessionResultSet.getSessions().first())
+        }
+        countResultSet.next()
+
+        val total = countResultSet.getInt(1)
+
+        return resultSessions to total.also { statement.close(); countStatement.close(); sessionStmt.close() }
+    }
 
     override fun addPlayer(sid: UInt, pid: UInt): Boolean {
         // Check if the player is already in the session

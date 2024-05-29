@@ -9,6 +9,7 @@ import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.domain.primitives.PasswordHash
 import pt.isel.ls.data.dto.GameInfoOutputModel
 import pt.isel.ls.data.dto.GameSearchResultOutputModel
 import pt.isel.ls.data.mapper.toEmail
@@ -205,8 +206,8 @@ class GameEndpointsTest {
         fun setup() {
             val mockGame = Game(1u, "TestName".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre(), "Adventure".toGenre()))
             val mockGame2 = Game(2u, "TestName2".toName(), "TestDeveloper".toName(), setOf("RPG".toGenre()))
-            val mockPlayer = Player(1u, "TestName".toName(), "TestEmail@test.pt".toEmail(), 0L)
-            val mockPlayer2 = Player(2u, "TestName2".toName(), "TestEmail2@test.pt".toEmail(), 0L)
+            val mockPlayer = Player(1u, "TestName".toName(), "TestEmail@test.pt".toEmail(), PasswordHash("TestPassword"))
+            val mockPlayer2 = Player(2u, "TestName2".toName(), "TestEmail2@test.pt".toEmail(), PasswordHash("TestPassword"))
             storage.game.create(mockGame)
             storage.game.create(mockGame2)
             storage.player.create(mockPlayer)

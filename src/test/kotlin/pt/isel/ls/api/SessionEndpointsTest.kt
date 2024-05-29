@@ -10,6 +10,7 @@ import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.domain.primitives.PasswordHash
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.mapper.toEmail
 import pt.isel.ls.data.mapper.toGenre
@@ -559,8 +560,8 @@ class SessionEndpointsTest {
             val mockSession = Session(1u, 100u, testDate1, mockGame2, setOf())
             val mockSession2 = Session(2u, 100u, testDate2, mockGame2, setOf())
 
-            val mockPlayer = Player(2u, "TestName".toName(), "testemail@test.pt".toEmail(), 0L)
-            val mockPlayer2 = Player(3u, "TestName2".toName(), "testemail2@test.pt".toEmail(), 0L)
+            val mockPlayer = Player(2u, "TestName".toName(), "testemail@test.pt".toEmail(), PasswordHash("TestPassword"))
+            val mockPlayer2 = Player(3u, "TestName2".toName(), "testemail2@test.pt".toEmail(), PasswordHash("TestPassword"))
 
             storage.game.create(mockGame)
             storage.game.create(mockGame2)

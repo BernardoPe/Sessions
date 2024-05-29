@@ -2,6 +2,7 @@ package pt.isel.ls.domain.session
 
 import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.domain.primitives.PasswordHash
 import pt.isel.ls.data.domain.session.SESSION_MAX_CAPACITY
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
@@ -25,12 +26,12 @@ class SessionTest {
         assertEquals(Game(1u, "Test Game 1".toName(), "Test Developer".toName(), setOf("Adventure".toGenre(), "RPG".toGenre())), session.gameSession)
         assertEquals(
             setOf(
-                Player(1u, "player1".toName(), "player1@example.com".toEmail(), uuid),
-                Player(2u, "player2".toName(), "player2@example.com".toEmail(), uuid),
-                Player(3u, "player3".toName(), "player3@example.com".toEmail(), uuid),
-                Player(4u, "player4".toName(), "player4@example.com".toEmail(), uuid),
-                Player(5u, "player5".toName(), "player5@example.com".toEmail(), uuid),
-                Player(6u, "player6".toName(), "player6@example.com".toEmail(), uuid),
+                Player(1u, "player1".toName(), "player1@example.com".toEmail(), passwordHash),
+                Player(2u, "player2".toName(), "player2@example.com".toEmail(), passwordHash),
+                Player(3u, "player3".toName(), "player3@example.com".toEmail(), passwordHash),
+                Player(4u, "player4".toName(), "player4@example.com".toEmail(), passwordHash),
+                Player(5u, "player5".toName(), "player5@example.com".toEmail(), passwordHash),
+                Player(6u, "player6".toName(), "player6@example.com".toEmail(), passwordHash),
             ),
             session.playersSession,
         )
@@ -100,15 +101,15 @@ class SessionTest {
             setOf("Adventure".toGenre(), "RPG".toGenre()),
         )
 
-        val uuid = 0L
+        val passwordHash = PasswordHash("PasswordHash")
 
         fun newPlayersTest() = setOf(
-            Player(1u, "player1".toName(), "player1@example.com".toEmail(), uuid),
-            Player(2u, "player2".toName(), "player2@example.com".toEmail(), uuid),
-            Player(3u, "player3".toName(), "player3@example.com".toEmail(), uuid),
-            Player(4u, "player4".toName(), "player4@example.com".toEmail(), uuid),
-            Player(5u, "player5".toName(), "player5@example.com".toEmail(), uuid),
-            Player(6u, "player6".toName(), "player6@example.com".toEmail(), uuid),
+            Player(1u, "player1".toName(), "player1@example.com".toEmail(), passwordHash),
+            Player(2u, "player2".toName(), "player2@example.com".toEmail(), passwordHash),
+            Player(3u, "player3".toName(), "player3@example.com".toEmail(), passwordHash),
+            Player(4u, "player4".toName(), "player4@example.com".toEmail(), passwordHash),
+            Player(5u, "player5".toName(), "player5@example.com".toEmail(), passwordHash),
+            Player(6u, "player6".toName(), "player6@example.com".toEmail(), passwordHash),
         )
     }
 }

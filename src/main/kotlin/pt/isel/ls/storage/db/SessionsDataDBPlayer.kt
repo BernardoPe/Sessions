@@ -1,9 +1,13 @@
 package pt.isel.ls.storage.db
 
+import kotlinx.datetime.toKotlinLocalDateTime
 import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.domain.player.Token
 import pt.isel.ls.data.domain.primitives.Email
 import pt.isel.ls.data.domain.primitives.Name
+import pt.isel.ls.data.domain.primitives.PasswordHash
 import pt.isel.ls.storage.SessionsDataPlayer
+import pt.isel.ls.utils.toTimestamp
 import java.sql.ResultSet
 import java.sql.Statement
 import java.util.*
@@ -11,7 +15,8 @@ import java.util.*
 class SessionsDataDBPlayer(private val dbURL: String) : SessionsDataPlayer {
 
     private val connection get() = TransactionManager.getConnection(dbURL)
-    override fun create(player: Player): Pair<UInt, UUID> {
+    override fun create(player: Player): Pair<UInt, Token> {
+
         val statement = connection.prepareStatement(
             "INSERT INTO players (name, email, password_hash) VALUES (?, ?, ?)",
             Statement.RETURN_GENERATED_KEYS,
@@ -27,16 +32,15 @@ class SessionsDataDBPlayer(private val dbURL: String) : SessionsDataPlayer {
 
         val playerId = generatedKeys.getInt(1).toUInt()
 
-        Pair(playerId, tokenCreation(connection, generatedKeys.getInt(1).toUInt()))
+        return Pair(playerId, tokenCreation(generatedKeys.getInt(1).toUInt()))
 
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun login(id: UInt): Pair<UInt, Token> = execQuery { connection ->
-        Pair(id, tokenCreation(connection, id))
-    } as Pair<UInt, Token>
+    override fun login(id: UInt): Pair<UInt, Token> {
+        return Pair(id, tokenCreation(id))
+    }
 
-    override fun getById(id: UInt): Player? = execQuery { connection ->
+    override fun getById(id: UInt): Player? {
         val statement = connection.prepareStatement(
             "SELECT * FROM players WHERE id = ?",
         )
@@ -125,7 +129,8 @@ class SessionsDataDBPlayer(private val dbURL: String) : SessionsDataPlayer {
     }
 
 
-    override fun getPlayerAndToken(token: UUID): Pair<Player, Token>? = execQuery { connection ->
+    override fun getPlayerAndToken(token: UUID): Pair<Player, Token>? {
+
         val statement = connection.prepareStatement(
             "SELECT * " +
                     "FROM players " +
@@ -136,7 +141,7 @@ class SessionsDataDBPlayer(private val dbURL: String) : SessionsDataPlayer {
         statement.setString(1, token.toString())
         val resultSet = statement.executeQuery()
 
-        if (resultSet.next()) {
+        return if (resultSet.next()) {
             val playerObj = Player(
                 resultSet.getInt("id").toUInt(),
                 Name(resultSet.getString("name")),
@@ -152,10 +157,9 @@ class SessionsDataDBPlayer(private val dbURL: String) : SessionsDataPlayer {
             )
             Pair(playerObj, tokenObj).also { statement.close() }
         } else {
-            statement.close()
             null
-        }
-    } as Pair<Player, Token>?
+        }.also { statement.close() }
+    }
 
     override fun isEmailStored(email: Email): Boolean {
         val statement = connection.prepareStatement(
@@ -179,7 +183,7 @@ class SessionsDataDBPlayer(private val dbURL: String) : SessionsDataPlayer {
         return resultSet.next().also { statement.close() }
     }
 
-    override fun revokeToken(token: UUID): Boolean = execQuery { connection ->
+    override fun revokeToken(token: UUID): Boolean {
         val statement = connection.prepareStatement(
             "DELETE FROM tokens WHERE token = ?",
         )
@@ -187,11 +191,7 @@ class SessionsDataDBPlayer(private val dbURL: String) : SessionsDataPlayer {
         statement.setString(1, token.toString())
         val updated = statement.executeUpdate()
 
-        updated > 0
-    } as Boolean
-
-    private fun UUID.hash(): Long {
-        return leastSignificantBits xor mostSignificantBits
+        return updated > 0
     }
 
     private fun ResultSet.getPlayers(): List<Player> {
@@ -207,7 +207,8 @@ class SessionsDataDBPlayer(private val dbURL: String) : SessionsDataPlayer {
         return players
     }
 
-    private fun tokenCreation(connection: Connection, playerId: UInt): Token {
+    private fun tokenCreation(playerId: UInt): Token {
+
         val statement = connection.prepareStatement(
             "INSERT INTO tokens (token, player_id, timeCreation, timeExpiration) VALUES (?, ?, ?, ?)",
         )

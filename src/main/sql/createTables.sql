@@ -44,3 +44,17 @@ CREATE TABLE sessions_players (
       PRIMARY KEY (session_id, player_id)
 );
 
+
+create or replace procedure removeOldTokens()
+language plpgsql
+as $$
+begin
+    delete from tokens where timeExpiration < current_timestamp;
+end;
+$$;
+
+
+create trigger removeOldTokensTrigger
+before insert or update or delete on tokens
+for each row
+execute procedure removeOldTokens();

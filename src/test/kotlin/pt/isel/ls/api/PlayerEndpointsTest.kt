@@ -8,6 +8,7 @@ import org.http4k.core.UriTemplate
 import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.data.domain.player.Player
+import pt.isel.ls.data.domain.primitives.PasswordHash
 import pt.isel.ls.data.dto.PlayerInfoOutputModel
 import pt.isel.ls.data.dto.PlayerSearchOutputModel
 import pt.isel.ls.data.mapper.toEmail
@@ -161,8 +162,8 @@ class PlayerEndpointsTest {
         private var api = SessionsApi(PlayerService(storage), GameService(storage), SessionsService(storage))
 
         fun setup() {
-            storage.player.create(Player(0u, "TestName".toName(), "TestEmail@test.pt".toEmail(), 0L))
-            storage.player.create(Player(0u, "TestName2".toName(), "TestEmail2@test.pt".toEmail(), 0L))
+            storage.player.create(Player(0u, "TestName".toName(), "TestEmail@test.pt".toEmail(), PasswordHash("TestPassword")))
+            storage.player.create(Player(0u, "TestName2".toName(), "TestEmail2@test.pt".toEmail(),  PasswordHash("TestPassword")))
         }
     }
 }
