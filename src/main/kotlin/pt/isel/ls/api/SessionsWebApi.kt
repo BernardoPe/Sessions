@@ -138,13 +138,8 @@ class SessionsApi(
      */
 
     fun authPlayer(request: Request): Response {
-        val token: UUID
 
-        if (request.cookie("Authorization") != null) {
-            token = parseCookie(request)
-        } else {
-            throw BadRequestException("No Authorization provided")
-        }
+        val token = parseCookie(request)
 
         val playerAndToken = playerServices.authenticatePlayer(token)
 

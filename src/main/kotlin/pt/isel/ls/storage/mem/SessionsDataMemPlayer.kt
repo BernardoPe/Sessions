@@ -15,27 +15,15 @@ import java.util.*
  *  Player Data management class for the in-memory database
 */
 class SessionsDataMemPlayer : SessionsDataPlayer, MemManager() {
-    override fun getPlayerAndToken(token: UUID): Player? {
-        return tokenDB.find { tokens -> tokens.token == token }?.let {
-            playerDB.find { player -> player.id == it.playerId }
-        }
-    }
-
-    override fun getToken(token: UUID): Token? {
-        return tokenDB.find { it.token == token }
+    override fun getPlayerAndToken(token: UUID): Pair<Player, Token>? {
+        val tok = tokenDB.find { it.token == token } ?: return null
+        val player = playerDB.find { it.id == tok.playerId } ?: return null
+        return Pair(player, tok)
     }
 
     override fun revokeToken(token: UUID): Boolean {
-        val token = tokenDB.find { it.token == token } ?: return false
-        tokenDB.remove(token)
-        tokenDB.add( // I don´t know why are we adding the token again
-            Token(
-                token.token,
-                token.playerId,
-                token.timeCreation,
-                token.timeExpiration
-            )
-        )
+        val tok = tokenDB.find { it.token == token } ?: return false
+        tokenDB.remove(tok)
         return true
     }
 
