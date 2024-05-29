@@ -137,13 +137,13 @@ class SessionsApi(
      * @throws BadRequestException If the request is invalid
      */
 
-    fun authPlayer(request: Request): Response {
+    fun authPlayer(request: Request): Response = processRequest(request) {
 
         val token = parseCookie(request)
 
         val playerAndToken = playerServices.authenticatePlayer(token)
 
-        return if (playerAndToken != null) {
+        if (playerAndToken != null) {
             Response(OK)
                 .header("content-type", "application/json")
                 .cookie(createCookie(null, playerAndToken.second.token))
@@ -153,16 +153,16 @@ class SessionsApi(
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(UnauthorizedException()))
         }
+
     }
 
     /**
      * Logs out a player
      */
     fun playerLogout(request: Request) = processRequest(request) {
-        if (request.cookie("Authorization") == null) {
-            throw BadRequestException("No Authorization provided")
-        }
+
         val token = parseCookie(request)
+
         if (playerServices.authenticatePlayer(token) == null) {
             throw UnauthorizedException()
         }
@@ -477,7 +477,8 @@ class SessionsApi(
     }
 
     private fun parseCookie(request: Request): UUID {
-        return UUID.fromString(request.cookie("Authorization")?.value ?: throw BadRequestException("No Authorization provided"))
+        val cookie = request.cookie("Authorization")?.value ?: throw UnauthorizedException()
+        return UUID.fromString(cookie)
     }
 
     private fun createCookie(expiration: Long?, token: UUID?): Cookie {
