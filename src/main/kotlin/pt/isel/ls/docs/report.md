@@ -298,6 +298,46 @@ The API returns the player details and the token session cookie. The SPA then st
 
 For logging out, the SPA sends a request to the API to erase the token cookie.
 
+## Deployment
+
+The application is containerised using Docker and is available as a Docker image.
+
+It can found on [Docker Hub](https://hub.docker.com/r/initdd/img-ls-2324-2-43d-g09/).
+
+### Steps to build and publish the Docker image
+
+The Docker image was built and published using the following steps:
+
+1. Built the Project with the command `./gradlew clean build`
+
+2. Built the Docker image with the command:
+
+```bash
+sudo docker build -t initdd/img-ls-2324-2-43d-g09 .
+```
+
+3. Published the Docker image to Docker Hub with the command:
+
+```bash
+sudo docker push initdd/img-ls-2324-2-43d-g09
+```
+
+To update the Docker image, repeat the steps above.
+
+With this, the application is available as a Docker image and can be deployed to any environment that supports Docker.
+
+In our case, the application was deployed to Render.
+
+### Render
+
+The objective of the deployment was to make the application available to the public.
+
+In Render, it was created a web service and a database service using `PostgreSQL`.
+
+The web service was configured to use the Docker image published on Docker Hub.
+
+The database service was configured to use the `PostgreSQL` database and the database schema was created using the `createTables.sql` script.
+
 ## Critical Evaluation
 
 No major defects were detected as of the time of writing this report.
