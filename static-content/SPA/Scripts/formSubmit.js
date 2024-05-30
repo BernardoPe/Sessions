@@ -307,8 +307,6 @@ async function submitFormUpdateSession(event, sid) {
 	date? reqBody.date = date : null;
 	capacity? reqBody.capacity = capacity : null;
 
-	console.log(reqBody)
-
 	fetch(`sessions/${sid}`, {
 		method: 'PATCH',
 		headers: {
@@ -426,7 +424,6 @@ function isInputNotInserted(input, type, err) {
  * @param gameName - the name of the game
  */
 function getUniqueGameId(gameName) {
-	console.log(gameName)
 	return fetch(`games?name=${gameName}`)
 		.then(response => response.status === 200 ? response.json() : Promise.reject(response))
 		.then(res => {
