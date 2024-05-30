@@ -5,13 +5,11 @@ import pt.isel.ls.data.domain.game.Game
 import pt.isel.ls.data.mapper.toGenre
 import pt.isel.ls.data.mapper.toName
 import pt.isel.ls.storage.mem.SessionsDataMemGame
-import pt.isel.ls.storage.mem.SessionsDataMemPlayer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class SessionsDataGameTest {
 

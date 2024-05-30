@@ -34,20 +34,24 @@ class PlayerService(private val dataManager: SessionsDataManager) {
      * @throws BadRequestException If the player name or email already exists in the system
      */
     fun createPlayer(name: Name, email: Email, password: Password): PlayerCredentials {
-        if (playerStorage.isEmailStored(email)) {
-            throw BadRequestException("Given Player email already exists")
+
+        return dataManager.executeTransaction {
+
+            if (playerStorage.isEmailStored(email)) {
+                throw BadRequestException("Given Player email already exists")
+            }
+
+            if (playerStorage.isNameStored(name)) {
+                throw BadRequestException("Given Player name already exists")
+            }
+            // This is line of code uses the JBCrypt library to hash the password
+            val hashedPassword = BCrypt.hashpw(password.toString(), BCrypt.gensalt(6))
+
+            val player = Player(0u, name, email, PasswordHash(hashedPassword))
+
+            playerStorage.create(player)
+
         }
-
-        if (playerStorage.isNameStored(name)) {
-            throw BadRequestException("Given Player name already exists")
-        }
-
-        // This is line of code uses the JBCrypt library to hash the password
-        val hashedPassword = BCrypt.hashpw(password.toString(), BCrypt.gensalt(12))
-
-        val player = Player(0u, name, email, PasswordHash(hashedPassword))
-
-        return playerStorage.create(player)
 
     }
 
@@ -63,23 +67,24 @@ class PlayerService(private val dataManager: SessionsDataManager) {
      */
     fun loginPlayer(name: Name, password: Password): PlayerCredentials {
 
-        if (name.toString() == "") {
-            throw BadRequestException("Name must be provided")
+        return dataManager.executeTransaction {
+
+            val player = playerStorage.getPlayersSearch(name = name, 1u, 0u).first.first()
+
+            if (player.name != name) {
+                throw BadRequestException("Invalid credentials")
+            }
+
+            /* This line of code uses the JBCrypt library to match the password
+                and the hashed password that was stored on the database */
+
+            if (!BCrypt.checkpw(password.toString(), player.password.toString())) {
+                throw BadRequestException("Invalid credentials")
+            }
+
+            playerStorage.login(player.id)
         }
 
-        val player = playerStorage.getPlayersSearch(name = name, 1u, 0u).first.first()
-
-        if (player.name != name) {
-            throw NotFoundException("Invalid credentials")
-        }
-
-        /* This line of code uses the JBCrypt library to match the password
-            and the hashed password that was stored on the database */
-        if (!BCrypt.checkpw(password.toString(), player.password.toString())) {
-            throw BadRequestException("Invalid credentials")
-        }
-
-        return playerStorage.login(player.id)
     }
 
     /**

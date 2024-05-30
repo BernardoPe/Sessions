@@ -5,6 +5,8 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.core.UriTemplate
+import org.http4k.core.cookie.cookie
+import org.http4k.core.cookie.cookies
 import org.http4k.routing.RoutedRequest
 import org.junit.jupiter.api.BeforeEach
 import pt.isel.ls.data.domain.player.Player
@@ -31,7 +33,8 @@ class PlayerEndpointsTest {
         // Act
         val response = api.createPlayer(request)
         // Assert
-        assertEquals(response.status, Status.CREATED)
+        assertEquals(Status.CREATED, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test
@@ -44,7 +47,8 @@ class PlayerEndpointsTest {
         api.createPlayer(request)
         val response = api.createPlayer(request)
         // Assert
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test
@@ -56,7 +60,8 @@ class PlayerEndpointsTest {
         // Act
         val response = api.createPlayer(request)
         // Assert
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test
@@ -68,7 +73,8 @@ class PlayerEndpointsTest {
         // Act
         val response = api.createPlayer(request)
         // Assert
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test
@@ -80,7 +86,8 @@ class PlayerEndpointsTest {
         // Act
         val response = api.createPlayer(request)
         // Assert
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test
@@ -92,8 +99,8 @@ class PlayerEndpointsTest {
         // Act
         val response = api.createPlayer(request)
         // Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.BAD_REQUEST, response.status)
     }
 
     @Test
@@ -107,10 +114,10 @@ class PlayerEndpointsTest {
         val playerDetails = Json.decodeFromString<PlayerInfoOutputModel>(playerDetailsJson)
         // Assert
         assertEquals(response.status, Status.OK)
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(playerDetails.name, "TestName")
-        assertEquals(playerDetails.email, "TestEmail@test.pt")
-        assertEquals(playerDetails.pid, 2u)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals("TestName", playerDetails.name)
+        assertEquals("TestEmail@test.pt", playerDetails.email)
+        assertEquals(2u, playerDetails.pid)
     }
 
     @Test
@@ -121,8 +128,8 @@ class PlayerEndpointsTest {
         // Act
         val response = api.getPlayerDetails(routedRequest)
         // Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.NOT_FOUND)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.NOT_FOUND, response.status)
     }
 
     @Test
@@ -132,56 +139,99 @@ class PlayerEndpointsTest {
         // Act
         val response = api.getPlayerList(request)
         // Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.OK)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.OK, response.status)
 
         val playerListJson = response.bodyString()
         val playerSearch = Json.decodeFromString<PlayerSearchOutputModel>(playerListJson)
 
         val players = playerSearch.players
 
-        assertEquals(players.size, 1)
-        assertEquals(players[0].name, "TestName")
-        assertEquals(players[0].email, "TestEmail@test.pt")
+        assertEquals(1, players.size)
+        assertEquals("TestName", players[0].name)
+        assertEquals("TestEmail@test.pt", players[0].email)
 
         assertEquals(2, playerSearch.total)
     }
 
     @Test
-    fun `test authPlayer should give unauthorized`() {
+    fun `test authPlayer no auth should give unauthorized`() {
         // Arrange
         val request = Request(Method.POST, "/auth")
             .header("Content-Type", "application/json")
-            .body("""{"email":"test@test.com","password":"TestPassword1!"}""")
         // Act
         val response = api.authPlayer(request)
         // Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.UNAUTHORIZED)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.UNAUTHORIZED, response.status)
     }
 
     @Test
-    fun `test authPlayer should give bad request`() {
+    fun `test authPlayer should give ok`() {
         // Arrange
         val request = Request(Method.POST, "/auth")
             .header("Content-Type", "application/json")
-            .body("""{"email":"test@etst.com"}""")
+            .cookie("Authorization", "00000000-0000-0000-0000-000000000000")
         // Act
         val response = api.authPlayer(request)
         // Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.UNAUTHORIZED)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.OK, response.status)
     }
+
+    @Test
+    fun `test loginPlayer should give ok`() {
+        // Arrange
+        val request = Request(Method.POST, "/login")
+            .header("Content-Type", "application/json")
+            .body("""{"name":"John Doe","password":"TestPassword#123"}""")
+        // Act
+        val response = api.loginPlayer(request)
+        // Assert
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.OK, response.status)
+    }
+
+    @Test
+    fun `test loginPlayer incorrect password should give bad request`() {
+        // Arrange
+        val request = Request(Method.POST, "/login")
+            .header("Content-Type", "application/json")
+            .body("""{"name":"John Doe", "password":"TestPassword"}""")
+        // Act
+        val response = api.loginPlayer(request)
+        // Assert
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.BAD_REQUEST, response.status)
+    }
+
 
     @Test
     fun `test playerLogout should give unauthorized`() {
         // Arrange
-        val request = Request(Method.POST, "/logout")
+        val request = Request(Method.GET, "/logout")
         // Act
         val response = api.playerLogout(request)
         // Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.UNAUTHORIZED)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.UNAUTHORIZED, response.status)
+    }
+
+    @Test
+    fun `test player logout should give ok`() {
+        // Arrange
+        val newPlayerRequest = Request(Method.POST, "/players")
+            .header("Content-Type", "application/json")
+            .body("""{"name":"Test","email":"testmail@gmail.com","password":"TestPassword#123"}""")
+        val newPlayerResponse = api.createPlayer(newPlayerRequest)
+
+        val request = Request(Method.GET, "/logout")
+            .header("Content-Type", "application/json")
+            .cookie("Authorization", newPlayerResponse.cookies().first().value)
+        // Act
+        val response = api.playerLogout(request)
+        // Assert
+        assertEquals(Status.OK, response.status)
     }
 
     @BeforeEach

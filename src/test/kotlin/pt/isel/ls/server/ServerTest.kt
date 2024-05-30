@@ -4,6 +4,8 @@ import kotlinx.serialization.json.Json
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
+import org.http4k.core.cookie.cookie
+import org.http4k.core.cookie.cookies
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -21,8 +23,8 @@ import pt.isel.ls.data.dto.GameInfoOutputModel
 import pt.isel.ls.data.dto.GameSearchResultOutputModel
 import pt.isel.ls.data.dto.PlayerInfoOutputModel
 import pt.isel.ls.data.dto.PlayerSearchOutputModel
-import pt.isel.ls.dto.SessionInfoOutputModel
-import pt.isel.ls.dto.SessionSearchResultOutputModel
+import pt.isel.ls.data.dto.SessionInfoOutputModel
+import pt.isel.ls.data.dto.SessionSearchResultOutputModel
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
@@ -42,7 +44,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assertEquals(response.status, Status.CREATED)
+        assertEquals(Status.CREATED, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test
@@ -55,7 +58,8 @@ class ServerTest {
         server.sessionsHandler(request)
         val response = server.sessionsHandler(request)
         // Assert
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test
@@ -67,7 +71,7 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals(Status.BAD_REQUEST, response.status)
     }
 
     @Test
@@ -79,7 +83,7 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals(Status.BAD_REQUEST, response.status)
     }
 
     @Test
@@ -91,7 +95,7 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals(Status.BAD_REQUEST, response.status)
     }
 
     @Test
@@ -103,8 +107,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test
@@ -116,11 +120,11 @@ class ServerTest {
         val playerDetailsJson = response.bodyString()
         val playerDetails = Json.decodeFromString<PlayerInfoOutputModel>(playerDetailsJson)
         // Assert
-        assertEquals(response.status, Status.OK)
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(playerDetails.name, "TestName")
-        assertEquals(playerDetails.email, "testemail@test.pt")
-        assertEquals(playerDetails.pid, 2u)
+        assertEquals(Status.OK, response.status)
+        assertEquals( "application/json", response.header("Content-Type"))
+        assertEquals( "TestName", playerDetails.name)
+        assertEquals("testemail@test.pt", playerDetails.email)
+        assertEquals(2u, playerDetails.pid)
     }
 
     @Test
@@ -130,7 +134,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test
@@ -161,7 +166,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.BAD_REQUEST, response.status)
     }
 
 
@@ -172,8 +178,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.NOT_FOUND)
+        assertEquals(Status.NOT_FOUND, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test
@@ -352,7 +358,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assertEquals(response.status, Status.CREATED)
+        assertEquals(Status.CREATED, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test
@@ -365,8 +372,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.BAD_REQUEST, response.status)
     }
 
     @Test
@@ -379,8 +386,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.BAD_REQUEST, response.status)
     }
 
     @Test
@@ -392,8 +399,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.UNAUTHORIZED)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.UNAUTHORIZED, response.status)
     }
 
     @Test
@@ -406,8 +413,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.NOT_FOUND)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.NOT_FOUND, response.status)
     }
 
     @Test
@@ -420,8 +427,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.BAD_REQUEST, response.status)
     }
 
     @Test
@@ -434,8 +441,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.BAD_REQUEST, response.status)
     }
 
     @Test
@@ -448,7 +455,7 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.status, Status.OK)
+        assertEquals(Status.OK, response.status)
     }
 
     @Test
@@ -460,8 +467,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.UNAUTHORIZED)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.UNAUTHORIZED, response.status)
     }
 
     @Test
@@ -474,8 +481,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.NOT_FOUND)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.NOT_FOUND, response.status)
     }
 
     @Test
@@ -488,8 +495,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.NOT_FOUND)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.NOT_FOUND, response.status)
     }
 
     @Test
@@ -502,8 +509,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.BAD_REQUEST, response.status)
     }
 
     @Test
@@ -515,7 +522,7 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.status, Status.OK)
+        assertEquals(Status.NO_CONTENT, response.status)
     }
 
     @Test
@@ -527,7 +534,7 @@ class ServerTest {
         val response = server.sessionsHandler(request)
         //  Assert
         assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.UNAUTHORIZED)
+        assertEquals(Status.UNAUTHORIZED, response.status)
     }
 
     @Test
@@ -539,8 +546,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.NOT_FOUND)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.NOT_FOUND, response.status)
     }
 
     @Test
@@ -552,8 +559,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.NOT_FOUND)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.NOT_FOUND, response.status)
     }
 
     @Test
@@ -565,7 +572,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.status, Status.NOT_FOUND)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.NOT_FOUND, response.status)
     }
 
     @Test
@@ -577,6 +585,7 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
+        assertEquals(response.header("Content-Type"), "application/json")
         assertEquals(response.status, Status.NOT_FOUND)
     }
 
@@ -591,6 +600,7 @@ class ServerTest {
         val response = server.sessionsHandler(request)
         //  Assert
         assertEquals(response.status, Status.NO_CONTENT)
+        assertEquals(null, response.header("Content-Type"))
     }
 
     @Test
@@ -602,8 +612,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.UNAUTHORIZED)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.UNAUTHORIZED, response.status)
     }
 
     @Test
@@ -616,8 +626,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.NOT_FOUND)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.NOT_FOUND, response.status)
     }
 
     @Test
@@ -630,7 +640,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test
@@ -643,8 +654,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.BAD_REQUEST, response.status)
     }
 
     @Test
@@ -657,8 +668,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.BAD_REQUEST, response.status)
     }
 
     @Test
@@ -671,8 +682,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.BAD_REQUEST, response.status)
     }
 
     @Test
@@ -683,8 +694,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.UNAUTHORIZED)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.UNAUTHORIZED, response.status)
     }
 
     @Test
@@ -696,8 +707,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.NOT_FOUND)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.NOT_FOUND, response.status)
     }
 
     @Test
@@ -709,7 +720,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         // Assert
-        assertEquals(response.status, Status.OK)
+        assertEquals(Status.NO_CONTENT, response.status)
+        assertEquals(null, response.header("Content-Type"))
     }
 
     @Test
@@ -722,8 +734,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(Status.BAD_REQUEST, response.status)
     }
 
     @Test
@@ -736,7 +748,8 @@ class ServerTest {
         // Act
         val response = server.sessionsHandler(request)
         //  Assert
-        assertEquals(response.status, Status.BAD_REQUEST)
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test
@@ -749,12 +762,12 @@ class ServerTest {
         val sessionBodyString = response.bodyString()
         val session = Json.decodeFromString<SessionInfoOutputModel>(sessionBodyString)
         //  Assert
-        assertEquals(response.status, Status.OK)
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(session.gameSession.gid, 2u)
-        assertEquals(session.capacity, 100u)
-        assertEquals(session.date, testDate1.toString())
-        assertEquals(session.sid, 1u)
+        assertEquals(Status.OK, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(2, session.playersSession.size)
+        assertEquals(100u, session.capacity)
+        assertEquals(testDate1.toString(), session.date)
+        assertEquals(1u, session.sid)
     }
 
     @Test
@@ -778,18 +791,18 @@ class ServerTest {
         val sessionListJson = response.bodyString()
         val sessionList = Json.decodeFromString<SessionSearchResultOutputModel>(sessionListJson)
         //  Assert
-        assertEquals(response.status, Status.OK)
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(sessionList.sessions.size, 2)
-        assertEquals(sessionList.sessions[0].gameSession.gid, 2u)
-        assertEquals(sessionList.sessions[0].capacity, 100u)
-        assertEquals(sessionList.sessions[0].date, testDate1.toString())
-        assertEquals(sessionList.sessions[0].sid, 1u)
-        assertEquals(sessionList.sessions[1].gameSession.gid, 2u)
-        assertEquals(sessionList.sessions[1].capacity, 100u)
-        assertEquals(sessionList.sessions[1].date, testDate2.toString())
-        assertEquals(sessionList.sessions[1].sid, 2u)
-        assertEquals(sessionList.total, 2)
+        assertEquals(Status.OK, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(2, sessionList.sessions.size)
+        assertEquals(2u, sessionList.sessions[0].gameSession.gid)
+        assertEquals(100u, sessionList.sessions[0].capacity)
+        assertEquals(testDate1.toString(), sessionList.sessions[0].date)
+        assertEquals(1u, sessionList.sessions[0].sid)
+        assertEquals(2u, sessionList.sessions[1].gameSession.gid)
+        assertEquals(100u, sessionList.sessions[1].capacity)
+        assertEquals(testDate2.toString(), sessionList.sessions[1].date)
+        assertEquals(2u, sessionList.sessions[1].sid)
+        assertEquals(2, sessionList.total)
     }
 
     @Test
@@ -801,14 +814,94 @@ class ServerTest {
         val sessionListJson = response.bodyString()
         val sessionList = Json.decodeFromString<SessionSearchResultOutputModel>(sessionListJson)
         //  Assert
-        assertEquals(response.status, Status.OK)
-        assertEquals(response.header("Content-Type"), "application/json")
-        assertEquals(sessionList.sessions.size, 1)
-        assertEquals(sessionList.sessions[0].gameSession.gid, 2u)
-        assertEquals(sessionList.sessions[0].capacity, 100u)
-        assertEquals(sessionList.sessions[0].date, testDate2.toString())
-        assertEquals(sessionList.sessions[0].sid, 2u)
-        assertEquals(sessionList.total, 2)
+        assertEquals(Status.OK, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(1, sessionList.sessions.size)
+        assertEquals(2u, sessionList.sessions[0].gameSession.gid)
+        assertEquals(100u, sessionList.sessions[0].capacity)
+        assertEquals(testDate2.toString(), sessionList.sessions[0].date)
+        assertEquals(2u, sessionList.sessions[0].sid)
+        assertEquals(2, sessionList.total)
+    }
+
+    @Test
+    fun `test authPlayer no auth should give unauthorized`() {
+        // Arrange
+        val request = Request(Method.POST, "/auth")
+            .header("Content-Type", "application/json")
+        // Act
+        val response = server.sessionsHandler(request)
+        // Assert
+        kotlin.test.assertEquals("application/json", response.header("Content-Type"))
+        kotlin.test.assertEquals(Status.UNAUTHORIZED, response.status)
+    }
+
+    @Test
+    fun `test authPlayer should give ok`() {
+        // Arrange
+        val request = Request(Method.POST, "/auth")
+            .header("Content-Type", "application/json")
+            .cookie("Authorization", "00000000-0000-0000-0000-000000000000")
+        // Act
+        val response = server.sessionsHandler(request)
+        // Assert
+        kotlin.test.assertEquals("application/json", response.header("Content-Type"))
+        kotlin.test.assertEquals(Status.OK, response.status)
+    }
+
+    @Test
+    fun `test loginPlayer should give ok`() {
+        // Arrange
+        val request = Request(Method.POST, "/login")
+            .header("Content-Type", "application/json")
+            .body("""{"name":"John Doe","password":"TestPassword#123"}""")
+        // Act
+        val response = server.sessionsHandler(request)
+        // Assert
+        kotlin.test.assertEquals("application/json", response.header("Content-Type"))
+        kotlin.test.assertEquals(Status.OK, response.status)
+    }
+
+    @Test
+    fun `test loginPlayer incorrect password should give bad request`() {
+        // Arrange
+        val request = Request(Method.POST, "/login")
+            .header("Content-Type", "application/json")
+            .body("""{"name":"John Doe", "password":"TestPassword"}""")
+        // Act
+        val response = server.sessionsHandler(request)
+        // Assert
+        kotlin.test.assertEquals("application/json", response.header("Content-Type"))
+        kotlin.test.assertEquals(Status.BAD_REQUEST, response.status)
+    }
+
+
+    @Test
+    fun `test playerLogout should give unauthorized`() {
+        // Arrange
+        val request = Request(Method.GET, "/logout")
+        // Act
+        val response = server.sessionsHandler(request)
+        // Assert
+        kotlin.test.assertEquals("application/json", response.header("Content-Type"))
+        kotlin.test.assertEquals(Status.UNAUTHORIZED, response.status)
+    }
+
+    @Test
+    fun `test player logout should give ok`() {
+        // Arrange
+        val newPlayerRequest = Request(Method.POST, "/players")
+            .header("Content-Type", "application/json")
+            .body("""{"name":"Test","email":"testmail@gmail.com","password":"TestPassword#123"}""")
+        val newPlayerResponse = server.sessionsHandler(newPlayerRequest)
+
+        val request = Request(Method.GET, "/logout")
+            .header("Content-Type", "application/json")
+            .cookie("Authorization", newPlayerResponse.cookies().first().value)
+        // Act
+        val response = server.sessionsHandler(request)
+        // Assert
+        kotlin.test.assertEquals(Status.OK, response.status)
     }
 
     @BeforeEach

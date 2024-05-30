@@ -28,18 +28,24 @@
                   "email": {
                     "type": "string",
                     "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "string",
+                    "example": "TestPassword123!"
                   }
                 },
                 "required": [
                   "name",
-                  "email"
+                  "email",
+                  "password"
                 ]
               }
             }
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "Player created successfully",
             "content": {
               "application/json": {
@@ -258,7 +264,8 @@
       "post": {
         "security": [
           {
-            "bearerAuth": []
+            "bearerAuth": [],
+            "cookieAuth": []
           }
         ],
         "summary": "Create a new game",
@@ -597,7 +604,8 @@
       "post": {
         "security": [
           {
-            "bearerAuth": []
+            "bearerAuth": [],
+            "cookieAuth": []
           }
         ],
         "summary": "Create a new session",
@@ -1060,7 +1068,8 @@
       "patch": {
         "security": [
           {
-            "bearerAuth": []
+            "bearerAuth": [],
+            "cookieAuth": []
           }
         ],
         "summary": "Update session",
@@ -1114,7 +1123,7 @@
                     },
                     "errorCause": {
                       "type": "string",
-                      "example": "Invalid token"
+                      "example": "Invalid credentials"
                     }
                   }
                 }
@@ -1190,7 +1199,8 @@
       "delete": {
         "security": [
           {
-            "bearerAuth": []
+            "bearerAuth": [],
+            "cookieAuth": []
           }
         ],
         "summary": "Delete session",
@@ -1277,7 +1287,8 @@
       "post": {
         "security": [
           {
-            "bearerAuth": []
+            "bearerAuth": [],
+            "cookieAuth": []
           }
         ],
         "summary": "Add player to session",
@@ -1407,7 +1418,8 @@
       "delete": {
         "security": [
           {
-            "bearerAuth": []
+            "bearerAuth": [],
+            "cookieAuth": []
           }
         ],
         "summary": "Remove player from session",
@@ -1504,7 +1516,7 @@
         "summary": "Authenticate user",
         "security": [
           {
-            "bearerAuth": []
+            "cookieAuth": []
           }
         ],
         "responses": {
@@ -1630,9 +1642,60 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Login user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "john",
+                    "description": "User name",
+                    "required": true
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password",
+                    "description": "User password",
+                    "required": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User logged in successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "pid": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "token": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                }
+              }
+            }
           },
-          "400": {
-            "description": "No Authorization provided",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
@@ -1640,15 +1703,15 @@
                   "properties": {
                     "status": {
                       "type": "integer",
-                      "example": 400
+                      "example": 401
                     },
                     "description": {
                       "type": "string",
-                      "example": "Bad Request"
+                      "example": "Unauthorized"
                     },
                     "errorCause": {
                       "type": "string",
-                      "example": "No Authorization provided"
+                      "example": "Invalid credentials"
                     }
                   }
                 }
@@ -1664,6 +1727,12 @@
       "bearerAuth": {
         "type": "http",
         "scheme": "bearer"
+      },
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "Authorization",
+        "description": "Session cookie"
       }
     }
   }

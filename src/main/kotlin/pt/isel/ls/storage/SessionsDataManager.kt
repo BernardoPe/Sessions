@@ -3,6 +3,7 @@ package pt.isel.ls.storage
 
 import org.postgresql.util.PSQLException
 import pt.isel.ls.exceptions.InternalServerErrorException
+import pt.isel.ls.logger
 import pt.isel.ls.storage.db.TransactionManager
 import pt.isel.ls.storage.db.SessionsDataDBGame
 import pt.isel.ls.storage.db.SessionsDataDBPlayer
@@ -15,6 +16,7 @@ import java.io.Closeable
 
 /**
  * Abstract class that manages the data for all the different entities.
+ * Implemented by [DBManager] and [MemManager].
  *
  * @property game The game data manager.
  * @property player The player data manager.
@@ -57,6 +59,14 @@ abstract class SessionsDataManager : Closeable {
  *
  * Implements the [SessionsDataManager] abstract class.
  *
+ * @param dbURL The database URL.
+ *
+ * @property game The game data manager.
+ * @property player The player data manager.
+ * @property session The session data manager.
+ *
+ * @property executeTransaction Executes a transaction, and returns the result.
+ *
  */
 class DBManager(
     private val dbURL: String
@@ -80,6 +90,7 @@ class DBManager(
                 TransactionManager.abort(dbURL)
                 if (e is PSQLException) {
                     if (e.sqlState == "40001") {
+                        logger.error("Transaction failed due to serialization failure. Retrying...")
                         // serialization failure
                         retries++
                     } else {
@@ -90,6 +101,7 @@ class DBManager(
                 }
             }
         }
+        logger.error("Transaction failed after $maxRetries retries.")
         throw InternalServerErrorException()
     }
 
@@ -106,6 +118,18 @@ class DBManager(
     }
 }
 
+/**
+ * Memory storage manager class.
+ *
+ * Implements the [SessionsDataManager] abstract class.
+ *
+ * @property game The game data manager.
+ * @property player The player data manager.
+ * @property session The session data manager.
+ *
+ * @property executeTransaction Executes a transaction, and returns the result.
+ *
+ */
 class MemManager : SessionsDataManager() {
 
     override val game : SessionsDataGame = SessionsDataMemGame()

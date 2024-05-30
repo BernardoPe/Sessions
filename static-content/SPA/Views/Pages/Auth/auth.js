@@ -65,13 +65,6 @@ function registerView() {
 						"Confirm Password"
 					),
 					errorMessage("error-register", ""),
-					formInputField(
-						"confirm-password",
-						"Confirm Password",
-						"password",
-						"Confirm Password"
-					),
-					errorMessage("error-confirm-password", ""),
 					button({type: "submit"}, "Register")
 				),
 			),

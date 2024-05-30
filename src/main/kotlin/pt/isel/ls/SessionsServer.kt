@@ -10,6 +10,7 @@ import org.http4k.routing.routes
 import org.http4k.routing.singlePageApp
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import pt.isel.ls.api.SessionsApi
 import pt.isel.ls.services.GameService
@@ -17,7 +18,7 @@ import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
 import pt.isel.ls.storage.DBManager
 
-val logger = LoggerFactory.getLogger("pt.isel.ls.http.HTTPServer")
+val logger: Logger = LoggerFactory.getLogger("pt.isel.ls.http.HTTPServer")
 
 const val PLAYER_ROUTE = "/players"
 const val PLAYER_DETAILS_ROUTE = "/players/{pid}"
@@ -28,7 +29,7 @@ const val SESSION_PLAYER_ROUTE = "/sessions/{sid}/players"
 const val SESSION_PLAYER_DETAILS_ROUTE = "/sessions/{sid}/players/{pid}"
 const val SESSION_ROUTE = "/sessions"
 const val AUTH_ROUTE = "/auth"
-const val PLAYER_LOGIN_ROUTE = "/players/login"
+const val PLAYER_LOGIN_ROUTE = "/login"
 const val LOGOUT_ROUTE = "/logout"
 
 /**
@@ -90,10 +91,6 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
     fun start() {
         jettyServer.start()
         logger.info("Server started listening")
-        Runtime.getRuntime().addShutdownHook(Thread{
-            logger.info("Shutting down server")
-            stop()
-        })
     }
 
     /**
@@ -103,15 +100,7 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
         jettyServer.stop()
     }
 
-    /**
-     * The method that blocks the current thread until the server stops
-     */
-    fun join() {
-        jettyServer.block()
-    }
-
 }
-
 fun main() {
 
     val databaseURL = System.getenv("JDBC_PRODUCTION_DATABASE_URL")
@@ -127,7 +116,9 @@ fun main() {
             ),
         )
         server.start()
-        server.join()
+        logger.info("Server started, to stop press Enter")
+        readln()
+        server.stop()
     }
 
 }

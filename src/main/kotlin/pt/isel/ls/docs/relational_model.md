@@ -23,21 +23,39 @@ AK: name, genres
 - id
 - name
 - email
-- token_hash
+- password_hash
 
 PK: id
 
-AK: email, token_hash
+AK: email, name, password_hash
+
+### Tokens
+
+- token
+- player_id
+- time_expiration
+- time_creation
+
+PK: token
+
+FK: player_id -> Players.id
 
 ### Sessions
 
 - id
 - capacity
 - date
-- gameSession
-- playersSession
+- game_id
 
 PK: id
 
-FK: gameSession -> Games.id
-    playersSession -> Players.id
+FK: game_id -> Games.id
+
+
+### Sessions_Players
+
+- session_id
+- player_id
+
+PK: session_id, player_id
+

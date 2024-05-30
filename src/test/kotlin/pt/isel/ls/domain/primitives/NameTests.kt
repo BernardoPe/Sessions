@@ -1,4 +1,4 @@
-package pt.isel.ls.domain
+package pt.isel.ls.domain.primitives
 
 import pt.isel.ls.data.domain.primitives.Name
 import kotlin.test.Test

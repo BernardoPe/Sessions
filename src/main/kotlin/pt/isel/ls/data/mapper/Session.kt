@@ -1,9 +1,9 @@
 package pt.isel.ls.data.mapper
 
 import pt.isel.ls.data.domain.session.Session
-import pt.isel.ls.dto.SessionCreationOutputModel
-import pt.isel.ls.dto.SessionInfoOutputModel
-import pt.isel.ls.dto.SessionSearchResultOutputModel
+import pt.isel.ls.data.dto.SessionCreationOutputModel
+import pt.isel.ls.data.dto.SessionInfoOutputModel
+import pt.isel.ls.data.dto.SessionSearchResultOutputModel
 import pt.isel.ls.services.SessionIdentifier
 import pt.isel.ls.services.SessionList
 

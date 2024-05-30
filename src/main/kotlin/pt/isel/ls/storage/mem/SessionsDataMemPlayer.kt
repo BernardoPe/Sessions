@@ -1,5 +1,6 @@
 package pt.isel.ls.storage.mem
 
+import org.mindrot.jbcrypt.BCrypt
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.player.Token
 import pt.isel.ls.data.domain.primitives.Email
@@ -156,9 +157,10 @@ class SessionsDataMemPlayer : SessionsDataPlayer, MemoryStorage() {
                 1u,
                 Name("John Doe"),
                 Email("testemail@a.pt"),
-                PasswordHash("\$2a\$10\$e0NRHJk/WZz4o6sW0IKZxeQJX5X/0y5Q7HRUBqKEXzSo1QzDOOXSi")
+                PasswordHash(BCrypt.hashpw("TestPassword#123", BCrypt.gensalt( 6)))
             )
         ) // for tests
     }
+
 
 }

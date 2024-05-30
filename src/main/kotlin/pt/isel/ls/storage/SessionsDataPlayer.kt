@@ -84,9 +84,7 @@ interface SessionsDataPlayer {
 
     /**
      * Login a player
-     *
-     * @param name The player name
-     * @param password The player password
+     * @param id The player identifier
      * @return A pair with the player identifier and a new UUID
      */
     fun login(id: UInt): Pair<UInt, Token>

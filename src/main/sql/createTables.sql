@@ -24,8 +24,8 @@ create table tokens
 (
     token          VARCHAR(256) primary key,
     player_id      int references players (id) on delete cascade not null,
-    timeCreation   timestamp                                     not null,
-    timeExpiration timestamp                                     not null
+    time_creation   timestamp                                     not null,
+    time_expiration timestamp                                     not null
 );
 
 
@@ -50,7 +50,7 @@ CREATE TABLE sessions_players (
 CREATE OR REPLACE FUNCTION removeOldTokens()
 RETURNS TRIGGER AS $$
 BEGIN
-    DELETE FROM tokens WHERE timeExpiration < CURRENT_TIMESTAMP;
+    DELETE FROM tokens WHERE tokens.time_expiration < CURRENT_TIMESTAMP;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

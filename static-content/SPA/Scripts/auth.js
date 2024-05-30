@@ -55,7 +55,7 @@ function authRegister(event) {
 			document.getElementById('register').style.display = "none"
 			document.getElementById('logout').style.display = "inline-block"
 			window.location.href = "#home"
-			const player = {pid: data.pid, name: name, email: email}
+			const player = {pid: data.pid, name: name}
 			sessionStorage.setItem('user', JSON.stringify(player))
 			return data
 		})
@@ -99,7 +99,7 @@ function authLogin(event) {
 		return
 	}
 
-	fetch('/players/login', {
+	fetch('/login', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -121,7 +121,9 @@ function authLogin(event) {
 		})
 }
 
-
+/**
+ * Attempts to authenticate a player using a browser cookie
+ */
 async function tryAuth() {
 	await fetch('/auth', {
 		method: 'POST',
@@ -133,6 +135,8 @@ async function tryAuth() {
 			sessionStorage.setItem('user', JSON.stringify(data))
 			return data
 		}).catch(() => {
+			if (getPlayerData()) // token expired
+				sessionStorage.removeItem('user')
 			document.getElementById('login').style.display = "inline-block"
 			document.getElementById('register').style.display = "inline-block"
 			return null

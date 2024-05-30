@@ -1,7 +1,6 @@
 package pt.isel.ls.services.player
 
 import org.junit.jupiter.api.BeforeEach
-import org.mindrot.jbcrypt.BCrypt
 import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.primitives.Password
 import pt.isel.ls.data.domain.primitives.PasswordHash
@@ -11,7 +10,6 @@ import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.storage.MemManager
-import java.util.*
 import kotlin.math.abs
 import kotlin.random.Random
 import kotlin.random.nextUInt
@@ -146,10 +144,6 @@ class PlayerServiceTest {
         private var storage = MemManager()
 
         private var servicePlayer = PlayerService(storage)
-
-        private fun testHashPassword(password: String): String {
-            return BCrypt.hashpw(password, BCrypt.gensalt(12))
-        }
 
     }
 }

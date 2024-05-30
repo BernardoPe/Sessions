@@ -24,7 +24,9 @@ import pt.isel.ls.data.domain.session.toState
 import pt.isel.ls.data.dto.GameCreationInputModel
 import pt.isel.ls.data.dto.PlayerCreationInputModel
 import pt.isel.ls.data.dto.PlayerLoginInputModel
-//import pt.isel.ls.data.dto.PlayerLoginInputModel
+import pt.isel.ls.data.dto.SessionAddPlayerInputModel
+import pt.isel.ls.data.dto.SessionCreationInputModel
+import pt.isel.ls.data.dto.SessionUpdateInputModel
 import pt.isel.ls.data.mapper.toGameCreationDTO
 import pt.isel.ls.data.mapper.toGameInfoDTO
 import pt.isel.ls.data.mapper.toGameSearchDTO
@@ -34,9 +36,6 @@ import pt.isel.ls.data.mapper.toPlayerSearchDTO
 import pt.isel.ls.data.mapper.toSessionCreationDTO
 import pt.isel.ls.data.mapper.toSessionInfoDTO
 import pt.isel.ls.data.mapper.toSessionSearchDTO
-import pt.isel.ls.dto.SessionAddPlayerInputModel
-import pt.isel.ls.dto.SessionCreationInputModel
-import pt.isel.ls.dto.SessionUpdateInputModel
 import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.InternalServerErrorException
 import pt.isel.ls.exceptions.NotFoundException
@@ -47,12 +46,14 @@ import pt.isel.ls.logger
 import pt.isel.ls.services.GameService
 import pt.isel.ls.services.PlayerService
 import pt.isel.ls.services.SessionsService
-import pt.isel.ls.utils.between
-import pt.isel.ls.utils.currentLocalTime
 import pt.isel.ls.utils.toLocalDateTime
 import pt.isel.ls.utils.toUInt
 import java.net.URLDecoder
 import java.util.*
+
+
+const val DEFAULT_LIMIT = 5u
+const val DEFAULT_SKIP = 0u
 
 /**
  * The [SessionsApi] class is responsible for processing HTTP requests and returning responses.
@@ -63,7 +64,7 @@ import java.util.*
  * @param gameServices The [GameService] instance
  * @param sessionServices The [SessionsService] instance
  *
- * @property createPlayer The method to create a player
+ * @property createPlayer method to create a player
  * @property getPlayerDetails The method to get player details
  * @property createGame The method to create a game
  * @property getGameById The method to get a game by its identifier
@@ -72,13 +73,14 @@ import java.util.*
  * @property addPlayerToSession The method to add a player to a session
  * @property getSessionById The method to get a session by its identifier
  * @property getSessionList The method to get a list of sessions
- *
- *
+ * @property removePlayerFromSession The method to remove a player from a session
+ * @property updateSession The method to update a session
+ * @property deleteSession The method to delete a session
+ * @property getPlayerList The method to get a list of players
+ * @property authPlayer The method to authenticate a player
+ * @property loginPlayer The method to log in a player
+ * @property playerLogout The method to log out a player
  */
-
-const val DEFAULT_LIMIT = 5u
-const val DEFAULT_SKIP = 0u
-
 class SessionsApi(
     private val playerServices: PlayerService,
     private val gameServices: GameService,
@@ -112,7 +114,7 @@ class SessionsApi(
      * @throws NotFoundException If the player is not found
      */
     fun getPlayerDetails(request: Request) = processRequest(request) {
-        val pid = request.path("pid")?.toUInt("Player Identifier") ?: throw BadRequestException("No Player Identifier provided")
+        val pid = request.path("pid")?.toUInt("Player Identifier") ?: throw BadRequestException("Invalid Player Identifier provided")
         val res = playerServices.getPlayerDetails(pid)
 
         Response(OK)
@@ -158,6 +160,10 @@ class SessionsApi(
 
     /**
      * Logs out a player
+     * This endpoint is used to log out a player using an authentication token.
+     * @param request The HTTP request
+     * @return [OK] if the player is logged out
+     * @throws UnauthorizedException If the player is not found or could not be logged out
      */
     fun playerLogout(request: Request) = processRequest(request) {
 
@@ -168,7 +174,7 @@ class SessionsApi(
         }
 
         if (!playerServices.logoutPlayer(token)) {
-            throw InternalServerErrorException()
+            throw UnauthorizedException()
         }
 
         Response(OK)
@@ -329,7 +335,7 @@ class SessionsApi(
         val pid = request.path("pid")?.toUInt("Player Identifier") ?: throw BadRequestException("No Player Identifier provided")
         sessionServices.removePlayer(sid, pid)
 
-        Response(OK)
+        Response(NO_CONTENT)
     }
 
     /**
@@ -365,7 +371,7 @@ class SessionsApi(
 
         sessionServices.deleteSession(sid)
 
-        Response(OK)
+        Response(NO_CONTENT)
     }
 
     /**

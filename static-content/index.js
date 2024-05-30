@@ -1,6 +1,6 @@
 import router from "./SPA/router.js";
 import handlers from "./SPA/handlers.js";
-import {authLogin, tryAuth} from "./SPA/Scripts/auth.js";
+import {tryAuth} from "./SPA/Scripts/auth.js";
 
 window.addEventListener('load', loadHandler)
 window.addEventListener('hashchange', hashChangeHandler)
@@ -25,7 +25,7 @@ const LOGOUT_URL = 'logout'
  * Handler for the load event. This function is called when the page is loaded.
  * It sets up the routes and their handlers.
  *
- * Routes were defined using the express.js syntax, with the addition of the colon (:) character to indicate a parameter.
+ * Routes were defined using the express.js syntax, with the addition of the colon ':' character to indicate a parameter.
  */
 async function loadHandler(){
     // home page

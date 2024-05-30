@@ -3,7 +3,6 @@ package pt.isel.ls.data.domain.player
 import pt.isel.ls.data.domain.primitives.Email
 import pt.isel.ls.data.domain.primitives.Name
 import pt.isel.ls.data.domain.primitives.PasswordHash
-import java.util.*
 
 /**
  *  Player

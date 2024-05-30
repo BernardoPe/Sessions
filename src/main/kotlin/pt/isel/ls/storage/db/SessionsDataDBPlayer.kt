@@ -152,8 +152,8 @@ class SessionsDataDBPlayer(private val dbURL: String) : SessionsDataPlayer {
             val tokenObj = Token(
                 UUID.fromString(resultSet.getString("token")),
                 resultSet.getInt("player_id").toUInt(),
-                resultSet.getTimestamp("timeCreation").toLocalDateTime().toKotlinLocalDateTime(),
-                resultSet.getTimestamp("timeExpiration").toLocalDateTime().toKotlinLocalDateTime()
+                resultSet.getTimestamp("time_creation").toLocalDateTime().toKotlinLocalDateTime(),
+                resultSet.getTimestamp("time_expiration").toLocalDateTime().toKotlinLocalDateTime()
             )
             Pair(playerObj, tokenObj).also { statement.close() }
         } else {
@@ -210,7 +210,7 @@ class SessionsDataDBPlayer(private val dbURL: String) : SessionsDataPlayer {
     private fun tokenCreation(playerId: UInt): Token {
 
         val statement = connection.prepareStatement(
-            "INSERT INTO tokens (token, player_id, timeCreation, timeExpiration) VALUES (?, ?, ?, ?)",
+            "INSERT INTO tokens (token, player_id, time_creation, time_expiration) VALUES (?, ?, ?, ?)",
         )
 
         val token = Token(UUID.randomUUID(), playerId)

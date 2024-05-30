@@ -15,8 +15,8 @@ import kotlin.time.Duration.Companion.days
  *
  * @param token The token's value (unique [UUID] object)
  * @param playerId The user's id (unique [UInt] number)
- * @param createdAt The token's creation date ([Instant] object)
- * @param lastUsedAt The token's last used date ([Instant] object)
+ * @param timeCreation The token's creation date ([Instant] object)
+ * @param timeExpiration The token's expiration date ([Instant] object)
  */
 
 data class Token(

@@ -1,23 +1,7 @@
-package pt.isel.ls.dto
+package pt.isel.ls.data.dto
 
 import kotlinx.serialization.Serializable
-import pt.isel.ls.data.dto.GameInfoOutputModel
-import pt.isel.ls.data.dto.PlayerInfoOutputModel
 
-/**
- * The [SessionOperationOutputModel] class is used to represent the response body of an added player to the session
- * The request to add the player to the session is going to need:
- * a session id URI path variable and another URI path variable id of the added player
- * e.g. /api/session/{sid}/{pid}
- *
- *  @param message The message when a player was added to the session.
- *  E.g: "The player <player name> has entered the game session".
- *
- */
-@Serializable
-data class SessionOperationOutputModel(
-    val message: String
-)
 
 /**
  * The [SessionCreationInputModel] class is used to represent the request body of a created session

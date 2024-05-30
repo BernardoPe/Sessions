@@ -1,12 +1,9 @@
 package pt.isel.ls.services.session
 
 import org.junit.jupiter.api.BeforeEach
-import org.mindrot.jbcrypt.BCrypt
 import pt.isel.ls.data.domain.game.Game
-import pt.isel.ls.data.domain.player.Player
 import pt.isel.ls.data.domain.primitives.Genre
 import pt.isel.ls.data.domain.primitives.Password
-import pt.isel.ls.data.domain.primitives.PasswordHash
 import pt.isel.ls.data.domain.session.SESSION_MAX_CAPACITY
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
@@ -20,7 +17,6 @@ import pt.isel.ls.services.SessionsService
 import pt.isel.ls.storage.MemManager
 import pt.isel.ls.utils.currentLocalTime
 import pt.isel.ls.utils.plus
-import java.util.*
 import kotlin.math.abs
 import kotlin.random.Random
 import kotlin.random.nextUInt
@@ -556,8 +552,6 @@ class SessionServiceTest {
         private fun newTestEmail() = "email-${abs(Random.nextLong())}@test.com"
 
         private fun newTestDateTime() = currentLocalTime() + Random.nextLong(10, 1000).seconds
-
-        private fun UUID.testTokenHash() = mostSignificantBits xor leastSignificantBits
 
         private var storage = MemManager()
 

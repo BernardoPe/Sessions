@@ -5,6 +5,7 @@ import org.postgresql.util.PSQLException
 import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.InternalServerErrorException
 import pt.isel.ls.exceptions.NotFoundException
+import pt.isel.ls.logger
 import java.sql.Connection
 
 /**
@@ -42,6 +43,7 @@ object TransactionManager {
          * @return The new connection
          */
         private fun getNewConnection(dbUrl: String): Connection {
+            logger.info("Creating new connection")
             val newSource = PGSimpleDataSource()
             newSource.setUrl(dbUrl)
             return newSource.connection
@@ -55,6 +57,7 @@ object TransactionManager {
          * @return The connection for the current thread
          */
         fun getConnection(dbUrl: String): Connection {
+            logger.info("Getting connection")
             val connection = connections.getOrPut(Thread.currentThread().id) { getNewConnection(dbUrl) }
             if (connection.isClosed) {
                 connections[Thread.currentThread().id] = getNewConnection(dbUrl)
@@ -70,11 +73,13 @@ object TransactionManager {
             val connection = connections.getOrPut(Thread.currentThread().id) { getNewConnection(dbUrl) }
             connection.autoCommit = false
             connection.beginRequest()
+            logger.info("Transaction started")
         }
 
         fun setIsolationLevel(dbUrl: String, isolationLevel: Int) {
             val connection = getConnection(dbUrl)
             connection.transactionIsolation = isolationLevel
+            logger.info("Isolation level set to $isolationLevel for current transaction")
         }
 
         /**
@@ -83,10 +88,11 @@ object TransactionManager {
          */
 
         fun abort(dbUrl: String) {
-                val connection = getConnection(dbUrl)
-                connection.rollback()
-                connection.endRequest()
-                connection.autoCommit = true
+            val connection = getConnection(dbUrl)
+            connection.rollback()
+            connection.endRequest()
+            connection.autoCommit = true
+            logger.info("Transaction aborted")
         }
 
         /**
@@ -97,6 +103,7 @@ object TransactionManager {
             connection.commit()
             connection.endRequest()
             connection.autoCommit = true
+            logger.info("Transaction finished")
         }
 
         // Map that stores the connections for each thread
@@ -117,6 +124,7 @@ object TransactionManager {
                     it.close()
                 }
             }
+            logger.info("Connection closed")
         }
 
         /**
@@ -128,11 +136,13 @@ object TransactionManager {
          * This method is useful when the application is shutting down
          */
         fun closeAll() {
+            logger.info("Closing all connections...")
             connections.values.forEach {
                 if (!it.isClosed) {
                     if (!it.autoCommit) //mid transaction
                         it.rollback()
                     it.close()
+                    logger.info("Connection closed for thread ${Thread.currentThread().id}")
                 }
             }
         }

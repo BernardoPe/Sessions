@@ -1,4 +1,4 @@
-package pt.isel.ls.domain
+package pt.isel.ls.domain.primitives
 
 import pt.isel.ls.data.domain.primitives.Email
 import pt.isel.ls.data.mapper.toEmail

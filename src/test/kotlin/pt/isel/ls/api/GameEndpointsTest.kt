@@ -35,6 +35,7 @@ class GameEndpointsTest {
         val response = api.createGame(request)
         // Assert
         assertEquals(Status.CREATED, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test
@@ -48,6 +49,7 @@ class GameEndpointsTest {
         val response = api.createGame(request)
         // Assert
         assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test
@@ -61,6 +63,7 @@ class GameEndpointsTest {
         val response = api.createGame(request)
         // Assert
         assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test
@@ -74,6 +77,7 @@ class GameEndpointsTest {
         val response = api.createGame(request)
         // Assert
         assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test
@@ -86,6 +90,7 @@ class GameEndpointsTest {
         val response = api.createGame(request)
         // Assert
         assertEquals(Status.UNAUTHORIZED, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test
@@ -115,6 +120,7 @@ class GameEndpointsTest {
         val response = api.getGameById(routedRequest)
         // Assert
         assertEquals(Status.NOT_FOUND, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
     }
 
     @Test

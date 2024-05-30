@@ -3,7 +3,6 @@ package pt.isel.ls.storage.mem
 import kotlinx.datetime.LocalDateTime
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
-import pt.isel.ls.exceptions.BadRequestException
 import pt.isel.ls.exceptions.NotFoundException
 import pt.isel.ls.storage.SessionsDataSession
 

@@ -1,7 +1,6 @@
 package pt.isel.ls.services
 
 import kotlinx.datetime.LocalDateTime
-import pt.isel.ls.data.domain.session.SESSION_MAX_CAPACITY
 import pt.isel.ls.data.domain.session.Session
 import pt.isel.ls.data.domain.session.State
 import pt.isel.ls.exceptions.BadRequestException
@@ -21,8 +20,8 @@ import java.sql.Connection
  */
 class SessionsService(private val dataManager: SessionsDataManager) {
 
-    val sessionStorage = dataManager.session
-    val gameStorage = dataManager.game
+    private val sessionStorage = dataManager.session
+    private val gameStorage = dataManager.game
 
     /**
      * Creates a new session
