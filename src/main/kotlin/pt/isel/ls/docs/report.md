@@ -235,13 +235,14 @@ The Games group has 3 endpoints:
 - Game Search : GET /games
 - Game Search by id : GET /games/{id}
 
-The Players group has 3 endpoints:
+The Players group has 6 endpoints:
 
 - Player Creation : POST /players
 - Player Details : GET /players/{id}
 - Player Search : GET /players
 - Authenticate player : POST /auth
-- Logout player : GET /logout
+- Log out player : GET /logout
+- Log in player : POST /login
 
 The Sessions group has 7 endpoints:
 - Create Session : POST /sessions
@@ -281,7 +282,7 @@ The SPA offers the following operations to the user:
 - Add a player to a session
 - Remove a player from a session
 - Authenticate a player (login and register)
-- Logout a player
+- Log out a player
 
 ### SPA Navigation 
 
@@ -300,7 +301,7 @@ For logging out, the SPA sends a request to the API to erase the token cookie.
 
 ## Deployment
 
-The application is containerised using Docker and is available as a Docker image.
+The application is containerized using Docker and is available as a Docker image.
 
 It can found on [Docker Hub](https://hub.docker.com/r/initdd/img-ls-2324-2-43d-g09/).
 
@@ -332,11 +333,11 @@ In our case, the application was deployed to Render.
 
 The objective of the deployment was to make the application available to the public.
 
-In Render, it was created a web service and a database service using `PostgreSQL`.
+In Render, the application was deployed as a web service and a database service (PostgresSQL).
 
 The web service was configured to use the Docker image published on Docker Hub.
 
-The database service was configured to use the `PostgreSQL` database and the database schema was created using the `createTables.sql` script.
+The database service was configured to use the `PostgreSQL` database and the database schema was created using the [createTables.sql](../../../../../sql/createTables.sql) script.
 
 ## Critical Evaluation
 
