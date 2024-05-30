@@ -16,7 +16,6 @@ export const RESULTS_PER_PAGE = 10;
  */
 function getHome(mainContent, req) {
     const user = getPlayerData()
-    console.log(user)
     mainContent.replaceChildren(homeView(user));
 }
 
@@ -24,6 +23,7 @@ function getHome(mainContent, req) {
  * Handles the routing of the application to the login page
  */
 function login(mainContent, req) {
+    if (getPlayerData()) return window.location.replace('#home')
     mainContent.replaceChildren(loginView());
 }
 
@@ -31,6 +31,7 @@ function login(mainContent, req) {
  * Handles the routing of the application for logging out
  */
 function logout(mainContent, req) {
+    if (!getPlayerData()) return window.location.replace('#login')
     authLogout()
 }
 
@@ -38,6 +39,7 @@ function logout(mainContent, req) {
  * Handles the routing of the application to the registration page
  */
 function register(mainContent, req) {
+    if (getPlayerData()) return window.location.replace('#home')
     mainContent.replaceChildren(registerView());
 }
 

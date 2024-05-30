@@ -22,8 +22,8 @@ create table players (
 
 create table tokens
 (
-    token          VARCHAR(256) primary key,
-    player_id      int references players (id) on delete cascade not null,
+    token           VARCHAR(256) primary key,
+    player_id       int references players (id) on delete cascade not null,
     time_creation   timestamp                                     not null,
     time_expiration timestamp                                     not null
 );
@@ -39,7 +39,7 @@ CREATE TABLE sessions (
 
 /**
   * N to N relationship between sessions and players must be represented by a separate table
- */
+  */
 CREATE TABLE sessions_players (
       session_id INT REFERENCES sessions(id) ON DELETE CASCADE,
       player_id INT REFERENCES players(id) ON DELETE CASCADE,

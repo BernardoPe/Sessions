@@ -43,7 +43,7 @@ object TransactionManager {
          * @return The new connection
          */
         private fun getNewConnection(dbUrl: String): Connection {
-            logger.info("Creating new connection")
+            logger.info("Creating new connection to database")
             val newSource = PGSimpleDataSource()
             newSource.setUrl(dbUrl)
             return newSource.connection
@@ -57,7 +57,7 @@ object TransactionManager {
          * @return The connection for the current thread
          */
         fun getConnection(dbUrl: String): Connection {
-            logger.info("Getting connection")
+            logger.info("Getting connection to database")
             val connection = connections.getOrPut(Thread.currentThread().id) { getNewConnection(dbUrl) }
             if (connection.isClosed) {
                 connections[Thread.currentThread().id] = getNewConnection(dbUrl)
