@@ -60,8 +60,7 @@ function handleSessionPagination(queries, page, total) {
 
 function handlePagination(url, page, generateUrl, total) {
 	const skip = (page - 1) * RESULTS_PER_PAGE;
-	const maxPage = Math.ceil(total / RESULTS_PER_PAGE);
-	return createPaginationNav(url, skip, page, maxPage, generateUrl);
+	return createPaginationNav(url, skip, page, total, generateUrl);
 }
 
 

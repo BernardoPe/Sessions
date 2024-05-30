@@ -2,9 +2,9 @@ import {button, div, p, path, svg, ul} from "../../../WebDSL/web_dsl.js";
 import {RESULTS_PER_PAGE} from "../../../handlers.js";
 
 
-function createPaginationNav(url, skip, page, maxPage, generateUrl) {
+function createPaginationNav(url, skip, page, total, generateUrl) {
 
-	const total = parseInt(maxPage) * RESULTS_PER_PAGE;
+	const maxPage = Math.ceil(total / RESULTS_PER_PAGE);
 
 	const info = div({class: "pagination-info"},
 		p(null,
