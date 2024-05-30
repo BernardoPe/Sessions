@@ -1264,7 +1264,7 @@
               }
             }
           },
-          "200": {
+          "204": {
             "description": "Session deleted successfully",
             "content": {
               "application/json": {
@@ -1603,7 +1603,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "User logged out successfully",
             "content": {
               "application/json": {
