@@ -49,8 +49,6 @@ function createElementNS(namespace, tagName, props, ...children) {
     return element;
 }
 
-// For now using free functions. In the future, we can create a class to represent the elements
-
 function body(props=null, ...children) {
     return createElement('body', props, ...children);
 }

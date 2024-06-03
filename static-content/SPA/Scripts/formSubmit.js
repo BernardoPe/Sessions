@@ -377,9 +377,6 @@ export function deleteSession(event, sid) {
 		if (res.ok) {
 			window.location.href = `#home`;
 		}
-		else {
-			// maybe display an error message
-		}
 	})
 }
 

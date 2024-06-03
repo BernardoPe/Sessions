@@ -60,7 +60,7 @@ class SessionsDataDBSession(private val dbURL: String) : SessionsDataSession {
         skip: UInt
     ): Pair<List<Session>, Int> {
         val resQuery = StringBuilder(
-            "SELECT DISTINCT sessions.id FROM sessions "
+            "SELECT DISTINCT sessions.id FROM sessions " // get distinct session ids first because of the limit and offset
         )
         val countQuery = StringBuilder("SELECT COUNT(*) FROM (SELECT DISTINCT sessions.id FROM sessions ")
         val queryParams = mutableListOf<Any>()
@@ -118,6 +118,7 @@ class SessionsDataDBSession(private val dbURL: String) : SessionsDataSession {
 
         val resultSet = statement.executeQuery()
         val countResultSet = countStatement.executeQuery()
+
         val sessionStmt = connection.prepareStatement(
             "SELECT sessions.id as sid, sessions.game_id as gid, date, capacity, games.name as gname, genres, developer, players.id as pid, players.name as pname, email, password_hash FROM sessions " +
                     "JOIN games ON sessions.game_id = games.id " +
@@ -125,12 +126,15 @@ class SessionsDataDBSession(private val dbURL: String) : SessionsDataSession {
                     "LEFT JOIN players ON sessions_players.player_id = players.id " +
                     "WHERE sessions.id = ?",
         )
+
         val resultSessions = mutableListOf<Session>()
+
         while (resultSet.next()) {
             sessionStmt.setInt(1, resultSet.getInt("id"))
             val sessionResultSet = sessionStmt.executeQuery()
             resultSessions.add(sessionResultSet.getSessions().first())
         }
+
         countResultSet.next()
 
         val total = countResultSet.getInt(1)

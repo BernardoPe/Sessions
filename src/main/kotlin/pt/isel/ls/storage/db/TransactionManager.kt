@@ -139,10 +139,10 @@ object TransactionManager {
             logger.info("Closing all connections...")
             connections.values.forEach {
                 if (!it.isClosed) {
-                    if (!it.autoCommit) //mid transaction
+                    if (!it.autoCommit) // mid transaction
                         it.rollback()
                     it.close()
-                    logger.info("Connection closed for thread ${Thread.currentThread().id}")
+                    logger.info("Connection closed")
                 }
             }
         }

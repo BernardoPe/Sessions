@@ -1,8 +1,9 @@
-import router from "../router.js";
+import router from "../SPA/router.js";
 
 
 describe('Router', () => {
-    beforeEach(() => {
+    before(() => {
+        router.addRouteHandler('/user/:id', () => 'User handler');
         router.addRouteHandler('/test', () => 'Test handler');
         router.addDefaultNotFoundRouteHandler(() => 'Not found handler');
     })
@@ -24,7 +25,6 @@ describe('Router', () => {
     })
 
     it('returns correct parameters and query for route with parameters and query', () => {
-        router.addRouteHandler('/user/:id', () => 'User handler');
         const { params, query } = router.getRequestParamsAndQuery('/user/123?active=true');
         params.id.should.equal('123');
         query.active.should.equal('true');
@@ -37,7 +37,6 @@ describe('Router', () => {
     })
 
     it('returns empty parameters and query for route with parameters but without query', () => {
-        router.addRouteHandler('/user/:id', () => 'User handler');
         const { params, query } = router.getRequestParamsAndQuery('/user/123');
         params.id.should.equal('123');
         (Object.keys(query).length).should.equal(0);

@@ -1,5 +1,5 @@
 
-import { div, a, button, input, li, ul } from '../WebDSL/web_dsl.js';
+import { div, a, button, input, li, ul } from '../SPA/WebDSL/web_dsl.js';
 
 describe('WebDSL', () => {
 

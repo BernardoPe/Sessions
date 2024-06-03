@@ -15,6 +15,7 @@ import java.util.*
 class SessionsDataDBPlayer(private val dbURL: String) : SessionsDataPlayer {
 
     private val connection get() = TransactionManager.getConnection(dbURL)
+
     override fun create(player: Player): Pair<UInt, Token> {
 
         val statement = connection.prepareStatement(
@@ -141,24 +142,26 @@ class SessionsDataDBPlayer(private val dbURL: String) : SessionsDataPlayer {
         statement.setString(1, token.toString())
         val resultSet = statement.executeQuery()
 
-        return if (resultSet.next()) {
-            val playerObj = Player(
-                resultSet.getInt("id").toUInt(),
-                Name(resultSet.getString("name")),
-                Email(resultSet.getString("email")),
-                PasswordHash(resultSet.getString("password_hash"))
-            )
+        if (!resultSet.next()) {
+            statement.close()
+            return null
+        }
 
-            val tokenObj = Token(
-                UUID.fromString(resultSet.getString("token")),
-                resultSet.getInt("player_id").toUInt(),
-                resultSet.getTimestamp("time_creation").toLocalDateTime().toKotlinLocalDateTime(),
-                resultSet.getTimestamp("time_expiration").toLocalDateTime().toKotlinLocalDateTime()
-            )
-            Pair(playerObj, tokenObj).also { statement.close() }
-        } else {
-            null
-        }.also { statement.close() }
+        val playerObj = Player(
+            resultSet.getInt("id").toUInt(),
+            Name(resultSet.getString("name")),
+            Email(resultSet.getString("email")),
+            PasswordHash(resultSet.getString("password_hash"))
+        )
+
+        val tokenObj = Token(
+            UUID.fromString(resultSet.getString("token")),
+            resultSet.getInt("player_id").toUInt(),
+            resultSet.getTimestamp("time_creation").toLocalDateTime().toKotlinLocalDateTime(),
+            resultSet.getTimestamp("time_expiration").toLocalDateTime().toKotlinLocalDateTime()
+        )
+
+        return Pair(playerObj, tokenObj).also { statement.close() }
     }
 
     override fun isEmailStored(email: Email): Boolean {
