@@ -33,17 +33,14 @@ class GameService(private val dataManager: SessionsDataManager) {
      */
     fun createGame(name: Name, developer: Name, genres: Set<Genre>): GameIdentifier {
 
-        return dataManager.executeTransaction {
-
-            if (gameStorage.isGameNameStored(name) ) {
-                throw BadRequestException("Game name already in use")
-            }
+        return dataManager.executeQuery {
 
             val game = Game(0u, name, developer, genres)
 
             gameStorage.create(game)
 
         }
+
     }
 
     /**

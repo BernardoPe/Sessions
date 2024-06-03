@@ -48,6 +48,11 @@ abstract class SessionsDataManager : Closeable {
     abstract fun <T> executeTransaction(query: (SessionsDataManager) -> T, isolationLevel: Int) : T
 
     /**
+     * Executes a query.
+     */
+    abstract fun <T> executeQuery(query: (SessionsDataManager) -> T) : T
+
+    /**
      * Closes all the data managers.
      */
     abstract override fun close()
@@ -113,6 +118,18 @@ class DBManager(
         return ret
     }
 
+    override fun <T> executeQuery(query: (SessionsDataManager) -> T): T {
+        return try {
+            query(this)
+        } catch (e: Exception) {
+            if (e is PSQLException) {
+                throw TransactionManager.handlePSQLException(e)
+            } else {
+                throw e
+            }
+        }
+    }
+
     override fun close() {
         TransactionManager.closeAll()
     }
@@ -146,6 +163,14 @@ class MemManager : SessionsDataManager() {
 
     override fun <T> executeTransaction(query: (SessionsDataManager) -> T, isolationLevel: Int) : T {
         return executeTransaction(query)
+    }
+
+    override fun <T> executeQuery(query: (SessionsDataManager) -> T): T {
+        return try {
+            query(this)
+        } catch (e: Exception) {
+            throw e
+        }
     }
 
     override fun close() {

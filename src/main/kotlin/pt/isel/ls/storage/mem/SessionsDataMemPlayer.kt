@@ -39,11 +39,11 @@ class SessionsDataMemPlayer : SessionsDataPlayer, MemoryStorage() {
 
     override fun create(player: Player): Pair<UInt, Token> {
 
-        if (playerDB.any { it.email == player.email }) {
+        if (isEmailStored(player.email)) {
             throw BadRequestException("Given Player email already exists")
         }
 
-        if (playerDB.any { it.name == player.name }) {
+        if (isNameStored(player.name)) {
             throw BadRequestException("Given Player name already exists")
         }
 

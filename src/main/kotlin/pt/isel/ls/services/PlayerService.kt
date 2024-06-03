@@ -35,16 +35,9 @@ class PlayerService(private val dataManager: SessionsDataManager) {
      */
     fun createPlayer(name: Name, email: Email, password: Password): PlayerCredentials {
 
-        return dataManager.executeTransaction {
+        return dataManager.executeQuery {
 
-            if (playerStorage.isEmailStored(email)) {
-                throw BadRequestException("Given Player email already exists")
-            }
-
-            if (playerStorage.isNameStored(name)) {
-                throw BadRequestException("Given Player name already exists")
-            }
-            // This is line of code uses the JBCrypt library to hash the password
+            // This line of code uses the JBCrypt library to hash the password
             val hashedPassword = BCrypt.hashpw(password.toString(), BCrypt.gensalt(6))
 
             val player = Player(0u, name, email, PasswordHash(hashedPassword))

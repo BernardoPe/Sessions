@@ -66,10 +66,6 @@ class SessionsService(private val dataManager: SessionsDataManager) {
 
         dataManager.executeTransaction({
 
-            if (dataManager.player.getById(pid) == null) {
-                throw NotFoundException("Player not found")
-            }
-
             val session = sessionStorage.getById(sid) ?: throw NotFoundException("Session not found")
 
             if (session.playersSession.any { it.id == pid }) {
@@ -101,6 +97,7 @@ class SessionsService(private val dataManager: SessionsDataManager) {
     fun removePlayer(sid: UInt, pid: UInt) {
 
         return dataManager.executeTransaction {
+
             val session = sessionStorage.getById(sid) ?: throw NotFoundException("Session not found")
 
             if (session.playersSession.none { it.id == pid }) {
@@ -108,6 +105,7 @@ class SessionsService(private val dataManager: SessionsDataManager) {
             }
 
             sessionStorage.removePlayer(sid, pid)
+
         }
 
     }
