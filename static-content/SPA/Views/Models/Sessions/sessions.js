@@ -80,24 +80,29 @@ function sessionDetailsAuthenticated(session) {
 	}
 
 	sessionView.appendChild(
-		div({class: "session__update"},
-			form({onsubmit: (event) => { submitFormUpdateSession(event, session.sid) } },
-				formInputField(
-					"capacity",
-					"capacity",
-					"number",
-					"Session capacity"
+		div({class: "session__update__container"},
+			div({class: "session__update"},
+				form({onsubmit: (event) => { submitFormUpdateSession(event, session.sid) } },
+					formInputField(
+						"capacity",
+						"capacity",
+						"number",
+						"Session capacity"
+					),
+					button({type: "submit"}, "Update capacity"),
 				),
-				errorMessage("err_message-capacity", "Capacity must be a number"),
-				button({type: "submit"}, "Update capacity"),
+				form({onsubmit: (event) => { submitFormUpdateSession(event, session.sid) } },
+					dateTimeInput(),
+					button({type: "submit"}, "Update date"),
+				),
 			),
-			form({onsubmit: (event) => { submitFormUpdateSession(event, session.sid) } },
-				dateTimeInput(),
-				errorMessage("err_message-date", "Invalid date to create a session"),
-				button({type: "submit"}, "Update date"),
+			sessionView.appendChild(
+				errorMessage("err_message-update", ""),
 			)
 		)
 	)
+
+
 	return sessionView
 }
 

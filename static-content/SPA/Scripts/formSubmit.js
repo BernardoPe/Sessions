@@ -293,13 +293,11 @@ async function submitFormUpdateSession(event, sid) {
 	event.preventDefault();
 	const capacity = document.getElementById('capacity').value;
 	const date = document.getElementById('date').value;
-	const capacityErr = document.getElementById('err_message-capacity');
-	const dateErr = document.getElementById('err_message-date');
+	const updateErr = document.getElementById('err_message-update');
 
-	capacityErr.style.display = 'none';
-	dateErr.style.display = 'none';
+	updateErr.style.display = 'none';
 
-	if (!handleGameCapacity(parseInt(capacity), capacityErr))
+	if (!handleGameCapacity(parseInt(capacity), updateErr))
 		return;
 
 	const reqBody = {};
@@ -327,13 +325,8 @@ async function submitFormUpdateSession(event, sid) {
 				}
 			} else {
 				res.json().then(err => {
-					if (err.errorCause.toLowerCase().includes("date")) {
-						dateErr.innerHTML = err.errorCause
-						dateErr.style.display = "block"
-					} else {
-						capacityErr.innerHTML = err.errorCause
-						capacityErr.style.display = "block"
-					}
+					updateErr.innerHTML = err.errorCause;
+					updateErr.style.display = 'block';
 				})
 			}
 		})

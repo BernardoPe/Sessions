@@ -978,3 +978,7 @@ i:hover {
 	margin: 2em auto 0;
 	width: 50%;
 }
+
+.session__update__container .error-message-container {
+	margin: 0 auto;
+}

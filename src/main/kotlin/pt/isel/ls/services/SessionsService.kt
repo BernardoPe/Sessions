@@ -131,6 +131,10 @@ class SessionsService(private val dataManager: SessionsDataManager) {
 
             val session = sessionStorage.getById(sid) ?: throw NotFoundException("Session not found")
 
+            if (session.state == State.CLOSE) {
+                throw BadRequestException("Session is closed")
+            }
+
             val updatedSession = session.copy(capacity = capacity ?: session.capacity, date = date ?: session.date)
 
             sessionStorage.update(updatedSession)
