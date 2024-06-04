@@ -135,6 +135,7 @@ class DBManager(
     override fun close() {
         if (closed) return
         TransactionManager.closeAll()
+        closed = true
     }
 }
 
