@@ -124,7 +124,8 @@ class SessionsDataDBSession(private val dbURL: String) : SessionsDataSession {
                     "JOIN games ON sessions.game_id = games.id " +
                     "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
                     "LEFT JOIN players ON sessions_players.player_id = players.id " +
-                    "WHERE sessions.id = ANY (?)",
+                    "WHERE sessions.id = ANY (?)" +
+                    "ORDER BY sessions.id",
         )
 
         val ids = resultSet.use { rs ->
