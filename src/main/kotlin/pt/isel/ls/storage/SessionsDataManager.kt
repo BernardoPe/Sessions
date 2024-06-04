@@ -83,6 +83,8 @@ class DBManager(
 
     private val maxRetries = 5
 
+    private var closed = false
+
     override fun <T> executeTransaction(query: (SessionsDataManager) -> T) : T {
         var retries = 0
         while (retries < maxRetries) {
@@ -131,6 +133,7 @@ class DBManager(
     }
 
     override fun close() {
+        if (closed) return
         TransactionManager.closeAll()
     }
 }

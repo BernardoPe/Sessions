@@ -168,7 +168,7 @@ Connections are closed for all threads when the `close` method of the `Transacti
 In the application, the `TransactionManager` class is used by the `SessionsDataManager` class to manage connections and transactions with the database. This 
 storage management class implements the `Closeable` interface, by calling the `close` method of the `TransactionManager` class.
 
-Whenever the [main](../SessionsServer.kt) `storage.use {}` block is finished, the `SessionsDataManager` internally calls the close method of the `TransactionManager` to close the connections.
+In the [main](../SessionsServer.kt) application execution, the storage is closed whenever the `storage.close()` method is called.
 
 #### Data Access
 

@@ -83,6 +83,8 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
 
     private val jettyServer = sessionsHandler.asServer(Jetty(port))
 
+    private var shutdown = false
+
     /**
      * The method that starts the server
      * This method starts the server and adds a shutdown hook to stop the server when the application is closed
@@ -97,7 +99,16 @@ class SessionsServer(requestHandler: SessionsApi, port: Int = 8080) {
      * The method that stops the server
      */
     fun stop() {
+        if (shutdown) return
         jettyServer.stop()
+        shutdown = true
+    }
+
+    /**
+     * The method that blocks the current thread until the server is stopped
+     */
+    fun join() {
+        jettyServer.block()
     }
 
 }
@@ -107,18 +118,28 @@ fun main() {
 
     val storage = DBManager(databaseURL)
 
-    storage.use {
-        val server = SessionsServer(
-            SessionsApi(
-                PlayerService(storage),
-                GameService(storage),
-                SessionsService(storage),
-            ),
-        )
-        server.start()
-        logger.info("Server started, to stop press Enter")
-        readln()
+    val server = SessionsServer(
+        SessionsApi(
+            PlayerService(storage),
+            GameService(storage),
+            SessionsService(storage),
+        ),
+    )
+
+    server.start()
+
+    if (System.console() != null) {
+        println("Press Enter to stop the server")
+        System.console().readLine()
+        storage.close()
         server.stop()
     }
+
+    Runtime.getRuntime().addShutdownHook(Thread {
+        storage.close()
+        server.stop()
+    })
+
+    server.join()
 
 }
