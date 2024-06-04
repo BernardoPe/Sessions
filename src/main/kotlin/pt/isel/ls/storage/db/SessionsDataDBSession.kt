@@ -124,16 +124,22 @@ class SessionsDataDBSession(private val dbURL: String) : SessionsDataSession {
                     "JOIN games ON sessions.game_id = games.id " +
                     "LEFT JOIN sessions_players ON sessions.id = sessions_players.session_id " +
                     "LEFT JOIN players ON sessions_players.player_id = players.id " +
-                    "WHERE sessions.id = ?",
+                    "WHERE sessions.id = ANY (?)",
         )
 
-        val resultSessions = mutableListOf<Session>()
-
-        while (resultSet.next()) {
-            sessionStmt.setInt(1, resultSet.getInt("id"))
-            val sessionResultSet = sessionStmt.executeQuery()
-            resultSessions.add(sessionResultSet.getSessions().first())
+        val ids = resultSet.use { rs ->
+            val idsList = mutableListOf<Int>()
+            while (rs.next()) {
+                idsList.add(rs.getInt(1))
+            }
+            idsList.toTypedArray()
         }
+
+        val sqlArray = connection.createArrayOf("INTEGER", ids)
+
+        sessionStmt.setArray(1, sqlArray)
+
+        val resultSessions = sessionStmt.executeQuery().getSessions()
 
         countResultSet.next()
 
