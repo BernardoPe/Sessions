@@ -128,13 +128,7 @@ class SessionsDataDBSession(private val dbURL: String) : SessionsDataSession {
                     "ORDER BY sessions.id",
         )
 
-        val ids = resultSet.use { rs ->
-            val idsList = mutableListOf<Int>()
-            while (rs.next()) {
-                idsList.add(rs.getInt(1))
-            }
-            idsList.toTypedArray()
-        }
+        val ids = resultSet.getIds()
 
         val sqlArray = connection.createArrayOf("INTEGER", ids)
 
@@ -239,6 +233,16 @@ class SessionsDataDBSession(private val dbURL: String) : SessionsDataSession {
             player,
         )
     }
+
+    private fun ResultSet.getIds(): Array<Int> =
+        use { rs ->
+            val idsList = mutableListOf<Int>()
+            while (rs.next()) {
+                idsList.add(rs.getInt(1))
+            }
+            idsList.toTypedArray()
+        }
+
 
     private fun ResultSet.getPlayer(): Player {
         return Player(

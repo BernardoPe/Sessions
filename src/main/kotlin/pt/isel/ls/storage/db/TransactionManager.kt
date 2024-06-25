@@ -51,10 +51,10 @@ object TransactionManager {
             return connection.also { connectionSet.add(it) }
         }
 
-    /**
-     * Begins a transaction for the current thread
-     * @param dbUrl The database URL
-     */
+        /**
+         * Begins a transaction for the current thread
+         * @param dbUrl The database URL
+         */
         fun begin(dbUrl: String) {
             val connection = getConnection(dbUrl)
             connection.autoCommit = false
@@ -72,7 +72,6 @@ object TransactionManager {
          * Aborts a transaction for the current thread
          *
          */
-
         fun abort(dbUrl: String) {
             val connection = getConnection(dbUrl)
             connection.rollback()
