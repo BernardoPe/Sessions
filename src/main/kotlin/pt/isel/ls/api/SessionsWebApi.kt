@@ -27,6 +27,7 @@ import pt.isel.ls.data.dto.PlayerLoginInputModel
 import pt.isel.ls.data.dto.SessionAddPlayerInputModel
 import pt.isel.ls.data.dto.SessionCreationInputModel
 import pt.isel.ls.data.dto.SessionUpdateInputModel
+import pt.isel.ls.data.mapper.toErrorDTO
 import pt.isel.ls.data.mapper.toGameCreationDTO
 import pt.isel.ls.data.mapper.toGameInfoDTO
 import pt.isel.ls.data.mapper.toGameSearchDTO
@@ -441,7 +442,7 @@ class SessionsApi(
             logger.info("Unauthorized request")
             Response(UNAUTHORIZED).header("content-type", "application/json").body(
                 Json.encodeToString(
-                    UnauthorizedException(),
+                    UnauthorizedException().toErrorDTO(),
                 ),
             )
         }
@@ -461,7 +462,7 @@ class SessionsApi(
         if (request.bodyString().isNotBlank() && request.header("content-type") != "application/json") {
             return Response(BAD_REQUEST).header("content-type", "application/json").body(
                 Json.encodeToString(
-                    UnsupportedMediaTypeException(),
+                    UnsupportedMediaTypeException().toErrorDTO(),
                 ),
             )
         }
@@ -469,13 +470,15 @@ class SessionsApi(
         val res = try {
             service(request)
         } catch (e: SessionsExceptions) {
-            Response(Status(e.status, e.description)).header("content-type", "application/json").body(Json.encodeToString(e))
-        } catch (e: IllegalArgumentException) {
-            Response(BAD_REQUEST).header("content-type", "application/json").body(Json.encodeToString(SessionsExceptions(BAD_REQUEST.code, "Bad Request", e.message)))
+            Response(Status(e.status, e.description)).header("content-type", "application/json").body(Json.encodeToString(e.toErrorDTO()))
+        } catch (e: IllegalArgumentException) { // don't check for kotlin exceptions, validate with defined exception classes
+            Response(BAD_REQUEST).header("content-type", "application/json").body(
+                Json.encodeToString(SessionsExceptions(BAD_REQUEST.code, "Bad Request", e.message).toErrorDTO())
+            )
         } catch (e: Exception) {
             logger.error(e.message, e)
             Response(INTERNAL_SERVER_ERROR).header("content-type", "application/json").body(
-                Json.encodeToString(InternalServerErrorException()),
+                Json.encodeToString(InternalServerErrorException().toErrorDTO()),
             )
         }
 

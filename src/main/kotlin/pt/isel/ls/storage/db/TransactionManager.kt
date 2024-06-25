@@ -1,5 +1,6 @@
 package pt.isel.ls.storage.db
 
+import org.postgresql.ds.PGConnectionPoolDataSource
 import org.postgresql.ds.PGSimpleDataSource
 import org.postgresql.util.PSQLException
 import pt.isel.ls.exceptions.BadRequestException
@@ -27,42 +28,27 @@ import java.sql.Connection
  *
  * The [closeAll] method is used to close all connections currently stored.
  *
- * The [closeThreadConnection] method is used to close the connection for the current thread.
- *
  * @property getConnection gets the connection for the current thread
 
  */
 object TransactionManager {
 
+        private val src = PGConnectionPoolDataSource()
+
+        private val connectionSet = mutableSetOf<Connection>()
 
         /**
-         * Gets a new connection to the database
+         * Gets a connection to the database
          *
          * It uses the [PGSimpleDataSource] to create a new connection to the database
          *
          * @return The new connection
          */
-        private fun getNewConnection(dbUrl: String): Connection {
-            logger.info("Creating new connection to database")
-            val newSource = PGSimpleDataSource()
-            newSource.setUrl(dbUrl)
-            return newSource.connection
-        }
-
-        /**
-         * Gets the connection for the current thread
-         *
-         * If the connection is closed, it will create a new connection
-         *
-         * @return The connection for the current thread
-         */
         fun getConnection(dbUrl: String): Connection {
             logger.info("Getting connection to database")
-            val connection = connections.getOrPut(Thread.currentThread().id) { getNewConnection(dbUrl) }
-            if (connection.isClosed) {
-                connections[Thread.currentThread().id] = getNewConnection(dbUrl)
-            }
-            return connections[Thread.currentThread().id]!!
+            src.setUrl(dbUrl)
+            val connection = src.pooledConnection.connection
+            return connection.also { connectionSet.add(it) }
         }
 
     /**
@@ -70,7 +56,7 @@ object TransactionManager {
      * @param dbUrl The database URL
      */
         fun begin(dbUrl: String) {
-            val connection = connections.getOrPut(Thread.currentThread().id) { getNewConnection(dbUrl) }
+            val connection = getConnection(dbUrl)
             connection.autoCommit = false
             connection.beginRequest()
             logger.info("Transaction started")
@@ -106,26 +92,6 @@ object TransactionManager {
             logger.info("Transaction finished")
         }
 
-        // Map that stores the connections for each thread
-        private val connections = mutableMapOf<Long, Connection>()
-
-        /**
-         * Closes the connection for the thread that calls this method
-         *
-         * If the connection is not closed, it will roll back any transaction that is in progress and then close the connection
-         *
-         * If the connection is closed, the function will have no effect
-         */
-        fun closeThreadConnection() {
-            connections.remove(Thread.currentThread().id)?.let {
-                if (!it.isClosed) {
-                    if (!it.autoCommit) //mid transaction
-                        it.rollback()
-                    it.close()
-                }
-            }
-            logger.info("Connection closed")
-        }
 
         /**
          * Closes all connections currently stored
@@ -137,7 +103,7 @@ object TransactionManager {
          */
         fun closeAll() {
             logger.info("Closing all connections...")
-            connections.values.forEach {
+            connectionSet.forEach {
                 if (!it.isClosed) {
                     if (!it.autoCommit) // mid transaction
                         it.rollback()

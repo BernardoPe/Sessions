@@ -1,17 +1,15 @@
-``## Introduction
+## Introduction
 
-The project consists of the development of an application that allows management of multiplayer game sessions.
+This project consists of the development of an application that allows management of multiplayer game sessions.
 
-The backend of the application was implemented with `kotlin`,
-`HTTP4K` library for the server and the `kotlinx.serialization` library for JSON serialization.  
+The backend of the application was implemented with `kotlin`, using
+`HTTP4K` for the server and the `kotlinx.serialization` library for JSON serialization.  
 Automatic tests were implemented with `JUnit` for the operations the API provides.
-The database is managed by `PostgreSQL` and the connections are made using the `JDBC` library.
+The database is managed by `PostgreSQL` and the connections are made using the `JDBC` driver.
 
 On the frontend side, we used Javascript modules to manage the user interface of the website.
 The web application loads only a single web page document and updates its content via JavaScript making by HTTP requests to the server and 
 replacing the page content with the content of the response.
-
-This design is called Single Page Application (SPA).
 
 ## Implementation Details
 

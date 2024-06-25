@@ -101,8 +101,6 @@ function sessionDetailsAuthenticated(session) {
 			)
 		)
 	)
-
-
 	return sessionView
 }
 
